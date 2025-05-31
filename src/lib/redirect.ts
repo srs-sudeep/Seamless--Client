@@ -1,4 +1,4 @@
-import { type UserRole } from '@/store/useAuthStore';
+import { type UserRole } from '@/types';
 
 export function getDashboardLink(role: UserRole | null | undefined) {
   const rolePaths: Record<string, string> = {

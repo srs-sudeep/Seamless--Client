@@ -1,6 +1,7 @@
 import { fetchRoutePermissions, type RouteAccess } from '@/api/routesApi';
 import { getDashboardLink } from '@/lib/redirect';
-import { useAuthStore, type UserRole } from '@/store/useAuthStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { type UserRole } from '@/types';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 

@@ -4,19 +4,36 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
+import { login } from '@/api/authApis';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { useMutation } from '@tanstack/react-query';
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const { toast } = useToast();
-  const { login } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: data => {
+      setAuth(data);
+      toast({
+        title: 'Success',
+        description: 'You have successfully logged in',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Login Failed',
+        description: error?.response?.data?.message || error.message || 'Invalid credentials',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -28,48 +45,22 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // Call login directly from useAuthStore which will handle the API call
-      await login(email, password);
-
-      toast({
-        title: 'Success',
-        description: 'You have successfully logged in',
-      });
-    } catch (error) {
-      toast({
-        title: 'Login Failed',
-        description: error instanceof Error ? error.message : 'Invalid email or password',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    mutation.mutate({ ldapid: email, password });
   };
 
   return (
     <div className="flex flex-col md:flex-row">
-      {/* Left side - Login form */}
+      {/* Left form side */}
       <div className="w-full md:w-1/2 p-8 relative">
-        {/* Logo moved to top right */}
         <div className="absolute top-6 right-6 flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
             IO
           </div>
         </div>
 
-        {/* User icon */}
         <div className="flex justify-center mb-6 mt-12">
           <div className="w-20 h-20 rounded-full border-2 border-purple-500 flex items-center justify-center text-purple-500 dark:text-purple-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -80,31 +71,22 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Login form */}
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-600 dark:text-gray-300">
-              Email
-            </Label>
+            <Label htmlFor="ldapid">Ldap Id</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
+              id="ldapid"
+              type="text"
+              placeholder="Enter your Ldap Id"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              required
-              className="bg-gray-100 dark:bg-white/10 border-0 text-gray-800 dark:text-white placeholder:text-gray-400"
+              className="bg-gray-100 dark:bg-white/10 border-0 text-gray-800 dark:text-white"
             />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-gray-600 dark:text-gray-300">
-                Password
-              </Label>
-              <Link
-                to="/forgot-password"
-                className="text-sm text-purple-600 dark:text-purple-300 hover:text-purple-800 dark:hover:text-purple-200"
-              >
+              <Label htmlFor="password">Password</Label>
+              <Link to="/forgot-password" className="text-sm text-purple-600 dark:text-purple-300">
                 Forgot password?
               </Link>
             </div>
@@ -113,8 +95,7 @@ const LoginPage: React.FC = () => {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              required
-              className="bg-gray-100 dark:bg-white/10 border-0 text-gray-800 dark:text-white placeholder:text-gray-400"
+              className="bg-gray-100 dark:bg-white/10 border-0 text-gray-800 dark:text-white"
             />
           </div>
           <div className="flex items-center space-x-2">
@@ -133,41 +114,25 @@ const LoginPage: React.FC = () => {
           </div>
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white"
-            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white"
+            disabled={mutation.isPending}
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {mutation.isPending ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
 
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
-            <Link
-              to="/register"
-              className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
-            >
+            Don&apos;t have an account?{' '}
+            <Link to="/register" className="text-purple-600 dark:text-purple-400">
               Sign up
             </Link>
           </p>
         </div>
-
-        {/* Demo accounts */}
-        <div className="mt-6 p-3 bg-gray-100/80 dark:bg-white/5 rounded-lg">
-          <p className="text-xs text-center text-gray-600 dark:text-gray-400 mb-1">
-            Demo Accounts:
-          </p>
-          <div className="grid grid-cols-2 gap-1 text-xs text-gray-600 dark:text-gray-400">
-            <p>admin@example.com / password</p>
-            <p>teacher@example.com / password</p>
-            <p>student@example.com / password</p>
-            <p>medical@example.com / password</p>
-            <p>multi@example.com / password</p>
-          </div>
-        </div>
       </div>
+
+      {/* Right side */}
       <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-purple-800 via-purple-700 to-indigo-800 items-center justify-center p-8 relative overflow-hidden">
-        {/* Abstract flowing shape */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-64 h-64 opacity-80">
             <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
@@ -185,13 +150,10 @@ const LoginPage: React.FC = () => {
             </svg>
           </div>
         </div>
-
-        {/* Content */}
         <div className="z-10 text-left max-w-xs">
           <h1 className="text-4xl font-bold text-white mb-4">Welcome.</h1>
           <p className="text-gray-300 text-sm opacity-80">
-            Log in to access your dashboard and manage all your resources in one place. Discover the
-            new features we've added to enhance your experience.
+            Log in to access your dashboard and manage your resources in one place.
           </p>
         </div>
       </div>

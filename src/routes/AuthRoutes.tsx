@@ -4,7 +4,6 @@ import AuthLayout from '@/layouts/AuthLayout';
 
 // Auth pages
 const LoginPage = lazyLoad(() => import('@/views/auth/LoginPage'));
-const RegisterPage = lazyLoad(() => import('@/views/auth/RegisterPage'));
 const ForgotPasswordPage = lazyLoad(() => import('@/views/auth/ForgotPasswordPage'));
 const ResetPasswordPage = lazyLoad(() => import('@/views/auth/ResetPasswordPage'));
 
@@ -15,23 +14,15 @@ const AuthRoutes = {
     {
       path: 'login',
       element: (
-        <GuestGuard redirectPath="role-dashboard">
+        <GuestGuard>
           <LoginPage />
-        </GuestGuard>
-      ),
-    },
-    {
-      path: 'register',
-      element: (
-        <GuestGuard redirectPath="role-dashboard">
-          <RegisterPage />
         </GuestGuard>
       ),
     },
     {
       path: 'forgot-password',
       element: (
-        <GuestGuard redirectPath="role-dashboard">
+        <GuestGuard>
           <ForgotPasswordPage />
         </GuestGuard>
       ),
@@ -39,7 +30,7 @@ const AuthRoutes = {
     {
       path: 'reset-password',
       element: (
-        <GuestGuard redirectPath="role-dashboard">
+        <GuestGuard>
           <ResetPasswordPage />
         </GuestGuard>
       ),

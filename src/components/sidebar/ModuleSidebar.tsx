@@ -1,19 +1,23 @@
-import { getFilteredModules, getHierarchicalSubModules } from '@/api/sidebarApi';
+import {
+  fetchSidebarModules,
+  type SidebarModuleItem,
+  type SidebarSubModuleTreeItem,
+} from '@/api/sidebarApi';
 import AppLogo from '@/components/AppLogo';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useSidebar } from '@/core/context/sidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { useAuthStore } from '@/store/useAuthStore';
-import { type HierarchicalSubModule, iconMap, type SidebarModuleItem } from '@/types';
+import { iconMap } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 // Helper function to get icon component
-const getIconComponent = (iconName: keyof typeof iconMap, size: number = 24) => {
+const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
   return IconComponent ? <IconComponent size={size} /> : null;
 };
@@ -22,85 +26,77 @@ const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [modules, setModules] = useState<SidebarModuleItem[]>([]);
-  const [subModulesMap, setSubModulesMap] = useState<Record<string, HierarchicalSubModule[]>>({});
-  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
   const { isOpen, closeSidebar } = useSidebar();
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentRole } = useAuthStore();
+
+  // Fetch sidebar modules from API
+  const { data: modules = [], isLoading } = useQuery({
+    queryKey: ['sidebarModules'],
+    queryFn: fetchSidebarModules,
+  });
+
   // Check if a module has any active submodule
   const hasActiveSubModule = useCallback(
-    (subModules: HierarchicalSubModule[], path: string): boolean => {
+    (subModules: SidebarSubModuleTreeItem[], path: string): boolean => {
       for (const subModule of subModules) {
-        if (path.startsWith(subModule.path)) return true;
+        if (subModule.path && path.startsWith(subModule.path)) return true;
         if (subModule.children?.length) {
           if (hasActiveSubModule(subModule.children, path)) return true;
         }
       }
       return false;
     },
-    [] // Add any real dependencies here if needed
+    []
   );
-  // Fetch sidebar data based on user roles
+
+  // Set active module based on current path
   useEffect(() => {
-    const fetchSidebarData = async () => {
-      setIsLoading(true);
-      try {
-        if (!currentRole) {
-          setModules([]);
-          setSubModulesMap({});
-          return;
+    if (!isLoading && modules.length > 0) {
+      let foundModule = false;
+      for (const module of modules) {
+        if (hasActiveSubModule(module.subModules, location.pathname)) {
+          setActiveModule(module.id);
+          foundModule = true;
+          break;
         }
-
-        // Fetch modules filtered by user roles
-        const filteredModules = await getFilteredModules(currentRole);
-        setModules(filteredModules);
-
-        // Fetch hierarchical submodules for each module
-        const subModulesData: Record<string, HierarchicalSubModule[]> = {};
-
-        for (const module of filteredModules) {
-          const hierarchicalSubModules = await getHierarchicalSubModules(module.id, currentRole);
-          subModulesData[module.id] = hierarchicalSubModules;
-        }
-
-        setSubModulesMap(subModulesData);
-
-        // Set active module based on current path if not already set
-        if (!activeModule && filteredModules.length > 0) {
-          // Find which module has a submodule matching the current path
-          let foundModule = false;
-          for (const module of filteredModules) {
-            const subModules = subModulesData[module.id] || [];
-            if (hasActiveSubModule(subModules, location.pathname)) {
-              setActiveModule(module.id);
-              foundModule = true;
-              break;
-            }
-          }
-
-          // If no match found, set the first module as active
-          if (!foundModule) {
-            setActiveModule(filteredModules[0].id);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch sidebar data:', error);
-      } finally {
-        setIsLoading(false);
       }
-    };
+      if (!foundModule) {
+        setActiveModule(modules[0]?.id ?? null);
+      }
+    }
+  }, [isLoading, modules, location.pathname, hasActiveSubModule]);
 
-    fetchSidebarData();
-  }, [currentRole, location.pathname]);
+  // Auto-expand parent items based on current path (batch state update)
+  useEffect(() => {
+    if (!isLoading && modules.length > 0 && activeModule) {
+      const expanded: string[] = [];
+      const expandParents = (items: SidebarSubModuleTreeItem[]) => {
+        for (const item of items) {
+          if (item.path && location.pathname.startsWith(item.path)) {
+            if (item.children && item.children.length > 0) {
+              expanded.push(item.id);
+              expandParents(item.children);
+            }
+          } else if (item.children) {
+            expandParents(item.children);
+          }
+        }
+      };
+      const module = modules.find(m => m.id === activeModule);
+      if (module) {
+        expandParents(module.subModules);
+        setExpandedItems(expanded);
+      }
+    }
+  }, [isLoading, modules, activeModule, location.pathname]);
 
   // Check if a path is active
-  const isActivePath = (path: string) => location.pathname === path;
+  const isActivePath = (path?: string) => path && location.pathname === path;
 
   // Check if a path is active or a parent path
-  const isActiveOrParent = (path: string) => location.pathname.startsWith(path);
+  const isActiveOrParent = (path?: string) => path && location.pathname.startsWith(path);
 
   // Toggle expanded state for items with children
   const toggleExpanded = (itemId: string) => {
@@ -109,49 +105,19 @@ const ModuleSidebar = () => {
     );
   };
 
-  // Set active module based on current path
-  useEffect(() => {
-    if (!isLoading && modules.length > 0) {
-      // Find which module has a submodule matching the current path
-      for (const module of modules) {
-        const subModules = subModulesMap[module.id] || [];
-        if (hasActiveSubModule(subModules, location.pathname)) {
-          setActiveModule(module.id);
-
-          // Auto-expand parent items based on current path
-          const expandParents = (items: HierarchicalSubModule[]) => {
-            for (const item of items) {
-              if (location.pathname.startsWith(item.path)) {
-                if (item.children && item.children.length > 0) {
-                  setExpandedItems(prev => (!prev.includes(item.id) ? [...prev, item.id] : prev));
-                  expandParents(item.children);
-                }
-              } else if (item.children) {
-                expandParents(item.children);
-              }
-            }
-          };
-
-          expandParents(subModules);
-          break;
-        }
-      }
-    }
-  }, [isLoading, modules, subModulesMap, location.pathname]);
-
   // Filter submodules based on search query
   const getFilteredBySearchSubModules = () => {
     if (searchQuery.trim() === '' || !activeModule) {
-      return subModulesMap[activeModule || ''] || [];
+      const module = modules.find(m => m.id === activeModule);
+      return module ? module.subModules : [];
     }
 
-    const searchInSubModules = (items: HierarchicalSubModule[]): HierarchicalSubModule[] => {
-      const result: HierarchicalSubModule[] = [];
-
+    const searchInSubModules = (items: SidebarSubModuleTreeItem[]): SidebarSubModuleTreeItem[] => {
+      const result: SidebarSubModuleTreeItem[] = [];
       for (const item of items) {
         const matchesSearch =
           item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.path.toLowerCase().includes(searchQuery.toLowerCase());
+          (item.path?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
 
         const childMatches = item.children ? searchInSubModules(item.children) : [];
 
@@ -162,15 +128,15 @@ const ModuleSidebar = () => {
           });
         }
       }
-
       return result;
     };
 
-    return searchInSubModules(subModulesMap[activeModule] || []);
+    const module = modules.find(m => m.id === activeModule);
+    return module ? searchInSubModules(module.subModules) : [];
   };
 
   // Render a submodule item
-  const renderSubModuleItem = (subModule: HierarchicalSubModule, level = 0) => {
+  const renderSubModuleItem = (subModule: SidebarSubModuleTreeItem, level = 0) => {
     const hasChildren = subModule.children && subModule.children.length > 0;
     const isExpanded = expandedItems.includes(subModule.id);
     const isActive = isActivePath(subModule.path);
@@ -191,34 +157,23 @@ const ModuleSidebar = () => {
           onClick={() => {
             if (hasChildren) {
               toggleExpanded(subModule.id);
-            } else {
+            } else if (subModule.path) {
               navigate(subModule.path);
             }
           }}
         >
           {subModule.icon && (
             <div className="mr-2 text-sidebar-foreground/70">
-              {getIconComponent(subModule.icon, subModule.iconSize || 16)}
+              {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </div>
           )}
           <span className="flex-1 truncate">{subModule.label}</span>
-
-          {typeof subModule.badge === 'number' && subModule.badge > 0 && (
-            <Badge
-              variant="default"
-              className="ml-2 bg-sidebar-primary text-sidebar-primary-foreground"
-            >
-              {subModule.badge}
-            </Badge>
-          )}
-
           {hasChildren && (
             <ChevronRight
-              className={cn('h-4 w-4 transition-transform', isExpanded && 'transform rotate-90')}
+              className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
             />
           )}
         </div>
-
         {hasChildren && isExpanded && (
           <div className="mt-1 pl-4 border-l border-sidebar-border/50 ml-4">
             {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
@@ -232,8 +187,7 @@ const ModuleSidebar = () => {
   const renderModuleIcon = (module: SidebarModuleItem) => {
     const isActive = activeModule === module.id;
     const isModuleActive =
-      activeModule === module.id ||
-      hasActiveSubModule(subModulesMap[module.id] || [], location.pathname);
+      activeModule === module.id || hasActiveSubModule(module.subModules, location.pathname);
 
     return (
       <div
@@ -247,7 +201,7 @@ const ModuleSidebar = () => {
         )}
         onClick={() => setActiveModule(module.id)}
       >
-        {getIconComponent(module.icon, module.iconSize || 20)}
+        {getIconComponent(module.icon as keyof typeof iconMap, 20)}
       </div>
     );
   };
@@ -256,14 +210,12 @@ const ModuleSidebar = () => {
     <div className="h-full flex">
       {/* Sidebar content inside Drawer */}
       <div className="w-full h-full">
-        {/* Paste full sidebar JSX here */}
         <div className="flex h-screen border-r border-sidebar-border">
           {/* Module icons sidebar */}
           <div className="w-16 h-full bg-sidebar flex flex-col items-center py-4 border-r border-sidebar-border">
             <div className="mb-6">
               <AppLogo short className="w-10 h-10 text-sidebar-foreground" />
             </div>
-
             <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
           </div>
 
@@ -315,22 +267,22 @@ const ModuleSidebar = () => {
                     {/* Show search results from other modules when searching */}
                     {searchQuery.trim() !== '' && (
                       <>
-                        {Object.entries(subModulesMap)
-                          .filter(([moduleId]) => moduleId !== activeModule)
-                          .flatMap(([moduleId, subModules]) => {
-                            const filteredSubModules = subModules.filter(
+                        {modules
+                          .filter(m => m.id !== activeModule)
+                          .flatMap(module => {
+                            const filteredSubModules = module.subModules.filter(
                               sm =>
                                 sm.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                sm.path.toLowerCase().includes(searchQuery.toLowerCase())
+                                (sm.path?.toLowerCase().includes(searchQuery.toLowerCase()) ??
+                                  false)
                             );
-
                             return filteredSubModules.length > 0 ? (
                               <div
-                                key={moduleId}
+                                key={module.id}
                                 className="mt-4 pt-4 border-t border-sidebar-border/50"
                               >
                                 <h3 className="px-3 mb-2 text-xs uppercase text-sidebar-foreground/60">
-                                  {modules.find(m => m.id === moduleId)?.label || moduleId}
+                                  {module.label}
                                 </h3>
                                 {filteredSubModules.map(subModule =>
                                   renderSubModuleItem(subModule)
@@ -353,7 +305,7 @@ const ModuleSidebar = () => {
     <>
       {isMobile ? (
         <Sheet open={isOpen} onOpenChange={closeSidebar}>
-          <SheetTitle hidden></SheetTitle>
+          <SheetTitle style={{ display: 'none' }} />
           <SheetContent
             side="left"
             className="p-0 w-[280px] bg-sidebar border-r border-sidebar-border"

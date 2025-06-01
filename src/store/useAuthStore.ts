@@ -1,7 +1,7 @@
+import { getMe, LoginResponse } from '@/api/authApi';
+import { UserRole } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getMe, LoginResponse } from '@/api/authApis';
-import { UserRole } from '@/types';
 
 interface User {
   name: string;
@@ -16,7 +16,6 @@ interface User {
 interface AuthState {
   user: User | null;
   currentRole: UserRole | null;
-  loading: boolean;
   refresh_token?: string;
   access_token?: string;
   isAuthenticated: boolean;
@@ -32,7 +31,6 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       currentRole: null,
-      loading: false,
       isAuthenticated: false,
       access_token: undefined,
       refresh_token: undefined,
@@ -41,7 +39,6 @@ export const useAuthStore = create<AuthState>()(
         set({
           access_token: creds.access_token,
           refresh_token: creds.refresh_token,
-          loading: true,
           isAuthenticated: false,
           user: null,
           currentRole: null,
@@ -49,8 +46,7 @@ export const useAuthStore = create<AuthState>()(
         const user = await getMe();
         set({
           user,
-          currentRole: user.roles[0] || null,
-          loading: false,
+          currentRole: user.roles[0],
           isAuthenticated: true,
         });
       },

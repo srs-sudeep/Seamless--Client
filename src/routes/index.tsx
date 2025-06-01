@@ -1,35 +1,31 @@
-// Router.tsx
+import { FullPageLoader } from '@/components/ui/loading-spinner';
 import AuthGuard from '@/core/guards/AuthGuard';
 import { useAvailableRoutes } from '@/hooks/useAvailableRoutes';
-import { useRoutes } from 'react-router-dom';
-
-// Static route modules
+import { filterNestedRoutesByAvailable } from '@/lib/filterRoutes';
 import AuthRoutes from '@/routes/AuthRoutes';
 import ErrorRoutes from '@/routes/ErrorRoutes';
 import LandingRoutes from '@/routes/LandingRoutes';
-
-// Dynamic route map
-import { routeModuleMap } from '@/routes/routeModuleMap';
+import { allRouteObjects } from '@/routes/routeModuleMap';
+import { useRoutes } from 'react-router-dom';
 
 const Router = () => {
   const { availableRoutes, isLoading } = useAvailableRoutes();
+  const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
 
-  // Filter route modules based on available routes
-  const filteredRoutes = Object.entries(routeModuleMap)
-    .filter(([key]) => availableRoutes.includes(key))
-    .map(([_, route]) => route);
-
-  // Combine all routes
+  // Always call useRoutes
   const routes = useRoutes([
     LandingRoutes,
     AuthRoutes,
     {
       element: <AuthGuard />,
-      children: isLoading ? [] : filteredRoutes,
+      children: filteredRoutes,
     },
+    ...filteredRoutes,
     ...ErrorRoutes,
   ]);
-
+  if (isLoading) {
+    return <FullPageLoader />;
+  }
   return routes;
 };
 

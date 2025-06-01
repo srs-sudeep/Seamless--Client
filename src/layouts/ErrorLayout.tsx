@@ -1,6 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { getDashboardLink } from '@/lib/redirect';
-import { useAuthStore } from '@/store/useAuthStore';
 import { ThemeSwitcher } from '@/theme';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -9,18 +7,6 @@ interface ErrorLayoutProps {
 }
 
 const ErrorLayout = ({ children }: ErrorLayoutProps) => {
-  const { isAuthenticated, currentRole } = useAuthStore();
-
-  // Determine where to redirect the user based on authentication status
-  const getHomeLink = () => {
-    if (!isAuthenticated) {
-      return '/';
-    }
-
-    // If authenticated, redirect to their role dashboard
-    return currentRole ? getDashboardLink(currentRole) : '/';
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-blue-950">
       <header className="p-4 flex justify-end">
@@ -31,10 +17,6 @@ const ErrorLayout = ({ children }: ErrorLayoutProps) => {
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild variant="default">
             <Link to="/">Go to Home</Link>
-          </Button>
-
-          <Button asChild variant="outline">
-            <Link to={getHomeLink()}>Go to Dashboard</Link>
           </Button>
         </div>
       </main>

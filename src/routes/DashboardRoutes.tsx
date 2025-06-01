@@ -1,5 +1,4 @@
 import lazyLoad from '@/lib/lazyLoad';
-import RoleBasedRoute from '@/core/guards/RoleBasedRoute';
 import MainLayout from '@/layouts/MainLayout';
 
 // Dashboard Pages
@@ -15,43 +14,23 @@ const DashboardRoutes = {
   children: [
     {
       path: 'admin',
-      element: (
-        <RoleBasedRoute path="/dashboard/admin">
-          <AdminDashboard />
-        </RoleBasedRoute>
-      ),
+      element: <AdminDashboard />,
     },
     {
       path: 'library',
-      element: (
-        <RoleBasedRoute path="/dashboard/library">
-          <LibrarianDashboard />
-        </RoleBasedRoute>
-      ),
+      element: <LibrarianDashboard />,
     },
     {
       path: 'medical',
-      element: (
-        <RoleBasedRoute path="/dashboard/medical">
-          <MedicalDashboard />
-        </RoleBasedRoute>
-      ),
+      element: <MedicalDashboard />,
     },
     {
       path: 'student',
-      element: (
-        <RoleBasedRoute path="/dashboard/student">
-          <StudentDashboard />
-        </RoleBasedRoute>
-      ),
+      element: <StudentDashboard />,
     },
     {
       path: 'teacher',
-      element: (
-        <RoleBasedRoute path="/dashboard/teacher">
-          <TeacherDashboard />
-        </RoleBasedRoute>
-      ),
+      element: <TeacherDashboard />,
     },
   ],
 };

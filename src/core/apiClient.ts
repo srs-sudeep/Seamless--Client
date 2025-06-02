@@ -77,8 +77,12 @@ apiClient.interceptors.response.use(
         });
 
         const newAccessToken = response.data.access_token;
-        // Update Zustand store with new access_token
-        useAuthStore.setState({ access_token: newAccessToken });
+        const newRefreshToken = response.data.refresh_token;
+
+        useAuthStore.setState({
+          access_token: newAccessToken,
+          refresh_token: newRefreshToken,
+        });
 
         apiClient.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
         onRefreshed(newAccessToken);

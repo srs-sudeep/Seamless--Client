@@ -1,4 +1,4 @@
-import { type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/api/sidebarApi';
+import { type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import AppLogo from '@/components/AppLogo';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -11,13 +11,12 @@ import { ChevronRight, Search } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSidebarItems } from '@/hooks/useSidebar';
-// Helper function to get icon component
+
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
   return IconComponent ? <IconComponent size={size} /> : null;
 };
 
-// Recursively check if any submodule or its children matches the path
 function findModuleIdByPath(modules: SidebarModuleItem[], pathname: string): string | null {
   for (const module of modules) {
     if (module.subModules && findSubModuleByPath(module.subModules, pathname)) {

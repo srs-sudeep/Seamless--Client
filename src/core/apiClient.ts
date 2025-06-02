@@ -1,11 +1,20 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { useAuthStore } from '@/store/useAuthStore';
-
+import { toast } from '@/hooks/use-toast';
+import { CustomAxiosRequestConfig } from '@/types';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
-
+export interface CustomAxiosInstance extends AxiosInstance {
+  <T = any, R = AxiosResponse<T>>(config: CustomAxiosRequestConfig): Promise<R>;
+  get<T = any, R = AxiosResponse<T>>(url: string, config?: CustomAxiosRequestConfig): Promise<R>;
+  post<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: any,
+    config?: CustomAxiosRequestConfig
+  ): Promise<R>;
+  // Add other HTTP verbs you use similarly
+}
 function onRefreshed(token: string) {
   refreshSubscribers.forEach(cb => cb(token));
   refreshSubscribers = [];
@@ -21,7 +30,7 @@ export const publicApiClient = axios.create({
 });
 
 // Authenticated client
-export const apiClient = axios.create({
+export const apiClient: CustomAxiosInstance = axios.create({
   baseURL: BASE_URL,
 });
 
@@ -37,7 +46,7 @@ apiClient.interceptors.request.use(config => {
 apiClient.interceptors.response.use(
   response => response,
   async error => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as CustomAxiosRequestConfig;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Get refresh_token from Zustand store
@@ -50,6 +59,9 @@ apiClient.interceptors.response.use(
       if (isRefreshing) {
         return new Promise(resolve => {
           addRefreshSubscriber((newToken: string) => {
+            if (!originalRequest.headers) {
+              originalRequest.headers = {};
+            }
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
             resolve(apiClient(originalRequest));
           });
@@ -77,6 +89,15 @@ apiClient.interceptors.response.use(
       } finally {
         isRefreshing = false;
       }
+    }
+    const context = originalRequest.headers?.['x-error-context'] ?? 'Request';
+    if (!error.config.silentError) {
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
+      toast({
+        title: `${context} failed`,
+        description: errorMessage,
+        variant: 'destructive',
+      });
     }
 
     return Promise.reject(error);

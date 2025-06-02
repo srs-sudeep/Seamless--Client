@@ -1,16 +1,15 @@
-import { type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import AppLogo from '@/components/AppLogo';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useSidebar } from '@/core/context/sidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSidebarItems } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import { iconMap } from '@/types';
+import { iconMap, type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Search } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSidebarItems } from '@/hooks/useSidebar';
 
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
@@ -125,13 +124,13 @@ const ModuleSidebar = () => {
       <div key={subModule.id} className="mb-1">
         <div
           className={cn(
-            'flex items-center px-3 py-2 rounded-md text-sm transition-colors',
+            'flex items-center px-3 py-2 rounded-md text-base transition-colors',
             'hover:bg-sidebar-accent/10 cursor-pointer',
             isActive
               ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               : 'text-sidebar-foreground/80',
             isParentActive && !isActive && 'text-sidebar-foreground/90',
-            level > 0 && 'ml-4 text-xs'
+            level > 0 && 'ml-4 text-base'
           )}
           onClick={() => {
             if (hasChildren) {
@@ -146,7 +145,11 @@ const ModuleSidebar = () => {
               {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </div>
           )}
-          <span className="flex-1 truncate">{subModule.label}</span>
+          <span
+            className="flex-1 whitespace-normal break-words" // <-- wrap and break long text
+          >
+            {subModule.label}
+          </span>
           {hasChildren && (
             <ChevronRight
               className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
@@ -210,7 +213,7 @@ const ModuleSidebar = () => {
               <AppLogo name className="m-2 pt-3" />
               {/* Header with module name */}
               <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-                <h2 className="text-lg font-medium text-sidebar-foreground">
+                <h2 className="text-xl font-semibold text-sidebar-foreground">
                   {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
                 </h2>
               </div>

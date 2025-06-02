@@ -1,20 +1,5 @@
 import { apiClient, publicApiClient } from '@/core/apiClient';
-
-export interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-}
-
-export interface MeResponse {
-  name: string;
-  idNumber: string;
-  ldapid: string;
-  is_active: boolean;
-  roles: string[];
-  created_at: string;
-  updated_at: string;
-}
+import { type LoginResponse, type MeResponse } from '@/types';
 
 export const login = async (credentials: {
   ldapid: string;
@@ -25,6 +10,11 @@ export const login = async (credentials: {
 };
 
 export const getMe = async (): Promise<MeResponse> => {
-  const response = await apiClient.get('/core/api/v1/users/me');
+  const response = await apiClient.get('/core/api/v1/users/me', {
+    silentError: true,
+    headers: {
+      'x-error-context': 'Fetching User Information',
+    },
+  });
   return response.data;
 };

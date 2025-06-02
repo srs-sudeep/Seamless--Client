@@ -42,9 +42,13 @@ import {
   Cloud,
   Lock,
   Key,
+  UserLock,
+  GlobeLock,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
+  userLock: UserLock,
+  globeLock: GlobeLock,
   book: Book,
   library: Library,
   heart: Heart,

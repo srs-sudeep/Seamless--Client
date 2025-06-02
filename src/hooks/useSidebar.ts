@@ -1,4 +1,4 @@
-import { fetchSidebarModules } from '@/api/sidebarApi';
+import { fetchSidebarModules } from '@/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 

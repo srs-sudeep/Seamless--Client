@@ -1,20 +1,17 @@
 import { apiClient } from '@/core/apiClient';
-import { type UserRole } from '@/types';
+import { type UserRoute } from '@/types';
 
-// Interface for route access configuration
-export interface RouteAccess {
-  path: string;
-  allowedRoles: UserRole[];
-}
-export interface UserRoute {
-  path: string;
-  is_active: boolean;
-  module_id: number;
-  id: number;
-  role_ids: string[];
-}
-
+/**
+ * Fetches the user-specific routes from the API.
+ *
+ * @returns {Promise<string[]>} A promise that resolves to an array of route paths.
+ */
 export const fetchUserRoutes = async (): Promise<string[]> => {
-  const { data } = await apiClient.get<UserRoute[]>('/core/api/v1/routes/my-routes');
+  const { data } = await apiClient.get<UserRoute[]>('/core/api/v1/routes/my-routes', {
+    silentError: false,
+    headers: {
+      'x-error-context': 'Fetching Sidebar Modules',
+    },
+  });
   return data.filter(route => route.is_active).map(route => route.path);
 };

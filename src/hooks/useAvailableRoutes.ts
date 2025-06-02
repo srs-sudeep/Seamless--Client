@@ -1,4 +1,4 @@
-import { fetchUserRoutes } from '@/api/routesApi';
+import { fetchUserRoutes } from '@/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useQuery } from '@tanstack/react-query';
 

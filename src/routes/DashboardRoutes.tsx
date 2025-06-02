@@ -6,6 +6,7 @@ const AdminDashboard = lazyLoad(() => import('@/views/dashboard/AdminDashboard')
 const LibrarianDashboard = lazyLoad(() => import('@/views/dashboard/LibrarianDashboard'));
 const MedicalDashboard = lazyLoad(() => import('@/views/dashboard/MedicalDashboard'));
 const StudentDashboard = lazyLoad(() => import('@/views/dashboard/StudentDashboard'));
+const AcademicsDashboard = lazyLoad(() => import('@/views/dashboard/AcademicsDashboard'));
 const TeacherDashboard = lazyLoad(() => import('@/views/dashboard/TeacherDashboard'));
 
 const DashboardRoutes = {
@@ -27,6 +28,10 @@ const DashboardRoutes = {
     {
       path: 'student',
       element: <StudentDashboard />,
+    },
+    {
+      path: 'academics',
+      element: <AcademicsDashboard />,
     },
     {
       path: 'teacher',

@@ -17,11 +17,13 @@ export interface SidebarModuleItem {
   subModules: SidebarSubModuleTreeItem[];
 }
 
-export const fetchSidebarModules = async (): Promise<SidebarModuleItem[]> => {
+export const fetchSidebarModules = async (role: string): Promise<SidebarModuleItem[]> => {
   try {
-    const { data } = await apiClient.get<SidebarModuleItem[]>('/core/api/v1/sidebar/sidebar');
+    const { data } = await apiClient.get<SidebarModuleItem[]>(
+      `/core/api/v1/sidebar/sidebar?role=${encodeURIComponent(role)}`
+    );
     return data;
   } catch (error) {
-    return [] as SidebarModuleItem[];
+    return [];
   }
 };

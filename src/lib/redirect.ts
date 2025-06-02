@@ -5,6 +5,7 @@ export function getDashboardLink(role: UserRole | null | undefined) {
     default: '/',
     admin: '/dashboard/admin',
     teacher: '/dashboard/teacher',
+    academics: '/dashboard/academics',
     student: '/dashboard/student',
     librarian: '/dashboard/librarian',
     medical: '/dashboard/medical',

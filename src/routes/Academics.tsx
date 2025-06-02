@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom';
 import lazyLoad from '@/lib/lazyLoad';
-import RoleBasedRoute from '@/core/guards/RoleBasedRoute';
 import MainLayout from '@/layouts/MainLayout';
 
 // Teacher pages

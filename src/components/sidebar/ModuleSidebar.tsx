@@ -1,8 +1,4 @@
-import {
-  fetchSidebarModules,
-  type SidebarModuleItem,
-  type SidebarSubModuleTreeItem,
-} from '@/api/sidebarApi';
+import { type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/api/sidebarApi';
 import AppLogo from '@/components/AppLogo';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -10,17 +6,34 @@ import { useSidebar } from '@/core/context/sidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { iconMap } from '@/types';
-import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Search } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import { useSidebarItems } from '@/hooks/useSidebar';
 // Helper function to get icon component
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
   return IconComponent ? <IconComponent size={size} /> : null;
 };
+
+// Recursively check if any submodule or its children matches the path
+function findModuleIdByPath(modules: SidebarModuleItem[], pathname: string): string | null {
+  for (const module of modules) {
+    if (module.subModules && findSubModuleByPath(module.subModules, pathname)) {
+      return module.id;
+    }
+  }
+  return modules[0]?.id ?? null;
+}
+
+function findSubModuleByPath(subModules: SidebarSubModuleTreeItem[], pathname: string): boolean {
+  for (const subModule of subModules) {
+    if (subModule.path && pathname.startsWith(subModule.path)) return true;
+    if (subModule.children && findSubModuleByPath(subModule.children, pathname)) return true;
+  }
+  return false;
+}
 
 const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
@@ -32,41 +45,14 @@ const ModuleSidebar = () => {
   const navigate = useNavigate();
 
   // Fetch sidebar modules from API
-  const { data: modules = [], isLoading } = useQuery({
-    queryKey: ['sidebarModules'],
-    queryFn: fetchSidebarModules,
-  });
-
-  // Check if a module has any active submodule
-  const hasActiveSubModule = useCallback(
-    (subModules: SidebarSubModuleTreeItem[], path: string): boolean => {
-      for (const subModule of subModules) {
-        if (subModule.path && path.startsWith(subModule.path)) return true;
-        if (subModule.children?.length) {
-          if (hasActiveSubModule(subModule.children, path)) return true;
-        }
-      }
-      return false;
-    },
-    []
-  );
+  const { sidebarItems: modules = [], isLoading } = useSidebarItems();
 
   // Set active module based on current path
   useEffect(() => {
     if (!isLoading && modules.length > 0) {
-      let foundModule = false;
-      for (const module of modules) {
-        if (hasActiveSubModule(module.subModules, location.pathname)) {
-          setActiveModule(module.id);
-          foundModule = true;
-          break;
-        }
-      }
-      if (!foundModule) {
-        setActiveModule(modules[0]?.id ?? null);
-      }
+      setActiveModule(findModuleIdByPath(modules, location.pathname));
     }
-  }, [isLoading, modules, location.pathname, hasActiveSubModule]);
+  }, [isLoading, modules, location.pathname]);
 
   // Auto-expand parent items based on current path (batch state update)
   useEffect(() => {
@@ -92,21 +78,16 @@ const ModuleSidebar = () => {
     }
   }, [isLoading, modules, activeModule, location.pathname]);
 
-  // Check if a path is active
   const isActivePath = (path?: string) => path && location.pathname === path;
-
-  // Check if a path is active or a parent path
   const isActiveOrParent = (path?: string) => path && location.pathname.startsWith(path);
 
-  // Toggle expanded state for items with children
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev =>
       prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
     );
   };
 
-  // Filter submodules based on search query
-  const getFilteredBySearchSubModules = () => {
+  const getFilteredBySearchSubModules = (): SidebarSubModuleTreeItem[] => {
     if (searchQuery.trim() === '' || !activeModule) {
       const module = modules.find(m => m.id === activeModule);
       return module ? module.subModules : [];
@@ -135,8 +116,7 @@ const ModuleSidebar = () => {
     return module ? searchInSubModules(module.subModules) : [];
   };
 
-  // Render a submodule item
-  const renderSubModuleItem = (subModule: SidebarSubModuleTreeItem, level = 0) => {
+  const renderSubModuleItem = (subModule: SidebarSubModuleTreeItem, level = 0): JSX.Element => {
     const hasChildren = subModule.children && subModule.children.length > 0;
     const isExpanded = expandedItems.includes(subModule.id);
     const isActive = isActivePath(subModule.path);
@@ -183,11 +163,11 @@ const ModuleSidebar = () => {
     );
   };
 
-  // Render module icon
-  const renderModuleIcon = (module: SidebarModuleItem) => {
+  const renderModuleIcon = (module: SidebarModuleItem): JSX.Element => {
     const isActive = activeModule === module.id;
     const isModuleActive =
-      activeModule === module.id || hasActiveSubModule(module.subModules, location.pathname);
+      activeModule === module.id ||
+      (module.subModules && findSubModuleByPath(module.subModules, location.pathname));
 
     return (
       <div
@@ -208,7 +188,6 @@ const ModuleSidebar = () => {
 
   const sideBarcontent = (
     <div className="h-full flex">
-      {/* Sidebar content inside Drawer */}
       <div className="w-full h-full">
         <div className="flex h-screen border-r border-sidebar-border">
           {/* Module icons sidebar */}

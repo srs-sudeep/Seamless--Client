@@ -1,5 +1,5 @@
 import { apiClient, publicApiClient } from '@/core/apiClient';
-import { type LoginResponse, type MeResponse } from '@/types';
+import { type LoginResponse, type User } from '@/types';
 
 export const login = async (credentials: {
   ldapid: string;
@@ -9,7 +9,7 @@ export const login = async (credentials: {
   return response.data;
 };
 
-export const getMe = async (): Promise<MeResponse> => {
+export const getMe = async (): Promise<User> => {
   const response = await apiClient.get('/core/api/v1/users/me', {
     silentError: true,
     headers: {

@@ -1,6 +1,6 @@
 import { FullPageLoader } from '@/components/ui/loading-spinner';
 import AuthGuard from '@/core/guards/AuthGuard';
-import { useAvailableRoutes } from '@/hooks/useAvailableRoutes';
+import { useAvailableRoutes } from '@/hooks/useAvailableRoutes.hook';
 import { filterNestedRoutesByAvailable } from '@/lib/filterRoutes';
 import AuthRoutes from '@/routes/AuthRoutes';
 import ErrorRoutes from '@/routes/ErrorRoutes';

@@ -1,17 +1,7 @@
-import { getMe, LoginResponse } from '@/api/authApi';
-import { UserRole } from '@/types';
+import { getMe } from '@/api';
+import { LoginResponse, UserRole, User } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-interface User {
-  name: string;
-  idNumber: string;
-  ldapid: string;
-  is_active: boolean;
-  roles: UserRole[];
-  created_at: string;
-  updated_at: string;
-}
 
 interface AuthState {
   user: User | null;

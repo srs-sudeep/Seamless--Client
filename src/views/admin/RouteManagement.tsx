@@ -165,164 +165,166 @@ const RouteManagement = () => {
   };
 
   return (
-    <HelmetWrapper title='Route | Seamless'>
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Route Management</h1>
-        <Button onClick={() => openDialog()}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Route
-        </Button>
-      </div>
+    <HelmetWrapper title="Route | Seamless">
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Route Management</h1>
+          <Button onClick={() => openDialog()}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Route
+          </Button>
+        </div>
 
-      <div className="flex items-center space-x-2">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search routes..."
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          className="max-w-sm"
-        />
-      </div>
+        <div className="flex items-center space-x-2">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search routes..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="max-w-sm"
+          />
+        </div>
 
-      {isLoading ? (
-        <div className="flex justify-center p-8">Loading...</div>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Path</TableHead>
-              <TableHead>Required Roles</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRoutes.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center p-8">Loading...</div>
+        ) : (
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  No routes found
-                </TableCell>
+                <TableHead>Path</TableHead>
+                <TableHead>Required Roles</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ) : (
-              filteredRoutes.map(route => (
-                <TableRow key={route.id}>
-                  <TableCell className="font-medium">{route.path}</TableCell>
-                  <TableCell>
-                    {route.requiredRoles.length > 0 ? route.requiredRoles.join(', ') : 'All users'}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        route.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {route.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </TableCell>
-                  <TableCell>{route.description || '-'}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => openDialog(route)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => openDeleteDialog(route)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            </TableHeader>
+            <TableBody>
+              {filteredRoutes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">
+                    No routes found
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      )}
+              ) : (
+                filteredRoutes.map(route => (
+                  <TableRow key={route.id}>
+                    <TableCell className="font-medium">{route.path}</TableCell>
+                    <TableCell>
+                      {route.requiredRoles.length > 0
+                        ? route.requiredRoles.join(', ')
+                        : 'All users'}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          route.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {route.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </TableCell>
+                    <TableCell>{route.description || '-'}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" onClick={() => openDialog(route)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => openDeleteDialog(route)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        )}
 
-      {/* Create/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{currentRoute ? 'Edit Route' : 'Create Route'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="path">Path</Label>
-              <Input
-                id="path"
-                name="path"
-                value={formData.path}
-                onChange={handleInputChange}
-                placeholder="/example/path"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Required Roles</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {roles.map(role => (
-                  <div key={role} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`role-${role}`}
-                      checked={(formData.requiredRoles || []).includes(role)}
-                      onCheckedChange={() => handleRoleToggle(role)}
-                    />
-                    <Label htmlFor={`role-${role}`}>{role}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isActive"
-                  checked={formData.isActive}
-                  onCheckedChange={handleCheckboxChange}
+        {/* Create/Edit Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{currentRoute ? 'Edit Route' : 'Create Route'}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="path">Path</Label>
+                <Input
+                  id="path"
+                  name="path"
+                  value={formData.path}
+                  onChange={handleInputChange}
+                  placeholder="/example/path"
                 />
-                <Label htmlFor="isActive">Active</Label>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Required Roles</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {roles.map(role => (
+                    <div key={role} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`role-${role}`}
+                        checked={(formData.requiredRoles || []).includes(role)}
+                        onCheckedChange={() => handleRoleToggle(role)}
+                      />
+                      <Label htmlFor={`role-${role}`}>{role}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={handleCheckboxChange}
+                  />
+                  <Label htmlFor="isActive">Active</Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  name="description"
+                  value={formData.description || ''}
+                  onChange={handleInputChange}
+                  placeholder="Route description"
+                />
               </div>
             </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit}>{currentRoute ? 'Update' : 'Create'}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                name="description"
-                value={formData.description || ''}
-                onChange={handleInputChange}
-                placeholder="Route description"
-              />
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p>Are you sure you want to delete this route?</p>
+              <p className="font-medium mt-2">{currentRoute?.path}</p>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>{currentRoute ? 'Update' : 'Create'}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p>Are you sure you want to delete this route?</p>
-            <p className="font-medium mt-2">{currentRoute?.path}</p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDelete}>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </HelmetWrapper>
   );
 };

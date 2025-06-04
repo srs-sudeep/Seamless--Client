@@ -9,8 +9,8 @@ type HelmetWrapperProps = {
 };
 
 const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
-  title = 'Default Title',
-  description = 'Default description',
+  title = 'Seamless',
+  description = 'Seamless Management System',
   keywords = 'default, keywords',
   children,
 }) => {

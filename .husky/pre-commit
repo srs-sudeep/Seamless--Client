@@ -1,1 +1,4 @@
-bun test
+bun run lint:check
+bun run lint:fix
+bun run format:write
+git update-index --again

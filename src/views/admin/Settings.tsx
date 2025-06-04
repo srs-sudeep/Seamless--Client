@@ -19,9 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import HelmetWrapper from '@/components/HelmetWrapper';
 
 const Settings = () => {
   return (
+    <HelmetWrapper title='Settings | Seamless'>
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Settings</h1>
 
@@ -164,6 +166,7 @@ const Settings = () => {
         </TabsContent>
       </Tabs>
     </div>
+    </HelmetWrapper>
   );
 };
 

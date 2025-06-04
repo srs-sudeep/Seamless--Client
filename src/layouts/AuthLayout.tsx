@@ -21,7 +21,7 @@ const AuthLayout = () => {
 
       {/* Footer */}
       <div className="absolute bottom-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} Codename. All rights reserved.
+        &copy; {new Date().getFullYear()} Recogx Init. All rights reserved.
       </div>
     </div>
   );

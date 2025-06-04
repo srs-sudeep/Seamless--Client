@@ -6,6 +6,7 @@ import {
   updateRoute,
 } from '@/api/mockApi/routes';
 import { getAllRoles } from '@/api/mockApi/users';
+import HelmetWrapper from '@/components/HelmetWrapper';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -164,6 +165,7 @@ const RouteManagement = () => {
   };
 
   return (
+    <HelmetWrapper title='Route | Seamless'>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Route Management</h1>
@@ -321,6 +323,7 @@ const RouteManagement = () => {
         </DialogContent>
       </Dialog>
     </div>
+    </HelmetWrapper>
   );
 };
 

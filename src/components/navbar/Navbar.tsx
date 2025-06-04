@@ -213,7 +213,7 @@ const Navbar = () => {
       {/* Full Page Loader */}
       {showLoader && <FullPageLoader />}
 
-      <div className="isolate sticky top-2 border mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl shadow-2x py-3 px-6  bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-theme">
+      <div className="isolate sticky top-2 border mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl py-3 h-24 px-6  bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-sm">
         <div className="flex items-center justify-between w-full">
           {/* Left side with breadcrumbs and page title */}
           <div className="flex flex-col justify-center">

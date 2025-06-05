@@ -7,7 +7,7 @@ import MainFooter from '@/components/footer/MainFooter';
 const MainLayout = () => {
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden relative">
         <ModuleSidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Navbar />

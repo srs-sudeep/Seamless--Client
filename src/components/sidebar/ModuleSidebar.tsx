@@ -7,7 +7,7 @@ import { useSidebarItems } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { iconMap, type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronRight, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -37,6 +37,7 @@ const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const isMobile = useIsMobile();
   const { isOpen, closeSidebar } = useSidebar();
   const location = useLocation();
@@ -129,7 +130,7 @@ const ModuleSidebar = () => {
             isActive
               ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               : 'text-sidebar-foreground/80',
-            isParentActive && !isActive && 'text-sidebar-foreground/90',
+            isParentActive && !isActive && 'text-sidebar-accent-foreground',
             level > 0 && 'ml-4 text-base'
           )}
           onClick={() => {
@@ -141,7 +142,11 @@ const ModuleSidebar = () => {
           }}
         >
           {subModule.icon && (
-            <div className="mr-2 text-sidebar-foreground/70">
+            <div
+              className={cn(
+                isActive ? 'mr-2 text-sidebar-accent-foreground' : 'mr-2 text-sidebar-foreground'
+              )}
+            >
               {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </div>
           )}
@@ -190,98 +195,109 @@ const ModuleSidebar = () => {
 
   const sideBarcontent = (
     <div className="h-full flex">
-      <div className="w-full h-full">
-        <div className="flex h-screen border-r border-sidebar-border">
-          {/* Module icons sidebar */}
-          <div className="w-16 h-full bg-sidebar flex flex-col items-center py-4 border-r border-sidebar-border">
-            <div className="mb-6">
-              <AppLogo short className="w-10 h-10 text-sidebar-foreground" />
-            </div>
-            <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
+      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-white/8 z-40">
+        <div className="mb-6">
+          <AppLogo short className="w-10 h-10 text-sidebar-foreground" />
+        </div>
+        <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
+        <button
+          className={
+            'mt-4 mb-2 p-1 rounded-full bg-sidebar-accent/10 hover:bg-sidebar-accent transition-colors'
+          }
+          onClick={() => setIsSidebarOpen(v => !v)}
+        >
+          {isSidebarOpen ? (
+            <ChevronLeft className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
+          ) : (
+            <ChevronRight className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
+          )}
+        </button>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={isSidebarOpen ? 'open' : 'closed'}
+          initial={{ width: 0, opacity: 0, x: -20 }}
+          animate={{
+            width: isSidebarOpen ? 256 : 0, // 256px = w-64
+            opacity: isSidebarOpen ? 1 : 0,
+            x: isSidebarOpen ? 0 : -20,
+            transition: { type: 'tween', duration: 0.25 },
+          }}
+          exit={{ width: 0, opacity: 0, x: -20, transition: { type: 'tween', duration: 0.2 } }}
+          style={{ overflow: 'hidden' }}
+          className={cn(
+            'h-full flex flex-col',
+            'bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-sm overflow-hidden',
+            'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
+          )}
+        >
+          <AppLogo name className="m-2 pt-3" />
+          {/* Header with module name */}
+          <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
+            <h2 className="text-xl font-semibold text-sidebar-foreground">
+              {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
+            </h2>
           </div>
 
-          {/* Submodules sidebar */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeModule}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-              className="w-64 h-full bg-sidebar flex flex-col"
-            >
-              <AppLogo name className="m-2 pt-3" />
-              {/* Header with module name */}
-              <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-                <h2 className="text-xl font-semibold text-sidebar-foreground">
-                  {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
-                </h2>
+          {/* Search box */}
+          <div className="px-3 py-2 border-b border-sidebar-border">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-sidebar-foreground/70" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full pl-8 pr-3 py-2 text-sm bg-sidebar-accent/10 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-sidebar-accent text-sidebar-foreground"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Submodules list */}
+          <ScrollArea className="flex-1">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-20">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sidebar-accent"></div>
               </div>
+            ) : (
+              <div className="py-3 px-2">
+                {activeModule &&
+                  getFilteredBySearchSubModules().map(subModule => renderSubModuleItem(subModule))}
 
-              {/* Search box */}
-              <div className="px-3 py-2 border-b border-sidebar-border">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-sidebar-foreground/70" />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full pl-8 pr-3 py-2 text-sm bg-sidebar-accent/10 border-0 rounded-md focus:outline-none focus:ring-1 focus:ring-sidebar-accent text-sidebar-foreground"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Submodules list */}
-              <ScrollArea className="flex-1">
-                {isLoading ? (
-                  <div className="flex justify-center items-center h-20">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sidebar-accent"></div>
-                  </div>
-                ) : (
-                  <div className="py-3 px-2">
-                    {activeModule &&
-                      getFilteredBySearchSubModules().map(subModule =>
-                        renderSubModuleItem(subModule)
-                      )}
-
-                    {/* Show search results from other modules when searching */}
-                    {searchQuery.trim() !== '' && (
-                      <>
-                        {modules
-                          .filter(m => m.id !== activeModule)
-                          .flatMap(module => {
-                            const filteredSubModules = module.subModules.filter(
-                              sm =>
-                                sm.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                (sm.path?.toLowerCase().includes(searchQuery.toLowerCase()) ??
-                                  false)
-                            );
-                            return filteredSubModules.length > 0 ? (
-                              <div
-                                key={module.id}
-                                className="mt-4 pt-4 border-t border-sidebar-border/50"
-                              >
-                                <h3 className="px-3 mb-2 text-xs uppercase text-sidebar-foreground/60">
-                                  {module.label}
-                                </h3>
-                                {filteredSubModules.map(subModule =>
-                                  renderSubModuleItem(subModule)
-                                )}
-                              </div>
-                            ) : null;
-                          })}
-                      </>
-                    )}
-                  </div>
+                {/* Show search results from other modules when searching */}
+                {searchQuery.trim() !== '' && (
+                  <>
+                    {modules
+                      .filter(m => m.id !== activeModule)
+                      .flatMap(module => {
+                        const filteredSubModules = module.subModules.filter(
+                          sm =>
+                            sm.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            (sm.path?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+                        );
+                        return filteredSubModules.length > 0 ? (
+                          <div
+                            key={module.id}
+                            className="mt-4 pt-4 border-t border-sidebar-border/50"
+                          >
+                            <h3 className="px-3 mb-2 text-xs uppercase text-sidebar-foreground/60">
+                              {module.label}
+                            </h3>
+                            {filteredSubModules.map(subModule => renderSubModuleItem(subModule))}
+                          </div>
+                        ) : null;
+                      })}
+                  </>
                 )}
-              </ScrollArea>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
+              </div>
+            )}
+          </ScrollArea>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
+
   return (
     <>
       {isMobile ? (

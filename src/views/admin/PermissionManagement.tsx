@@ -10,14 +10,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { toast } from '@/components/ui/use-toast';
 import {
   useCreatePermission,
@@ -28,6 +20,9 @@ import {
 import { Permission } from '@/types';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import DynamicTable from '@/components/DynamicTable';
+import { type FilterConfig } from '@/types';
+// import DynamicForm from '@/components/DynamicForm';
 
 const PermissionManagement = () => {
   const { data: permissions = [], isLoading } = usePermissions();
@@ -96,9 +91,168 @@ const PermissionManagement = () => {
     setCreateForm({ name: '', description: '', resource: '', action: '' });
     setCreateDialogOpen(false);
   };
+  const customRender = {
+    Edit: (_: any, perm: Permission) => (
+      <Dialog
+        open={editPermission?.permission_id === perm.permission_id}
+        onOpenChange={open => {
+          if (!open) setEditPermission(null);
+        }}
+      >
+        <DialogTrigger asChild>
+          <Button size="icon" variant="ghost" onClick={() => handleEdit(perm)}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Permission</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="permission-name">
+                Name
+              </label>
+              <Input
+                id="permission-name"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="permission-description">
+                Description
+              </label>
+              <Input
+                id="permission-description"
+                value={form.description}
+                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="permission-resource">
+                Resource
+              </label>
+              <Input
+                id="permission-resource"
+                value={form.resource}
+                onChange={e => setForm(f => ({ ...f, resource: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="permission-action">
+                Action
+              </label>
+              <div className="flex gap-2">
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value=""
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val) setForm(f => ({ ...f, action: val }));
+                  }}
+                >
+                  <option value="">Select</option>
+                  <option value="read">read</option>
+                  <option value="create">create</option>
+                  <option value="update">update</option>
+                  <option value="delete">delete</option>
+                </select>
+                <Input
+                  id="permission-action"
+                  value={form.action}
+                  onChange={e => setForm(f => ({ ...f, action: e.target.value }))}
+                  placeholder="Action (e.g. read)"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4 mr-2 inline" />
+                  Saving...
+                </>
+              ) : (
+                'Save'
+              )}
+            </Button>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    ),
+    Delete: (_: any, perm: Permission) => (
+      <Button
+        size="icon"
+        variant="destructive"
+        onClick={() => handleDelete(perm.permission_id)}
+        disabled={deleteMutation.isPending}
+      >
+        {deleteMutation.isPending ? (
+          <Loader2 className="animate-spin w-4 h-4" />
+        ) : (
+          <Trash2 className="w-4 h-4" />
+        )}
+      </Button>
+    ),
+  };
+
+  const getTableData = (perms: Permission[]) =>
+    perms.map(perm => ({
+      Name: perm.name,
+      PermissionID: perm.permission_id,
+      Description: perm.description,
+      Action: perm.action,
+      Edit: '',
+      Delete: '',
+      _row: perm,
+    }));
+
+  const filterConfig: FilterConfig[] = [
+    {
+      type: 'search',
+      column: 'Name',
+    },
+    {
+      type: 'dropdown',
+      column: 'Action',
+      options: ['read', 'create', 'update', 'delete'],
+    },
+    {
+      type: 'date',
+      column: 'Created At',
+    },
+  ];
+
+  const schema = [
+    { label: 'Username', name: 'username', type: 'text', required: true },
+    { label: 'Password', name: 'password', type: 'password', required: true },
+    { label: 'Bio', name: 'bio', type: 'textarea' },
+    { label: 'Gender', name: 'gender', type: 'radio', options: ['Male', 'Female', 'Other'] },
+    {
+      label: 'Hobbies',
+      name: 'hobbies',
+      type: 'checkbox',
+      options: ['Reading', 'Gaming', 'Traveling'],
+    },
+    { label: 'Country', name: 'country', type: 'select', options: ['India', 'USA', 'UK'] },
+    { label: 'Birth Date', name: 'birthDate', type: 'date' },
+    { label: 'Profile Picture', name: 'profilePic', type: 'file' },
+  ];
+
+  const handleSubmit = (data: Record<string, any>) => {
+    console.log('Submitted:', data);
+  };
 
   return (
     <HelmetWrapper title="Permissions | Seamless">
+      {/* <DynamicForm schema={schema} onSubmit={handleSubmit} /> */}
       <div className="max-w-5xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Permission Management</h1>
@@ -170,16 +324,7 @@ const PermissionManagement = () => {
                         value=""
                         onChange={e => {
                           const val = e.target.value;
-                          if (val) {
-                            // For create dialog
-                            if (typeof createForm !== 'undefined') {
-                              setCreateForm(f => ({ ...f, action: val }));
-                            }
-                            // For edit dialog
-                            if (typeof form !== 'undefined') {
-                              setForm(f => ({ ...f, action: val }));
-                            }
-                          }
+                          if (val) setCreateForm(f => ({ ...f, action: val }));
                         }}
                       >
                         <option value="">Select</option>
@@ -190,15 +335,8 @@ const PermissionManagement = () => {
                       </select>
                       <Input
                         id="permission-action"
-                        value={typeof createForm !== 'undefined' ? createForm.action : form.action}
-                        onChange={e => {
-                          if (typeof createForm !== 'undefined') {
-                            setCreateForm(f => ({ ...f, action: e.target.value }));
-                          }
-                          if (typeof form !== 'undefined') {
-                            setForm(f => ({ ...f, action: e.target.value }));
-                          }
-                        }}
+                        value={createForm.action}
+                        onChange={e => setCreateForm(f => ({ ...f, action: e.target.value }))}
                         placeholder="Action (e.g. read)"
                       />
                     </div>
@@ -233,171 +371,16 @@ const PermissionManagement = () => {
           Object.entries(grouped).map(([resource, perms]) => (
             <div key={resource} className="mb-8">
               {groupByResource && <h2 className="text-lg font-semibold mb-2">{resource}</h2>}
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead className="w-24">Edit</TableHead>
-                    <TableHead className="w-24">Delete</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {perms.map(perm => (
-                    <TableRow key={perm.permission_id}>
-                      <TableCell>{perm.name}</TableCell>
-                      <TableCell className="max-w-xs whitespace-pre-line break-words">
-                        {perm.description}
-                      </TableCell>
-                      <TableCell>{perm.action}</TableCell>
-                      <TableCell>
-                        <Dialog
-                          open={editPermission?.permission_id === perm.permission_id}
-                          onOpenChange={open => {
-                            if (!open) setEditPermission(null);
-                          }}
-                        >
-                          <DialogTrigger asChild>
-                            <Button size="icon" variant="ghost" onClick={() => handleEdit(perm)}>
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit Permission</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <div>
-                                <label
-                                  className="block text-sm font-medium mb-1"
-                                  htmlFor="permission-name"
-                                >
-                                  Name
-                                </label>
-                                <Input
-                                  id="permission-name"
-                                  value={form.name}
-                                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  className="block text-sm font-medium mb-1"
-                                  htmlFor="permission-description"
-                                >
-                                  Description
-                                </label>
-                                <Input
-                                  id="permission-description"
-                                  value={form.description}
-                                  onChange={e =>
-                                    setForm(f => ({ ...f, description: e.target.value }))
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  className="block text-sm font-medium mb-1"
-                                  htmlFor="permission-resource"
-                                >
-                                  Resource
-                                </label>
-                                <Input
-                                  id="permission-resource"
-                                  value={form.resource}
-                                  onChange={e => setForm(f => ({ ...f, resource: e.target.value }))}
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  className="block text-sm font-medium mb-1"
-                                  htmlFor="permission-action"
-                                >
-                                  Action
-                                </label>
-                                <div className="flex gap-2">
-                                  <select
-                                    className="border rounded px-2 py-1 text-sm"
-                                    value=""
-                                    onChange={e => {
-                                      const val = e.target.value;
-                                      if (val) {
-                                        // For create dialog
-                                        if (typeof createForm !== 'undefined') {
-                                          setCreateForm(f => ({ ...f, action: val }));
-                                        }
-                                        // For edit dialog
-                                        if (typeof form !== 'undefined') {
-                                          setForm(f => ({ ...f, action: val }));
-                                        }
-                                      }
-                                    }}
-                                  >
-                                    <option value="">Select</option>
-                                    <option value="read">read</option>
-                                    <option value="create">create</option>
-                                    <option value="update">update</option>
-                                    <option value="delete">delete</option>
-                                  </select>
-                                  <Input
-                                    id="permission-action"
-                                    value={
-                                      typeof createForm !== 'undefined'
-                                        ? createForm.action
-                                        : form.action
-                                    }
-                                    onChange={e => {
-                                      if (typeof createForm !== 'undefined') {
-                                        setCreateForm(f => ({ ...f, action: e.target.value }));
-                                      }
-                                      if (typeof form !== 'undefined') {
-                                        setForm(f => ({ ...f, action: e.target.value }));
-                                      }
-                                    }}
-                                    placeholder="Action (e.g. read)"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
-                                {updateMutation.isPending ? (
-                                  <>
-                                    <Loader2 className="animate-spin h-4 w-4 mr-2 inline" />
-                                    Saving...
-                                  </>
-                                ) : (
-                                  'Save'
-                                )}
-                              </Button>
-                              <DialogClose asChild>
-                                <Button variant="outline" type="button">
-                                  Cancel
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          size="icon"
-                          variant="destructive"
-                          onClick={() => handleDelete(perm.permission_id)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          {deleteMutation.isPending ? (
-                            <Loader2 className="animate-spin w-4 h-4" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DynamicTable
+                data={getTableData(perms).map(row => ({
+                  ...row,
+                  Edit: customRender.Edit('', row._row),
+                  Delete: customRender.Delete('', row._row),
+                }))}
+                customRender={{}}
+                filterConfig={filterConfig}
+                className="bg-background"
+              />
             </div>
           ))
         )}

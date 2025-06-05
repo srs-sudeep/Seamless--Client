@@ -1,3 +1,13 @@
+#!/bin/sh
+
+# Add Bun to PATH for macOS/Linux
+export PATH="$PATH:$HOME/.bun/bin"
+
+# Add Bun to PATH for Windows (Git Bash or WSL)
+if [ -n "$USERPROFILE" ]; then
+  export PATH="$PATH:/c/Users/$(basename "$USERPROFILE")/.bun/bin"
+fi
+
 bun run lint:check
 bun run lint:fix
 bun run format:write

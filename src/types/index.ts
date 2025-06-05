@@ -6,7 +6,7 @@ export * from './customAxios.types';
 export * from './routes.types';
 export * from './auth.types';
 export * from './filterType.types';
-// export * from './fieldType.types';
+export * from './fieldType.types';
 
 /* Type definitions for core permissions */
 export * from './core/permission.types';

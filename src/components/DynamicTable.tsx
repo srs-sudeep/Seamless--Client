@@ -142,7 +142,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </TableHeader>
           <TableBody>
             {filteredData.map((row, i) => (
-              <TableRow key={i}>
+              <TableRow
+                key={i}
+                className={`transition-colors ${
+                  i % 2 === 0 ? 'bg-muted/50 dark:bg-muted/40' : 'bg-background dark:bg-muted/20'
+                } hover:bg-muted/70 dark:hover:bg-muted/60`}
+              >
                 {headers.map(key => {
                   const value = row[key];
                   if (customRender[key]) {

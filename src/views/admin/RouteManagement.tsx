@@ -1,327 +1,227 @@
-import {
-  createRoute,
-  deleteRoute,
-  getRoutes,
-  RouteConfig,
-  updateRoute,
-} from '@/api/mockApi/routes';
-import { getAllRoles } from '@/api/mockApi/users';
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import DynamicTable from '@/components/DynamicTable';
+import DynamicForm from '@/components/DynamicForm';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { type UserRole } from '@/store/useAuthStore';
-import { Pencil, PlusCircle, Search, Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/use-toast';
+import HelmetWrapper from '@/components/HelmetWrapper';
+import { useCreateRoute, useUpdateRoute, useDeleteRoute } from '@/hooks/core/useRoute.hook';
+import { FieldType, Route } from '@/types';
+import { useSidebarItems } from '@/hooks/useSidebar.hook';
+
+const schema: FieldType[] = [
+  { name: 'path', label: 'Path', type: 'text', required: true, columns: 2 },
+  { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
+  { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
+  { name: 'is_active', label: 'Active', type: 'checkbox', required: true, columns: 2 },
+  { name: 'module_id', label: 'Module ID', type: 'number', required: true, columns: 2 },
+  { name: 'parent_id', label: 'Parent ID', type: 'number', required: false, columns: 2 },
+  { name: 'role_ids', label: 'Role IDs', type: 'text', required: false, columns: 2 },
+];
 
 const RouteManagement = () => {
-  const [routes, setRoutes] = useState<RouteConfig[]>([]);
-  const [roles, setRoles] = useState<UserRole[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentRoute, setCurrentRoute] = useState<RouteConfig | null>(null);
-  const [formData, setFormData] = useState<Partial<RouteConfig>>({
-    path: '',
-    requiredRoles: [],
-    isActive: true,
-    description: '',
-  });
+  const { sidebarItems, isLoading: sidebarLoading } = useSidebarItems();
+  const createMutation = useCreateRoute();
+  const updateMutation = useUpdateRoute();
+  const deleteMutation = useDeleteRoute();
 
-  // Load data
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [routesData, rolesData] = await Promise.all([getRoutes(), getAllRoles()]);
-        setRoutes(routesData);
-        setRoles(rolesData);
-      } catch (error) {
-        toast.error('Failed to load data');
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const [editRoute, setEditRoute] = useState<Route | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editModule, setEditModule] = useState<any | null>(null);
 
-    loadData();
-  }, []);
+  const handleEdit = (route: Route) => setEditRoute(route);
 
-  // Filter routes based on search query
-  const filteredRoutes = routes.filter(
-    route =>
-      route.path.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      route.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Handle checkbox change
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, isActive: checked }));
-  };
-
-  // Handle role selection
-  const handleRoleToggle = (role: UserRole) => {
-    setFormData(prev => {
-      const currentRoles = prev.requiredRoles || [];
-      return {
-        ...prev,
-        requiredRoles: currentRoles.includes(role)
-          ? currentRoles.filter(r => r !== role)
-          : [...currentRoles, role],
-      };
+  const handleUpdate = async (formData: Record<string, any>) => {
+    if (!editRoute) return;
+    await updateMutation.mutateAsync({
+      route_id: editRoute.route_id,
+      payload: {
+        path: formData.path,
+        label: formData.label,
+        icon: formData.icon,
+        is_active: !!formData.is_active,
+        module_id: Number(formData.module_id),
+        parent_id: formData.parent_id ? Number(formData.parent_id) : null,
+        role_ids:
+          typeof formData.role_ids === 'string'
+            ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
+            : formData.role_ids,
+      },
     });
+    toast({ title: 'Route updated' });
+    setEditRoute(null);
   };
 
-  // Open dialog for creating/editing
-  const openDialog = (route?: RouteConfig) => {
-    if (route) {
-      setCurrentRoute(route);
-      setFormData({
-        path: route.path,
-        requiredRoles: [...route.requiredRoles],
-        isActive: route.isActive,
-        description: route.description,
-      });
-    } else {
-      setCurrentRoute(null);
-      setFormData({
-        path: '',
-        requiredRoles: [],
-        isActive: true,
-        description: '',
-      });
-    }
-    setIsDialogOpen(true);
+  const handleDelete = async (route_id: number) => {
+    await deleteMutation.mutateAsync(route_id);
+    toast({ title: 'Route deleted' });
   };
 
-  // Open delete confirmation dialog
-  const openDeleteDialog = (route: RouteConfig) => {
-    setCurrentRoute(route);
-    setIsDeleteDialogOpen(true);
+  const handleCreate = async (formData: Record<string, any>) => {
+    await createMutation.mutateAsync({
+      path: formData.path,
+      label: formData.label,
+      icon: formData.icon,
+      is_active: !!formData.is_active,
+      module_id: Number(formData.module_id),
+      parent_id: formData.parent_id ? Number(formData.parent_id) : null,
+      role_ids:
+        typeof formData.role_ids === 'string'
+          ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
+          : formData.role_ids,
+    });
+    toast({ title: 'Route created' });
+    setCreateDialogOpen(false);
   };
 
-  // Handle form submission
-  const handleSubmit = async () => {
-    if (!formData.path) {
-      toast.error('Path is required');
-      return;
-    }
+  // Prepare table data for modules
+  const getModuleTableData = (modules: any[]) =>
+    modules.map(mod => ({
+      Label: mod.label,
+      Icon: mod.icon,
+      Active: mod.isActive,
+      Edit: '',
+      Delete: '',
+      _row: mod,
+      _subModules: mod.subModules || [],
+    }));
 
-    try {
-      if (currentRoute) {
-        // Update existing route
-        const updated = await updateRoute(currentRoute.id, formData);
-        setRoutes(prev => prev.map(r => (r.id === updated.id ? updated : r)));
-        toast.success('Route updated successfully');
-      } else {
-        // Create new route
-        const created = await createRoute(formData as Omit<RouteConfig, 'id'>);
-        setRoutes(prev => [...prev, created]);
-        toast.success('Route created successfully');
-      }
-      setIsDialogOpen(false);
-    } catch (error) {
-      toast.error('Failed to save route');
-      console.error(error);
-    }
+  // Prepare table data for submodules (for expandable rows)
+  const getSubModuleTableData = (subModules: any[]) =>
+    subModules.map(sub => ({
+      Label: sub.label,
+      Path: sub.path || '',
+      Icon: sub.icon,
+      Active: sub.isActive,
+      Edit: '',
+      Delete: '',
+      _row: sub,
+      _subModules: sub.children || [],
+    }));
+
+  // Custom renderers
+  const customRender = {
+    Edit: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={e => {
+          e.stopPropagation();
+          setEditModule(row._row);
+        }}
+      >
+        <Pencil className="w-4 h-4" />
+      </Button>
+    ),
+    Delete: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="destructive"
+        onClick={e => {
+          e.stopPropagation();
+          // Implement delete logic if needed
+        }}
+        disabled={false}
+      >
+        <Trash2 className="w-4 h-4" />
+      </Button>
+    ),
+    Active: (value: boolean) => (
+      <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+        {value ? 'Active' : 'Inactive'}
+      </span>
+    ),
+    Icon: (value: string) => (
+      <span>
+        <i className={value} /> {value}
+      </span>
+    ),
   };
 
-  // Handle route deletion
-  const handleDelete = async () => {
-    if (!currentRoute) return;
-
-    try {
-      await deleteRoute(currentRoute.id);
-      setRoutes(prev => prev.filter(r => r.id !== currentRoute.id));
-      toast.success('Route deleted successfully');
-      setIsDeleteDialogOpen(false);
-    } catch (error) {
-      toast.error('Failed to delete route');
-      console.error(error);
-    }
+  // Recursive expandedComponent for submodules
+  const renderExpandedComponent = (row: Record<string, any>) => {
+    if (!row._subModules || row._subModules.length === 0) return null;
+    return (
+      <DynamicTable
+        data={getSubModuleTableData(row._subModules)}
+        customRender={customRender}
+        className="bg-background"
+        expandableRows={true}
+        expandedComponent={renderExpandedComponent}
+        disableSearch={true}
+      />
+    );
   };
 
   return (
-    <HelmetWrapper title="Route | Seamless">
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Route Management</h1>
-          <Button onClick={() => openDialog()}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Route
-          </Button>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search routes..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="max-w-sm"
-          />
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center p-8">Loading...</div>
+    <HelmetWrapper title="Sidebar Modules | Seamless">
+      <div className="max-w-5xl mx-auto p-6">
+        {sidebarLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+          </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Path</TableHead>
-                <TableHead>Required Roles</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredRoutes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">
-                    No routes found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredRoutes.map(route => (
-                  <TableRow key={route.id}>
-                    <TableCell className="font-medium">{route.path}</TableCell>
-                    <TableCell>
-                      {route.requiredRoles.length > 0
-                        ? route.requiredRoles.join(', ')
-                        : 'All users'}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          route.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {route.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </TableCell>
-                    <TableCell>{route.description || '-'}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openDialog(route)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => openDeleteDialog(route)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <DynamicTable
+            data={getModuleTableData(sidebarItems)}
+            customRender={customRender}
+            className="bg-background"
+            expandableRows={true}
+            expandedComponent={renderExpandedComponent}
+          />
         )}
 
-        {/* Create/Edit Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-md">
+        <div className="flex items-center justify-end mb-6">
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Route
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Route</DialogTitle>
+              </DialogHeader>
+              <DynamicForm
+                schema={schema}
+                onSubmit={() => setCreateDialogOpen(false)}
+                onCancel={() => setCreateDialogOpen(false)}
+                submitButtonText="Create"
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Example edit dialog for module/submodule */}
+        <Dialog
+          open={!!editModule}
+          onOpenChange={open => {
+            if (!open) setEditModule(null);
+          }}
+        >
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle>{currentRoute ? 'Edit Route' : 'Create Route'}</DialogTitle>
+              <DialogTitle>Edit Module/Submodule</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="path">Path</Label>
-                <Input
-                  id="path"
-                  name="path"
-                  value={formData.path}
-                  onChange={handleInputChange}
-                  placeholder="/example/path"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Required Roles</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {roles.map(role => (
-                    <div key={role} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`role-${role}`}
-                        checked={(formData.requiredRoles || []).includes(role)}
-                        onCheckedChange={() => handleRoleToggle(role)}
-                      />
-                      <Label htmlFor={`role-${role}`}>{role}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="isActive"
-                    checked={formData.isActive}
-                    onCheckedChange={handleCheckboxChange}
-                  />
-                  <Label htmlFor="isActive">Active</Label>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  name="description"
-                  value={formData.description || ''}
-                  onChange={handleInputChange}
-                  placeholder="Route description"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSubmit}>{currentRoute ? 'Update' : 'Create'}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <p>Are you sure you want to delete this route?</p>
-              <p className="font-medium mt-2">{currentRoute?.path}</p>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleDelete}>
-                Delete
-              </Button>
-            </DialogFooter>
+            <DynamicForm
+              schema={[
+                { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
+                { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
+                { name: 'isActive', label: 'Active', type: 'checkbox', required: true, columns: 2 },
+                { name: 'path', label: 'Path', type: 'text', required: false, columns: 2 },
+              ]}
+              onSubmit={() => setEditModule(null)}
+              defaultValues={editModule ?? undefined}
+              onCancel={() => setEditModule(null)}
+              submitButtonText="Save"
+            />
           </DialogContent>
         </Dialog>
       </div>

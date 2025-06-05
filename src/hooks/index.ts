@@ -5,3 +5,5 @@ export * from './useSidebar.hook';
 
 /* Exporting all core hooks */
 export * from './core/usePermission.hook';
+export * from './core/useModule.hook';
+export * from './core/useRoute.hook';

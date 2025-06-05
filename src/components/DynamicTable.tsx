@@ -13,6 +13,8 @@ import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/u
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
 import { DateTimePicker } from '@/components/ui/date-timePicker';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
 
 type DynamicTableProps = {
@@ -23,6 +25,9 @@ type DynamicTableProps = {
   loading?: boolean;
   filterConfig?: FilterConfig[];
   className?: string;
+  expandableRows?: boolean;
+  expandedComponent?: (row: Record<string, any>) => React.ReactNode;
+  disableSearch?: boolean;
 };
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
@@ -31,15 +36,20 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   loading = false,
   filterConfig = [],
   className = '',
+  expandableRows = false,
+  expandedComponent,
+  disableSearch = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
 
   const filteredData = useMemo(() => {
     return data.filter(row => {
       if (
+        !disableSearch &&
         searchTerm &&
         !Object.values(row).some(val =>
           String(val).toLowerCase().includes(searchTerm.toLowerCase())
@@ -61,17 +71,23 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
       return true;
     });
-  }, [data, searchTerm, columnFilters]);
+  }, [data, searchTerm, columnFilters, disableSearch]);
+
+  const toggleRow = (index: number) => {
+    setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
+  };
 
   return (
     <div className={`w-full space-y-4 ${className}`}>
       <div className="flex flex-wrap gap-4 items-end">
-        <Input
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="max-w-xs"
-        />
+        {!disableSearch && (
+          <Input
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="max-w-xs"
+          />
+        )}
 
         {filterConfig.map(filter => {
           switch (filter.type) {
@@ -135,6 +151,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
+              {expandableRows && <TableHead />}
               {headers.map(key => (
                 <TableHead key={key}>{key}</TableHead>
               ))}
@@ -142,33 +159,50 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </TableHeader>
           <TableBody>
             {filteredData.map((row, i) => (
-              <TableRow
-                key={i}
-                className={`transition-colors ${
-                  i % 2 === 0 ? 'bg-muted/50 dark:bg-muted/40' : 'bg-background dark:bg-muted/20'
-                } hover:bg-muted/70 dark:hover:bg-muted/60`}
-              >
-                {headers.map(key => {
-                  const value = row[key];
-                  if (customRender[key]) {
-                    return <TableCell key={key}>{customRender[key](value, row)}</TableCell>;
-                  }
-                  if (React.isValidElement(value)) {
-                    return <TableCell key={key}>{value}</TableCell>;
-                  }
-                  if (value instanceof Date) {
-                    return <TableCell key={key}>{value.toLocaleString()}</TableCell>;
-                  }
-                  if (typeof value === 'object' && value !== null) {
-                    try {
-                      return <TableCell key={key}>{JSON.stringify(value)}</TableCell>;
-                    } catch {
-                      return <TableCell key={key}>[Object]</TableCell>;
+              <React.Fragment key={i}>
+                <TableRow
+                  className={`transition-colors ${
+                    i % 2 === 0 ? 'bg-muted/50 dark:bg-muted/40' : 'bg-background dark:bg-muted/20'
+                  } hover:bg-muted/70 dark:hover:bg-muted/60`}
+                >
+                  {expandableRows && (
+                    <TableCell onClick={() => toggleRow(i)} className="cursor-pointer w-4">
+                      <ChevronDownIcon
+                        className={cn(
+                          'h-4 w-4 transition-transform',
+                          expandedRows[i] ? 'rotate-180' : 'rotate-0'
+                        )}
+                      />
+                    </TableCell>
+                  )}
+                  {headers.map(key => {
+                    const value = row[key];
+                    if (customRender[key]) {
+                      return <TableCell key={key}>{customRender[key](value, row)}</TableCell>;
                     }
-                  }
-                  return <TableCell key={key}>{value}</TableCell>;
-                })}
-              </TableRow>
+                    if (React.isValidElement(value)) {
+                      return <TableCell key={key}>{value}</TableCell>;
+                    }
+                    if (value instanceof Date) {
+                      return <TableCell key={key}>{value.toLocaleString()}</TableCell>;
+                    }
+                    if (typeof value === 'object' && value !== null) {
+                      try {
+                        return <TableCell key={key}>{JSON.stringify(value)}</TableCell>;
+                      } catch {
+                        return <TableCell key={key}>[Object]</TableCell>;
+                      }
+                    }
+                    return <TableCell key={key}>{value}</TableCell>;
+                  })}
+                </TableRow>
+
+                {expandableRows && expandedRows[i] && expandedComponent && (
+                  <TableRow className="bg-muted">
+                    <TableCell colSpan={headers.length + 1}>{expandedComponent(row)}</TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>

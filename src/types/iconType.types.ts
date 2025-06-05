@@ -44,6 +44,8 @@ import {
   Key,
   UserLock,
   GlobeLock,
+  Boxes,
+  Waypoints,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -91,4 +93,6 @@ export const iconMap = {
   cloud: Cloud,
   lock: Lock,
   key: Key,
+  boxes: Boxes,
+  path: Waypoints,
 };

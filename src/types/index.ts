@@ -1,5 +1,4 @@
 export * from './iconType.types';
-export * from './Sidebar.types';
 export * from './navbar.types';
 export * from './roles.types';
 export * from './customAxios.types';
@@ -9,6 +8,7 @@ export * from './filterType.types';
 export * from './fieldType.types';
 
 /* Type definitions for core permissions */
+export * from './core/Sidebar.types';
 export * from './core/permission.types';
 export * from './core/module.types';
 export * from './core/route.types';

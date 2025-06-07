@@ -1,4 +1,4 @@
-import { apiClient } from '@/core/apiClient';
+import { apiClient } from '@/core';
 import type { Route } from '@/types';
 
 export async function getRoutes(): Promise<Route[]> {

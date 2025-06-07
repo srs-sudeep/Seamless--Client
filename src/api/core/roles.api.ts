@@ -1,5 +1,5 @@
-import { apiClient } from '@/core/apiClient';
-import type { Role } from '@/types/core/rolesApi.types';
+import { apiClient } from '@/core';
+import type { Role } from '@/types';
 
 export async function getRoles(): Promise<Role[]> {
   const { data } = await apiClient.get<Role[]>('/core/api/v1/rbac/roles');

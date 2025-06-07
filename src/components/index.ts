@@ -6,6 +6,13 @@ export * from '@/components/HelmetWrapper';
 export * from '@/components/Loadable';
 export * from '@/components/UserAvatar';
 
+//Exporting Layout Components
+export * from '@/components/navbar/LandingNavbar';
+export * from '@/components/navbar/Navbar';
+export * from '@/components/footer/MainFooter';
+export * from '@/components/sidebar/ModuleSidebar';
+export * from '@/components/footer/LandingFooter';
+
 // Exporting Custom Components
 export * from '@/components/DynamicForm';
 export * from '@/components/DynamicTable';

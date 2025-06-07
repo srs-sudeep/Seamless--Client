@@ -1,4 +1,4 @@
-import { apiClient } from '@/core/apiClient';
+import { apiClient } from '@/core';
 import type { Permission } from '@/types';
 
 export async function getPermissions(skip = 0, limit = 100): Promise<Permission[]> {

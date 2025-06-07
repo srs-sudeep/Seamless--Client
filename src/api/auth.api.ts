@@ -1,4 +1,4 @@
-import { apiClient, publicApiClient } from '@/core/apiClient';
+import { apiClient, publicApiClient } from '@/core';
 import { type LoginResponse, type User } from '@/types';
 
 export const login = async (credentials: {

@@ -22,4 +22,4 @@ const Loadable = <P extends object>(
   );
 };
 
-export default Loadable;
+export { Loadable };

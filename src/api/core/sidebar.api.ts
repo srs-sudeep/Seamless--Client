@@ -1,4 +1,4 @@
-import { apiClient } from '@/core/apiClient';
+import { apiClient } from '@/core';
 import { SidebarModuleItem } from '@/types';
 
 /**

@@ -1,4 +1,4 @@
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { HelmetWrapper } from '@/components';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,8 +17,8 @@ import {
 import { FieldType, Permission } from '@/types';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import DynamicTable from '@/components/DynamicTable';
-import DynamicForm from '@/components/DynamicForm';
+import { DynamicTable } from '@/components';
+import { DynamicForm } from '@/components';
 
 const PermissionManagement = () => {
   const { data: permissions = [], isLoading } = usePermissions();

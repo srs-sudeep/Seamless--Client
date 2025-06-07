@@ -27,3 +27,11 @@ export async function getRolePermissions(role_id: number) {
   const { data } = await apiClient.get(`/core/api/v1/rbac/roles/${role_id}/permissions/all`);
   return data;
 }
+
+export async function addPermissionToRole(role_id: number, permission_id: number) {
+  await apiClient.post(`/core/api/v1/rbac/roles/${role_id}/permissions/${permission_id}`);
+}
+
+export async function removePermissionFromRole(role_id: number, permission_id: number) {
+  await apiClient.delete(`/core/api/v1/rbac/roles/${role_id}/permissions/${permission_id}`);
+}

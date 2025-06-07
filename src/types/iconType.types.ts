@@ -47,6 +47,7 @@ import {
   GlobeLock,
   Boxes,
   Waypoints,
+  View,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -97,4 +98,5 @@ export const iconMap = {
   key: Key,
   boxes: Boxes,
   path: Waypoints,
+  view: View,
 };

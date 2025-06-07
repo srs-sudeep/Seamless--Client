@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
-import DynamicTable from '@/components/DynamicTable';
-import DynamicForm from '@/components/DynamicForm';
+import { DynamicTable } from '@/components';
+import { DynamicForm } from '@/components';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { HelmetWrapper } from '@/components';
 import { useModules, useCreateModule, useUpdateModule, useDeleteModule } from '@/hooks';
 import { FieldType, Module } from '@/types';
 

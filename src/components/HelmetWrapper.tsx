@@ -26,4 +26,4 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
   );
 };
 
-export default HelmetWrapper;
+export { HelmetWrapper };

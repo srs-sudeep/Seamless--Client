@@ -211,4 +211,4 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   );
 };
 
-export default DynamicTable;
+export { DynamicTable };

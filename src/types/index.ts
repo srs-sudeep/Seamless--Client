@@ -13,3 +13,4 @@ export * from './core/permission.types';
 export * from './core/module.types';
 export * from './core/route.types';
 export * from './core/rolesApi.types';
+export * from './core/user.types';

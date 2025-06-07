@@ -20,8 +20,8 @@ const ErrorLayout = ({ children }: ErrorLayoutProps) => {
           </Button>
         </div>
       </main>
-      <footer className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        &copy; {new Date().getFullYear()} Codename. All rights reserved.
+      <footer className="text-center text-sm text-gray-500 dark:text-gray-400">
+        &copy; {new Date().getFullYear()} Recogx Init. All rights reserved.
       </footer>
     </div>
   );

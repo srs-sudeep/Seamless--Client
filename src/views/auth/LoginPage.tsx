@@ -1,16 +1,11 @@
 import { login } from '@/api';
-import { HelmetWrapper } from '@/components';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { useAuthStore } from '@/store/useAuthStore';
+import { Button, HelmetWrapper, Input, Label, toast } from '@/components';
+import { useAuthStore } from '@/store';
 import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { toast } = useToast();
   const { setAuth } = useAuthStore();
 
   const mutation = useMutation({

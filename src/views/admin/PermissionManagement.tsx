@@ -1,13 +1,17 @@
-import { HelmetWrapper } from '@/components';
-import { Button } from '@/components/ui/button';
+import {} from '@/components';
+import {} from '@/components/ui/button';
 import {
   Dialog,
+  HelmetWrapper,
+  Button,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { toast } from '@/components/ui/use-toast';
+  DynamicForm,
+  DynamicTable,
+  toast,
+} from '@/components';
 import {
   useCreatePermission,
   useDeletePermission,
@@ -17,8 +21,6 @@ import {
 import { FieldType, Permission } from '@/types';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { DynamicTable } from '@/components';
-import { DynamicForm } from '@/components';
 
 const PermissionManagement = () => {
   const { data: permissions = [], isLoading } = usePermissions();

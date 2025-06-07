@@ -30,8 +30,8 @@ import {
   UserAvatar,
   FullPageLoader,
 } from '@/components';
-import { useSidebar } from '@/core/context/sidebarContext';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useSidebar } from '@/core';
+import { useIsMobile } from '@/hooks';
 import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
 import { ThemeSwitcher } from '@/theme';

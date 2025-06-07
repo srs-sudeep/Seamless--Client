@@ -8,3 +8,4 @@ export * from './core/useModule.hook';
 export * from './core/usePermission.hook';
 export * from './core/useRole.hook';
 export * from './core/useRoute.hook';
+export * from './core/useUser.hook';

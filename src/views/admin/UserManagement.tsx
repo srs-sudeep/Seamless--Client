@@ -7,17 +7,17 @@ import {
   DynamicTable,
   toast,
 } from '@/components';
-import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks/core/useUser.hook';
+import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import type { User, UserRole } from '@/types/core/user.types';
+import type { UserAPI, UserRoleAPI } from '@/types';
 
 const UserManagement = () => {
   const { data: users = [], isLoading } = useUsers();
   const assignRoleToUser = useAssignRoleToUser();
   const removeRoleFromUser = useRemoveRoleFromUser();
 
-  const [editUser, setEditUser] = useState<User | null>(null);
+  const [editUser, setEditUser] = useState<UserAPI | null>(null);
 
   // Sync editUser with latest users data after mutation
   useEffect(() => {
@@ -27,7 +27,7 @@ const UserManagement = () => {
   }, [users, editUser?.ldapid]);
 
   // Table data
-  const getTableData = (users: User[]) =>
+  const getTableData = (users: UserAPI[]) =>
     users.map(user => ({
       Name: user.name,
       'User ID': user.ldapid,
@@ -51,10 +51,10 @@ const UserManagement = () => {
     ),
     Roles: (_: any, row: any) => (
       <div className="flex flex-wrap gap-1">
-        {row._row.roles.filter((r: UserRole) => r.isAssigned).length > 0 ? (
+        {row._row.roles.filter((r: UserRoleAPI) => r.isAssigned).length > 0 ? (
           row._row.roles
-            .filter((r: UserRole) => r.isAssigned)
-            .map((role: UserRole) => (
+            .filter((r: UserRoleAPI) => r.isAssigned)
+            .map((role: UserRoleAPI) => (
               <span
                 key={role.role_id}
                 className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-medium border border-blue-200"
@@ -155,7 +155,7 @@ const UserManagement = () => {
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Edit Roles</h3>
                   <div className="space-y-4">
-                    {editUser.roles.map((role: UserRole) => {
+                    {editUser.roles.map((role: UserRoleAPI) => {
                       const isLoading = assignRoleToUser.isPending || removeRoleFromUser.isPending;
                       const checked = !!role.isAssigned;
                       return (

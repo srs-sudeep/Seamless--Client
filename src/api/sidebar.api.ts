@@ -9,18 +9,21 @@ import { SidebarModuleItem } from '@/types';
  */
 
 export const fetchSidebarModules = async (
-  role: string,
-  is_active?: boolean
+  params: { role?: string; is_active?: boolean } = {}
 ): Promise<SidebarModuleItem[]> => {
-  let url = `/core/api/v1/sidebar/sidebar?role=${encodeURIComponent(role)}`;
-  if (typeof is_active === 'boolean') {
-    url += `&is_active=${is_active}`;
-  }
-  const { data } = await apiClient.get<SidebarModuleItem[]>(url, {
-    silentError: false,
-    headers: {
-      'x-error-context': 'Fetching Sidebar Modules',
-    },
-  });
+  const searchParams = new URLSearchParams();
+  if (params.role) searchParams.append('role', params.role);
+  if (typeof params.is_active === 'boolean')
+    searchParams.append('is_active', String(params.is_active));
+
+  const { data } = await apiClient.get<SidebarModuleItem[]>(
+    `/core/api/v1/sidebar/sidebar${searchParams.toString() ? `?${searchParams}` : ''}`,
+    {
+      silentError: false,
+      headers: {
+        'x-error-context': 'Fetching Sidebar Modules',
+      },
+    }
+  );
   return data;
 };

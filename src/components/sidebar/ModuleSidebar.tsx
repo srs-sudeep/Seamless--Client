@@ -1,6 +1,4 @@
-import AppLogo from '@/components/AppLogo';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle, ScrollArea, AppLogo } from '@/components';
 import { useSidebar } from '@/core/context/sidebarContext';
 import { useSidebarItems, useIsMobile } from '@/hooks';
 import { cn } from '@/lib/utils';

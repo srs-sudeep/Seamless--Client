@@ -1,13 +1,26 @@
 import { fetchSidebarModules } from '@/api';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/store';
 import { useQuery } from '@tanstack/react-query';
 
-export function useSidebarItems(is_active?: boolean) {
+interface UseSidebarItemsOptions {
+  role?: string;
+  is_active?: boolean;
+}
+
+export function useSidebarItems(options?: UseSidebarItemsOptions) {
   const { currentRole } = useAuthStore();
+
+  let roleToUse = options?.role ?? currentRole;
+  if (roleToUse === 'all') roleToUse = null;
+
+  const params: Record<string, any> = {};
+  if (roleToUse) params.role = roleToUse;
+  if (typeof options?.is_active === 'boolean') params.is_active = options.is_active;
+
   const { data: sidebarItems = [], isLoading } = useQuery({
-    queryKey: ['sidebarItems', currentRole, is_active],
-    queryFn: () => fetchSidebarModules(currentRole ?? '', is_active),
-    enabled: !!currentRole,
+    queryKey: ['sidebarItems', params],
+    queryFn: () => fetchSidebarModules(params),
+    enabled: !!roleToUse || typeof options?.is_active === 'boolean',
   });
 
   return { sidebarItems, isLoading };

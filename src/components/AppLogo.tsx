@@ -37,4 +37,4 @@ const AppLogo = ({ className, horizontal = false, name = false, short = false }:
   );
 };
 
-export default AppLogo;
+export { AppLogo };

@@ -33,4 +33,4 @@ const UserAvatar = ({ name, role, imgUrl, className, showInfo = true }: UserAvat
   );
 };
 
-export default UserAvatar;
+export { UserAvatar };

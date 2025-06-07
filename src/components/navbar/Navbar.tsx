@@ -1,20 +1,16 @@
-import AppLogo from '@/components/AppLogo';
 import {
+  AppLogo,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import {
+  Button,
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -26,11 +22,14 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useToast } from '@/components/ui/use-toast';
-import UserAvatar from '@/components/UserAvatar';
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  useToast,
+  UserAvatar,
+  FullPageLoader,
+} from '@/components';
 import { useSidebar } from '@/core/context/sidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { getDashboardLink } from '@/lib/redirect';
@@ -50,7 +49,6 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FullPageLoader } from '../ui/loading-spinner';
 const Navbar = () => {
   const { user, logout, setCurrentRole, currentRole } = useAuthStore();
   const { toast } = useToast();

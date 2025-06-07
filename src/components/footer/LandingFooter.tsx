@@ -1,4 +1,4 @@
-import AppLogo from '@/components/AppLogo';
+import { AppLogo } from '@/components';
 import { Github, Twitter, Slack } from 'lucide-react';
 
 export const LandingFooter = () => {

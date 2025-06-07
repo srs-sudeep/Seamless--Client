@@ -41,7 +41,7 @@ const ModuleSidebar = () => {
   const navigate = useNavigate();
 
   // Fetch sidebar modules from API
-  const { sidebarItems: modules = [], isLoading } = useSidebarItems(true);
+  const { sidebarItems: modules = [], isLoading } = useSidebarItems({ is_active: true });
 
   // Set active module based on current path
   useEffect(() => {

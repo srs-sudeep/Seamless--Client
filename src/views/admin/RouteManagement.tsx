@@ -11,23 +11,6 @@ import { useRoles } from '@/hooks';
 import { FieldType } from '@/types';
 import { useSidebarItems } from '@/hooks';
 
-const getAllRoles = (sidebarItems: any[]): { value: string; label: string }[] => {
-  const roleMap = new Map<string, string>();
-  const collectRoles = (items: any[]) => {
-    items.forEach(item => {
-      if (item.roles) {
-        item.roles.forEach((role: any) => {
-          roleMap.set(role.role_id, role.role_name);
-        });
-      }
-      if (item.subModules) collectRoles(item.subModules);
-      if (item.children) collectRoles(item.children);
-    });
-  };
-  collectRoles(sidebarItems);
-  return Array.from(roleMap.entries()).map(([value, label]) => ({ value, label }));
-};
-
 const baseSchema: FieldType[] = [
   { name: 'path', label: 'Path', type: 'text', required: true, columns: 2 },
   { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
@@ -52,7 +35,7 @@ const baseSchema: FieldType[] = [
 ];
 
 const RouteManagement = () => {
-  const { sidebarItems, isLoading: sidebarLoading } = useSidebarItems();
+  const { sidebarItems, isLoading: sidebarLoading } = useSidebarItems({ role: 'all' });
   const createMutation = useCreateRoute();
   const updateMutation = useUpdateRoute();
   const deleteMutation = useDeleteRoute();

@@ -70,12 +70,10 @@ apiClient.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
-
       try {
-        const response = await publicApiClient.post('/refresh-token', {
+        const response = await publicApiClient.post('/core/api/v1/auth/refresh', {
           refresh_token: refreshToken,
         });
-        console.log('Token refreshed successfully');
         const newAccessToken = response.data.access_token;
         const newRefreshToken = response.data.refresh_token;
 

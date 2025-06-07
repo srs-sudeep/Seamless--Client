@@ -17,10 +17,15 @@ export function useSidebarItems(options?: UseSidebarItemsOptions) {
   if (roleToUse) params.role = roleToUse;
   if (typeof options?.is_active === 'boolean') params.is_active = options.is_active;
 
+  const enabled =
+    options?.role !== undefined ||
+    (roleToUse !== undefined && roleToUse !== null) ||
+    typeof options?.is_active === 'boolean';
+
   const { data: sidebarItems = [], isLoading } = useQuery({
     queryKey: ['sidebarItems', params],
     queryFn: () => fetchSidebarModules(params),
-    enabled: !!roleToUse || typeof options?.is_active === 'boolean',
+    enabled,
   });
 
   return { sidebarItems, isLoading };

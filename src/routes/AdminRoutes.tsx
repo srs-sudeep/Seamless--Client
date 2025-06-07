@@ -7,6 +7,7 @@ const UserManagement = lazy(() => import('@/views/admin/UserManagement'));
 const PermissionManagement = lazy(() => import('@/views/admin/PermissionManagement'));
 const ModuleManagement = lazy(() => import('@/views/admin/ModuleManagement'));
 const RouteManagement = lazy(() => import('@/views/admin/RouteManagement'));
+const RolesManagement = lazy(() => import('@/views/admin/RolesManagement'));
 const AdminRoutes: RouteObject = {
   path: '/admin',
   element: <MainLayout />,
@@ -14,6 +15,10 @@ const AdminRoutes: RouteObject = {
     {
       path: 'users',
       element: <UserManagement />,
+    },
+    {
+      path: 'roles-management',
+      element: <RolesManagement />,
     },
     {
       path: 'permission-management',

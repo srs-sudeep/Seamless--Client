@@ -3,7 +3,9 @@ export type FieldType = {
   label: string;
   type: string;
   required?: boolean;
-  options?: string[];
+  options?: string[] | { value: string; label: string }[];
   columns?: number;
   placeholder?: string;
+  disabled?: boolean;
+  multiSelect?: boolean;
 };

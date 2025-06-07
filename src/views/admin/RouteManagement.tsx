@@ -1,29 +1,54 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import DynamicTable from '@/components/DynamicTable';
 import DynamicForm from '@/components/DynamicForm';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import HelmetWrapper from '@/components/HelmetWrapper';
-import { useCreateRoute, useUpdateRoute, useDeleteRoute } from '@/hooks/core/useRoute.hook';
-import { FieldType, Route } from '@/types';
-import { useSidebarItems } from '@/hooks/useSidebar.hook';
+import { useCreateRoute, useUpdateRoute, useDeleteRoute } from '@/hooks';
+import { useRoles } from '@/hooks';
+import { FieldType } from '@/types';
+import { useSidebarItems } from '@/hooks';
 
-const schema: FieldType[] = [
+const getAllRoles = (sidebarItems: any[]): { value: string; label: string }[] => {
+  const roleMap = new Map<string, string>();
+  const collectRoles = (items: any[]) => {
+    items.forEach(item => {
+      if (item.roles) {
+        item.roles.forEach((role: any) => {
+          roleMap.set(role.role_id, role.role_name);
+        });
+      }
+      if (item.subModules) collectRoles(item.subModules);
+      if (item.children) collectRoles(item.children);
+    });
+  };
+  collectRoles(sidebarItems);
+  return Array.from(roleMap.entries()).map(([value, label]) => ({ value, label }));
+};
+
+const baseSchema: FieldType[] = [
   { name: 'path', label: 'Path', type: 'text', required: true, columns: 2 },
   { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
   { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
-  { name: 'is_active', label: 'Active', type: 'checkbox', required: true, columns: 2 },
-  { name: 'module_id', label: 'Module ID', type: 'number', required: true, columns: 2 },
-  { name: 'parent_id', label: 'Parent ID', type: 'number', required: false, columns: 2 },
-  { name: 'role_ids', label: 'Role IDs', type: 'text', required: false, columns: 2 },
+  { name: 'is_active', label: 'Active', type: 'toggle', columns: 2 },
+  {
+    name: 'module_id',
+    label: 'Module ID',
+    type: 'number',
+    required: true,
+    columns: 2,
+    disabled: true,
+  },
+  {
+    name: 'parent_id',
+    label: 'Parent ID',
+    type: 'number',
+    required: false,
+    columns: 2,
+    disabled: true,
+  },
 ];
 
 const RouteManagement = () => {
@@ -32,81 +57,57 @@ const RouteManagement = () => {
   const updateMutation = useUpdateRoute();
   const deleteMutation = useDeleteRoute();
 
-  const [editRoute, setEditRoute] = useState<Route | null>(null);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editModule, setEditModule] = useState<any | null>(null);
+  const { data: allRolesApi = [], isLoading: rolesLoading } = useRoles();
 
-  const handleEdit = (route: Route) => setEditRoute(route);
+  const [editRoute, setEditRoute] = useState<any | null>(null);
+  const [createDialogParent, setCreateDialogParent] = useState<{
+    module_id: number;
+    parent_id: number | null;
+  } | null>(null);
 
-  const handleUpdate = async (formData: Record<string, any>) => {
-    if (!editRoute) return;
-    await updateMutation.mutateAsync({
-      route_id: editRoute.route_id,
-      payload: {
-        path: formData.path,
-        label: formData.label,
-        icon: formData.icon,
-        is_active: !!formData.is_active,
-        module_id: Number(formData.module_id),
-        parent_id: formData.parent_id ? Number(formData.parent_id) : null,
-        role_ids:
-          typeof formData.role_ids === 'string'
-            ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
-            : formData.role_ids,
-      },
-    });
-    toast({ title: 'Route updated' });
-    setEditRoute(null);
-  };
+  const allRoles = useMemo(
+    () =>
+      allRolesApi.map((role: any) => ({
+        value: role.role_id,
+        label: role.name,
+      })),
+    [allRolesApi]
+  );
 
-  const handleDelete = async (route_id: number) => {
-    await deleteMutation.mutateAsync(route_id);
-    toast({ title: 'Route deleted' });
-  };
+  const getSchema = (): FieldType[] => [
+    ...baseSchema,
+    {
+      name: 'role_ids',
+      label: 'Role IDs',
+      type: 'select',
+      multiSelect: true,
+      required: false,
+      columns: 2,
+      options: allRoles,
+      disabled: false,
+    },
+  ];
 
-  const handleCreate = async (formData: Record<string, any>) => {
-    await createMutation.mutateAsync({
-      path: formData.path,
-      label: formData.label,
-      icon: formData.icon,
-      is_active: !!formData.is_active,
-      module_id: Number(formData.module_id),
-      parent_id: formData.parent_id ? Number(formData.parent_id) : null,
-      role_ids:
-        typeof formData.role_ids === 'string'
-          ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
-          : formData.role_ids,
-    });
-    toast({ title: 'Route created' });
-    setCreateDialogOpen(false);
-  };
-
-  // Prepare table data for modules
-  const getModuleTableData = (modules: any[]) =>
-    modules.map(mod => ({
-      Label: mod.label,
-      Icon: mod.icon,
-      Active: mod.isActive,
-      Edit: '',
-      Delete: '',
-      _row: mod,
-      _subModules: mod.subModules || [],
-    }));
-
-  // Prepare table data for submodules (for expandable rows)
   const getSubModuleTableData = (subModules: any[]) =>
     subModules.map(sub => ({
       Label: sub.label,
       Path: sub.path || '',
       Icon: sub.icon,
       Active: sub.isActive,
+      Roles: (sub.roles || []).map((role: any) => ({
+        label: role.role_name || role.name || role.label || role,
+        value: role.role_id || role.value || role,
+      })),
       Edit: '',
       Delete: '',
+      Create: '',
       _row: sub,
       _subModules: sub.children || [],
+      _module_id: sub.module_id,
+      _parent_id: sub.parent_id ?? null,
+      _roles: sub.roles || [],
     }));
 
-  // Custom renderers
   const customRender = {
     Edit: (_: any, row: Record<string, any>) => (
       <Button
@@ -114,7 +115,13 @@ const RouteManagement = () => {
         variant="ghost"
         onClick={e => {
           e.stopPropagation();
-          setEditModule(row._row);
+          setEditRoute({
+            ...row._row,
+            module_id: row._module_id,
+            parent_id: row._parent_id,
+            is_active: row._row.isActive,
+            role_ids: (row._row.roles || []).map((r: any) => String(r.role_id)),
+          });
         }}
       >
         <Pencil className="w-4 h-4" />
@@ -126,11 +133,27 @@ const RouteManagement = () => {
         variant="destructive"
         onClick={e => {
           e.stopPropagation();
-          // Implement delete logic if needed
+          if (row._row && row._row.id) {
+            deleteMutation.mutate(row._row.id);
+            toast({ title: 'Route deleted' });
+          }
         }}
         disabled={false}
       >
         <Trash2 className="w-4 h-4" />
+      </Button>
+    ),
+    Create: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="outline"
+        onClick={e => {
+          e.stopPropagation();
+          setCreateDialogParent({ module_id: row._module_id, parent_id: row._row.id });
+        }}
+        title="Add Child Route"
+      >
+        <Plus className="w-4 h-4" />
       </Button>
     ),
     Active: (value: boolean) => (
@@ -143,14 +166,35 @@ const RouteManagement = () => {
         <i className={value} /> {value}
       </span>
     ),
+    Roles: (roles: { label: string; value: string }[]) => (
+      <div className="flex flex-wrap gap-1">
+        {roles && roles.length > 0 ? (
+          roles.map(role => (
+            <span
+              key={role.value}
+              className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-medium border border-blue-200"
+            >
+              {role.label}
+            </span>
+          ))
+        ) : (
+          <span className="text-gray-400 text-xs">No Roles</span>
+        )}
+      </div>
+    ),
   };
 
-  // Recursive expandedComponent for submodules
   const renderExpandedComponent = (row: Record<string, any>) => {
     if (!row._subModules || row._subModules.length === 0) return null;
     return (
       <DynamicTable
-        data={getSubModuleTableData(row._subModules)}
+        data={getSubModuleTableData(row._subModules).map(childRow => ({
+          ...childRow,
+          Edit: customRender.Edit('', childRow),
+          Delete: customRender.Delete('', childRow),
+          Create: customRender.Create('', childRow),
+          Icon: customRender.Icon(childRow.Icon),
+        }))}
         customRender={customRender}
         className="bg-background"
         expandableRows={true}
@@ -163,63 +207,136 @@ const RouteManagement = () => {
   return (
     <HelmetWrapper title="Sidebar Modules | Seamless">
       <div className="max-w-5xl mx-auto p-6">
-        {sidebarLoading ? (
+        {sidebarLoading || rolesLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
           </div>
         ) : (
-          <DynamicTable
-            data={getModuleTableData(sidebarItems)}
-            customRender={customRender}
-            className="bg-background"
-            expandableRows={true}
-            expandedComponent={renderExpandedComponent}
-          />
+          sidebarItems.map((mod: any) => (
+            <div key={mod.id} className="mb-8">
+              <h2 className="text-lg font-semibold mb-2 flex justify-between itec">
+                {mod.label}
+                <Button
+                  size="sm"
+                  className="ml-4"
+                  onClick={() => {
+                    setCreateDialogParent({ module_id: mod.id, parent_id: null });
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Route
+                </Button>
+              </h2>
+              <DynamicTable
+                data={getSubModuleTableData(mod.subModules || []).map(row => ({
+                  ...row,
+                  Edit: customRender.Edit('', row),
+                  Delete: customRender.Delete('', row),
+                  Create: customRender.Create('', row),
+                  Icon: customRender.Icon(row.Icon),
+                }))}
+                customRender={customRender}
+                className="bg-background"
+                expandableRows={true}
+                expandedComponent={renderExpandedComponent}
+                disableSearch={true}
+              />
+            </div>
+          ))
         )}
 
-        <div className="flex items-center justify-end mb-6">
-          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Route
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create Route</DialogTitle>
-              </DialogHeader>
-              <DynamicForm
-                schema={schema}
-                onSubmit={() => setCreateDialogOpen(false)}
-                onCancel={() => setCreateDialogOpen(false)}
-                submitButtonText="Create"
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Example edit dialog for module/submodule */}
+        {/* Create Route Dialog */}
         <Dialog
-          open={!!editModule}
+          open={!!createDialogParent}
           onOpenChange={open => {
-            if (!open) setEditModule(null);
+            if (!open) setCreateDialogParent(null);
           }}
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Module/Submodule</DialogTitle>
+              <DialogTitle>Create Route</DialogTitle>
             </DialogHeader>
             <DynamicForm
-              schema={[
-                { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
-                { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
-                { name: 'isActive', label: 'Active', type: 'checkbox', required: true, columns: 2 },
-                { name: 'path', label: 'Path', type: 'text', required: false, columns: 2 },
-              ]}
-              onSubmit={() => setEditModule(null)}
-              defaultValues={editModule ?? undefined}
-              onCancel={() => setEditModule(null)}
+              schema={getSchema()}
+              defaultValues={{
+                module_id: createDialogParent?.module_id,
+                parent_id: createDialogParent?.parent_id ?? '',
+                role_ids: [],
+              }}
+              onSubmit={async (formData: Record<string, any>) => {
+                if (!createDialogParent) return;
+                await createMutation.mutateAsync({
+                  path: formData.path,
+                  label: formData.label,
+                  icon: formData.icon,
+                  is_active: !!formData.is_active,
+                  module_id: Number(createDialogParent.module_id),
+                  parent_id:
+                    createDialogParent.parent_id !== null &&
+                    createDialogParent.parent_id !== undefined
+                      ? Number(createDialogParent.parent_id)
+                      : null,
+                  role_ids: Array.isArray(formData.role_ids)
+                    ? formData.role_ids.map((id: string) => Number(id))
+                    : typeof formData.role_ids === 'string'
+                      ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
+                      : [],
+                });
+                toast({ title: 'Route created' });
+                setCreateDialogParent(null);
+              }}
+              onCancel={() => setCreateDialogParent(null)}
+              submitButtonText="Create"
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Route Dialog */}
+        <Dialog
+          open={!!editRoute}
+          onOpenChange={open => {
+            if (!open) setEditRoute(null);
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Route</DialogTitle>
+            </DialogHeader>
+            <DynamicForm
+              schema={getSchema()}
+              defaultValues={{
+                ...editRoute,
+                module_id: editRoute?.module_id ?? '',
+                parent_id: editRoute?.parent_id ?? '',
+                is_active: !!editRoute?.isActive,
+                role_ids: Array.isArray(editRoute?.role_ids)
+                  ? editRoute.role_ids.map(String)
+                  : (editRoute?.roles || []).map((r: any) => String(r.role_id)),
+              }}
+              onSubmit={async (formData: Record<string, any>) => {
+                if (!editRoute) return;
+                await updateMutation.mutateAsync({
+                  route_id: editRoute.id || editRoute.route_id,
+                  payload: {
+                    path: formData.path,
+                    label: formData.label,
+                    icon: formData.icon,
+                    is_active: !!formData.is_active,
+                    module_id: Number(editRoute.module_id),
+                    parent_id:
+                      editRoute.parent_id === null || editRoute.parent_id === undefined
+                        ? null
+                        : Number(editRoute.parent_id),
+                    role_ids: Array.isArray(formData.role_ids)
+                      ? formData.role_ids.map((id: string) => Number(id))
+                      : typeof formData.role_ids === 'string'
+                        ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
+                        : [],
+                  },
+                });
+                toast({ title: 'Route updated' });
+                setEditRoute(null);
+              }}
+              onCancel={() => setEditRoute(null)}
               submitButtonText="Save"
             />
           </DialogContent>

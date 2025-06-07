@@ -19,6 +19,6 @@ export async function deleteRoute(route_id: number) {
 }
 
 export async function createRoute(payload: Omit<Route, 'route_id' | 'created_at' | 'updated_at'>) {
-  const { data } = await apiClient.post<Route>('/core/api/v1/routes', payload);
+  const { data } = await apiClient.post<Route>('/core/api/v1/routes/', payload);
   return data;
 }

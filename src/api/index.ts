@@ -6,3 +6,4 @@ export * from './sidebar.api';
 export * from './core/permission.api';
 export * from './core/module.api';
 export * from './core/route.api';
+export * from './core/roles.api';

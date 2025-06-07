@@ -75,7 +75,7 @@ apiClient.interceptors.response.use(
         const response = await publicApiClient.post('/refresh-token', {
           refresh_token: refreshToken,
         });
-
+        console.log('Token refreshed successfully');
         const newAccessToken = response.data.access_token;
         const newRefreshToken = response.data.refresh_token;
 

@@ -1,5 +1,5 @@
 import { login } from '@/api';
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { HelmetWrapper } from '@/components';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

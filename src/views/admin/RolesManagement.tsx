@@ -1,8 +1,18 @@
-import { HelmetWrapper } from '@/components';
-import { Button } from '@/components';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components';
-import { Sheet, SheetContent, SheetTitle } from '@/components';
-import { toast } from '@/components';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  HelmetWrapper,
+  Button,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  toast,
+  DynamicTable,
+  DynamicForm,
+} from '@/components';
 import {
   useRoles,
   useCreateRole,
@@ -12,12 +22,9 @@ import {
   useAddPermissionToRole,
   useRemovePermissionFromRole,
 } from '@/hooks';
-import { FieldType } from '@/types';
+import { FieldType, Role } from '@/types';
 import { Loader2, Pencil, Plus, Trash2, View } from 'lucide-react';
 import { useState, JSX } from 'react';
-import { DynamicTable } from '@/components';
-import { DynamicForm } from '@/components';
-import type { Role } from '@/types';
 
 const schema: FieldType[] = [
   { name: 'name', label: 'Name', type: 'text', required: true, columns: 2 },
@@ -87,13 +94,13 @@ const RolesManagement = () => {
         description: formData.description,
       },
     });
-    toast('Role updated');
+    toast({ title: 'Role updated' });
     setEditRole(null);
   };
 
   const handleDelete = async (role_id: number) => {
     await deleteMutation.mutateAsync(role_id);
-    toast('Role deleted');
+    toast({ title: 'Role deleted' });
   };
 
   const handleCreate = async (formData: Record<string, any>) => {
@@ -101,7 +108,7 @@ const RolesManagement = () => {
       name: formData.name,
       description: formData.description,
     });
-    toast('Role created');
+    toast({ title: 'Role created' });
     setCreateDialogOpen(false);
   };
 
@@ -109,7 +116,7 @@ const RolesManagement = () => {
   const permissionCustomRender = allActions.reduce<{
     [key: string]: (val: any, row: any) => JSX.Element;
   }>((acc, action: any) => {
-    acc[action] = (val: any, row: any) => {
+    acc[action] = (val: any) => {
       const isLoading = addPermissionToRole.isPending || removePermissionFromRole.isPending;
       const disabled = val.wildcard || isLoading || !viewPermissionRole;
       return (

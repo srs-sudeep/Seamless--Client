@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
-import DynamicTable from '@/components/DynamicTable';
-import DynamicForm from '@/components/DynamicForm';
+import { DynamicTable } from '@/components';
+import { DynamicForm } from '@/components';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { HelmetWrapper } from '@/components';
 import { useCreateRoute, useUpdateRoute, useDeleteRoute } from '@/hooks';
 import { useRoles } from '@/hooks';
 import { FieldType } from '@/types';

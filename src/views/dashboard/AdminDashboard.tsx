@@ -6,7 +6,7 @@ import MonthlyEarnings from '@/components/dashboard/MonthlyEarnings';
 import ProductsSection from '@/components/dashboard/ProductsSection';
 import ProjectsSection from '@/components/dashboard/ProjectsSection';
 import CustomersSection from '@/components/dashboard/CustomersSection';
-import HelmetWrapper from '@/components/HelmetWrapper';
+import { HelmetWrapper } from '@/components';
 
 const AdminDashboard = () => {
   return (

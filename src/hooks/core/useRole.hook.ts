@@ -5,6 +5,8 @@ import {
   updateRole,
   deleteRole,
   getRolePermissions,
+  addPermissionToRole,
+  removePermissionFromRole,
 } from '@/api/core/roles.api';
 import type { Role } from '@/types/core/rolesApi.types';
 
@@ -56,5 +58,29 @@ export function usePermissionByRole(role_id?: number) {
     queryKey: ['role-permissions', role_id],
     queryFn: () => getRolePermissions(role_id as number),
     enabled: !!role_id,
+  });
+}
+
+export function useAddPermissionToRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ role_id, permission_id }: { role_id: number; permission_id: number }) => {
+      await addPermissionToRole(role_id, permission_id);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['role-permissions', variables.role_id] });
+    },
+  });
+}
+
+export function useRemovePermissionFromRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ role_id, permission_id }: { role_id: number; permission_id: number }) => {
+      await removePermissionFromRole(role_id, permission_id);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['role-permissions', variables.role_id] });
+    },
   });
 }

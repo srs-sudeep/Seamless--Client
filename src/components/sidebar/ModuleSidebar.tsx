@@ -1,6 +1,6 @@
-import { Sheet, SheetContent, SheetTitle, ScrollArea, AppLogo } from '@/components';
-import { useSidebar } from '@/core/context/sidebarContext';
-import { useSidebarItems, useIsMobile } from '@/hooks';
+import { AppLogo, ScrollArea, Sheet, SheetContent, SheetTitle } from '@/components';
+import { useSidebar } from '@/core';
+import { useIsMobile, useSidebarItems } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { iconMap, type SidebarModuleItem, type SidebarSubModuleTreeItem } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -30,6 +30,24 @@ function findSubModuleByPath(subModules: SidebarSubModuleTreeItem[], pathname: s
   return false;
 }
 
+// Helper to find the path of parent IDs to the active submodule
+function findParentIds(
+  items: SidebarSubModuleTreeItem[],
+  pathname: string,
+  parents: string[] = []
+): string[] | null {
+  for (const item of items) {
+    if (item.path && pathname.startsWith(item.path)) {
+      return [...parents];
+    }
+    if (item.children) {
+      const found = findParentIds(item.children, pathname, [...parents, item.id]);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -53,23 +71,11 @@ const ModuleSidebar = () => {
   // Auto-expand parent items based on current path (batch state update)
   useEffect(() => {
     if (!isLoading && modules.length > 0 && activeModule) {
-      const expanded: string[] = [];
-      const expandParents = (items: SidebarSubModuleTreeItem[]) => {
-        for (const item of items) {
-          if (item.path && location.pathname.startsWith(item.path)) {
-            if (item.children && item.children.length > 0) {
-              expanded.push(item.id);
-              expandParents(item.children);
-            }
-          } else if (item.children) {
-            expandParents(item.children);
-          }
-        }
-      };
       const module = modules.find(m => m.id === activeModule);
       if (module) {
-        expandParents(module.subModules);
-        setExpandedItems(expanded);
+        // Find all parent IDs leading to the active submodule
+        const parentIds = findParentIds(module.subModules, location.pathname) || [];
+        setExpandedItems(parentIds);
       }
     }
   }, [isLoading, modules, activeModule, location.pathname]);

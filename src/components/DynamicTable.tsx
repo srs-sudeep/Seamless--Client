@@ -28,6 +28,7 @@ type DynamicTableProps = {
   expandableRows?: boolean;
   expandedComponent?: (row: Record<string, any>) => React.ReactNode;
   disableSearch?: boolean;
+  onRowClick?: (row: Record<string, any>, index: number) => void;
 };
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
@@ -39,6 +40,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   expandableRows = false,
   expandedComponent,
   disableSearch = false,
+  onRowClick,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
@@ -164,9 +166,17 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   className={`transition-colors ${
                     i % 2 === 0 ? 'bg-muted/50 dark:bg-muted/40' : 'bg-background dark:bg-muted/20'
                   } hover:bg-muted/70 dark:hover:bg-muted/60`}
+                  onClick={() => onRowClick && onRowClick(row, i)} // <-- Add this
+                  style={onRowClick ? { cursor: 'pointer' } : undefined}
                 >
                   {expandableRows && (
-                    <TableCell onClick={() => toggleRow(i)} className="cursor-pointer w-4">
+                    <TableCell
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleRow(i);
+                      }}
+                      className="cursor-pointer w-4"
+                    >
                       <ChevronDownIcon
                         className={cn(
                           'h-4 w-4 transition-transform',

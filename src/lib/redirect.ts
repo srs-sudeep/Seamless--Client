@@ -4,7 +4,7 @@ export function getDashboardLink(role: UserRole | null | undefined) {
   const rolePaths: Record<string, string> = {
     default: '/',
     admin: '/dashboard/admin',
-    teacher: '/dashboard/teacher',
+    faculty: '/dashboard/faculty',
     academics: '/dashboard/academics',
     student: '/dashboard/student',
     librarian: '/dashboard/librarian',

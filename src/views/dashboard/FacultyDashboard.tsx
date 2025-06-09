@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, BookOpen, Calendar, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
-const TeacherDashboard = () => {
+const FacultyDashboard = () => {
   // Mock data for upcoming classes
   const upcomingClasses = [
     { id: 1, subject: 'Mathematics', grade: '10th Grade', time: '09:00 AM', room: 'Room 101' },
@@ -138,4 +138,4 @@ const TeacherDashboard = () => {
   );
 };
 
-export default TeacherDashboard;
+export default FacultyDashboard;

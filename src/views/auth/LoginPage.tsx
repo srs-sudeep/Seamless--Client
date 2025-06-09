@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
     onError: (error: any) => {
       toast({
         title: 'Login Failed',
-        description: error?.response?.data?.message || error.message || 'Invalid credentials',
+        description: error?.response?.data?.detail || error.message || 'Invalid credentials',
         variant: 'destructive',
       });
     },

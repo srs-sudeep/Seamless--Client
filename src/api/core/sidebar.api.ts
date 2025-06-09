@@ -19,7 +19,7 @@ export const fetchSidebarModules = async (
   const { data } = await apiClient.get<SidebarModuleItem[]>(
     `/core/api/v1/sidebar/sidebar${searchParams.toString() ? `?${searchParams}` : ''}`,
     {
-      silentError: false,
+      silentError: true,
       headers: {
         'x-error-context': 'Fetching Sidebar Modules',
       },

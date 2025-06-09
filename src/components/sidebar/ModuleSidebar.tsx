@@ -129,7 +129,7 @@ const ModuleSidebar = () => {
         <div
           className={cn(
             'flex items-center px-3 py-2 rounded-md text-base transition-colors',
-            'hover:bg-sidebar-accent/10 text-accent cursor-pointer',
+            'hover:bg-sidebar-accent/10 hover:text-sidebar-accent cursor-pointer',
             isActive
               ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               : 'text-sidebar-foreground/80',
@@ -145,19 +145,11 @@ const ModuleSidebar = () => {
           }}
         >
           {subModule.icon && (
-            <div
-              className={cn(
-                isActive ? 'mr-2 text-sidebar-accent-foreground' : 'mr-2 text-sidebar-foreground'
-              )}
-            >
+            <div className={cn(isActive ? 'mr-2' : 'mr-2')}>
               {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
             </div>
           )}
-          <span
-            className="flex-1 whitespace-normal break-words" // <-- wrap and break long text
-          >
-            {subModule.label}
-          </span>
+          <span className="flex-1 whitespace-normal break-words">{subModule.label}</span>
           {hasChildren && (
             <ChevronRight
               className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}

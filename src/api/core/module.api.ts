@@ -21,6 +21,6 @@ export async function deleteModule(module_id: number) {
 export async function createModule(
   payload: Omit<Module, 'module_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.post<Module>('/core/api/v1/modules', payload);
+  const { data } = await apiClient.post<Module>('/core/api/v1/modules/', payload);
   return data;
 }

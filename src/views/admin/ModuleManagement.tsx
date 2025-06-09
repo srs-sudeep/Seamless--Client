@@ -114,7 +114,9 @@ const ModuleManagement = () => {
       Active: mod.is_active,
       Edit: '',
       Delete: '',
-      _row: mod,
+      _row: {
+        ...mod,
+      },
     }));
 
   return (

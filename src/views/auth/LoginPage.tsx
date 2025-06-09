@@ -2,10 +2,12 @@ import { login } from '@/api';
 import { Button, HelmetWrapper, Input, Label, toast } from '@/components';
 import { useAuthStore } from '@/store';
 import { useMutation } from '@tanstack/react-query';
+import { Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuthStore();
 
   const mutation = useMutation({
@@ -83,12 +85,20 @@ const LoginPage: React.FC = () => {
               </div>
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 placeholder="Password"
                 onChange={e => setPassword(e.target.value)}
                 className="bg-gray-100 dark:bg-white/10 border-0 text-gray-800 dark:text-white"
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center px-3 mt-[196px] mr-7 text-gray-400 hover:text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
             <Button
               type="submit"

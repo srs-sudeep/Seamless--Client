@@ -14,3 +14,9 @@ export * from './core/module.types';
 export * from './core/route.types';
 export * from './core/rolesApi.types';
 export * from './core/user.types';
+export * from './core/service.types';
+
+/* Type definitions for device permissions */
+export * from './device/deviceAdmin.types';
+export * from './device/devices.types';
+export * from './device/attendance.types';

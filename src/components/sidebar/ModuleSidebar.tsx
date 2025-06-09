@@ -129,7 +129,7 @@ const ModuleSidebar = () => {
         <div
           className={cn(
             'flex items-center px-3 py-2 rounded-md text-base transition-colors',
-            'hover:bg-sidebar-accent/10 cursor-pointer',
+            'hover:bg-sidebar-accent/10 text-accent cursor-pointer',
             isActive
               ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               : 'text-sidebar-foreground/80',

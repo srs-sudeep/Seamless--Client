@@ -48,6 +48,11 @@ import {
   Boxes,
   Waypoints,
   View,
+  MonitorSmartphone,
+  MonitorCheck,
+  TabletSmartphone,
+  ServerCog,
+  CalendarCheck,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -99,4 +104,9 @@ export const iconMap = {
   boxes: Boxes,
   path: Waypoints,
   view: View,
+  device: MonitorSmartphone,
+  deviceAdmin: MonitorCheck,
+  devices: TabletSmartphone,
+  service: ServerCog,
+  attendance: CalendarCheck,
 };

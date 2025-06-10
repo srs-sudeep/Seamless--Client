@@ -1,14 +1,14 @@
 import MainLayout from '@/layouts/MainLayout';
-import { lazy } from 'react';
+import lazyLoad from '@/lib/lazyLoad';
 import { type RouteObject } from 'react-router-dom';
 
 // Lazy load admin views
-const PermissionManagement = lazy(() => import('@/views/admin/PermissionManagement'));
-const ModuleManagement = lazy(() => import('@/views/admin/ModuleManagement'));
-const RouteManagement = lazy(() => import('@/views/admin/RouteManagement'));
-const RolesManagement = lazy(() => import('@/views/admin/RolesManagement'));
-const UserManagement = lazy(() => import('@/views/admin/UserManagement'));
-const ServiceManagement = lazy(() => import('@/views/admin/ServiceManagement'));
+const PermissionManagement = lazyLoad(() => import('@/views/admin/PermissionManagement'));
+const ModuleManagement = lazyLoad(() => import('@/views/admin/ModuleManagement'));
+const RouteManagement = lazyLoad(() => import('@/views/admin/RouteManagement'));
+const RolesManagement = lazyLoad(() => import('@/views/admin/RolesManagement'));
+const UserManagement = lazyLoad(() => import('@/views/admin/UserManagement'));
+const ServiceManagement = lazyLoad(() => import('@/views/admin/ServiceManagement'));
 const AdminRoutes: RouteObject = {
   path: '/admin',
   element: <MainLayout />,

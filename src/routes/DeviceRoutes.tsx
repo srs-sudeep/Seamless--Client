@@ -1,11 +1,11 @@
 import MainLayout from '@/layouts/MainLayout';
-import { lazy } from 'react';
+import lazyLoad from '@/lib/lazyLoad';
 import { type RouteObject } from 'react-router-dom';
 
-// Lazy load admin views
-const DeviceAdminManagement = lazy(() => import('@/views/device/deviceAdmin'));
-const DevicesManagement = lazy(() => import('@/views/device/devices'));
-const AttendanceManagement = lazy(() => import('@/views/device/attendance'));
+// Lazy load device views
+const DeviceAdminManagement = lazyLoad(() => import('@/views/device/deviceAdmin'));
+const DevicesManagement = lazyLoad(() => import('@/views/device/devices'));
+const AttendanceManagement = lazyLoad(() => import('@/views/device/attendance'));
 const DeviceRoutes: RouteObject = {
   path: '/device',
   element: <MainLayout />,

@@ -22,7 +22,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -36,17 +35,7 @@ import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
 import { ThemeSwitcher } from '@/theme';
 import { notifications, UserRole } from '@/types';
-import {
-  Bell,
-  ChevronDown,
-  HelpCircle,
-  LogOut,
-  Mail,
-  Menu,
-  Search,
-  Settings,
-  User,
-} from 'lucide-react';
+import { Bell, ChevronDown, HelpCircle, LogOut, Mail, Menu, Settings, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 const Navbar = () => {
@@ -64,7 +53,7 @@ const Navbar = () => {
 
     try {
       setIsChangingRole(true);
-      setShowLoader(true); // Show loader
+      setShowLoader(true);
       setCurrentRole(role);
       navigate(getDashboardLink(role));
       toast({
@@ -274,7 +263,7 @@ const Navbar = () => {
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center xl:gap-4">
             <ThemeSwitcher />
 
             <Popover>

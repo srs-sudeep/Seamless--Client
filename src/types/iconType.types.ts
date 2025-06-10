@@ -53,6 +53,8 @@ import {
   TabletSmartphone,
   ServerCog,
   CalendarCheck,
+  BookLock,
+  NotebookTabs,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -109,4 +111,6 @@ export const iconMap = {
   devices: TabletSmartphone,
   service: ServerCog,
   attendance: CalendarCheck,
+  bookLock: BookLock,
+  slot: NotebookTabs,
 };

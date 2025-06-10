@@ -70,8 +70,12 @@ const UserManagement = () => {
   };
 
   return (
-    <HelmetWrapper title="Users | Seamless">
-      <div className="max-w-5xl mx-auto p-6">
+    <HelmetWrapper
+      title="Users | Seamless"
+      heading="User Management"
+      subHeading="Manage users, roles, and permissions for your organization."
+    >
+      <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -84,7 +88,7 @@ const UserManagement = () => {
               Active: customRender.Active(row.Active),
             }))}
             customRender={{}}
-            className="bg-background"
+            className="bg-background rounded-xl"
             onRowClick={row => setEditUser(row._row)}
           />
         )}

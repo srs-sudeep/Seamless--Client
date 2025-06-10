@@ -11,7 +11,7 @@ const MainLayout = () => {
         <ModuleSidebar />
         <div className="flex-1 flex flex-col overflow-auto bg-accent">
           <Navbar />
-          <main className="flex-1 p-6 bg-background mt-7 mx-6 mb-0 rounded-xl">
+          <main className="flex-1 bg-background mt-7 mx-6 mb-0 rounded-xl">
             <Outlet />
           </main>
           <MainFooter />

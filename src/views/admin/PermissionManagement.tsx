@@ -29,7 +29,7 @@ const PermissionManagement = () => {
   const createMutation = useCreatePermission();
 
   const [editPermission, setEditPermission] = useState<Permission | null>(null);
-  const [groupByResource, setGroupByResource] = useState(false);
+  const [groupByResource] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const grouped = useMemo(() => {
@@ -163,36 +163,7 @@ const PermissionManagement = () => {
 
   return (
     <HelmetWrapper title="Permissions | Seamless">
-      <div className="max-w-5xl mx-auto p-6">
-        <div className="flex items-center justify-end mb-6">
-          <div className="flex gap-2">
-            <Button
-              variant={groupByResource ? 'default' : 'outline'}
-              onClick={() => setGroupByResource(g => !g)}
-            >
-              {groupByResource ? 'Ungroup' : 'Group by Resource'}
-            </Button>
-            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Permission
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Permission</DialogTitle>
-                </DialogHeader>
-                <DynamicForm
-                  schema={schema}
-                  onSubmit={handleCreate}
-                  onCancel={() => setCreateDialogOpen(false)}
-                  submitButtonText="Create"
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+      <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -200,7 +171,6 @@ const PermissionManagement = () => {
         ) : (
           Object.entries(grouped).map(([resource, perms]) => (
             <div key={resource} className="mb-8">
-              {groupByResource && <h2 className="text-lg font-semibold mb-2">{resource}</h2>}
               <DynamicTable
                 data={getTableData(perms).map(row => ({
                   ...row,
@@ -208,7 +178,31 @@ const PermissionManagement = () => {
                   Delete: customRender.Delete('', row._row),
                 }))}
                 customRender={{}}
-                className="bg-background"
+                className="bg-background rounded-xl"
+                tableHeading={resource} // <-- Pass resource as table heading
+                headerActions={
+                  <div className="flex gap-2">
+                    <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button>
+                          <Plus className="w-4 h-4 mr-2" />
+                          Create Permission
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Create Permission</DialogTitle>
+                        </DialogHeader>
+                        <DynamicForm
+                          schema={schema}
+                          onSubmit={handleCreate}
+                          onCancel={() => setCreateDialogOpen(false)}
+                          submitButtonText="Create"
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                }
               />
             </div>
           ))

@@ -82,7 +82,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 space-y-4 transition-all duration-300">
+      <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 space-y-4 transition-all duration-300">
         {tableHeading && (
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-2">
             {toSentenceCase(tableHeading)}
@@ -91,9 +91,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
         {(!disableSearch || filterConfig.length > 0 || headerActions) && (
           <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
-            <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-wrap items-end  md:gap-4">
               {!disableSearch && (
-                <div className="flex-1 min-w-sm">
+                <div className="flex-1 min-w-full">
                   <Input
                     placeholder="Search across all columns..."
                     value={searchTerm}

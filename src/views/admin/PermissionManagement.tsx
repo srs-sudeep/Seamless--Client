@@ -162,7 +162,11 @@ const PermissionManagement = () => {
     }));
 
   return (
-    <HelmetWrapper title="Permissions | Seamless">
+    <HelmetWrapper
+      title="Permissions | Seamless"
+      heading="Permission Management"
+      subHeading="Configure and manage granular permissions, define access rights, and control user capabilities."
+    >
       <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">

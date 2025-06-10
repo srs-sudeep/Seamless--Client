@@ -215,7 +215,11 @@ const RolesManagement = () => {
     }));
 
   return (
-    <HelmetWrapper title="Roles | Seamless">
+    <HelmetWrapper
+      title="Roles | Seamless"
+      heading="Role Management"
+      subHeading="Define and manage user roles, assign permissions, and control access levels across the application."
+    >
       <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">

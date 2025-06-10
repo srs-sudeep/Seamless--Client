@@ -137,7 +137,11 @@ const ServiceManagement = () => {
   };
 
   return (
-    <HelmetWrapper title="Services | Seamless">
+    <HelmetWrapper
+      title="Services | Seamless"
+      heading="Service Management"
+      subHeading="Monitor and manage application services, track health status, and configure service endpoints."
+    >
       <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">

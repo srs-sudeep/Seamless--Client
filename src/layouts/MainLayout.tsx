@@ -9,9 +9,9 @@ const MainLayout = () => {
     <SidebarProvider>
       <div className="flex h-screen overflow-hidden relative">
         <ModuleSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-auto bg-accent">
           <Navbar />
-          <main className="flex-1 overflow-auto p-6 bg-background">
+          <main className="flex-1 p-6 bg-background mt-7 mx-6 mb-0 rounded-xl">
             <Outlet />
           </main>
           <MainFooter />

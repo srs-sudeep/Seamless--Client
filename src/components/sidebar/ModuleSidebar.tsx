@@ -195,18 +195,21 @@ const ModuleSidebar = () => {
           <AppLogo short className="w-10 h-10 text-sidebar-foreground" />
         </div>
         <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
-        <button
-          className={
-            'mt-4 mb-2 p-1 rounded-full bg-sidebar-accent/10 hover:bg-sidebar-accent transition-colors'
-          }
-          onClick={() => setIsSidebarOpen(v => !v)}
-        >
-          {isSidebarOpen ? (
-            <ChevronLeft className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
-          ) : (
-            <ChevronRight className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
-          )}
-        </button>
+        {/* Only show the open/close button on non-mobile screens */}
+        {!isMobile && (
+          <button
+            className={
+              'mt-4 mb-2 p-1 rounded-full bg-sidebar-accent/10 hover:bg-sidebar-accent transition-colors'
+            }
+            onClick={() => setIsSidebarOpen(v => !v)}
+          >
+            {isSidebarOpen ? (
+              <ChevronLeft className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
+            ) : (
+              <ChevronRight className="h-5 w-5 text-sidebar-foreground hover:text-sidebar-accent-foreground" />
+            )}
+          </button>
+        )}
       </div>
 
       <AnimatePresence mode="wait">

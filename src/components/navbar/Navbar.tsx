@@ -104,7 +104,7 @@ const Navbar = () => {
   };
   if (isMobile) {
     return (
-      <div className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 border-b rounded-b-xl shadow-2x py-3 bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-theme">
+      <div className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 border-b rounded-b-xl shadow-2xl py-3 bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-theme">
         <div className="md:hidden mr-2">
           <button onClick={toggleSidebar}>
             <Menu className="w-6 h-6" />
@@ -129,12 +129,6 @@ const Navbar = () => {
               </DrawerHeader>
 
               <div className="space-y-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search..." className="pl-10 pr-4 py-2 rounded-lg border" />
-                </div>
-
                 {/* Notifications */}
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground font-medium text-sm">
@@ -211,43 +205,72 @@ const Navbar = () => {
       {/* Full Page Loader */}
       {showLoader && <FullPageLoader />}
 
-      <div className="isolate sticky top-2 border mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl py-3 h-24 px-6  bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-sm">
+      <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl dark:bg-gray-50/10 shadow-lg py-3 h-24 px-6 backdrop-blur-sm">
         <div className="flex items-center justify-between w-full">
           {/* Left side with breadcrumbs and page title */}
           <div className="flex flex-col justify-center">
-            <Breadcrumb className="flex flex-wrap items-center space-x-1 text-base font-medium text-muted-foreground">
+            <Breadcrumb
+              className="flex flex-nowrap items-center space-x-1 text-base font-medium text-muted-foreground overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted-foreground/20"
+              style={{ maxWidth: '100vw' }}
+            >
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/" className="hover:text-primary">
+                  <BreadcrumbLink href="/" className="hover:text-primary ">
                     HorizonX
                   </BreadcrumbLink>
                 </BreadcrumbItem>
 
-                {getBreadcrumbItems().map((item, index) => (
-                  <React.Fragment key={index}>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbLink href={item.url} className="hover:text-primary">
-                        {item.name}
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                  </React.Fragment>
-                ))}
+                {/* Responsive: show all on md+, only first and last on mobile */}
+                {getBreadcrumbItems().length > 2 ? (
+                  <>
+                    {/* On mobile, show first, ellipsis, last */}
+                    <span className="block md:hidden">
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <span className="px-2 text-muted-foreground">...</span>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbLink
+                          href={getBreadcrumbItems()[getBreadcrumbItems().length - 1].url}
+                          className="hover:text-primary"
+                        >
+                          {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </span>
+                    {/* On md+, show all */}
+                    <span className="hidden md:inline">
+                      {getBreadcrumbItems().map((item, index) => (
+                        <React.Fragment key={index}>
+                          <BreadcrumbSeparator />
+                          <BreadcrumbItem>
+                            <BreadcrumbLink href={item.url} className="hover:text-primary">
+                              {item.name}
+                            </BreadcrumbLink>
+                          </BreadcrumbItem>
+                        </React.Fragment>
+                      ))}
+                    </span>
+                  </>
+                ) : (
+                  // If only 1 or 2 items, show all
+                  getBreadcrumbItems().map((item, index) => (
+                    <React.Fragment key={index}>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href={item.url} className="hover:text-primary">
+                          {item.name}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  ))
+                )}
               </BreadcrumbList>
             </Breadcrumb>
-            <h1 className="text-3xl font-bold text-foreground">{getPageName()}</h1>
-          </div>
-
-          {/* Center - Search */}
-          <div className="flex-1 px-8">
-            <div className="relative max-w-xl mx-auto w-full">
-              <Search className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 w-full rounded-full bg-background/90 border border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 shadow-sm"
-              />
-            </div>
+            <h1 className="xl:text-3xl text-lg md:text-2xl font-bold text-foreground truncate">
+              {getPageName()}
+            </h1>
           </div>
 
           {/* Right side - Actions */}
@@ -312,7 +335,9 @@ const Navbar = () => {
                     role={currentRole || ''}
                     showInfo={false}
                   />
-                  <span className="hidden md:inline-block font-medium">{user?.name}</span>
+                  {!isMobile && (
+                    <span className="hidden xl:inline-block font-medium">{user?.name}</span>
+                  )}
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>

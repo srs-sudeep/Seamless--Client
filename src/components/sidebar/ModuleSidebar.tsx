@@ -141,6 +141,7 @@ const ModuleSidebar = () => {
               toggleExpanded(subModule.id);
             } else if (subModule.path) {
               navigate(subModule.path);
+              closeSidebar();
             }
           }}
         >

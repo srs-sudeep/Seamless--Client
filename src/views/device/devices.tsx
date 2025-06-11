@@ -185,8 +185,12 @@ const DevicesManagement = () => {
   });
 
   return (
-    <HelmetWrapper title="Devices | Seamless">
-      <div className="max-w-5xl mx-auto p-6">
+    <HelmetWrapper
+      title="Devices | Seamless"
+      heading="Device Management"
+      subHeading="Manage all devices and their assigned services."
+    >
+      <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -202,7 +206,6 @@ const DevicesManagement = () => {
               Delete: customRender.Delete('', row._row),
             }))}
             customRender={customRender}
-            className="bg-background"
           />
         )}
         <Dialog

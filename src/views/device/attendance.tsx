@@ -17,8 +17,12 @@ const AttendanceManagement = () => {
     }));
 
   return (
-    <HelmetWrapper title="Attendance | Seamless">
-      <div className="max-w-5xl mx-auto p-6">
+    <HelmetWrapper
+      title="Attendance | Seamless"
+      heading="Attendance Management"
+      subHeading="View device attendance logs."
+    >
+      <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -28,7 +32,6 @@ const AttendanceManagement = () => {
             data={getTableData(attendances).map(row => ({
               ...row,
             }))}
-            className="bg-background"
           />
         )}
       </div>

@@ -153,7 +153,7 @@ const PermissionManagement = () => {
   const getTableData = (perms: Permission[]) =>
     perms.map(perm => ({
       Name: perm.name,
-      PermissionID: perm.permission_id,
+      PermissionId: perm.permission_id,
       Description: perm.description,
       Action: perm.action,
       Edit: '',
@@ -182,7 +182,6 @@ const PermissionManagement = () => {
                   Delete: customRender.Delete('', row._row),
                 }))}
                 customRender={{}}
-                className="bg-background rounded-xl"
                 tableHeading={resource} // <-- Pass resource as table heading
                 headerActions={
                   <div className="flex gap-2">

@@ -4,6 +4,7 @@ import { type RouteObject } from 'react-router-dom';
 
 // Lazy load admin views
 const SlotsManagement = lazy(() => import('@/views/bodhika/slotsManagement'));
+const RoomsManagement = lazy(() => import('@/views/bodhika/roomsManagement'));
 const BodhikaRoutes: RouteObject = {
   path: '/bodhika',
   element: <MainLayout />,
@@ -11,6 +12,10 @@ const BodhikaRoutes: RouteObject = {
     {
       path: 'slots-management',
       element: <SlotsManagement />,
+    },
+    {
+      path: 'rooms-list',
+      element: <RoomsManagement />,
     },
   ],
 };

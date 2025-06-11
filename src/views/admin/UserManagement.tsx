@@ -1,12 +1,4 @@
-import {
-  HelmetWrapper,
-  Button,
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  DynamicTable,
-  toast,
-} from '@/components';
+import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } from '@/components';
 import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -30,8 +22,8 @@ const UserManagement = () => {
   const getTableData = (users: UserAPI[]) =>
     users.map(user => ({
       Name: user.name,
-      'User ID': user.ldapid,
-      'ID Number': user.idNumber,
+      'Ldap Id': user.ldapid,
+      'Id Number': user.idNumber,
       Active: user.is_active,
       Roles: user.roles
         .filter(r => r.isAssigned)
@@ -88,7 +80,6 @@ const UserManagement = () => {
               Active: customRender.Active(row.Active),
             }))}
             customRender={{}}
-            className="bg-background rounded-xl"
             onRowClick={row => setEditUser(row._row)}
           />
         )}
@@ -99,116 +90,185 @@ const UserManagement = () => {
           <SheetContent
             side="right"
             className="
-              p-0
+              p-0 
               fixed right-0 top-1/2 -translate-y-1/2
-              h-auto rounded-lg shadow-lg bg-background
-              min-h-[300px]
-              flex flex-col justify-center
-              w-full
-              sm:w-[90vw]
-              md:min-w-[60vw]
-              lg:min-w-[50vw]
-              max-w-2xl
-              max-h-[80vh]
-              overflow-y-auto
+              min-h-fit max-h-[100vh]
+              sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
+              bg-card border-l border-border
+              shadow-2xl
+              overflow-hidden
+              flex flex-col
+              rounded-l-xl
             "
+            style={{ width: '60vw', maxWidth: '1200px' }}
           >
-            <div className="p-6">
-              {editUser && (
-                <>
-                  <h2 className="text-2xl font-semibold mb-4">User Details</h2>
-                  <div className="mb-6 space-y-2">
-                    <div>
-                      <span className="font-semibold">Name:</span> {editUser.name}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-8 space-y-6">
+                {editUser && (
+                  <>
+                    {/* Header */}
+                    <div className="border-b border-border pb-4">
+                      <h2 className="text-2xl font-bold text-foreground mb-2">User Details</h2>
+                      <p className="text-sm text-muted-foreground">
+                        Manage user information and role assignments
+                      </p>
                     </div>
-                    <div>
-                      <span className="font-semibold">User ID:</span> {editUser.ldapid}
-                    </div>
-                    <div>
-                      <span className="font-semibold">ID Number:</span> {editUser.idNumber}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Active:</span>{' '}
-                      <span
-                        className={
-                          editUser.is_active
-                            ? 'text-green-600 font-semibold'
-                            : 'text-red-600 font-semibold'
-                        }
-                      >
-                        {editUser.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-semibold">Assigned Roles:</span>{' '}
-                      {editUser.roles.filter(r => r.isAssigned).length > 0 ? (
-                        editUser.roles
-                          .filter(r => r.isAssigned)
-                          .map(role => (
-                            <span
-                              key={role.role_id}
-                              className="ml-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-medium border border-blue-200"
-                            >
-                              {role.name}
-                            </span>
-                          ))
-                      ) : (
-                        <span className="text-gray-400 text-xs ml-1">No Roles</span>
-                      )}
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">Edit Roles</h3>
-                  <div className="space-y-4">
-                    {editUser.roles.map((role: UserRoleAPI) => {
-                      const isLoading = assignRoleToUser.isPending || removeRoleFromUser.isPending;
-                      const checked = !!role.isAssigned;
-                      return (
-                        <div
-                          key={role.role_id}
-                          className="flex items-center justify-between border-b pb-2"
-                        >
-                          <span className="font-medium">{role.name}</span>
-                          <button
-                            type="button"
-                            className={`w-10 h-5 flex items-center rounded-full p-1 transition-colors duration-200 ${
-                              checked ? 'bg-green-500' : 'bg-gray-300'
-                            } ${isLoading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-                            disabled={isLoading}
-                            aria-pressed={checked}
-                            onClick={() => {
-                              if (isLoading) return;
-                              if (checked) {
-                                removeRoleFromUser.mutate(
-                                  { user_id: editUser.ldapid, role_id: role.role_id },
-                                  {
-                                    onSuccess: () => toast({ title: 'Role removed' }),
-                                  }
-                                );
-                              } else {
-                                assignRoleToUser.mutate(
-                                  { user_id: editUser.ldapid, role_id: role.role_id },
-                                  {
-                                    onSuccess: () => toast({ title: 'Role assigned' }),
-                                  }
-                                );
-                              }
-                            }}
-                          >
-                            <span
-                              className={`bg-white w-3.5 h-3.5 rounded-full shadow-md transform transition-transform duration-200 ${
-                                checked ? 'translate-x-5' : ''
-                              }`}
-                            />
-                          </button>
+
+                    {/* User Information Card */}
+                    <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
+                        Basic Information
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm font-medium text-muted-foreground">Name</span>
+                          <span className="text-sm font-semibold text-foreground">
+                            {editUser.name}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                  <Button className="mt-6" onClick={() => setEditUser(null)}>
-                    Close
-                  </Button>
-                </>
-              )}
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm font-medium text-muted-foreground">LDAP ID</span>
+                          <span className="text-sm font-mono text-foreground">
+                            {editUser.ldapid}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-border/50">
+                          <span className="text-sm font-medium text-muted-foreground">
+                            ID Number
+                          </span>
+                          <span className="text-sm font-mono text-foreground">
+                            {editUser.idNumber}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-2">
+                          <span className="text-sm font-medium text-muted-foreground">Status</span>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              editUser.is_active
+                                ? 'bg-green-100 text-green-700 border border-green-200'
+                                : 'bg-red-100 text-red-700 border border-red-200'
+                            }`}
+                          >
+                            {editUser.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Current Roles Display */}
+                    <div className="bg-muted/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
+                        Currently Assigned Roles
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {editUser.roles.filter(r => r.isAssigned).length > 0 ? (
+                          editUser.roles
+                            .filter(r => r.isAssigned)
+                            .map(role => (
+                              <span
+                                key={role.role_id}
+                                className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20"
+                              >
+                                {role.name}
+                              </span>
+                            ))
+                        ) : (
+                          <div className="w-full text-center py-8">
+                            <span className="text-muted-foreground text-sm">
+                              No roles currently assigned
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Role Management */}
+                    <div className="bg-muted/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
+                        Manage Role Assignments
+                      </h3>
+                      <div className="space-y-3">
+                        {editUser.roles.map((role: UserRoleAPI) => {
+                          const isLoading =
+                            assignRoleToUser.isPending || removeRoleFromUser.isPending;
+                          const checked = !!role.isAssigned;
+                          return (
+                            <div
+                              key={role.role_id}
+                              className="flex items-center justify-between p-3 rounded-lg bg-background border border-border hover:bg-muted/30 transition-colors"
+                            >
+                              <div className="flex flex-col">
+                                <span className="font-medium text-foreground">{role.name}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  Role ID: {role.role_id}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                className={`
+                                  relative w-12 h-6 flex items-center rounded-full p-1 
+                                  transition-all duration-200 ease-in-out
+                                  ${
+                                    checked
+                                      ? 'bg-green-500 shadow-inner'
+                                      : 'bg-muted-foreground/20 shadow-inner'
+                                  } 
+                                  ${
+                                    isLoading
+                                      ? 'opacity-50 cursor-not-allowed'
+                                      : 'cursor-pointer hover:scale-105'
+                                  }
+                                  focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+                                `}
+                                disabled={isLoading}
+                                aria-pressed={checked}
+                                aria-label={`${checked ? 'Remove' : 'Assign'} ${role.name} role`}
+                                onClick={() => {
+                                  if (isLoading) return;
+                                  if (checked) {
+                                    removeRoleFromUser.mutate(
+                                      { user_id: editUser.ldapid, role_id: role.role_id },
+                                      {
+                                        onSuccess: () =>
+                                          toast({
+                                            title: 'Role removed successfully',
+                                            description: `${role.name} has been removed from ${editUser.name}`,
+                                          }),
+                                      }
+                                    );
+                                  } else {
+                                    assignRoleToUser.mutate(
+                                      { user_id: editUser.ldapid, role_id: role.role_id },
+                                      {
+                                        onSuccess: () =>
+                                          toast({
+                                            title: 'Role assigned successfully',
+                                            description: `${role.name} has been assigned to ${editUser.name}`,
+                                          }),
+                                      }
+                                    );
+                                  }
+                                }}
+                              >
+                                <span
+                                  className={`
+                                    bg-background w-4 h-4 rounded-full shadow-sm
+                                    transform transition-transform duration-200 ease-in-out
+                                    ${checked ? 'translate-x-6' : 'translate-x-0'}
+                                  `}
+                                />
+                                {isLoading && (
+                                  <Loader2 className="absolute inset-0 m-auto w-3 h-3 animate-spin text-foreground" />
+                                )}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </SheetContent>
         </Sheet>

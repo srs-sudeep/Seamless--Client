@@ -182,7 +182,6 @@ const RouteManagement = () => {
           Icon: customRender.Icon(childRow.Icon),
         }))}
         customRender={customRender}
-        className="bg-background"
         expandableRows={true}
         expandedComponent={renderExpandedComponent}
         disableSearch={true}
@@ -214,7 +213,6 @@ const RouteManagement = () => {
                   Icon: customRender.Icon(row.Icon),
                 }))}
                 customRender={customRender}
-                className="bg-background rounded-xl"
                 expandableRows={true}
                 expandedComponent={renderExpandedComponent}
                 headerActions={

@@ -75,7 +75,7 @@ const ModuleSidebar = () => {
       if (module) {
         // Find all parent IDs leading to the active submodule
         const parentIds = findParentIds(module.subModules, location.pathname) || [];
-        setExpandedItems(parentIds);
+        setExpandedItems(prev => Array.from(new Set([...prev, ...parentIds])));
       }
     }
   }, [isLoading, modules, activeModule, location.pathname]);
@@ -133,7 +133,7 @@ const ModuleSidebar = () => {
             isActive
               ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               : 'text-sidebar-foreground/80',
-            isParentActive && !isActive && 'text-sidebar-accent-foreground',
+            isParentActive && !isActive && 'text-sidebar-accent',
             level > 0 && 'ml-4 text-base'
           )}
           onClick={() => {

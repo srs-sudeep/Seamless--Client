@@ -55,6 +55,9 @@ import {
   CalendarCheck,
   BookLock,
   NotebookTabs,
+  DoorOpen,
+  ListMinus,
+  Unplug,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -113,4 +116,7 @@ export const iconMap = {
   attendance: CalendarCheck,
   bookLock: BookLock,
   slot: NotebookTabs,
+  rooms: DoorOpen,
+  list: ListMinus,
+  connect: Unplug,
 };

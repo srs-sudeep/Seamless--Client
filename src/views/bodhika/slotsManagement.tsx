@@ -156,6 +156,7 @@ const SlotsManagement = () => {
   const getTableData = (slots: any[]) =>
     slots.map(slot => ({
       Time: slot.time,
+      Slot: slot.slot_id,
       Day: slot.day,
       Edit: '',
       Delete: '',
@@ -183,7 +184,6 @@ const SlotsManagement = () => {
               Day: customRender.day(row.Day),
             }))}
             customRender={customRender}
-            className="bg-background rounded-xl"
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

@@ -158,7 +158,6 @@ const ServiceManagement = () => {
               'Health URL': customRender.health_url(row['Health URL']),
             }))}
             customRender={customRender}
-            className="bg-background rounded-xl"
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { TimeRangePicker } from '@/components/ui/timeRangePicker';
 import { type FieldType } from '@/types';
+import { parse } from 'date-fns';
 
 type DynamicFormProps = {
   schema: FieldType[];
@@ -10,6 +12,19 @@ type DynamicFormProps = {
   disabled?: boolean;
 };
 
+function parseTimeRangeString(str: string): { start?: Date; end?: Date } {
+  if (!str || typeof str !== 'string') return {};
+  const [startStr, endStr] = str.split(' - ');
+  if (!startStr || !endStr) return {};
+  // Use today's date for both, only time matters
+  const today = new Date();
+  const parseTime = (s: string) => parse(s, 'hh:mma', today);
+  return {
+    start: parseTime(startStr.trim()),
+    end: parseTime(endStr.trim()),
+  };
+}
+
 const DynamicForm: React.FC<DynamicFormProps> = ({
   schema,
   onSubmit,
@@ -18,7 +33,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   submitButtonText = 'Submit',
   disabled,
 }) => {
-  const [formData, setFormData] = useState<Record<string, any>>(defaultValues || {});
+  // If editing and timerange, convert string to {start, end} for picker
+  const initialFormData = { ...(defaultValues || {}) };
+  schema.forEach(field => {
+    if (
+      field.type === 'timerange' &&
+      initialFormData[field.name] &&
+      typeof initialFormData[field.name] === 'string'
+    ) {
+      initialFormData[field.name] = parseTimeRangeString(initialFormData[field.name]);
+    }
+  });
+
+  const [formData, setFormData] = useState<Record<string, any>>(initialFormData);
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -110,6 +137,20 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
   if (currentRow.length > 0) rows.push(currentRow);
 
+  // Helper to format time range as "hh:mmAM - hh:mmPM"
+  const formatTimeRange = (range: { start?: Date; end?: Date }) => {
+    if (!range?.start || !range?.end) return '';
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const format = (d: Date) => {
+      let h = d.getHours();
+      const m = pad(d.getMinutes());
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${pad(h)}:${m}${ampm}`;
+    };
+    return `${format(range.start)} - ${format(range.end)}`;
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mx-auto max-w-5xl w-full">
       {rows.map((row, rowIndex) => (
@@ -121,7 +162,18 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
             >
               <label className="mb-1">{field.label}</label>
 
-              {field.type === 'toggle' ? (
+              {field.type === 'timerange' ? (
+                <TimeRangePicker
+                  value={formData[field.name]}
+                  onChange={range => {
+                    setFormData({
+                      ...formData,
+                      [field.name]: range,
+                    });
+                  }}
+                  placeholder="Select time range"
+                />
+              ) : field.type === 'toggle' ? (
                 <label className="flex items-center gap-2">
                   <button
                     type="button"

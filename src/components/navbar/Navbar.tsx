@@ -79,7 +79,7 @@ const Navbar = () => {
   // Get current page name from path
   const getPageName = () => {
     const path = location.pathname.split('/');
-    return path[path.length - 1].charAt(0).toUpperCase() + path[path.length - 1].slice(1);
+    return path[1].charAt(0).toUpperCase() + path[1].slice(1);
   };
 
   // Generate breadcrumb items

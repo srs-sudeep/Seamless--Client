@@ -136,7 +136,6 @@ const ModuleManagement = () => {
               Icon: customRender.icon(row.Icon),
             }))}
             customRender={customRender}
-            className="bg-background rounded-xl"
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

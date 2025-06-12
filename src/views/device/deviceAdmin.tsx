@@ -110,29 +110,12 @@ const DeviceAdminManagement = () => {
     }));
 
   return (
-    <HelmetWrapper title="Device Admins | Seamless">
-      <div className="max-w-5xl mx-auto p-6">
-        <div className="flex items-center justify-end mb-6">
-          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Device Admin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create Device Admin</DialogTitle>
-              </DialogHeader>
-              <DynamicForm
-                schema={createSchema}
-                onSubmit={handleCreate}
-                onCancel={() => setCreateDialogOpen(false)}
-                submitButtonText="Create"
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
+    <HelmetWrapper
+      title="Device Admins | Seamless"
+      heading="Device Admin Management"
+      subHeading="Manage device administrators and their institute assignments."
+    >
+      <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -145,7 +128,27 @@ const DeviceAdminManagement = () => {
               Delete: customRender.Delete('', row._row),
             }))}
             customRender={customRender}
-            className="bg-background"
+            headerActions={
+              <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Device Admin
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create Device Admin</DialogTitle>
+                  </DialogHeader>
+                  <DynamicForm
+                    schema={createSchema}
+                    onSubmit={handleCreate}
+                    onCancel={() => setCreateDialogOpen(false)}
+                    submitButtonText="Create"
+                  />
+                </DialogContent>
+              </Dialog>
+            }
           />
         )}
         <Dialog

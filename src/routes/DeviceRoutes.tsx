@@ -6,6 +6,7 @@ import { type RouteObject } from 'react-router-dom';
 const DeviceAdminManagement = lazyLoad(() => import('@/views/device/deviceAdmin'));
 const DevicesManagement = lazyLoad(() => import('@/views/device/devices'));
 const AttendanceManagement = lazyLoad(() => import('@/views/device/attendance'));
+const RoomDevicesManagement = lazyLoad(() => import('@/views/device/roomDevices'));
 const DeviceRoutes: RouteObject = {
   path: '/device',
   element: <MainLayout />,
@@ -21,6 +22,10 @@ const DeviceRoutes: RouteObject = {
     {
       path: 'attendance',
       element: <AttendanceManagement />,
+    },
+    {
+      path: 'room-devices',
+      element: <RoomDevicesManagement />,
     },
   ],
 };

@@ -58,6 +58,10 @@ import {
   DoorOpen,
   ListMinus,
   Unplug,
+  Atom,
+  List,
+  SquarePlus,
+  UserPen,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -119,4 +123,8 @@ export const iconMap = {
   rooms: DoorOpen,
   list: ListMinus,
   connect: Unplug,
+  course: Atom,
+  lists: List,
+  add: SquarePlus,
+  instructor: UserPen,
 };

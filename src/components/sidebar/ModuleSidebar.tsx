@@ -230,12 +230,15 @@ const ModuleSidebar = () => {
             'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
           )}
         >
-          <AppLogo name className="m-2 pt-3" />
-          {/* Header with module name */}
-          <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-            <h2 className="text-xl font-semibold text-sidebar-foreground">
-              {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
-            </h2>
+          <div className="px-4 pt-3 border-b border-sidebar-border flex flex-col items-start space-y-2 h-[120px]">
+            <div className="shrink-0">
+              <AppLogo name className="m-2 pt-3" />
+            </div>
+            <div className="h-6">
+              <h2 className="text-xl font-semibold text-sidebar-foreground">
+                {modules.find(m => m.id === activeModule)?.label || 'Dashboard'}
+              </h2>
+            </div>
           </div>
 
           {/* Search box */}

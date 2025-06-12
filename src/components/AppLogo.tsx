@@ -21,7 +21,7 @@ const getLogoSrc = (
   } else if (short) {
     return theme === 'dark' ? '/WhiteX.svg' : '/X.svg';
   }
-  return theme === 'dark' ? '/WhiteLogo.svg' : '/Logo.svg';
+  return theme === 'dark' ? '/WhiteX.svg' : '/X.svg';
 };
 
 const AppLogo = ({ className, horizontal = false, name = false, short = false }: AppLogoProps) => {

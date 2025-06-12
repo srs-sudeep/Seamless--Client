@@ -120,11 +120,7 @@ const ModuleManagement = () => {
     }));
 
   return (
-    <HelmetWrapper
-      title="Modules | Seamless"
-      heading="Module Management"
-      subHeading="Create and manage application modules, organize features, and control module visibility."
-    >
+    <HelmetWrapper title="Modules | Seamless">
       <div className="mx-auto p-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">

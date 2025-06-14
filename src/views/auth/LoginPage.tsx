@@ -165,7 +165,7 @@ const LoginPage: React.FC = () => {
             <div
               className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30"
               style={{
-                backgroundImage: 'url("./LoginImage.webp")',
+                backgroundImage: 'url("./images/Login/LoginImage.webp")',
               }}
             />
           </div>
@@ -180,14 +180,14 @@ const LoginPage: React.FC = () => {
                   <div className="flex flex-col items-center">
                     {/* IIT Bhilai Logo (common to both modes) */}
                     <img
-                      src="./IIT_Bhilai_Logo.svg"
+                      src="./images/Login/IIT_Bhilai_Logo.svg"
                       alt="IIT Bhilai Logo"
                       className="w-[12vw] h-auto mb-2 -mt-4"
                     />
 
                     {/* Horizontal Logo for Light Mode */}
                     <img
-                      src="./LogoHorizontal.svg"
+                      src="./images/Login/LogoHorizontal.svg"
                       alt="Logo"
                       className="w-[25vw] h-[20vh] object-contain block dark:hidden"
                     />

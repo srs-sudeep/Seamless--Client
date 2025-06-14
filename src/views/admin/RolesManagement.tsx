@@ -52,7 +52,6 @@ const RolesManagement = () => {
   const addPermissionToRole = useAddPermissionToRole();
   const removePermissionFromRole = useRemovePermissionFromRole();
 
-  // 1. Find all unique actions (excluding '*')
   const allActions: string[] = Array.from(
     new Set(
       permissions

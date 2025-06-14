@@ -12,7 +12,6 @@ const Router = () => {
   const { availableRoutes, isLoading } = useAvailableRoutes();
   const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
 
-  // Always call useRoutes
   const routes = useRoutes([
     LandingRoutes,
     AuthRoutes,

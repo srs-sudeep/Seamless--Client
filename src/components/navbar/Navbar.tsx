@@ -100,7 +100,7 @@ const Navbar = () => {
           </button>
         </div>
         <div className="text-sm font-semibold text-muted-foreground">
-          <AppLogo horizontal />
+          <AppLogo horizontal imgClassname="w-[80vw] h-[7vh]" />
         </div>
         <div className="flex flex-row">
           <div>

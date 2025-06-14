@@ -193,7 +193,7 @@ const ModuleSidebar = () => {
     <div className="h-full flex">
       <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-background z-40">
         <div className="mb-6">
-          <AppLogo short className="w-10 h-10 text-sidebar-foreground" />
+          <AppLogo short className=" text-sidebar-foreground" imgClassname="w-13 h-15" />
         </div>
         <div className="flex-1 flex flex-col items-center">{modules.map(renderModuleIcon)}</div>
         {/* Only show the open/close button on non-mobile screens */}
@@ -233,7 +233,7 @@ const ModuleSidebar = () => {
         >
           <div className="px-4 pt-3 border-b border-sidebar-border flex flex-col items-start space-y-2 h-[120px]">
             <div className="shrink-0">
-              <AppLogo name className="m-2 pt-3" />
+              <AppLogo name className="m-2 pt-3" imgClassname="w-full h-full" />
             </div>
             <div className="h-6">
               <h2 className="text-xl font-semibold text-sidebar-foreground">

@@ -6,6 +6,7 @@ interface AppLogoProps {
   horizontal?: boolean;
   name?: boolean;
   short?: boolean;
+  imgClassname?: string;
 }
 
 const getLogoSrc = (
@@ -24,14 +25,20 @@ const getLogoSrc = (
   return theme === 'dark' ? '/WhiteX.svg' : '/X.svg';
 };
 
-const AppLogo = ({ className, horizontal = false, name = false, short = false }: AppLogoProps) => {
+const AppLogo = ({
+  className,
+  horizontal = false,
+  name = false,
+  short = false,
+  imgClassname,
+}: AppLogoProps) => {
   const { theme } = useTheme();
   const logoSrc = getLogoSrc(theme, horizontal, name, short);
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className="relative">
-        <img src={logoSrc} alt="Logo" className="object-contain w-full h-full" />
+        <img src={logoSrc} alt="Logo" className={cn('object-contain', imgClassname)} />
       </div>
     </div>
   );

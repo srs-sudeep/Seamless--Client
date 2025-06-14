@@ -32,7 +32,6 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!email || !password) {
       toast({
         title: 'Error',
@@ -41,17 +40,31 @@ const LoginPage: React.FC = () => {
       });
       return;
     }
-
     mutation.mutate({ ldapid: email, password });
   };
 
   return (
     <HelmetWrapper title="Login | Seamless">
-      <div className="h-1/3 flex">
-        {/* Left form side */}
-        <div className="flex-1 flex items-center justify-center p-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 border-0">
+      {/* Top-level layout with flex-col on mobile, row on desktop */}
+      <div className="flex flex-col lg:flex-row">
+        {/* Left side (form section) */}
+        <div className="flex-1 flex flex-col items-center justify-start p-8">
+          {/* Mobile/Tablet Logo (top center) */}
+          <div className="w-full flex lg:hidden justify-center mt-6 mb-4">
+            <img
+              src="./LogoHorizontal.svg"
+              alt="Logo"
+              className="w-[50vw] h-auto object-contain block dark:hidden"
+            />
+            <img
+              src="./WhiteLogoHorizontal.svg"
+              alt="Logo"
+              className="w-[50vw] h-auto object-contain hidden dark:block"
+            />
+          </div>
+
           <div className="w-full max-w-md">
-            {/* Logo/Brand section */}
+            {/* Logo/Brand section (desktop header text) */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-6 shadow-lg">
                 <svg
@@ -76,7 +89,7 @@ const LoginPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Login card */}
+            {/* Login form card */}
             <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-8">
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
@@ -142,9 +155,9 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right side - Image section */}
+        {/* Right side - Image and desktop logo */}
         <div className="hidden lg:flex flex-1 relative justify-center items-center overflow-hidden">
-          {/* Background with modern clip-path */}
+          {/* Background */}
           <div
             className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-400 to-indigo-800"
             style={{
@@ -161,7 +174,7 @@ const LoginPage: React.FC = () => {
               />
             </div>
 
-            {/* Main background image */}
+            {/* Background image */}
             <div
               className="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-30"
               style={{
@@ -170,29 +183,22 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          {/* Content overlay */}
+          {/* Desktop logo */}
           <div className="relative z-10 flex items-center justify-center p-12 text-white">
             <div className="text-center">
               <div className="mb-8">
-                {/* Logo container with fixed dimensions */}
                 <div className="relative mx-auto w-[25vw] h-[35vh] flex flex-col items-center justify-center space-y-4">
-                  {/* IIT Bhilai logo (newly added) */}
                   <div className="flex flex-col items-center">
-                    {/* IIT Bhilai Logo (common to both modes) */}
                     <img
                       src="./IIT_Bhilai_Logo.svg"
                       alt="IIT Bhilai Logo"
                       className="w-[12vw] h-auto mb-2 -mt-4"
                     />
-
-                    {/* Horizontal Logo for Light Mode */}
                     <img
                       src="./LogoHorizontal.svg"
                       alt="Logo"
                       className="w-[25vw] h-[20vh] object-contain block dark:hidden"
                     />
-
-                    {/* Horizontal Logo for Dark Mode */}
                     <img
                       src="./WhiteLogoHorizontal.svg"
                       alt="Logo"
@@ -201,11 +207,6 @@ const LoginPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <h2 className="text-4xl font-bold mb-6 leading-tight text-center">
-                <span className="block ml-20 text-black dark:text-white">Seamless</span>
-                <span className="block  text-black dark:text-white ml-20">Experience</span>
-              </h2> */}
             </div>
           </div>
         </div>

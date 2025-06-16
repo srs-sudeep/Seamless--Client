@@ -8,6 +8,9 @@ import {
   DynamicTable,
   HelmetWrapper,
   toast,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '@/components';
 import { useCreateRoute, useDeleteRoute, useRoles, useSidebarItems, useUpdateRoute } from '@/hooks';
 import { FieldType } from '@/types';
@@ -96,51 +99,65 @@ const RouteManagement = () => {
 
   const customRender = {
     Edit: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={e => {
-          e.stopPropagation();
-          setEditRoute({
-            ...row._row,
-            module_id: row._module_id,
-            parent_id: row._parent_id,
-            is_active: row._row.isActive,
-            role_ids: (row._row.roles || []).map((r: any) => String(r.role_id)),
-          });
-        }}
-      >
-        <Pencil className="w-4 h-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={e => {
+              e.stopPropagation();
+              setEditRoute({
+                ...row._row,
+                module_id: row._module_id,
+                parent_id: row._parent_id,
+                is_active: row._row.isActive,
+                role_ids: (row._row.roles || []).map((r: any) => String(r.role_id)),
+              });
+            }}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Edit Child Route</TooltipContent>
+      </Tooltip>
     ),
     Delete: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="destructive"
-        onClick={e => {
-          e.stopPropagation();
-          if (row._row && row._row.id) {
-            deleteMutation.mutate(row._row.id);
-            toast({ title: 'Route deleted' });
-          }
-        }}
-        disabled={false}
-      >
-        <Trash2 className="w-4 h-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="destructive"
+            onClick={e => {
+              e.stopPropagation();
+              if (row._row && row._row.id) {
+                deleteMutation.mutate(row._row.id);
+                toast({ title: 'Route deleted' });
+              }
+            }}
+            disabled={false}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Delete Route</TooltipContent>
+      </Tooltip>
     ),
     Create: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="outline"
-        onClick={e => {
-          e.stopPropagation();
-          setCreateDialogParent({ module_id: row._module_id, parent_id: row._row.id });
-        }}
-        title="Add Child Route"
-      >
-        <Plus className="w-4 h-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={e => {
+              e.stopPropagation();
+              setCreateDialogParent({ module_id: row._module_id, parent_id: row._row.id });
+            }}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Add Child Route</TooltipContent>
+      </Tooltip>
     ),
     Active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>

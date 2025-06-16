@@ -249,7 +249,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               subField.type === 'select' ? (
                                 <select
                                   key={subField.name}
-                                  className="border p-2 rounded-md"
+                                  className="border p-2 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                                   value={item[subField.name]}
                                   onChange={e =>
                                     handleArrayFieldChange(
@@ -278,7 +278,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                   key={subField.name}
                                   type={subField.type}
                                   placeholder={subField.label}
-                                  className="border p-2 rounded-md flex-1"
+                                  className="border p-2 rounded-md flex-1 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                   value={item[subField.name]}
                                   onChange={e =>
                                     handleArrayFieldChange(
@@ -295,7 +295,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                             {arrayFieldData[field.name].length > (field.minItems || 1) && (
                               <Trash2
-                                className="text-red-500 cursor-pointer hover:bg-red-100 rounded p-1"
+                                className="text-red-500 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900 rounded p-1"
                                 size={24}
                                 onClick={() => handleRemoveArrayFieldItem(field.name, idx)}
                                 style={{ minWidth: 24, minHeight: 24 }}
@@ -305,7 +305,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               />
                             )}
                             <Plus
-                              className="rounded cursor-pointer h-9 w-9 p-2 border"
+                              className="rounded cursor-pointer h-9 w-9 p-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                               onClick={() => handleAddArrayFieldItem(field.name, field.fields!)}
                               aria-label={`Add ${field.label}`}
                               tabIndex={0}
@@ -329,14 +329,15 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                       <label className="flex items-center gap-2">
                         <button
                           type="button"
-                          className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
-                            formData[field.name] ? 'bg-green-500' : 'bg-gray-300'
+                          role="switch"
+                          aria-checked={formData[field.name]}
+                          className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 focus:outline-none ${
+                            formData[field.name] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                           }`}
                           onClick={() =>
                             setFormData({ ...formData, [field.name]: !formData[field.name] })
                           }
                           disabled={disabled || field.disabled}
-                          aria-pressed={!!formData[field.name]}
                         >
                           <span
                             className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
@@ -344,7 +345,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             }`}
                           />
                         </button>
-                        <span className="ml-2 text-sm">
+                        <span
+                          className={`text-sm font-medium ${
+                            formData[field.name]
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-gray-600 dark:text-gray-300'
+                          }`}
+                        >
                           {formData[field.name] ? 'Active' : 'Inactive'}
                         </span>
                       </label>
@@ -354,7 +361,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3"
+                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       />
@@ -370,10 +377,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           type="button"
                           onClick={() => toggleDropdown(field.name)}
                           disabled={disabled || field.disabled}
-                          className="w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white flex justify-between items-center text-left"
+                          className="w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center text-left"
                         >
                           <span
-                            className={`${!formData[field.name]?.length ? 'text-gray-500' : ''}`}
+                            className={`${!formData[field.name]?.length ? 'text-gray-500 dark:text-gray-400' : ''}`}
                           >
                             {getSelectedLabel(field)}
                           </span>
@@ -394,7 +401,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
                         {/* Dropdown Options */}
                         {openDropdowns[field.name] && (
-                          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
                             {field.options?.map(opt => {
                               const optionValue = typeof opt === 'string' ? opt : opt.value;
                               const optionLabel = typeof opt === 'string' ? opt : opt.label;
@@ -405,8 +412,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               return (
                                 <div
                                   key={optionValue}
-                                  className={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${
-                                    isSelected ? 'bg-blue-50' : ''
+                                  className={`px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 ${
+                                    isSelected ? 'bg-blue-50 dark:bg-blue-900' : ''
                                   }`}
                                   onClick={() => handleMultiSelectToggle(field.name, optionValue)}
                                 >
@@ -416,7 +423,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                     onChange={() => {}} // Handled by parent onClick
                                     className="w-4 h-4"
                                   />
-                                  <span className={isSelected ? 'font-medium text-blue-700' : ''}>
+                                  <span
+                                    className={`dark:text-white ${isSelected ? 'font-medium text-blue-700 dark:text-blue-300' : ''}`}
+                                  >
                                     {optionLabel}
                                   </span>
                                 </div>
@@ -438,12 +447,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               return (
                                 <span
                                   key={val}
-                                  className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full border border-blue-200"
+                                  className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
                                 >
                                   {label}
                                   <button
                                     type="button"
-                                    className="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none"
+                                    className="ml-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 focus:outline-none"
                                     onClick={() => handleMultiSelectToggle(field.name, val)}
                                     aria-label="Remove"
                                     tabIndex={0}
@@ -461,7 +470,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         name={field.name}
                         required={field.required}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3"
+                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       >
@@ -525,8 +534,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3"
-                        value={defaultValues?.[field.name] ?? formData[field.name] ?? ''}
+                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                        value={formData[field.name] ?? ''}
                         disabled={disabled || field.disabled}
                       />
                     )}
@@ -537,7 +546,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           })()}
         </div>
       ))}
-
       <div className="flex justify-end gap-2 mt-8">
         {onCancel && (
           <button

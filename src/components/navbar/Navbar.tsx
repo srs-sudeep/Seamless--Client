@@ -25,6 +25,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   useToast,
   UserAvatar,
   FullPageLoader,
@@ -50,7 +53,6 @@ const Navbar = () => {
 
   const handleRoleChange = async (role: UserRole) => {
     if (currentRole === role) return;
-
     try {
       setIsChangingRole(true);
       setShowLoader(true);
@@ -79,10 +81,9 @@ const Navbar = () => {
   // Get current page name from path
   const getPageName = () => {
     const path = location.pathname.split('/');
-    return path[1].charAt(0).toUpperCase() + path[1].slice(1);
+    return path[1]?.charAt(0).toUpperCase() + path[1]?.slice(1);
   };
 
-  // Generate breadcrumb items
   const getBreadcrumbItems = () => {
     const paths = location.pathname.split('/').filter(Boolean);
     return paths.map((path, index) => {
@@ -91,21 +92,32 @@ const Navbar = () => {
       return { name, url };
     });
   };
+
   if (isMobile) {
     return (
       <div className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 border-b rounded-b-xl shadow-2xl py-3 bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-theme">
         <div className="md:hidden mr-2">
-          <button onClick={toggleSidebar}>
-            <Menu className="w-6 h-6" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button onClick={toggleSidebar}>
+                <Menu className="w-6 h-6" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Toggle Sidebar</TooltipContent>
+          </Tooltip>
         </div>
         <div className="text-sm font-semibold text-muted-foreground">
           <AppLogo horizontal imgClassname="w-[80vw] h-[7vh]" />
         </div>
         <div className="flex flex-row">
-          <div>
-            <ThemeSwitcher />
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <ThemeSwitcher />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Toggle Theme</TooltipContent>
+          </Tooltip>
           <Drawer direction="bottom">
             <DrawerTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -204,9 +216,14 @@ const Navbar = () => {
             >
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/" className="hover:text-primary ">
-                    HorizonX
-                  </BreadcrumbLink>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <BreadcrumbLink href="/" className="hover:text-primary">
+                        HorizonX
+                      </BreadcrumbLink>
+                    </TooltipTrigger>
+                    <TooltipContent>HorizonX</TooltipContent>
+                  </Tooltip>
                 </BreadcrumbItem>
 
                 {/* Responsive: show all on md+, only first and last on mobile */}
@@ -220,12 +237,19 @@ const Navbar = () => {
                       </BreadcrumbItem>
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
-                        <BreadcrumbLink
-                          href={getBreadcrumbItems()[getBreadcrumbItems().length - 1].url}
-                          className="hover:text-primary"
-                        >
-                          {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
-                        </BreadcrumbLink>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <BreadcrumbLink
+                              href={getBreadcrumbItems()[getBreadcrumbItems().length - 1].url}
+                              className="hover:text-primary"
+                            >
+                              {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
+                            </BreadcrumbLink>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
+                          </TooltipContent>
+                        </Tooltip>
                       </BreadcrumbItem>
                     </span>
                     {/* On md+, show all */}
@@ -234,9 +258,14 @@ const Navbar = () => {
                         <React.Fragment key={index}>
                           <BreadcrumbSeparator />
                           <BreadcrumbItem>
-                            <BreadcrumbLink href={item.url} className="hover:text-primary">
-                              {item.name}
-                            </BreadcrumbLink>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <BreadcrumbLink href={item.url} className="hover:text-primary">
+                                  {item.name}
+                                </BreadcrumbLink>
+                              </TooltipTrigger>
+                              <TooltipContent>{item.name}</TooltipContent>
+                            </Tooltip>
                           </BreadcrumbItem>
                         </React.Fragment>
                       ))}
@@ -248,9 +277,14 @@ const Navbar = () => {
                     <React.Fragment key={index}>
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
-                        <BreadcrumbLink href={item.url} className="hover:text-primary">
-                          {item.name}
-                        </BreadcrumbLink>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <BreadcrumbLink href={item.url} className="hover:text-primary">
+                              {item.name}
+                            </BreadcrumbLink>
+                          </TooltipTrigger>
+                          <TooltipContent>{item.name}</TooltipContent>
+                        </Tooltip>
                       </BreadcrumbItem>
                     </React.Fragment>
                   ))
@@ -264,17 +298,28 @@ const Navbar = () => {
 
           {/* Right side - Actions */}
           <div className="flex items-center xl:gap-4">
-            <ThemeSwitcher />
-
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <ThemeSwitcher />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>Toggle Theme</TooltipContent>
+            </Tooltip>
             <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-blue-500 text-xs flex items-center justify-center text-white">
-                    {notifications.filter(n => !n.read).length}
-                  </span>
-                </Button>
-              </PopoverTrigger>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <Bell className="h-5 w-5" />
+                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-blue-500 text-xs flex items-center justify-center text-white">
+                        {notifications.filter(n => !n.read).length}
+                      </span>
+                    </Button>
+                  </PopoverTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Notifications</TooltipContent>
+              </Tooltip>
               <PopoverContent className="w-80 p-0 rounded-xl shadow-lg" align="end">
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="font-medium">Notifications</h3>

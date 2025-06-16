@@ -47,6 +47,23 @@ const LoginPage: React.FC = () => {
 
   return (
     <HelmetWrapper title="Login | Seamless">
+      <div className="lg:hidden flex flex-col items-center mt-6 space-y-2">
+        <img
+          src="./images/Login/IIT_Bhilai_Logo.svg"
+          alt="IIT Bhilai Logo"
+          className="w-24 h-auto"
+        />
+        <img
+          src="./LogoHorizontal.svg"
+          alt="Logo Light"
+          className="w-48 h-auto object-contain block dark:hidden"
+        />
+        <img
+          src="./WhiteLogoHorizontal.svg"
+          alt="Logo Dark"
+          className="w-48 h-auto object-contain hidden dark:block"
+        />
+      </div>
       <div className="h-1/3 flex">
         {/* Left form side */}
         <div className="flex-1 flex items-center justify-center p-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 border-0">
@@ -187,7 +204,7 @@ const LoginPage: React.FC = () => {
 
                     {/* Horizontal Logo for Light Mode */}
                     <img
-                      src="./images/Login/LogoHorizontal.svg"
+                      src="./LogoHorizontal.svg"
                       alt="Logo"
                       className="w-[25vw] h-[20vh] object-contain block dark:hidden"
                     />

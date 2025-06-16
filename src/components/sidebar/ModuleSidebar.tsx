@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];
@@ -126,37 +127,46 @@ const ModuleSidebar = () => {
 
     return (
       <div key={subModule.id} className="mb-1">
-        <div
-          className={cn(
-            'flex items-center px-3 py-2 rounded-md text-base transition-colors',
-            'hover:bg-sidebar-accent/10 hover:text-sidebar-accent cursor-pointer',
-            isActive
-              ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-              : 'text-sidebar-foreground/80',
-            isParentActive && !isActive && 'text-sidebar-accent',
-            level > 0 && 'ml-4 text-base'
-          )}
-          onClick={() => {
-            if (hasChildren) {
-              toggleExpanded(subModule.id);
-            } else if (subModule.path) {
-              navigate(subModule.path);
-              closeSidebar();
-            }
-          }}
-        >
-          {subModule.icon && (
-            <div className={cn(isActive ? 'mr-2' : 'mr-2')}>
-              {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className={cn(
+                'flex items-center px-3 py-2 rounded-md text-base transition-colors',
+                'hover:bg-sidebar-accent/10 hover:text-sidebar-accent cursor-pointer',
+                isActive
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                  : 'text-sidebar-foreground/80',
+                isParentActive && !isActive && 'text-sidebar-accent',
+                level > 0 && 'ml-4 text-base'
+              )}
+              onClick={() => {
+                if (hasChildren) {
+                  toggleExpanded(subModule.id);
+                } else if (subModule.path) {
+                  navigate(subModule.path);
+                  closeSidebar();
+                }
+              }}
+            >
+              {subModule.icon && (
+                <div className="mr-2">
+                  {getIconComponent(subModule.icon as keyof typeof iconMap, 16)}
+                </div>
+              )}
+              <span className="flex-1 whitespace-normal break-words">{subModule.label}</span>
+              {hasChildren && (
+                <ChevronRight
+                  className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
+                />
+              )}
             </div>
-          )}
-          <span className="flex-1 whitespace-normal break-words">{subModule.label}</span>
-          {hasChildren && (
-            <ChevronRight
-              className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-90')}
-            />
-          )}
-        </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" align="center" sideOffset={6} className="text-sm">
+            {subModule.label}
+          </TooltipContent>
+        </Tooltip>
+
+        {/* Recursively render children if expanded */}
         {hasChildren && isExpanded && (
           <div className="mt-1 pl-4 border-l border-sidebar-border/50 ml-4">
             {subModule.children?.map(child => renderSubModuleItem(child, level + 1))}
@@ -173,19 +183,25 @@ const ModuleSidebar = () => {
       (module.subModules && findSubModuleByPath(module.subModules, location.pathname));
 
     return (
-      <div
-        key={module.id}
-        className={cn(
-          'flex items-center justify-center w-12 h-12 mb-2 rounded-md cursor-pointer transition-all',
-          isActive
-            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-            : 'hover:bg-sidebar-accent/10 text-sidebar-foreground/70',
-          isModuleActive && !isActive && 'text-sidebar-foreground'
-        )}
-        onClick={() => setActiveModule(module.id)}
-      >
-        {getIconComponent(module.icon as keyof typeof iconMap, 20)}
-      </div>
+      <Tooltip key={module.id}>
+        <TooltipTrigger asChild>
+          <div
+            className={cn(
+              'flex items-center justify-center w-12 h-12 mb-2 rounded-md cursor-pointer transition-all',
+              isActive
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                : 'hover:bg-sidebar-accent/10 text-sidebar-foreground/70',
+              isModuleActive && !isActive && 'text-sidebar-foreground'
+            )}
+            onClick={() => setActiveModule(module.id)}
+          >
+            {getIconComponent(module.icon as keyof typeof iconMap, 20)}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{module.label}</p>
+        </TooltipContent>
+      </Tooltip>
     );
   };
 

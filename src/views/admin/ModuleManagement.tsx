@@ -11,6 +11,9 @@ import {
   Button,
   toast,
   HelmetWrapper,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '@/components';
 import { useModules, useCreateModule, useUpdateModule, useDeleteModule } from '@/hooks';
 import { FieldType, Module } from '@/types';
@@ -19,7 +22,7 @@ const schema: FieldType[] = [
   { name: 'name', label: 'Name', type: 'text', required: true, columns: 2 },
   { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
   { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
-  { name: 'is_active', label: 'Active', type: 'checkbox', required: true, columns: 2 },
+  { name: 'is_active', label: 'Active', type: 'toggle', required: true, columns: 2 },
 ];
 
 const ModuleManagement = () => {
@@ -66,33 +69,43 @@ const ModuleManagement = () => {
 
   const customRender = {
     Edit: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={e => {
-          e.stopPropagation();
-          handleEdit(row._row);
-        }}
-      >
-        <Pencil className="w-4 h-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={e => {
+              e.stopPropagation();
+              handleEdit(row._row);
+            }}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Edit Module</TooltipContent>
+      </Tooltip>
     ),
     Delete: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="destructive"
-        onClick={e => {
-          e.stopPropagation();
-          handleDelete(row._row.module_id);
-        }}
-        disabled={deleteMutation.isPending}
-      >
-        {deleteMutation.isPending ? (
-          <Loader2 className="animate-spin w-4 h-4" />
-        ) : (
-          <Trash2 className="w-4 h-4" />
-        )}
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="destructive"
+            onClick={e => {
+              e.stopPropagation();
+              handleDelete(row._row.id);
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? (
+              <Loader2 className="animate-spin w-4 h-4" />
+            ) : (
+              <Trash2 className="w-4 h-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Delete Module</TooltipContent>
+      </Tooltip>
     ),
     is_active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>

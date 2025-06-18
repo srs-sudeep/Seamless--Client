@@ -240,6 +240,7 @@ const RouteManagement = () => {
                   <Plus className="w-4 h-4 mr-1" /> Add Route
                 </Button>
               }
+              onRowClick={() => {}}
             />
           </div>
         ))}

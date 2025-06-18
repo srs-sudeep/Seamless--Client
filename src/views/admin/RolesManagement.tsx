@@ -263,6 +263,7 @@ const RolesManagement = () => {
               Delete: customRender.Delete('', row._row),
             }))}
             customRender={{}}
+            onRowClick={() => {}}
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

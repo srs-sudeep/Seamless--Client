@@ -207,6 +207,7 @@ const PermissionManagement = () => {
                   Delete: customRender.Delete('', row._row),
                 }))}
                 customRender={{}}
+                onRowClick={() => {}}
                 tableHeading={resource}
                 headerActions={
                   <div className="flex gap-2">

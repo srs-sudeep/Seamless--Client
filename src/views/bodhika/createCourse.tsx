@@ -90,11 +90,12 @@ const CreateCourse = () => {
 
   const handleFormChange = (values: Record<string, any>) => {
     const updated = { ...values };
+
+    // Auto-fill course_id only if both inputs are present
     if (updated.course_code && updated.sem) {
       updated.course_id = `${updated.course_code}-${updated.sem}`;
-    } else {
-      updated.course_id = '';
     }
+
     setFormValues(updated);
   };
 

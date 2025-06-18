@@ -153,6 +153,7 @@ const ModuleManagement = () => {
               Icon: customRender.icon(row.Icon),
             }))}
             customRender={customRender}
+            onRowClick={() => {}}
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

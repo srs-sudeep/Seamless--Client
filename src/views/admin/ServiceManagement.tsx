@@ -167,6 +167,7 @@ const ServiceManagement = () => {
               'Health URL': customRender.health_url(row['Health URL']),
             }))}
             customRender={customRender}
+            onRowClick={() => {}}
             headerActions={
               <>
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

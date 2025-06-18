@@ -1,5 +1,6 @@
 import {} from '@/components';
 import {} from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   HelmetWrapper,
@@ -31,6 +32,7 @@ const PermissionManagement = () => {
   const [editPermission, setEditPermission] = useState<Permission | null>(null);
   const [groupByResource] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [targetResource, setTargetResource] = useState<string | null>(null);
 
   const grouped = useMemo(() => {
     if (!groupByResource) return { All: permissions };
@@ -73,6 +75,8 @@ const PermissionManagement = () => {
       action: formData.action,
     };
     createMutation.mutate(payload);
+    toast({ title: 'Permission created' });
+    setCreateDialogOpen(false);
   };
 
   const schema: FieldType[] = [
@@ -96,6 +100,7 @@ const PermissionManagement = () => {
       type: 'text',
       required: true,
       columns: 2,
+      disabled: true,
     },
     {
       name: 'action',
@@ -104,6 +109,14 @@ const PermissionManagement = () => {
       required: true,
       columns: 2,
       options: ['read', 'create', 'update', 'delete'],
+    },
+    {
+      name: 'expressions',
+      label: 'Expressions',
+      type: 'textarea',
+      required: false,
+      columns: 2,
+      placeholder: 'Type expressions here...',
     },
   ];
 
@@ -125,7 +138,9 @@ const PermissionManagement = () => {
             <DialogTitle>Edit Permission</DialogTitle>
           </DialogHeader>
           <DynamicForm
-            schema={schema}
+            schema={schema.map(field =>
+              field.name === 'resource' ? { ...field, disabled: true } : field
+            )}
             onSubmit={handleUpdate}
             defaultValues={editPermission ?? undefined}
             onCancel={() => setEditPermission(null)}
@@ -164,6 +179,17 @@ const PermissionManagement = () => {
   return (
     <HelmetWrapper title="Permissions | Seamless">
       <div className="mx-auto p-6">
+        <div className="flex justify-end mb-4">
+          <Button
+            onClick={() => {
+              setTargetResource(null);
+              setCreateDialogOpen(true);
+            }}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Permission
+          </Button>
+        </div>
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -178,34 +204,43 @@ const PermissionManagement = () => {
                   Delete: customRender.Delete('', row._row),
                 }))}
                 customRender={{}}
-                tableHeading={resource} // <-- Pass resource as table heading
+                tableHeading={resource}
                 headerActions={
                   <div className="flex gap-2">
-                    <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Plus className="w-4 h-4 mr-2" />
-                          Create Permission
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Create Permission</DialogTitle>
-                        </DialogHeader>
-                        <DynamicForm
-                          schema={schema}
-                          onSubmit={handleCreate}
-                          onCancel={() => setCreateDialogOpen(false)}
-                          submitButtonText="Create"
-                        />
-                      </DialogContent>
-                    </Dialog>
+                    <Button
+                      onClick={() => {
+                        setTargetResource(resource);
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Permission
+                    </Button>
                   </div>
                 }
               />
             </div>
           ))
         )}
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <div />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Permission</DialogTitle>
+            </DialogHeader>
+            <DynamicForm
+              schema={schema.map(field =>
+                field.name === 'resource' && targetResource ? { ...field, disabled: true } : field
+              )}
+              defaultValues={{ resource: targetResource }}
+              onSubmit={handleCreate}
+              onCancel={() => setCreateDialogOpen(false)}
+              submitButtonText="Create"
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </HelmetWrapper>
   );

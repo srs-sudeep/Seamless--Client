@@ -11,6 +11,9 @@ import {
   Button,
   toast,
   HelmetWrapper,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '@/components';
 import { useServices, useCreateService, useUpdateService, useDeleteService } from '@/hooks';
 import type { Service } from '@/types';
@@ -18,7 +21,7 @@ import type { Service } from '@/types';
 const schema = [
   { name: 'name', label: 'Name', type: 'text', required: true, columns: 2 },
   { name: 'description', label: 'Description', type: 'text', required: true, columns: 2 },
-  { name: 'active', label: 'Active', type: 'checkbox', required: true, columns: 2 },
+  { name: 'active', label: 'Active', type: 'toggle', required: true, columns: 2 },
   { name: 'health_url', label: 'Health URL', type: 'text', required: false, columns: 2 },
 ];
 
@@ -81,33 +84,43 @@ const ServiceManagement = () => {
 
   const customRender = {
     Edit: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={e => {
-          e.stopPropagation();
-          handleEdit(row._row);
-        }}
-      >
-        <Pencil className="w-4 h-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={e => {
+              e.stopPropagation();
+              handleEdit(row._row);
+            }}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Edit Service</TooltipContent>
+      </Tooltip>
     ),
     Delete: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="destructive"
-        onClick={e => {
-          e.stopPropagation();
-          handleDelete(row._row.id);
-        }}
-        disabled={deleteMutation.isPending}
-      >
-        {deleteMutation.isPending ? (
-          <Loader2 className="animate-spin w-4 h-4" />
-        ) : (
-          <Trash2 className="w-4 h-4" />
-        )}
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant="destructive"
+            onClick={e => {
+              e.stopPropagation();
+              handleDelete(row._row.id);
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? (
+              <Loader2 className="animate-spin w-4 h-4" />
+            ) : (
+              <Trash2 className="w-4 h-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Delete Service</TooltipContent>
+      </Tooltip>
     ),
     active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -163,7 +176,7 @@ const ServiceManagement = () => {
                       Create Service
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50">
                     <DialogHeader>
                       <DialogTitle>Create Service</DialogTitle>
                     </DialogHeader>
@@ -185,7 +198,7 @@ const ServiceManagement = () => {
             if (!open) setEditService(null);
           }}
         >
-          <DialogContent>
+          <DialogContent className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50">
             <DialogHeader>
               <DialogTitle>Edit Service</DialogTitle>
             </DialogHeader>

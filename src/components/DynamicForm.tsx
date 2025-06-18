@@ -361,7 +361,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                        className="border p-2 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       />
@@ -377,7 +377,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           type="button"
                           onClick={() => toggleDropdown(field.name)}
                           disabled={disabled || field.disabled}
-                          className="w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center text-left"
+                          className="w-full border p-2 mb-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center text-left"
                         >
                           <span
                             className={`${!formData[field.name]?.length ? 'text-gray-500 dark:text-gray-400' : ''}`}
@@ -470,7 +470,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         name={field.name}
                         required={field.required}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        className="border p-2 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       >
@@ -498,7 +498,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 value={optionValue}
                                 onChange={handleChange}
                                 required={field.required}
-                                className="bg-primary checked:bg-accent"
+                                className="bg-primary mb-2 checked:bg-accent"
                                 checked={formData[field.name] === optionValue}
                                 disabled={disabled || field.disabled}
                               />
@@ -521,6 +521,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 onChange={handleChange}
                                 checked={formData[field.name]?.includes?.(optionValue) || false}
                                 disabled={disabled || field.disabled}
+                                className="mb-2"
                               />
                               <span>{optionLabel}</span>
                             </label>
@@ -534,7 +535,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                        className="border p-2 rounded-md focus:outline-none focus:ring-2 mb-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                         value={formData[field.name] ?? ''}
                         disabled={disabled || field.disabled}
                       />

@@ -23,6 +23,7 @@ type DynamicTableProps = {
   onRowClick?: (row: Record<string, any>, index: number) => void;
   headerActions?: React.ReactNode;
   tableHeading?: string;
+  rowExpandable?: (row: Record<string, any>) => boolean;
 };
 
 function toSentenceCase(str: string) {
@@ -42,6 +43,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   onRowClick,
   headerActions,
   tableHeading,
+  rowExpandable,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
@@ -244,93 +246,97 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredData.map((row, i) => (
-                      <React.Fragment key={i}>
-                        <TableRow
-                          className={cn(
-                            'group transition-all duration-200 border-b border-gray-100 dark:border-gray-800',
-                            i % 2 === 0
-                              ? 'bg-white dark:bg-gray-900'
-                              : 'bg-gray-50/50 dark:bg-gray-800/30',
-                            'light:hover:bg-gradient-to-r light:hover:from-blue-50 hover:to-indigo-50',
-                            'hover:shadow-md dark:hover:shadow-gray-900/10',
-                            onRowClick && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
-                          )}
-                          onClick={() => onRowClick && onRowClick(row, i)}
-                        >
-                          {expandableRows && (
-                            <TableCell
-                              onClick={e => {
-                                e.stopPropagation();
-                                toggleRow(i);
-                              }}
-                              className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 
-                                       transition-colors duration-200 rounded-l-lg"
-                            >
-                              <ChevronDownIcon
-                                className={cn(
-                                  'h-4 w-4 transition-all duration-300 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400',
-                                  expandedRows[i] ? 'rotate-180' : 'rotate-0'
-                                )}
-                              />
-                            </TableCell>
-                          )}
-                          {headers.map((key, keyIndex) => {
-                            const value = row[key];
-                            const isLastColumn = keyIndex === headers.length - 1;
-
-                            return (
-                              <TableCell
-                                key={key}
-                                className={cn(
-                                  'px-6 py-4 text-sm text-gray-900 dark:text-gray-100 font-medium',
-                                  isLastColumn && !expandableRows && 'rounded-r-lg'
-                                )}
-                              >
-                                {customRender[key] ? (
-                                  customRender[key](value, row)
-                                ) : React.isValidElement(value) ? (
-                                  value
-                                ) : value instanceof Date ? (
-                                  <span className="text-gray-600 dark:text-gray-300">
-                                    {value.toLocaleString()}
-                                  </span>
-                                ) : typeof value === 'object' && value !== null ? (
-                                  <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">
-                                    {(() => {
-                                      try {
-                                        return JSON.stringify(value);
-                                      } catch {
-                                        return '[Object]';
-                                      }
-                                    })()}
-                                  </code>
-                                ) : (
-                                  <span className="break-words">{String(value)}</span>
-                                )}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-
-                        {expandableRows && expandedRows[i] && expandedComponent && (
+                    filteredData.map((row, i) => {
+                      const canExpand = rowExpandable ? rowExpandable(row) : expandableRows;
+                      return (
+                        <React.Fragment key={i}>
                           <TableRow
-                            className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-750 
-                                             border-b border-gray-200 dark:border-gray-700"
+                            className={cn(
+                              'group transition-all duration-200 border-b border-gray-100 dark:border-gray-800',
+                              i % 2 === 0
+                                ? 'bg-white dark:bg-gray-900'
+                                : 'bg-gray-50/50 dark:bg-gray-800/30',
+                              'light:hover:bg-gradient-to-r light:hover:from-blue-50 hover:to-indigo-50',
+                              'hover:shadow-md dark:hover:shadow-gray-900/10',
+                              onRowClick && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
+                            )}
+                            onClick={() => onRowClick && onRowClick(row, i)}
                           >
-                            <TableCell
-                              colSpan={headers.length + 1}
-                              className="px-6 py-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900
-                                       border-l-4 border-blue-500 dark:border-blue-400"
-                            >
-                              <div className="rounded-lg p-4 bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-700">
-                                {expandedComponent(row)}
-                              </div>
-                            </TableCell>
+                            {expandableRows && (
+                              <TableCell
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  if (canExpand) toggleRow(i);
+                                }}
+                                className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 
+                                       transition-colors duration-200 rounded-l-lg"
+                              >
+                                {canExpand ? (
+                                  <ChevronDownIcon
+                                    className={cn(
+                                      'h-4 w-4 transition-all duration-300 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400',
+                                      expandedRows[i] ? 'rotate-180' : 'rotate-0'
+                                    )}
+                                  />
+                                ) : null}
+                              </TableCell>
+                            )}
+                            {headers.map((key, keyIndex) => {
+                              const value = row[key];
+                              const isLastColumn = keyIndex === headers.length - 1;
+
+                              return (
+                                <TableCell
+                                  key={key}
+                                  className={cn(
+                                    'px-6 py-4 text-sm text-gray-900 dark:text-gray-100 font-medium',
+                                    isLastColumn && !expandableRows && 'rounded-r-lg'
+                                  )}
+                                >
+                                  {customRender[key] ? (
+                                    customRender[key](value, row)
+                                  ) : React.isValidElement(value) ? (
+                                    value
+                                  ) : value instanceof Date ? (
+                                    <span className="text-gray-600 dark:text-gray-300">
+                                      {value.toLocaleString()}
+                                    </span>
+                                  ) : typeof value === 'object' && value !== null ? (
+                                    <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">
+                                      {(() => {
+                                        try {
+                                          return JSON.stringify(value);
+                                        } catch {
+                                          return '[Object]';
+                                        }
+                                      })()}
+                                    </code>
+                                  ) : (
+                                    <span className="break-words">{String(value)}</span>
+                                  )}
+                                </TableCell>
+                              );
+                            })}
                           </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))
+                          {expandableRows && expandedRows[i] && expandedComponent && canExpand && (
+                            <TableRow
+                              className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-750 
+                                             border-b border-gray-200 dark:border-gray-700"
+                            >
+                              <TableCell
+                                colSpan={headers.length + 1}
+                                className="px-6 py-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900
+                                       border-l-4 border-blue-500 dark:border-blue-400"
+                              >
+                                <div className="rounded-lg p-4 bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-700">
+                                  {expandedComponent(row)}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>

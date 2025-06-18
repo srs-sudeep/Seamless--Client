@@ -209,40 +209,36 @@ const RouteManagement = () => {
   return (
     <HelmetWrapper title="Sidebar Modules | Seamless">
       <div className="mx-auto p-6">
-        {sidebarLoading || rolesLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+        {sidebarItems.map((mod: any) => (
+          <div key={mod.id} className="mb-8">
+            <DynamicTable
+              tableHeading={mod.label}
+              data={getSubModuleTableData(mod.subModules || []).map(row => ({
+                ...row,
+                Edit: customRender.Edit('', row),
+                Delete: customRender.Delete('', row),
+                Create: customRender.Create('', row),
+                Icon: customRender.Icon(row.Icon),
+              }))}
+              customRender={customRender}
+              expandableRows={true}
+              expandedComponent={renderExpandedComponent}
+              rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
+              loading={sidebarLoading || rolesLoading}
+              headerActions={
+                <Button
+                  size="sm"
+                  className="ml-4"
+                  onClick={() => {
+                    setCreateDialogParent({ module_id: mod.id, parent_id: null });
+                  }}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Route
+                </Button>
+              }
+            />
           </div>
-        ) : (
-          sidebarItems.map((mod: any) => (
-            <div key={mod.id} className="mb-8">
-              <DynamicTable
-                tableHeading={mod.label}
-                data={getSubModuleTableData(mod.subModules || []).map(row => ({
-                  ...row,
-                  Edit: customRender.Edit('', row),
-                  Delete: customRender.Delete('', row),
-                  Create: customRender.Create('', row),
-                  Icon: customRender.Icon(row.Icon),
-                }))}
-                customRender={customRender}
-                expandableRows={true}
-                expandedComponent={renderExpandedComponent}
-                headerActions={
-                  <Button
-                    size="sm"
-                    className="ml-4"
-                    onClick={() => {
-                      setCreateDialogParent({ module_id: mod.id, parent_id: null });
-                    }}
-                  >
-                    <Plus className="w-4 h-4 mr-1" /> Add Route
-                  </Button>
-                }
-              />
-            </div>
-          ))
-        )}
+        ))}
         {/* Edit Route Dialog */}
         <Dialog
           open={!!editRoute}

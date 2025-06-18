@@ -74,7 +74,6 @@ const ModuleSidebar = () => {
     if (!isLoading && modules.length > 0 && activeModule) {
       const module = modules.find(m => m.id === activeModule);
       if (module) {
-        // Find all parent IDs leading to the active submodule
         const parentIds = findParentIds(module.subModules, location.pathname) || [];
         setExpandedItems(prev => Array.from(new Set([...prev, ...parentIds])));
       }

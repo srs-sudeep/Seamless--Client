@@ -177,19 +177,22 @@ const PermissionManagement = () => {
     }));
 
   return (
-    <HelmetWrapper title="Permissions | Seamless">
+    <HelmetWrapper
+      title="Permissions | Seamless"
+      heading="Permission Management"
+      subHeading="Manage permissions for modules and user actions in the system."
+    >
+      <Button
+        className="mx-7 mt-2.5 mb-2.5"
+        onClick={() => {
+          setTargetResource(null);
+          setCreateDialogOpen(true);
+        }}
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Add Permission
+      </Button>
       <div className="mx-auto p-6">
-        <div className="flex justify-end mb-4">
-          <Button
-            onClick={() => {
-              setTargetResource(null);
-              setCreateDialogOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Permission
-          </Button>
-        </div>
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
@@ -232,7 +235,7 @@ const PermissionManagement = () => {
             </DialogHeader>
             <DynamicForm
               schema={schema.map(field =>
-                field.name === 'resource' && targetResource ? { ...field, disabled: true } : field
+                field.name === 'resource' ? { ...field, disabled: targetResource !== null } : field
               )}
               defaultValues={{ resource: targetResource }}
               onSubmit={handleCreate}

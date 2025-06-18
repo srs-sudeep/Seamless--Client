@@ -207,7 +207,11 @@ const RouteManagement = () => {
   };
 
   return (
-    <HelmetWrapper title="Sidebar Modules | Seamless">
+    <HelmetWrapper
+      title="Paths | Seamless"
+      heading="Path Management"
+      subHeading="Manage application paths and their access control."
+    >
       <div className="mx-auto p-6">
         {sidebarLoading || rolesLoading ? (
           <div className="flex justify-center items-center h-40">

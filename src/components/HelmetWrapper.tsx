@@ -7,6 +7,7 @@ type HelmetWrapperProps = {
   keywords?: string;
   heading?: string;
   subHeading?: string;
+  headerActions?: React.ReactNode;
   children?: React.ReactNode;
 };
 
@@ -16,6 +17,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
   keywords = 'default, keywords',
   heading,
   subHeading,
+  headerActions,
   children,
 }) => {
   return (
@@ -25,23 +27,30 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
       </Helmet>
-      {(heading || subHeading) && (
+
+      {(heading || subHeading || headerActions) && (
         <div className="mx-6 mt-6 mb-4">
-          <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 space-y-4 transition-all duration-300">
-            {heading && (
-              <h1 className="xl:text-3xl text-lg md:text-2xl font-bold text-foreground truncate relative pb-2">
-                {heading}
-                <span className="block h-1 w-16 bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full mt-2" />
-              </h1>
-            )}
-            {subHeading && (
-              <div className="mt-1 text-base md:text-lg text-muted-foreground font-medium">
-                {subHeading}
+          <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 transition-all duration-300">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                {heading && (
+                  <h1 className="xl:text-3xl text-lg md:text-2xl font-bold text-foreground truncate relative pb-2">
+                    {heading}
+                    <span className="block h-1 w-16 bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full mt-2" />
+                  </h1>
+                )}
+                {subHeading && (
+                  <div className="mt-1 text-base md:text-lg text-muted-foreground font-medium">
+                    {subHeading}
+                  </div>
+                )}
               </div>
-            )}
+              {headerActions && <div className="shrink-0">{headerActions}</div>}
+            </div>
           </div>
         </div>
       )}
+
       {children}
     </>
   );

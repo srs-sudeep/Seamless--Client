@@ -62,6 +62,8 @@ import {
   List,
   SquarePlus,
   UserPen,
+  UtensilsCrossed,
+  ChefHat,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -127,4 +129,6 @@ export const iconMap = {
   lists: List,
   add: SquarePlus,
   instructor: UserPen,
+  mess: UtensilsCrossed,
+  vendor: ChefHat,
 };

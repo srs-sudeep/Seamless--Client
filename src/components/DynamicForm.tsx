@@ -199,7 +199,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     if (defaultValues) {
       setFormData(defaultValues);
     }
-  }, [defaultValues]);
+  }, []);
 
   // Group fields by section
   const sectionMap: Record<string, FieldType[]> = {};

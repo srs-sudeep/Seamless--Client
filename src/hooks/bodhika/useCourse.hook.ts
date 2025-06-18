@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCourses, createCourse, updateCourse, deleteCourse } from '@/api/bodhika/course.api';
-import type { Course } from '@/types/bodhika/course.type';
+import type { Course } from '@/types/bodhika/course.types';
 
 export function useCourses() {
   return useQuery<Course[]>({

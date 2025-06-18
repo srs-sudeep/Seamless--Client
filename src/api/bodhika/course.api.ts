@@ -1,5 +1,5 @@
 import { apiClient } from '@/core';
-import type { Course } from '@/types/bodhika/course.type';
+import type { Course } from '@/types/bodhika/course.types';
 
 export async function getCourses(): Promise<Course[]> {
   const { data } = await apiClient.get<Course[]>('bodhika/api/v1/courses/courses-details');

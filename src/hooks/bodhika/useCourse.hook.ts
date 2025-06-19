@@ -1,11 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCourses, createCourse, updateCourse, deleteCourse } from '@/api/bodhika/course.api';
+import {
+  getCourses,
+  createCourse,
+  updateCourse,
+  deleteCourse,
+  getMyInstructorCourses,
+  getMyStudentCourses,
+} from '@/api/bodhika/course.api';
 import type { Course } from '@/types/bodhika/course.types';
 
 export function useCourses() {
   return useQuery<Course[]>({
     queryKey: ['courses'],
     queryFn: getCourses,
+  });
+}
+
+export function useMyInstructorCourses() {
+  return useQuery<Course[]>({
+    queryKey: ['myInstructorCourses'],
+    queryFn: getMyInstructorCourses,
+  });
+}
+
+export function useMyStudentCourses() {
+  return useQuery<Course[]>({
+    queryKey: ['myStudentCourses'],
+    queryFn: getMyStudentCourses,
   });
 }
 

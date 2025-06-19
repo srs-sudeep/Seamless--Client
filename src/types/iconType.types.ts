@@ -64,6 +64,7 @@ import {
   UserPen,
   UtensilsCrossed,
   ChefHat,
+  Waves,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -131,4 +132,5 @@ export const iconMap = {
   instructor: UserPen,
   mess: UtensilsCrossed,
   vendor: ChefHat,
+  session: Waves,
 };

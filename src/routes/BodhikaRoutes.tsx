@@ -9,6 +9,8 @@ const CourseManagement = lazy(() => import('@/views/bodhika/courseManagement'));
 const InstructorManagement = lazy(() => import('@/views/bodhika/instructorManagement'));
 const StudentsManagement = lazy(() => import('@/views/bodhika/studentsManagement'));
 const CreateCourse = lazy(() => import('@/views/bodhika/createCourse'));
+const CreateSession = lazy(() => import('@/views/bodhika/createSession'));
+const Sessions = lazy(() => import('@/views/bodhika/sessions'));
 const BodhikaRoutes: RouteObject = {
   path: '/bodhika',
   element: <MainLayout />,
@@ -36,6 +38,14 @@ const BodhikaRoutes: RouteObject = {
     {
       path: 'student-list',
       element: <StudentsManagement />,
+    },
+    {
+      path: 'session-create',
+      element: <CreateSession />,
+    },
+    {
+      path: 'sessions',
+      element: <Sessions />,
     },
   ],
 };

@@ -201,6 +201,7 @@ const RouteManagement = () => {
         customRender={customRender}
         expandableRows={true}
         expandedComponent={renderExpandedComponent}
+        rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
         disableSearch={true}
       />
     );

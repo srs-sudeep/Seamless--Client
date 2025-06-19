@@ -240,7 +240,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                     key={field.name}
                     className={`flex flex-col ${field.columns === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}
                   >
-                    <label className="mb-1">{field.label}</label>
+                    <label className={`mb-1 ${field.className || ''}`}>{field.label}</label>
                     {field.type === 'array' && field.fields ? (
                       <div className="mb-6 mt-2">
                         {arrayFieldData[field.name]?.map((item, idx) => (
@@ -268,7 +268,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                     const optionLabel = typeof opt === 'string' ? opt : opt.label;
                                     return (
                                       <option key={optionValue} value={optionValue}>
-                                        {optionLabel}
+                                        {typeof optionLabel === 'object' && optionLabel !== null
+                                          ? `${optionLabel.id} - ${optionLabel.name}`
+                                          : optionLabel}
                                       </option>
                                     );
                                   })}
@@ -426,7 +428,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                   <span
                                     className={`dark:text-white ${isSelected ? 'font-medium text-blue-700 dark:text-blue-300' : ''}`}
                                   >
-                                    {optionLabel}
+                                    {typeof optionLabel === 'object' && optionLabel !== null
+                                      ? `${optionLabel.id} - ${optionLabel.name}`
+                                      : optionLabel}
                                   </span>
                                 </div>
                               );
@@ -449,7 +453,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                   key={val}
                                   className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
                                 >
-                                  {label}
+                                  {typeof label === 'object' &&
+                                  label !== null &&
+                                  'id' in label &&
+                                  'name' in label
+                                    ? `${label.id} - ${label.name}`
+                                    : String(label)}
                                   <button
                                     type="button"
                                     className="ml-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 focus:outline-none"
@@ -480,7 +489,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           const optionLabel = typeof opt === 'string' ? opt : opt.label;
                           return (
                             <option key={optionValue} value={optionValue}>
-                              {optionLabel}
+                              {typeof optionLabel === 'object' &&
+                              optionLabel !== null &&
+                              'id' in optionLabel &&
+                              'name' in optionLabel
+                                ? `${optionLabel.id} - ${optionLabel.name}`
+                                : String(optionLabel)}
                             </option>
                           );
                         })}
@@ -502,7 +516,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 checked={formData[field.name] === optionValue}
                                 disabled={disabled || field.disabled}
                               />
-                              <span>{optionLabel}</span>
+                              <span>
+                                {typeof optionLabel === 'object' &&
+                                optionLabel !== null &&
+                                'id' in optionLabel &&
+                                'name' in optionLabel
+                                  ? `${optionLabel.id} - ${optionLabel.name}`
+                                  : String(optionLabel)}
+                              </span>
                             </label>
                           );
                         })}
@@ -523,8 +544,165 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 disabled={disabled || field.disabled}
                                 className="mb-2"
                               />
-                              <span>{optionLabel}</span>
+                              <span>
+                                {typeof optionLabel === 'object' &&
+                                optionLabel !== null &&
+                                'id' in optionLabel &&
+                                'name' in optionLabel
+                                  ? `${optionLabel.id} - ${optionLabel.name}`
+                                  : String(optionLabel)}
+                              </span>
                             </label>
+                          );
+                        })}
+                      </div>
+                    ) : field.type === 'chip' ? (
+                      <div className="flex flex-wrap gap-2">
+                        {field.options?.map(opt => {
+                          const optionValue = typeof opt === 'string' ? opt : opt.value;
+                          const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                          const selected = formData[field.name] === optionValue;
+
+                          if (
+                            optionLabel &&
+                            typeof optionLabel === 'object' &&
+                            optionLabel !== null &&
+                            'id' in optionLabel &&
+                            'name' in optionLabel &&
+                            typeof (optionLabel as { id: any; name: any }).id !== 'undefined' &&
+                            typeof (optionLabel as { id: any; name: any }).name !== 'undefined'
+                          ) {
+                            const labelObj = optionLabel as { id: string; name: string };
+                            return (
+                              <button
+                                key={optionValue}
+                                type="button"
+                                className={`
+    group relative px-6 py-4 my-2 rounded-xl border-2 
+    transition-all duration-300 ease-out
+    flex flex-col items-center justify-center min-w-[140px] min-h-[100px]
+    transform hover:scale-105 hover:shadow-lg
+    focus:outline-none focus:ring-4 focus:ring-opacity-50
+    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+    ${
+      selected
+        ? `bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30
+         text-blue-700 dark:text-blue-300 border-blue-500 dark:border-blue-400
+         shadow-lg shadow-blue-200/50 dark:shadow-blue-900/30
+         focus:ring-blue-300 dark:focus:ring-blue-600`
+        : `bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900
+         text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700
+         hover:border-gray-300 dark:hover:border-gray-600
+         hover:shadow-md hover:bg-gradient-to-br hover:from-gray-50 hover:to-gray-100
+         dark:hover:from-gray-700 dark:hover:to-gray-800
+         focus:ring-gray-300 dark:focus:ring-gray-600`
+    }
+  `}
+                                onClick={() => {
+                                  setFormData({ ...formData, [field.name]: optionValue });
+                                  if (onChange)
+                                    onChange({ ...formData, [field.name]: optionValue });
+                                }}
+                                disabled={disabled || field.disabled}
+                              >
+                                {/* Subtle background pattern */}
+                                <div
+                                  className={`
+    absolute inset-0 rounded-xl opacity-20
+    bg-gradient-to-br from-transparent via-white/20 to-transparent
+    ${selected ? 'opacity-30' : 'opacity-0 group-hover:opacity-20'}
+    transition-opacity duration-300
+  `}
+                                />
+
+                                {/* Content container */}
+                                <div className="relative z-10 flex flex-col items-center space-y-1">
+                                  {/* Main label with enhanced typography */}
+                                  <span
+                                    className={`
+      font-bold text-center leading-tight
+      transition-all duration-300
+      ${
+        selected
+          ? 'text-3xl text-blue-600 dark:text-blue-300 transform scale-110'
+          : 'text-2xl group-hover:text-3xl group-hover:transform group-hover:scale-105'
+      }
+    `}
+                                  >
+                                    {labelObj.id}
+                                  </span>
+
+                                  {/* Secondary label with improved styling */}
+                                  <span
+                                    className={`
+      text-sm font-medium text-center leading-relaxed
+      transition-all duration-300
+      ${
+        selected
+          ? 'text-blue-600/80 dark:text-blue-300/80'
+          : 'text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+      }
+    `}
+                                  >
+                                    {labelObj.name}
+                                  </span>
+                                </div>
+
+                                {/* Selection indicator */}
+                                {selected && (
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <svg
+                                      className="w-3 h-3 text-white"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+
+                                {/* Ripple effect on click */}
+                                <div className="absolute inset-0 rounded-xl overflow-hidden">
+                                  <div
+                                    className={`
+      absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent
+      transform -skew-x-12 -translate-x-full
+      group-active:translate-x-full group-active:duration-700
+      transition-transform duration-0
+    `}
+                                  />
+                                </div>
+                              </button>
+                            );
+                          }
+
+                          // Fallback for string or other label types
+                          return (
+                            <button
+                              key={optionValue}
+                              type="button"
+                              className={`px-4 py-1 my-1 mb-2 rounded-full border transition-colors ${
+                                selected
+                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600'
+                              }`}
+                              onClick={() => {
+                                setFormData({ ...formData, [field.name]: optionValue });
+                                if (onChange) onChange({ ...formData, [field.name]: optionValue });
+                              }}
+                              disabled={disabled || field.disabled}
+                            >
+                              {typeof optionLabel === 'object' &&
+                              optionLabel !== null &&
+                              'id' in optionLabel &&
+                              'name' in optionLabel
+                                ? `${optionLabel.id} - ${optionLabel.name}`
+                                : String(optionLabel)}
+                            </button>
                           );
                         })}
                       </div>

@@ -25,3 +25,13 @@ export async function updateCourse(course_id: string, payload: Partial<Course>) 
 export async function deleteCourse(course_id: string) {
   await apiClient.delete(`bodhika/api/v1/courses/delete-course/${course_id}`);
 }
+
+export async function getMyInstructorCourses(): Promise<Course[]> {
+  const { data } = await apiClient.get<Course[]>('/bodhika/api/v1/courses/my-courses/instructor');
+  return data;
+}
+
+export async function getMyStudentCourses(): Promise<Course[]> {
+  const { data } = await apiClient.get<Course[]>('/bodhika/api/v1/courses/my-courses/student');
+  return data;
+}

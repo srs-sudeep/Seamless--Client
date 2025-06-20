@@ -1,5 +1,7 @@
 import {
+  Badge,
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -9,6 +11,10 @@ import {
   DynamicTable,
   HelmetWrapper,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  ScrollArea,
   toast,
 } from '@/components';
 import {} from '@/components/ui/button';
@@ -19,7 +25,7 @@ import {
   useUpdatePermission,
 } from '@/hooks';
 import { FieldType, Permission } from '@/types';
-import { Loader2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { ChevronDownIcon, Loader2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const PermissionManagement = () => {
@@ -33,20 +39,32 @@ const PermissionManagement = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [targetResource, setTargetResource] = useState<string | null>(null);
   const [globalSearch, setGlobalSearch] = useState('');
+  const [resourceFilter, setResourceFilter] = useState<string[]>([]);
 
-  // Filter permissions based on global search
+  // Get all unique resources from permissions
+  const allResources = useMemo(
+    () => Array.from(new Set(permissions.map(p => p.resource))).sort(),
+    [permissions]
+  );
+
+  // Filter permissions based on global search and resource filter
   const filteredPermissions = useMemo(() => {
-    if (!globalSearch.trim()) return permissions;
-
-    return permissions.filter(
-      perm =>
-        perm.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        perm.description.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        perm.resource.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        perm.action.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        String(perm.permission_id).includes(globalSearch)
-    );
-  }, [permissions, globalSearch]);
+    let perms = permissions;
+    if (resourceFilter.length > 0) {
+      perms = perms.filter(perm => resourceFilter.includes(perm.resource));
+    }
+    if (globalSearch.trim()) {
+      perms = perms.filter(
+        perm =>
+          perm.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
+          perm.description.toLowerCase().includes(globalSearch.toLowerCase()) ||
+          perm.resource.toLowerCase().includes(globalSearch.toLowerCase()) ||
+          perm.action.toLowerCase().includes(globalSearch.toLowerCase()) ||
+          String(perm.permission_id).includes(globalSearch)
+      );
+    }
+    return perms;
+  }, [permissions, globalSearch, resourceFilter]);
 
   // Group filtered permissions by resource
   const grouped = useMemo(() => {
@@ -200,10 +218,92 @@ const PermissionManagement = () => {
       heading="Permission Management"
       subHeading="Manage permissions for modules and user actions in the system."
     >
-      {/* Enhanced Search Card */}
+      {/* Filter & Search Card */}
       <div className="mx-6 mt-3 mb-6">
         <div className="rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
           <div className="flex flex-col md:flex-row gap-4 items-center">
+            {/* Resource Multi-Select Filter */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="min-w-[180px] flex justify-between items-center"
+                >
+                  <span>
+                    {resourceFilter.length === 0
+                      ? 'Filter by Resource'
+                      : `Resources (${resourceFilter.length})`}
+                  </span>
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <ScrollArea className="h-48">
+                  {allResources.map(resource => (
+                    <div
+                      key={resource}
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => {
+                        setResourceFilter(prev =>
+                          prev.includes(resource)
+                            ? prev.filter(r => r !== resource)
+                            : [...prev, resource]
+                        );
+                      }}
+                    >
+                      <Checkbox
+                        checked={resourceFilter.includes(resource)}
+                        onCheckedChange={() => {
+                          setResourceFilter(prev =>
+                            prev.includes(resource)
+                              ? prev.filter(r => r !== resource)
+                              : [...prev, resource]
+                          );
+                        }}
+                        className="mr-2"
+                        tabIndex={-1}
+                        aria-label={resource}
+                      />
+                      <span className="capitalize">{resource}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+                {resourceFilter.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => setResourceFilter([])}
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
+
+            {/* Selected Filters as Badges */}
+            <div className="flex flex-wrap gap-2">
+              {resourceFilter.map(resource => (
+                <Badge
+                  key={resource}
+                  variant="secondary"
+                  className="flex items-center gap-1 px-2 py-1"
+                >
+                  <span className="capitalize">{resource}</span>
+                  <button
+                    className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setResourceFilter(prev => prev.filter(r => r !== resource));
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+
+            {/* Global Search */}
             <div className="relative flex-1 w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
@@ -241,7 +341,7 @@ const PermissionManagement = () => {
           </div>
 
           {/* Search results summary - inside the card */}
-          {globalSearch && (
+          {(globalSearch || resourceFilter.length > 0) && (
             <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
               <div className="flex items-center">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3">
@@ -249,7 +349,7 @@ const PermissionManagement = () => {
                 </div>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
                   {totalPermissions === 0
-                    ? 'No permissions found for your search.'
+                    ? 'No permissions found for your search/filter.'
                     : `Found ${totalPermissions} permission${totalPermissions !== 1 ? 's' : ''} in ${resourceCount} resource${resourceCount !== 1 ? 's' : ''}.`}
                 </p>
               </div>

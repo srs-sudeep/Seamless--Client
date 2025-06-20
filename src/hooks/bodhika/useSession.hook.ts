@@ -5,6 +5,8 @@ import {
   getAllSessions,
   getSessionAttendance,
   updateSession,
+  getSessionsByCourseId,
+  getRoomsActiveSessions,
 } from '@/api/bodhika/session.api';
 import type { Session } from '@/types/bodhika/session.types';
 import { Attendance } from '@/types';
@@ -53,5 +55,20 @@ export function useSessionUpdate() {
       queryClient.invalidateQueries({ queryKey: ['myInstructorCourses'] });
       queryClient.invalidateQueries({ queryKey: ['myActiveSessions'] });
     },
+  });
+}
+
+export function useSessionsByCourseId(course_id?: string) {
+  return useQuery<Session[]>({
+    queryKey: ['sessionsByCourseId', course_id],
+    queryFn: () => getSessionsByCourseId(course_id!),
+    enabled: !!course_id,
+  });
+}
+
+export function useRoomsActiveSessions() {
+  return useQuery<any[]>({
+    queryKey: ['roomsActiveSessions'],
+    queryFn: getRoomsActiveSessions,
   });
 }

@@ -16,6 +16,7 @@ import {
 } from '@/components';
 import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks/bodhika/useCourse.hook';
 import { FieldType } from '@/types';
+import { useNavigate } from 'react-router-dom';
 
 const editSchema: FieldType[] = [
   { name: 'name', label: 'Name', type: 'text', required: true, columns: 2 },
@@ -24,10 +25,6 @@ const editSchema: FieldType[] = [
 ];
 
 const CourseManagement = () => {
-  const { data: courses = [], isLoading } = useCourses();
-  const updateMutation = useUpdateCourse();
-  const deleteMutation = useDeleteCourse();
-
   const [editCourse, setEditCourse] = useState<any | null>(null);
 
   // Side panel state for instructors and students
@@ -35,6 +32,12 @@ const CourseManagement = () => {
     type: 'instructors' | 'students' | null;
     course: any | null;
   }>({ type: null, course: null });
+
+  const { data: courses = [], isLoading } = useCourses();
+  console.log(courses);
+  const updateMutation = useUpdateCourse();
+  const deleteMutation = useDeleteCourse();
+  const navigate = useNavigate();
 
   const handleEdit = (course: any) => setEditCourse(course);
 
@@ -113,6 +116,39 @@ const CourseManagement = () => {
         <Users className="w-4 h-4" />
       </Button>
     ),
+    'View Sessions': (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="outline"
+        onClick={e => {
+          e.stopPropagation();
+          navigate(`/bodhika/course-session/${row._row.course_id}`);
+        }}
+        aria-label="View Sessions"
+      >
+        <span role="img" aria-label="sessions">
+          📅
+        </span>
+      </Button>
+    ),
+    'Slot-Room': (value: string, row: any) =>
+      Array.isArray(row._row.slot_room_id) ? (
+        <div className="flex flex-wrap gap-2">
+          {row._row.slot_room_id.map((sr: any, idx: number) => (
+            <span
+              key={idx}
+              className="inline-block px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono"
+            >
+              {sr.slot_id}
+              {Array.isArray(sr.room_id) && sr.room_id.length > 0
+                ? `: ${sr.room_id.join(', ')}`
+                : ''}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <span className="text-muted-foreground text-xs">-</span>
+      ),
   };
 
   const getTableData = (courses: any[]) =>
@@ -120,10 +156,18 @@ const CourseManagement = () => {
       'Course Code': course.course_code,
       Name: course.name,
       Semester: course.sem,
-      Slot: course.slot_id,
-      Room: course.room_id,
+      'Slot-Room': Array.isArray(course.slot_room_id)
+        ? course.slot_room_id
+            .map((sr: any) =>
+              sr.slot_id && Array.isArray(sr.room_id)
+                ? `${sr.slot_id}: ${sr.room_id.join(', ')}`
+                : sr.slot_id
+            )
+            .join(' | ')
+        : '',
       Instructors: '', // Placeholder for icon
       Students: '', // Placeholder for icon
+      'View Sessions': '', // Placeholder for icon
       Edit: '',
       Delete: '',
       _row: { ...course },
@@ -147,10 +191,14 @@ const CourseManagement = () => {
               ...row,
               Instructors: customRender.Instructors('', row),
               Students: customRender.Students('', row),
+              'View Sessions': customRender['View Sessions']('', row),
               Edit: customRender.Edit('', row._row),
               Delete: customRender.Delete('', row._row),
             }))}
-            customRender={customRender}
+            customRender={{
+              ...customRender,
+              'Slot-Room': customRender['Slot-Room'],
+            }}
           />
         )}
         <Dialog

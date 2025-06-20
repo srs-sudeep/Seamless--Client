@@ -11,7 +11,6 @@ import { useRoutes } from 'react-router-dom';
 const Router = () => {
   const { availableRoutes, isLoading } = useAvailableRoutes();
   const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
-
   const routes = useRoutes([
     LandingRoutes,
     AuthRoutes,

@@ -31,3 +31,13 @@ export async function updateSession(session_id: string) {
   const { data } = await apiClient.put(`/bodhika/api/v1/sessions/stop-session/${session_id}`);
   return data;
 }
+
+export async function getSessionsByCourseId(course_id: string): Promise<Session[]> {
+  const { data } = await apiClient.get<Session[]>(`/bodhika/api/v1/sessions/sessions/${course_id}`);
+  return data;
+}
+
+export async function getRoomsActiveSessions(): Promise<any[]> {
+  const { data } = await apiClient.get<any[]>('/bodhika/api/v1/sessions/rooms-active-sessions');
+  return data;
+}

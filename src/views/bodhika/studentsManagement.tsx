@@ -44,14 +44,14 @@ const StudentsManagement = () => {
 
   const handleCreate = async (formData: Record<string, any>) => {
     // Join course_code and sem for each course
-    const courses = Array.isArray(formData.courses)
+    const course_ids = Array.isArray(formData.courses)
       ? formData.courses
           .filter((c: any) => c.course_code && c.sem)
           .map((c: any) => `${c.course_code}-${c.sem}`)
       : [];
     await createMutation.mutateAsync({
       student_id: formData.student_id,
-      courses,
+      courses: course_ids,
     });
     toast({ title: 'Student created' });
     setCreateDialogOpen(false);

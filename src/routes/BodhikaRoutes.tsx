@@ -1,6 +1,7 @@
 import MainLayout from '@/layouts/MainLayout';
 import { lazy } from 'react';
 import { type RouteObject } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 // Lazy load admin views
 const SlotsManagement = lazy(() => import('@/views/bodhika/slotsManagement'));
@@ -11,6 +12,11 @@ const StudentsManagement = lazy(() => import('@/views/bodhika/studentsManagement
 const CreateCourse = lazy(() => import('@/views/bodhika/createCourse'));
 const CreateSession = lazy(() => import('@/views/bodhika/createSession'));
 const Sessions = lazy(() => import('@/views/bodhika/sessions'));
+const CourseIndi = lazy(() => import('@/views/bodhika/courseIndi'));
+const RoomSession = lazy(() => import('@/views/bodhika/RoomSession'));
+const InstructorCourses = lazy(() => import('@/views/bodhika/instructorCourses'));
+const StudentCourses = lazy(() => import('@/views/bodhika/studentCourses'));
+
 const BodhikaRoutes: RouteObject = {
   path: '/bodhika',
   element: <MainLayout />,
@@ -26,6 +32,16 @@ const BodhikaRoutes: RouteObject = {
     {
       path: 'course-list',
       element: <CourseManagement />,
+    },
+    {
+      path: 'course-session',
+      element: <Outlet />,
+      children: [
+        {
+          path: ':course_id',
+          element: <CourseIndi />,
+        },
+      ],
     },
     {
       path: 'create-course',
@@ -46,6 +62,18 @@ const BodhikaRoutes: RouteObject = {
     {
       path: 'sessions',
       element: <Sessions />,
+    },
+    {
+      path: 'room-session',
+      element: <RoomSession />,
+    },
+    {
+      path: 'instructor-courses',
+      element: <InstructorCourses />,
+    },
+    {
+      path: 'student-courses',
+      element: <StudentCourses />,
     },
   ],
 };

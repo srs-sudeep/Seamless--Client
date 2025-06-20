@@ -20,8 +20,9 @@ import { useMemo, useState } from 'react';
 const baseSchema: FieldType[] = [
   { name: 'path', label: 'Path', type: 'text', required: true, columns: 2 },
   { name: 'label', label: 'Label', type: 'text', required: true, columns: 2 },
-  { name: 'icon', label: 'Icon', type: 'text', required: true, columns: 2 },
-  { name: 'is_active', label: 'Active', type: 'toggle', columns: 2 },
+  { name: 'icon', label: 'Icon', type: 'text', required: false, columns: 2 },
+  { name: 'is_active', label: 'Active', type: 'toggle', columns: 1 },
+  { name: 'is_sidebar', label: 'Is Sidebar', type: 'toggle', columns: 1 },
   {
     name: 'module_id',
     label: 'Module ID',
@@ -90,6 +91,7 @@ const RouteManagement = () => {
       Edit: '',
       Delete: '',
       Create: '',
+      'Is Sidebar': sub.is_sidebar,
       _row: sub,
       _subModules: sub.children || [],
       _module_id: sub.module_id,
@@ -276,6 +278,7 @@ const RouteManagement = () => {
                     label: formData.label,
                     icon: formData.icon,
                     is_active: !!formData.is_active,
+                    is_sidebar: !!formData.is_sidebar,
                     module_id: Number(editRoute.module_id),
                     parent_id:
                       editRoute.parent_id === null || editRoute.parent_id === undefined
@@ -321,6 +324,7 @@ const RouteManagement = () => {
                   label: formData.label,
                   icon: formData.icon,
                   is_active: !!formData.is_active,
+                  is_sidebar: !!formData.is_sidebar,
                   module_id: Number(createDialogParent.module_id),
                   parent_id:
                     createDialogParent.parent_id !== null &&

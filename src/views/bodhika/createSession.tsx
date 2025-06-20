@@ -51,8 +51,14 @@ const CreateSession = () => {
     label: r.room_name,
   }));
 
-  // Find the assigned room for the selected course
-  const assignedRoomId = selectedCourse?.room_id;
+  // Get all room_ids for the selected course (from slot_room_id)
+  const assignedRoomIds: string[] = useMemo(() => {
+    if (!selectedCourse || !Array.isArray(selectedCourse.slot_room_id)) return [];
+    // Flatten all room_ids from all slot_room_id entries
+    return selectedCourse.slot_room_id.flatMap((sr: any) =>
+      Array.isArray(sr.room_id) ? sr.room_id : typeof sr.room_id === 'string' ? [sr.room_id] : []
+    );
+  }, [selectedCourse]);
 
   // DynamicForm schema
   const schema: FieldType[] = [
@@ -77,19 +83,30 @@ const CreateSession = () => {
             multiSelect: true,
             options: roomOptions,
             section: 'Session Details',
-            default: assignedRoomId ? [assignedRoomId] : [],
+            default: assignedRoomIds, // <-- Use all assigned room_ids for the selected course
           } as FieldType,
         ]
       : []),
   ];
 
-  // Ensure default room is selected when course changes
+  // Ensure default room(s) are selected when course changes
   const handleFormChange = (values: Record<string, any>) => {
     if (values.course_id && values.course_id !== formValues.course_id && allCourses.length > 0) {
       const course = allCourses.find((c: any) => c.course_id === values.course_id);
+      // Get all room_ids for the selected course
+      const defaultRoomIds =
+        course && Array.isArray(course.slot_room_id)
+          ? course.slot_room_id.flatMap((sr: any) =>
+              Array.isArray(sr.room_id)
+                ? sr.room_id
+                : typeof sr.room_id === 'string'
+                  ? [sr.room_id]
+                  : []
+            )
+          : [];
       setFormValues({
         ...values,
-        room_ids: course?.room_id ? [course.room_id] : [],
+        room_ids: defaultRoomIds,
       });
     } else {
       setFormValues(values);

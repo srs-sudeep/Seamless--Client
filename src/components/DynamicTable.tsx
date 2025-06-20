@@ -1,13 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components';
-import { Input } from '@/components';
-import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
+import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
+import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
-import { DateTimePicker } from '@/components/ui/date-timePicker';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import React, { useMemo, useState } from 'react';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
@@ -25,6 +24,8 @@ type DynamicTableProps = {
   tableHeading?: string;
   rowExpandable?: (row: Record<string, any>) => boolean;
 };
+
+type SortDirection = 'asc' | 'desc' | null;
 
 function toSentenceCase(str: string) {
   if (!str) return '';
@@ -48,11 +49,32 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+  // Add sorting state
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
 
+  // Handle column sorting
+  const handleSort = (column: string) => {
+    // If clicking the same column, cycle through: asc -> desc -> null
+    if (sortColumn === column) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortColumn(null);
+        setSortDirection(null);
+      }
+    } else {
+      // New column, start with ascending
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
   const filteredData = useMemo(() => {
-    return data.filter(row => {
+    // First filter the data
+    let result = data.filter(row => {
       if (
         !disableSearch &&
         searchTerm &&
@@ -76,7 +98,55 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
       return true;
     });
-  }, [data, searchTerm, columnFilters, disableSearch]);
+
+    // Then sort the filtered data
+    if (sortColumn && sortDirection) {
+      result = [...result].sort((a, b) => {
+        // Get values to compare
+        const aVal = a[sortColumn];
+        const bVal = b[sortColumn];
+
+        // Handle nulls/undefined
+        if (aVal == null) return sortDirection === 'asc' ? -1 : 1;
+        if (bVal == null) return sortDirection === 'asc' ? 1 : -1;
+
+        // Handle different types of values
+        if (aVal instanceof Date && bVal instanceof Date) {
+          return sortDirection === 'asc'
+            ? aVal.getTime() - bVal.getTime()
+            : bVal.getTime() - aVal.getTime();
+        }
+
+        // Numbers
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+          return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+
+        // Boolean
+        if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
+          return sortDirection === 'asc'
+            ? aVal === bVal
+              ? 0
+              : aVal
+                ? 1
+                : -1
+            : aVal === bVal
+              ? 0
+              : aVal
+                ? -1
+                : 1;
+        }
+
+        // Default to string comparison
+        const aStr = String(aVal).toLowerCase();
+        const bStr = String(bVal).toLowerCase();
+
+        return sortDirection === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+      });
+    }
+
+    return result;
+  }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection]);
 
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
@@ -218,9 +288,37 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       <TableHead
                         key={key}
                         className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 
-                                 uppercase tracking-wider bg-transparent"
+                                 uppercase tracking-wider bg-transparent cursor-pointer group"
+                        onClick={() => handleSort(key)}
                       >
-                        {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                        <div className="flex items-center">
+                          <span className="mr-2">
+                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                          </span>
+                          <div className="opacity-0 group-hover:opacity-70 transition-opacity">
+                            {sortColumn === key ? (
+                              sortDirection === 'asc' ? (
+                                <ArrowUpIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              ) : (
+                                <ArrowDownIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              )
+                            ) : (
+                              <div className="w-4 h-4 flex flex-col">
+                                <ArrowUpIcon className="w-3 h-3 opacity-40" />
+                                <ArrowDownIcon className="w-3 h-3 opacity-40" />
+                              </div>
+                            )}
+                          </div>
+                          {sortColumn === key && (
+                            <div className="ml-1">
+                              {sortDirection === 'asc' ? (
+                                <ArrowUpIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              ) : (
+                                <ArrowDownIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </TableHead>
                     ))}
                   </TableRow>
@@ -285,12 +383,16 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                               const value = row[key];
                               const isLastColumn = keyIndex === headers.length - 1;
 
+                              // Highlight column that's being sorted
+                              const isActiveSortColumn = sortColumn === key;
+
                               return (
                                 <TableCell
                                   key={key}
                                   className={cn(
                                     'px-6 py-4 text-sm text-gray-900 dark:text-gray-100 font-medium',
-                                    isLastColumn && !expandableRows && 'rounded-r-lg'
+                                    isLastColumn && !expandableRows && 'rounded-r-lg',
+                                    isActiveSortColumn && 'bg-blue-50/50 dark:bg-blue-900/10'
                                   )}
                                 >
                                   {customRender[key] ? (
@@ -356,13 +458,18 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               <span className="font-semibold text-gray-900 dark:text-gray-100">{data.length}</span>
               <span>results</span>
             </div>
-            {(searchTerm || Object.keys(columnFilters).length > 0) && (
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
+              {sortColumn && (
+                <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full">
+                  Sorted by {sortColumn} ({sortDirection === 'asc' ? 'ascending' : 'descending'})
+                </span>
+              )}
+              {(searchTerm || Object.keys(columnFilters).length > 0) && (
                 <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full">
                   Filtered
                 </span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

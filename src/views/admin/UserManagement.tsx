@@ -100,7 +100,7 @@ const UserManagement = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '60vw', maxWidth: '1200px' }}
+            style={{ width: '90vw', maxWidth: '1200px' }}
           >
             <div className="flex-1 overflow-y-auto">
               <div className="p-8 space-y-6">
@@ -108,7 +108,7 @@ const UserManagement = () => {
                   <>
                     {/* Header */}
                     <div className="border-b border-border pb-4">
-                      <h2 className="text-2xl font-bold text-foreground mb-2">User Details</h2>
+                      <h2 className="text-3xl font-bold text-foreground mb-2">User Details</h2>
                       <p className="text-sm text-muted-foreground">
                         Manage user information and role assignments
                       </p>

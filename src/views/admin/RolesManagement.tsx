@@ -310,7 +310,7 @@ const RolesManagement = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '60vw', maxWidth: '1200px' }}
+            style={{ width: '90vw', maxWidth: '1200px' }}
           >
             <div className="flex-1 overflow-y-auto">
               <div className="p-8 space-y-6">
@@ -381,7 +381,7 @@ const RolesManagement = () => {
                       ) : permissionTableData.length === 0 ? (
                         <div className="text-center py-12">
                           <div className="text-muted-foreground mb-2">
-                            <View className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <View className="md:w-12 md:h-12 mx-auto mb-4 opacity-50" />
                             <p className="text-sm">No permissions available</p>
                             <p className="text-xs">
                               Contact your administrator to configure permissions

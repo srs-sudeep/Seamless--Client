@@ -165,9 +165,9 @@ const CourseManagement = () => {
             )
             .join(' | ')
         : '',
-      Instructors: '', // Placeholder for icon
-      Students: '', // Placeholder for icon
-      'View Sessions': '', // Placeholder for icon
+      Instructors: '',
+      Students: '',
+      'View Sessions': '',
       Edit: '',
       Delete: '',
       _row: { ...course },
@@ -240,7 +240,7 @@ const CourseManagement = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '60vw', maxWidth: '1200px' }}
+            style={{ width: '90vw', maxWidth: '1200px' }}
           >
             <div className="flex-1 overflow-y-auto">
               <div className="p-8 space-y-6">

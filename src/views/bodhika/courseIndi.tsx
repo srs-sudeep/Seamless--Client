@@ -283,7 +283,7 @@ const CourseIndi = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '60vw', maxWidth: '1200px' }}
+            style={{ width: '90vw', maxWidth: '1200px' }}
           >
             <div className="flex-1 overflow-y-auto">
               <div className="p-8 space-y-6">

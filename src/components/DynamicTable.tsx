@@ -261,13 +261,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
         <div
           className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 
-                        bg-white dark:bg-gray-900 transition-all duration-300"
+                     bg-white dark:bg-gray-900 transition-all duration-300"
         >
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading...</span>
+              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
+                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-sm font-medium">Loading data...</span>
               </div>
             </div>
           ) : (
@@ -275,7 +275,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               <Table>
                 <TableHeader>
                   <TableRow
-                    className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 
+                    className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-gray-800 dark:to-gray-700 
                                      hover:from-gray-100 hover:to-gray-150 
                                      border-b border-gray-200 dark:border-gray-700 transition-all duration-200"
                   >
@@ -330,15 +330,27 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         colSpan={headers.length + (expandableRows ? 1 : 0)}
                         className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                       >
-                        <div className="flex flex-col items-center space-y-2">
-                          <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                            <span className="text-2xl">📋</span>
+                        <div className="flex flex-col items-center space-y-3">
+                          <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-gray-400 dark:text-gray-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
                           </div>
-                          <p className="text-sm font-medium">No data found</p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500">
+                          <p className="text-base font-medium">No data found</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500 max-w-xs text-center">
                             {searchTerm || Object.keys(columnFilters).length > 0
-                              ? 'Try adjusting your search or filters'
-                              : 'No records available'}
+                              ? "Try adjusting your search or filters to find what you're looking for."
+                              : 'No records are currently available in this table.'}
                           </p>
                         </div>
                       </TableCell>
@@ -346,6 +358,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   ) : (
                     filteredData.map((row, i) => {
                       const canExpand = rowExpandable ? rowExpandable(row) : expandableRows;
+                      const isExpanded = expandedRows[i] || false;
+
                       return (
                         <React.Fragment key={i}>
                           <TableRow
@@ -354,9 +368,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                               i % 2 === 0
                                 ? 'bg-white dark:bg-gray-900'
                                 : 'bg-gray-50/50 dark:bg-gray-800/30',
-                              'light:hover:bg-gradient-to-r light:hover:from-blue-50 hover:to-indigo-50',
-                              'hover:shadow-md dark:hover:shadow-gray-900/10',
-                              onRowClick && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
+                              'hover:bg-blue-50/50 dark:hover:bg-blue-900/10',
+                              isExpanded && 'bg-blue-50/50 dark:bg-blue-900/10 shadow-sm',
+                              onRowClick &&
+                                'cursor-pointer hover:scale-[1.005] active:scale-[0.995]'
                             )}
                             onClick={() => onRowClick && onRowClick(row, i)}
                           >
@@ -366,24 +381,36 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                   e.stopPropagation();
                                   if (canExpand) toggleRow(i);
                                 }}
-                                className="px-4 py-4 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 
-                                       transition-colors duration-200 rounded-l-lg"
+                                className={cn(
+                                  'px-4 py-4 text-center transition-colors duration-200',
+                                  canExpand &&
+                                    'cursor-pointer hover:bg-blue-100/50 dark:hover:bg-blue-900/20 rounded-l-lg'
+                                )}
                               >
                                 {canExpand ? (
-                                  <ChevronDownIcon
+                                  <div
                                     className={cn(
-                                      'h-4 w-4 transition-all duration-300 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400',
-                                      expandedRows[i] ? 'rotate-180' : 'rotate-0'
+                                      'flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300',
+                                      isExpanded
+                                        ? 'bg-blue-100 dark:bg-blue-900/30'
+                                        : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30'
                                     )}
-                                  />
+                                  >
+                                    <ChevronDownIcon
+                                      className={cn(
+                                        'h-4 w-4 transition-all duration-300',
+                                        isExpanded
+                                          ? 'text-blue-600 dark:text-blue-400 rotate-180'
+                                          : 'text-gray-500 dark:text-gray-400 rotate-0 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                      )}
+                                    />
+                                  </div>
                                 ) : null}
                               </TableCell>
                             )}
                             {headers.map((key, keyIndex) => {
                               const value = row[key];
                               const isLastColumn = keyIndex === headers.length - 1;
-
-                              // Highlight column that's being sorted
                               const isActiveSortColumn = sortColumn === key;
 
                               return (
@@ -392,7 +419,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                   className={cn(
                                     'px-6 py-4 text-sm text-gray-900 dark:text-gray-100 font-medium',
                                     isLastColumn && !expandableRows && 'rounded-r-lg',
-                                    isActiveSortColumn && 'bg-blue-50/50 dark:bg-blue-900/10'
+                                    isActiveSortColumn && 'bg-blue-50/70 dark:bg-blue-900/20'
                                   )}
                                 >
                                   {customRender[key] ? (
@@ -420,18 +447,21 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                               );
                             })}
                           </TableRow>
-                          {expandableRows && expandedRows[i] && expandedComponent && canExpand && (
-                            <TableRow
-                              className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-750 
-                                             border-b border-gray-200 dark:border-gray-700"
-                            >
+                          {expandableRows && isExpanded && expandedComponent && canExpand && (
+                            <TableRow className="transition-all duration-300">
                               <TableCell
                                 colSpan={headers.length + 1}
-                                className="px-6 py-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900
-                                       border-l-4 border-blue-500 dark:border-blue-400"
+                                className="p-0 border-b-0 bg-transparent"
                               >
-                                <div className="rounded-lg p-4 bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-700">
-                                  {expandedComponent(row)}
+                                <div className="mx-4 mt-0 mb-4 overflow-hidden rounded-b-lg border border-t-0 border-blue-200 dark:border-blue-900 dark:bg-gray-900/50">
+                                  <div className="p-5 bg-white/80 dark:bg-gray-900/50 border-t-2 border-blue-400 dark:border-blue-700">
+                                    <div className="pb-1 mb-3 border-b border-gray-100 dark:border-gray-800">
+                                      <span className="inline-block px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 rounded-md">
+                                        Details
+                                      </span>
+                                    </div>
+                                    {expandedComponent(row)}
+                                  </div>
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -446,27 +476,61 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           )}
         </div>
 
-        {/* Table Footer Info */}
+        {/* Table Footer Info - refined styling */}
         {filteredData.length > 0 && (
-          <div className="flex items-center justify-between px-1 text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex items-center space-x-1">
-              <span>Showing</span>
-              <span className="font-semibold text-gray-900 dark:text-gray-100">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 px-1 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Showing</span>
+              <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
                 {filteredData.length}
               </span>
               <span>of</span>
-              <span className="font-semibold text-gray-900 dark:text-gray-100">{data.length}</span>
+              <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
+                {data.length}
+              </span>
               <span>results</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               {sortColumn && (
-                <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full">
-                  Sorted by {sortColumn} ({sortDirection === 'asc' ? 'ascending' : 'descending'})
+                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
+                  <svg
+                    className="w-3.5 h-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d={
+                        sortDirection === 'asc'
+                          ? 'M8 10L12 6M12 6L16 10M12 6V18'
+                          : 'M8 14L12 18M12 18L16 14M12 18V6'
+                      }
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Sorted by {sortColumn} ({sortDirection === 'asc' ? 'A to Z' : 'Z to A'})
                 </span>
               )}
               {(searchTerm || Object.keys(columnFilters).length > 0) && (
-                <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full">
-                  Filtered
+                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200">
+                  <svg
+                    className="w-3.5 h-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75M3 18h14.25M16.5 8.25L19.5 11.25L16.5 14.25"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Filtered results
                 </span>
               )}
             </div>

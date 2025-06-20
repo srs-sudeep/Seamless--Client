@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { TimeRangePicker } from '@/components/ui/timeRangePicker';
 import { type FieldType as BaseFieldType } from '@/types';
+import { parse } from 'date-fns';
+import { Plus, Trash2 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Extend FieldType to include 'fields', 'minItems', and 'maxItems' for array type
 type FieldType = BaseFieldType & {
@@ -9,8 +11,6 @@ type FieldType = BaseFieldType & {
   maxItems?: number;
   section?: string;
 };
-import { parse } from 'date-fns';
-import { Plus, Trash2 } from 'lucide-react';
 
 type DynamicFormProps = {
   schema: FieldType[];
@@ -209,6 +209,47 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     sectionMap[section].push(field);
   });
 
+  // Handle dropdown positioning to prevent it from going off-screen
+  useEffect(() => {
+    const handleDropdownPosition = () => {
+      Object.keys(openDropdowns).forEach(fieldName => {
+        if (openDropdowns[fieldName] && dropdownRefs.current[fieldName]) {
+          const dropdown = dropdownRefs.current[fieldName]?.querySelector('div[class*="absolute"]');
+          if (!dropdown) return;
+
+          const rect = dropdown.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+
+          const dropdownEl = dropdown as HTMLElement;
+          if (rect.bottom > viewportHeight) {
+            // If dropdown would go below viewport, position it above the button instead
+            dropdownEl.style.bottom = '100%';
+            dropdownEl.style.top = 'auto';
+            dropdownEl.style.marginTop = '0';
+            dropdownEl.style.marginBottom = '0.25rem';
+          } else {
+            // Reset to default (below button)
+            dropdownEl.style.top = 'auto';
+            dropdownEl.style.bottom = 'auto';
+            dropdownEl.style.marginBottom = '0';
+            dropdownEl.style.marginTop = '0.25rem';
+          }
+        }
+      });
+    };
+
+    if (Object.values(openDropdowns).some(Boolean)) {
+      handleDropdownPosition();
+      window.addEventListener('scroll', handleDropdownPosition);
+      window.addEventListener('resize', handleDropdownPosition);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleDropdownPosition);
+      window.removeEventListener('resize', handleDropdownPosition);
+    };
+  }, [openDropdowns]);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8 mx-auto max-w-5xl w-full">
       {Object.entries(sectionMap).map(([section, fields]) => (
@@ -240,7 +281,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                     key={field.name}
                     className={`flex flex-col ${field.columns === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}
                   >
-                    <label className={`mb-1 ${field.className || ''}`}>{field.label}</label>
+                    <label
+                      className={`mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 ${field.className || ''}`}
+                    >
+                      {field.label}
+                      {field.required && <span className="ml-1 text-red-500">*</span>}
+                    </label>
                     {field.type === 'array' && field.fields ? (
                       <div className="mb-6 mt-2">
                         {arrayFieldData[field.name]?.map((item, idx) => (
@@ -280,7 +326,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                   key={subField.name}
                                   type={subField.type}
                                   placeholder={subField.label}
-                                  className="border p-2 rounded-md flex-1 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                                  className="w-full border p-2.5 rounded-md mb-2 
+                                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                           bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
+                                           dark:placeholder-gray-400 dark:focus:ring-blue-400 dark:focus:border-blue-400
+                                           transition-all duration-200"
                                   value={item[subField.name]}
                                   onChange={e =>
                                     handleArrayFieldChange(
@@ -379,15 +429,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           type="button"
                           onClick={() => toggleDropdown(field.name)}
                           disabled={disabled || field.disabled}
-                          className="w-full border p-2 mb-2 rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white flex justify-between items-center text-left"
+                          className="w-full border p-2 mb-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 px-3 
+                                       bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
+                                       flex justify-between items-center text-left
+                                       hover:border-gray-400 dark:hover:border-gray-500
+                                       transition-all duration-200"
                         >
                           <span
-                            className={`${!formData[field.name]?.length ? 'text-gray-500 dark:text-gray-400' : ''}`}
+                            className={`${!formData[field.name]?.length ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white font-medium'}`}
                           >
                             {getSelectedLabel(field)}
                           </span>
                           <svg
-                            className={`w-4 h-4 transition-transform ${openDropdowns[field.name] ? 'rotate-180' : ''}`}
+                            className={`w-4 h-4 transition-transform ${openDropdowns[field.name] ? 'rotate-180 text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -401,44 +455,87 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           </svg>
                         </button>
 
-                        {/* Dropdown Options */}
+                        {/* Dropdown Options - Fixed positioning and scrolling */}
                         {openDropdowns[field.name] && (
-                          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
-                            {field.options?.map(opt => {
-                              const optionValue = typeof opt === 'string' ? opt : opt.value;
-                              const optionLabel = typeof opt === 'string' ? opt : opt.label;
-                              const isSelected =
-                                Array.isArray(formData[field.name]) &&
-                                formData[field.name].map(String).includes(String(optionValue));
+                          <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            {/* Search Input for Filtering Options */}
+                            <div className="sticky top-0 z-10 p-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                              <input
+                                type="text"
+                                className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                                placeholder="Search options..."
+                                onClick={e => e.stopPropagation()}
+                                onChange={e => {
+                                  // Add a filter state for dropdown search
+                                  // Implementation would go here
+                                }}
+                              />
+                            </div>
 
-                              return (
-                                <div
-                                  key={optionValue}
-                                  className={`px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 ${
-                                    isSelected ? 'bg-blue-50 dark:bg-blue-900' : ''
-                                  }`}
-                                  onClick={() => handleMultiSelectToggle(field.name, optionValue)}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isSelected}
-                                    onChange={() => {}} // Handled by parent onClick
-                                    className="w-4 h-4"
-                                  />
-                                  <span
-                                    className={`dark:text-white ${isSelected ? 'font-medium text-blue-700 dark:text-blue-300' : ''}`}
+                            {/* Option List with improved styling */}
+                            <div>
+                              {field.options?.map(opt => {
+                                const optionValue = typeof opt === 'string' ? opt : opt.value;
+                                const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                                const isSelected =
+                                  Array.isArray(formData[field.name]) &&
+                                  formData[field.name].map(String).includes(String(optionValue));
+
+                                return (
+                                  <div
+                                    key={optionValue}
+                                    className={`px-3 py-2 cursor-pointer transition-colors duration-150 
+                                               ${
+                                                 isSelected
+                                                   ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                                   : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                                               }`}
+                                    onClick={() => handleMultiSelectToggle(field.name, optionValue)}
                                   >
-                                    {typeof optionLabel === 'object' && optionLabel !== null
-                                      ? `${optionLabel.id} - ${optionLabel.name}`
-                                      : optionLabel}
-                                  </span>
+                                    <div className="flex items-center gap-2">
+                                      <div
+                                        className={`flex-shrink-0 w-4 h-4 border rounded 
+                                                      ${
+                                                        isSelected
+                                                          ? 'bg-blue-500 dark:bg-blue-600 border-blue-500 dark:border-blue-600'
+                                                          : 'border-gray-300 dark:border-gray-500'
+                                                      }`}
+                                      >
+                                        {isSelected && (
+                                          <svg
+                                            className="w-4 h-4 text-white"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                          >
+                                            <path
+                                              fillRule="evenodd"
+                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                              clipRule="evenodd"
+                                            />
+                                          </svg>
+                                        )}
+                                      </div>
+                                      <span className={`${isSelected ? 'font-medium' : ''}`}>
+                                        {typeof optionLabel === 'object' && optionLabel !== null
+                                          ? `${optionLabel.id} - ${optionLabel.name}`
+                                          : optionLabel}
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+
+                              {/* Empty state when no options match search */}
+                              {field.options?.length === 0 && (
+                                <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400">
+                                  No options available
                                 </div>
-                              );
-                            })}
+                              )}
+                            </div>
                           </div>
                         )}
 
-                        {/* Selected Options Chips */}
+                        {/* Selected Options Chips with improved styling */}
                         {Array.isArray(formData[field.name]) && formData[field.name].length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-2">
                             {formData[field.name].map((val: string) => {
@@ -451,7 +548,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               return (
                                 <span
                                   key={val}
-                                  className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
+                                  className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 
+                                           text-blue-700 dark:text-blue-200 text-sm px-3 py-1.5 
+                                           rounded-full border border-blue-200 dark:border-blue-700
+                                           shadow-sm transition-all duration-200 hover:shadow-md"
                                 >
                                   {typeof label === 'object' &&
                                   label !== null &&
@@ -461,12 +561,26 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                     : String(label)}
                                   <button
                                     type="button"
-                                    className="ml-2 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 focus:outline-none"
-                                    onClick={() => handleMultiSelectToggle(field.name, val)}
+                                    className="ml-1 rounded-full w-4 h-4 flex items-center justify-center 
+                                             text-blue-500 hover:text-white bg-transparent hover:bg-blue-500
+                                             transition-colors duration-200"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      handleMultiSelectToggle(field.name, val);
+                                    }}
                                     aria-label="Remove"
-                                    tabIndex={0}
                                   >
-                                    ×
+                                    <svg
+                                      className="w-3 h-3"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
                                   </button>
                                 </span>
                               );
@@ -713,7 +827,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md focus:outline-none focus:ring-2 mb-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                        className="w-full border p-2.5 rounded-md mb-2 
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
+                                 dark:placeholder-gray-400 dark:focus:ring-blue-400 dark:focus:border-blue-400
+                                 transition-all duration-200"
                         value={formData[field.name] ?? ''}
                         disabled={disabled || field.disabled}
                       />

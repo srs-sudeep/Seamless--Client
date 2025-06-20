@@ -83,15 +83,15 @@ const RouteManagement = () => {
       Label: sub.label,
       Path: sub.path || '',
       Icon: sub.icon,
-      Active: sub.isActive,
+      Status: sub.isActive,
       Roles: (sub.roles || []).map((role: any) => ({
         label: role.role_name || role.name || role.label || role,
         value: role.role_id || role.value || role,
       })),
+      'Is Sidebar': sub.is_sidebar,
       Edit: '',
       Delete: '',
       Create: '',
-      'Is Sidebar': sub.is_sidebar,
       _row: sub,
       _subModules: sub.children || [],
       _module_id: sub.module_id,
@@ -161,9 +161,18 @@ const RouteManagement = () => {
         <TooltipContent>Add Child Route</TooltipContent>
       </Tooltip>
     ),
-    Active: (value: boolean) => (
-      <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+    Status: (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border`}
+      >
         {value ? 'Active' : 'Inactive'}
+      </span>
+    ),
+    'Is Sidebar': (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border `}
+      >
+        {String(value)}
       </span>
     ),
     Icon: (value: string) => (

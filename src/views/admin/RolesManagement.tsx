@@ -117,7 +117,9 @@ const RolesManagement = () => {
   }>((acc, action: any) => {
     acc[action] = (val: any, row: any) => {
       const isLoading = addPermissionToRole.isPending || removePermissionFromRole.isPending;
-      const disabled = val.wildcard || isLoading || !viewPermissionRole;
+      // Only enable toggle if permission_id exists (i.e., permission is available in data)
+      const isAvailable = !!val.permission_id;
+      const disabled = val.wildcard || isLoading || !viewPermissionRole || !isAvailable;
       return (
         <div className="flex justify-center">
           <button

@@ -51,7 +51,7 @@ const LoginPage: React.FC = () => {
         <img
           src="./images/Login/IIT_Bhilai_Logo.svg"
           alt="IIT Bhilai Logo"
-          className="w-24 h-auto"
+          className="w-12 h-auto"
         />
         <img
           src="./LogoHorizontal.svg"
@@ -199,30 +199,25 @@ const LoginPage: React.FC = () => {
                     <img
                       src="./images/Login/IIT_Bhilai_Logo.svg"
                       alt="IIT Bhilai Logo"
-                      className="w-[12vw] h-auto mb-2 -mt-4"
+                      className="w-36 h-auto mb-2 -mt-4"
                     />
 
                     {/* Horizontal Logo for Light Mode */}
                     <img
                       src="./LogoHorizontal.svg"
                       alt="Logo"
-                      className="w-[25vw] h-[20vh] object-contain block dark:hidden"
+                      className="w-72 h-auto object-contain block dark:hidden"
                     />
 
                     {/* Horizontal Logo for Dark Mode */}
                     <img
                       src="./WhiteLogoHorizontal.svg"
                       alt="Logo"
-                      className="w-[25vw] h-[20vh] object-contain hidden dark:block"
+                      className="w-72 h-auto object-contain hidden dark:block"
                     />
                   </div>
                 </div>
               </div>
-
-              {/* <h2 className="text-4xl font-bold mb-6 leading-tight text-center">
-                <span className="block ml-20 text-black dark:text-white">Seamless</span>
-                <span className="block  text-black dark:text-white ml-20">Experience</span>
-              </h2> */}
             </div>
           </div>
         </div>

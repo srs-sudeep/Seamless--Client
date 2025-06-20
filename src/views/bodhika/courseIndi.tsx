@@ -13,7 +13,7 @@ import {
   TabsContent,
 } from '@/components';
 import { useSessionsByCourseId, useSessionAttendance } from '@/hooks/bodhika/useSession.hook';
-import { Loader2 } from 'lucide-react';
+import { Eye, Loader2 } from 'lucide-react';
 
 const truncateId = (id: string, len = 10) =>
   id && id.length > len ? id.slice(0, len) + '...' : id;
@@ -34,8 +34,6 @@ const formatDateTime = (dateString: string) => {
 const CourseIndi = () => {
   const { course_id } = useParams<{ course_id: string }>();
   const { data: sessions = [], isLoading } = useSessionsByCourseId(course_id);
-
-  console.log(sessions);
   // State for attendance side panel
   const [editSessionId, setEditSessionId] = useState<string | null>(null);
   const [attendanceTab, setAttendanceTab] = useState<
@@ -56,6 +54,19 @@ const CourseIndi = () => {
   ) as {
     data: AttendanceData;
     isLoading: boolean;
+  };
+
+  const getStatusChip = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-300';
+      case 'paused':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'ended':
+        return 'bg-gray-100 text-gray-800 border-gray-300';
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-300';
+    }
   };
 
   const getStatusChipClass = (count: number) =>
@@ -133,8 +144,7 @@ const CourseIndi = () => {
           Rooms: Array.isArray(session.rooms)
             ? session.rooms
                 .map(
-                  (room: any) =>
-                    `${room.room_id}${room.room_name ? ` (${room.room_name})` : ''}${room.device_id ? ` [${room.device_id}]` : ''}`
+                  (room: any) => `${room.room_id}${room.room_name ? ` (${room.room_name})` : ''}`
                 )
                 .join(', ')
             : '',
@@ -148,10 +158,41 @@ const CourseIndi = () => {
     'Session Id': (value: string) => <span className="font-mono">{truncateId(value)}</span>,
     'Start Time': (value: string) => <span>{formatDateTime(value)}</span>,
     'End Time': (value: string) => <span>{formatDateTime(value)}</span>,
-    Rooms: (value: string) => <span className="font-mono">{value}</span>,
+    Rooms: (_: string, row: any) => (
+      <div>
+        {Array.isArray(row._row.rooms) && row._row.rooms.length > 0 ? (
+          row._row.rooms.map((room: any, idx: number) => (
+            <div key={idx} className="mb-1">
+              <span className="font-mono">{room.room_id}</span>
+              {room.room_name && (
+                <div>
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-xl bg-gray-200 text-gray-700 text-xs">
+                    {room.room_name}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <span className="text-muted-foreground text-xs">-</span>
+        )}
+      </div>
+    ),
+    Status: (value: string) => {
+      const statusStr = typeof value === 'string' ? value : value ? String(value) : '';
+      return (
+        <span
+          className={`inline-block px-3 py-1 rounded-full border text-xs font-semibold ${getStatusChip(
+            statusStr
+          )}`}
+        >
+          {statusStr.charAt(0).toUpperCase() + statusStr.slice(1)}
+        </span>
+      );
+    },
     ViewAttendance: (session_id: string, row: any) => (
       <Button size="sm" variant="outline" onClick={() => setEditSessionId(session_id)}>
-        View Attendance
+        <Eye className="w-4 h-4" />
       </Button>
     ),
   };
@@ -221,6 +262,7 @@ const CourseIndi = () => {
               'Start Time': customRender['Start Time'],
               'End Time': customRender['End Time'],
               Rooms: customRender['Rooms'],
+              Status: customRender['Status'],
             }}
           />
         )}

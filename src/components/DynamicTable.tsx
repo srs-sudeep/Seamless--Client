@@ -12,9 +12,7 @@ import {
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { type FilterConfig } from '@/types';
 import React, { useMemo, useState } from 'react';
-import { Transitions } from './Transitions';
 import { FilterConfig } from '@/types';
 
 type DynamicTableProps = {

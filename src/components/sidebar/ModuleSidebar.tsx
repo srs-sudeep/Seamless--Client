@@ -49,7 +49,7 @@ function findParentIds(
   return null;
 }
 
-const ModuleSidebar = () => {
+export const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -333,5 +333,3 @@ const ModuleSidebar = () => {
     </>
   );
 };
-
-export default ModuleSidebar;

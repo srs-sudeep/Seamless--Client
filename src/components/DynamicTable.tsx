@@ -9,18 +9,19 @@ import {
   ScrollArea,
   Checkbox,
   Button,
+  TableShimmer,
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
   customRender?: {
     [key: string]: (value: any, row: Record<string, any>) => React.ReactNode;
   };
-  loading?: boolean;
+  isLoading?: boolean;
   filterConfig?: FilterConfig[];
   className?: string;
   expandableRows?: boolean;
@@ -39,6 +40,10 @@ type DynamicTableProps = {
   limit?: number;
   onLimitChange?: (limit: number) => void;
   total?: number;
+  columnFilters?: Record<string, any>;
+  setColumnFilters?: (
+    filters: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)
+  ) => void;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -51,7 +56,7 @@ function toSentenceCase(str: string) {
 const DynamicTable: React.FC<DynamicTableProps> = ({
   data,
   customRender = {},
-  loading = false,
+  isLoading = false,
   filterConfig = [],
   className = '',
   expandableRows = false,
@@ -70,10 +75,26 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   limit = 10,
   onLimitChange,
   total = 0,
+  columnFilters: controlledColumnFilters,
+  setColumnFilters: controlledSetColumnFilters,
 }) => {
+  // Use controlled filters if provided, otherwise manage internally
+  const [uncontrolledColumnFilters, setUncontrolledColumnFilters] = useState<Record<string, any>>(
+    {}
+  );
+  const isControlled =
+    controlledColumnFilters !== undefined && controlledSetColumnFilters !== undefined;
+  const columnFilters = isControlled ? controlledColumnFilters : uncontrolledColumnFilters;
+  const setColumnFilters = isControlled ? controlledSetColumnFilters : setUncontrolledColumnFilters;
+
+  // Memoize columnFilters to avoid unnecessary rerenders and keep dropdowns in sync
+  useEffect(() => {
+    if (isControlled && controlledColumnFilters) {
+      setUncontrolledColumnFilters(controlledColumnFilters);
+    }
+  }, [controlledColumnFilters]);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
-  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
@@ -94,14 +115,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     }
   };
   const clearFilter = (column: string) => {
-    setColumnFilters(prev => {
+    setColumnFilters((prev: Record<string, any>) => {
       const newFilters = { ...prev };
       delete newFilters[column];
       return newFilters;
     });
   };
   const updateColumnFilters = (updater: (prev: Record<string, any>) => Record<string, any>) => {
-    setColumnFilters(prev => {
+    setColumnFilters((prev: Record<string, any>) => {
       const newFilters = updater(prev);
       if (filterMode === 'ui' && onFilterChange) {
         onFilterChange(newFilters);
@@ -477,6 +498,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     return result;
   }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
 
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
@@ -532,13 +555,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
-                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading data...</span>
-              </div>
-            </div>
+          {isLoading ? (
+            <TableShimmer />
           ) : (
             <div className="overflow-x-auto">
               <Table>

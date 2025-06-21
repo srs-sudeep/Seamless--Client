@@ -1,4 +1,4 @@
-const ContactSection = () => {
+export const ContactSection = () => {
   return (
     <section className="w-full bg-white dark:bg-[#0f0e26] px-6 py-16">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12">
@@ -38,5 +38,3 @@ const ContactSection = () => {
     </section>
   );
 };
-
-export default ContactSection;

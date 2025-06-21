@@ -1,6 +1,6 @@
 import { ScrollText, Landmark, BookOpenCheck } from 'lucide-react';
 
-const IITBhilaiInfo = () => {
+export const IITBhilaiInfo = () => {
   return (
     <section className="py-20 bg-gradient-to-b from-white to-slate-50 dark:from-black dark:to-gray-900 text-gray-800 dark:text-white">
       <div className="max-w-5xl mx-auto px-4 text-center">
@@ -57,5 +57,3 @@ const IITBhilaiInfo = () => {
     </section>
   );
 };
-
-export default IITBhilaiInfo;

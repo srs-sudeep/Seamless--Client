@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Transitions } from './Transitions';
+import { Transitions } from '@/components/Transitions';
 type HelmetWrapperProps = {
   title?: string;
   description?: string;

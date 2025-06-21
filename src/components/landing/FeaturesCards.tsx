@@ -1,7 +1,7 @@
 import { Zap, Shield, Users, Sparkles, Globe } from 'lucide-react';
 import ScrollWrapper from './ScrollWrapper';
 
-const FeaturesCards = () => {
+export const FeaturesCards = () => {
   const features = [
     {
       icon: Zap,

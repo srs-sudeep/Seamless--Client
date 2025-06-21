@@ -13,9 +13,17 @@ export * from '@/components/footer/MainFooter';
 export * from '@/components/sidebar/ModuleSidebar';
 export * from '@/components/footer/LandingFooter';
 
+//Exporting all landing components
+export * from '@/components/landing/Hero';
+export * from '@/components/landing/IITBhilaiInfo';
+export * from '@/components/landing/ContactSection';
+export * from '@/components/landing/FeaturesCards';
+export * from '@/components/landing/FaqSlider';
+
 // Exporting Custom Components
 export * from '@/components/DynamicForm';
 export * from '@/components/DynamicTable';
+export * from '@/components/Transitions';
 
 // Exporting all the shadcn/ui components for easy import
 export * from '@/components/ui/alert-dialog';

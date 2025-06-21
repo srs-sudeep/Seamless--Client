@@ -1,12 +1,8 @@
-import LandingpageFirstLook from '../../components/landing/LandingPageFirstLook';
-import FeaturesCards from '@/components/landing/FeaturesCards';
-import IITBhilaiInfo from '@/components/landing/IITBhilaiInfo';
-import ContactSection from '@/components/landing/ContactSection';
-import FaqSlider from '@/components/landing/FaqSlider';
+import { Hero, FeaturesCards, IITBhilaiInfo, FaqSlider, ContactSection } from '@/components';
 const LandingPage = () => {
   return (
     <div className="scroll-smooth">
-      <LandingpageFirstLook />
+      <Hero />
       <FeaturesCards />
       <IITBhilaiInfo />
       <FaqSlider />

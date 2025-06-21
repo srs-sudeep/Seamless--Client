@@ -206,7 +206,7 @@ export const ModuleSidebar = () => {
 
   const sideBarcontent = (
     <div className="h-full flex">
-      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-background z-40">
+      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-sidebar-accent-foreground z-40">
         <div className="mb-6">
           <AppLogo short className=" text-sidebar-foreground" imgClassname="w-13 h-15" />
         </div>
@@ -242,7 +242,7 @@ export const ModuleSidebar = () => {
           style={{ overflow: 'hidden' }}
           className={cn(
             'h-full flex flex-col',
-            'bg-background backdrop-blur-sm overflow-hidden',
+            'bg-sidebar-accent-foreground backdrop-blur-sm overflow-hidden',
             'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
           )}
         >

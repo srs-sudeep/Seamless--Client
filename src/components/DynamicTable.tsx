@@ -31,8 +31,6 @@ type DynamicTableProps = {
   tableHeading?: string;
   rowExpandable?: (row: Record<string, any>) => boolean;
   filterMode?: 'local' | 'ui';
-  onFilterChange?: (filters: Record<string, any>) => void;
-  search?: string;
   onSearchChange?: (val: string) => void;
   page?: number;
   onPageChange?: (page: number) => void;
@@ -62,12 +60,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   tableHeading,
   rowExpandable,
   filterMode = 'local',
-  onFilterChange,
-  search = '',
   onSearchChange,
   page = 1,
   onPageChange,
-  limit = 10,
+  limit = 2,
   onLimitChange,
   total = 0,
 }) => {
@@ -77,8 +73,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
-  const [localLimit, setLocalLimit] = useState(10);
-
+  const [localLimit, setLocalLimit] = useState(2);
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -699,14 +694,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         <React.Fragment key={i}>
                           <TableRow
                             className={cn(
-                              'group transition-all duration-200 border-b border-gray-100 dark:border-gray-800',
+                              'group transition-all duration-200 border-b border-gray-100 md:overflow-scroll dark:border-gray-800',
                               i % 2 === 0
                                 ? 'bg-white dark:bg-gray-900'
                                 : 'bg-gray-50/50 dark:bg-gray-800/30',
                               'hover:bg-blue-50/50 dark:hover:bg-blue-900/10',
                               isExpanded && 'bg-blue-50/50 dark:bg-blue-900/10 shadow-sm',
-                              onRowClick &&
-                                'cursor-pointer hover:scale-[1.0005] active:scale-[0.995]'
+                              onRowClick && 'cursor-pointer active:scale-[0.995]'
                             )}
                             onClick={() => onRowClick && onRowClick(row, i)}
                           >
@@ -810,7 +804,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             </div>
           )}
         </div>
-        {(filterMode === 'ui' ? total : paginatedData.length) > 0 && (
+        {total > 0 && (
           <div className="flex items-center justify-between mt-4">
             <div>
               <span>Rows per page: </span>

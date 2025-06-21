@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  PanelLeft,
   Shield,
   FileText,
   Scale,
@@ -32,25 +31,17 @@ const Terms: React.FC = () => {
 
   return (
     <div>
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="w-10 h-10 bg-white dark:bg-slate-800 rounded-md shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-transform duration-200 hover:scale-105"
-          aria-label="Toggle sidebar"
-        >
-          <PanelLeft className="w-6 h-6 text-gray-800 dark:text-gray-200" />
-        </button>
-      </div>
-
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 transition-all duration-300">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 pt-24">
         {/* Header */}
-        <div className="relative pt-20 pb-12 mt-24">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/5 via-purple-900/5 to-blue-900/5 dark:from-blue-900/5 dark:via-purple-900/5 dark:to-blue-900/5"></div>
-          <div className="relative max-w-6xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 dark:text-slate-100 tracking-tight mb-4">
-              Terms & Conditions
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <div className="flex justify-center pt-8 pb-8">
+          <div className="relative group ">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
+              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                Terms & Conditions
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+              </span>
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center">
               Please read these terms carefully before using our services
             </p>
             <div className="flex items-center justify-center space-x-2 mt-4 text-sm text-slate-500 dark:text-slate-500">
@@ -59,11 +50,10 @@ const Terms: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Mobile Menu Button */}
 
         {/* Main Content */}
-        <div className="max-w-6xl mx-auto px-6 pb-20  pt-24">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="flex gap-8">
             {/* Sidebar Navigation */}
             <div

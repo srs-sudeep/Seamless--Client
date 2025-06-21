@@ -60,6 +60,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.16.0",
     "git-cz": "^4.9.0",
+    "horizonxclient": ".",
     "husky": "^9.1.7",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.510.0",

@@ -48,28 +48,26 @@ const ContactUs: React.FC = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 mt-16">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 mt-24">
         {/* Main Contact Us Heading */}
-        <div className="pt-16 pb-8 flex justify-center">
+        <div className="flex justify-center pt-8 pb-8">
           <div className="relative group">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
               <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
-                CONTACT US
+                Contact us
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mx-auto leading-relaxed">
+              Ready to transform your business with cutting-edge technology? Let's start a
+              conversation about how we can help you achieve your goals.
+            </p>
           </div>
         </div>
 
         {/* Content Container */}
         <div className="max-w-7xl mx-auto px-6 pb-20">
           {/* Hero Section */}
-          <section className="text-center mb-16">
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Ready to transform your business with cutting-edge technology? Let's start a
-              conversation about how we can help you achieve your goals.
-            </p>
-          </section>
 
           {/* Main Content Grid */}
           <div className="grid lg:grid-cols-3 gap-12">

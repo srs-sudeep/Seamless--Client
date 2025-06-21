@@ -418,7 +418,8 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         }
     }
 
-    setHistory(prev => [...prev, { command: trimmedCmd, output, outputClass }]);
+    if (command !== 'clear')
+      setHistory(prev => [...prev, { command: trimmedCmd, output, outputClass }]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -453,22 +454,26 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
   ];
   const suggestion = getGhostSuggestion(command, commands);
   const ghost = suggestion ? suggestion.slice(command.length) : '';
+
   return (
     <div>
-      <div className="h-screen flex bg-slate-50  dark:bg-gray-900 text-green-600 dark:text-green-400 text-sm leading-relaxed overflow-hidden relative font-mono pb-480 pt-24">
-        <div className="pt-16 flex justify-center">
-          <div className="relative group">
-            <h2 className="text-8xl md:text-8xl lg:text-8xl font-extralight text-center tracking-widest">
+      <div className="text-green-600 dark:text-green-400  transition-colors duration-300 bg-gray-50 dark:bg-gray-900 mt-24">
+        <div className=" flex justify-center pt-8 pb-8">
+          <div className="relative group justify-center">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
               <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
-                ABOUT US
+                About us
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mx-auto leading-relaxed text-center">
+              More than code – this is our story.
+            </p>
           </div>
         </div>
         {/* Terminal Container - Fixed height and centered */}
 
-        <div className="h-screen  flex items-center justify-center  relative z-10 w-full pr-10">
+        <div className="h-screen items-center justify-center  relative z-10 w-full hidden lg:flex ">
           <div className="w-full max-w-6xl h-5/6 flex flex-col">
             {/* Terminal Header */}
             <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-t-lg p-3 flex items-center gap-2 shadow-lg flex-shrink-0">
@@ -605,7 +610,39 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
             </div>
           </div>
         </div>
+        <div className="text-black dark:text-white block lg:hidden w-[80%] ml-[10%] mr-[10%]">
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            We are a group of passionate minds from IIT Bhilai, driven by curiosity, collaboration,
+            and a shared vision for creating impactful digital experiences. What started as a simple
+            idea evolved into a platform where innovation, purpose, and user experience come
+            together.
+          </p>
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            Our team is made up of students with diverse skill sets — from front-end design to
+            back-end architecture — united by a single goal: to build something meaningful. We
+            believe that technology should not only solve problems, but also feel intuitive,
+            responsive, and enjoyable. Every interaction should be thoughtful. Every line of code
+            should serve a purpose.
+          </p>
 
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            Being part of one of India’s premier institutions, we’re deeply rooted in a culture of
+            learning and growth. Our environment encourages experimentation, sharpens
+            problem-solving, and pushes us to go beyond the obvious. It’s this atmosphere that fuels
+            our creative process and brings our ideas to life.
+          </p>
+
+          <p className="text-[17px] font-light leading-relaxed">
+            Our aim is simple: create solutions that empower, educate, and inspire. Whether it's
+            making academic processes smoother, helping faculty and students connect better, or
+            simply making interfaces more human — we care about the details that make experiences
+            seamless.
+          </p>
+          <p className="text-[17px] font-light leading-relaxed">
+            We’re proud of what we’re building, but we’re even more excited about what’s next. This
+            is just the beginning, and we invite you to be part of the journey.
+          </p>
+        </div>
         <style>{`
         @keyframes fall {
           0% { transform: translateY(-100vh); }
@@ -638,6 +675,139 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         }
       `}</style>
       </div>
+      <div className="text-black dark:text-white bg-gray-50 dark:bg-gray-900 pt-24">
+        <section className="max-w-4xl mx-auto px-6 py-16 pt-8 pb-8">
+          <div className=" flex justify-center">
+            <div className="relative group">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
+                <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                  About Seamless
+                  <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                </span>
+              </h2>
+            </div>
+          </div>
+
+          {/* Stylized opening blockquote */}
+          <blockquote className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 italic text-lg mb-8 text-gray-700 dark:text-gray-300">
+            “Software should feel invisible — it should just work, beautifully.”
+          </blockquote>
+
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            <strong className="font-semibold text-blue-600 dark:text-blue-400">Seamless</strong> is
+            a modern, intuitive platform designed to simplify digital workflows, enhance
+            collaboration, and provide users with a frictionless experience across devices and
+            services. Built with elegance and efficiency in mind, Seamless bridges the gap between
+            functionality and design — empowering individuals and teams to do more with less effort.
+          </p>
+
+          <hr className="my-6 border-slate-300 dark:border-slate-600" />
+
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            At its core, Seamless is about minimizing digital clutter. Whether you're managing
+            tasks, collaborating on content, or switching between tools, Seamless offers a unified
+            interface that adapts to your context. Its minimalist aesthetic, paired with powerful
+            capabilities, helps you stay focused on what matters most — getting things done.
+          </p>
+
+          <p className="text-[17px] font-light leading-relaxed mb-6">
+            One of Seamless’ key strengths is its adaptive layout and smart component system. From
+            responsive controls to dynamic dashboards, every element is designed for clarity and
+            flow. The platform supports role-based views and personalization, ensuring that both
+            beginners and power users feel right at home.
+          </p>
+
+          <p className="text-[17px] font-light leading-relaxed">
+            But Seamless isn’t just another tool — it’s a mindset. We believe great software gets
+            out of your way. Whether you're planning, building, or exploring, Seamless offers an
+            environment where ideas flow naturally, collaboration thrives, and work feels
+            effortless.
+          </p>
+        </section>
+      </div>
+      <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6 ">
+        {/* Section Heading */}
+        <div className="flex justify-center pt-8 pb-8">
+          <div className="relative group ">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
+              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                Our Guiding Pillars
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+              </span>
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center">
+              We’re grateful for the unwavering support and mentorship from our esteemed faculty.
+            </p>
+          </div>
+        </div>
+        {/* Faculty Cards */}
+        <div className="flex flex-wrap justify-center gap-16">
+          {[
+            { name: 'Prof. Santosh Biswas', role: '', img: '/team/santosh.jpg' },
+            { name: 'Dr. Amit Kumar Dhar', role: '', img: '/team/amit.jpg' },
+            { name: 'Dr. Gagan Raj Gupta', role: '', img: '/team/gagan.jpg' },
+            { name: 'Dr. Anand Baswade', role: '', img: '/team/anand.jpg' },
+          ].map((member, i) => (
+            <div
+              key={i}
+              className="w-90 h-64 bg-white dark:bg-zinc-900 rounded-3xl shadow-md p-6 text-center transition-transform hover:scale-[1.02] hover:shadow-lg duration-300"
+            >
+              <img
+                src={member.img}
+                alt={member.name}
+                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-slate-200 dark:border-zinc-700"
+              />
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{member.name}</h3>
+              {member.role && (
+                <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
+        {/* Headline */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-serif text-gray-900 dark:text-white"></h2>
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-300"></p>
+        </div>
+        <div className="flex justify-center">
+          <div className="relative group pt-8 pb-8">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
+              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                By the Team
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+              </span>
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center">
+              A passionate team turning bold ideas into intuitive experiences.
+            </p>
+          </div>
+        </div>
+        {/* Team Cards */}
+        <div className="flex flex-wrap justify-center gap-16">
+          {[
+            { name: 'Sudeep Ranjan Sahoo', role: 'Team Lead', img: '/team/srs.jpg' },
+            { name: 'Naman Sharma', role: 'Frontend Developer', img: '/team/naman.jpg' },
+            { name: 'Rohit', role: 'Frontend Developer', img: '/team/rohit.jpg' },
+            { name: 'Slok', role: 'Full Stack Developer', img: '/team/slok.jpg' },
+            { name: 'Ujjwal Raj', role: 'Backend Developer', img: '/team/uj.jpg' },
+          ].map((member, i) => (
+            <div
+              key={i}
+              className="w-90 h-64 bg-white dark:bg-zinc-900 rounded-3xl shadow-lg p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl duration-300"
+            >
+              <img
+                src={member.img}
+                alt={member.name}
+                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-slate-200 dark:border-zinc-700"
+              />
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{member.name}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

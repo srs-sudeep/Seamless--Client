@@ -1,191 +1,187 @@
-import React, { Suspense } from 'react';
-const ShimmerEffect = ({ className }: { className?: string }) => (
-  <div className={`relative overflow-hidden ${className}`}>
-    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent dark:via-white/10" />
-  </div>
-);
+import React, { Suspense, useEffect, useState } from 'react';
 
-const LoadingFallback = () => (
-  <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
-    {/* Header Skeleton */}
-    <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand Skeleton */}
-          <div className="flex items-center space-x-4">
-            <div className="relative h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-lg">
-              <ShimmerEffect className="h-full w-full rounded-lg" />
-            </div>
-            <div className="relative h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded">
-              <ShimmerEffect className="h-full w-full rounded" />
-            </div>
-          </div>
+interface LoadingFallbackProps {
+  minLoadTime?: number; // in milliseconds
+}
 
-          {/* Navigation Skeleton */}
-          <nav className="hidden md:flex space-x-8">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="relative h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded">
-                <ShimmerEffect className="h-full w-full rounded" />
-              </div>
-            ))}
-          </nav>
+const LoadingFallback: React.FC<LoadingFallbackProps> = ({ minLoadTime = 5000 }) => {
+  const [progress, setProgress] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
 
-          {/* Profile/Actions Skeleton */}
-          <div className="flex items-center space-x-3">
-            <div className="relative h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded-md">
-              <ShimmerEffect className="h-full w-full rounded-md" />
-            </div>
-            <div className="relative h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full">
-              <ShimmerEffect className="h-full w-full rounded-full" />
-            </div>
-          </div>
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progressPercent = Math.min((elapsed / minLoadTime) * 100, 100);
+
+      setProgress(progressPercent);
+
+      if (progressPercent >= 100) {
+        setIsComplete(true);
+        clearInterval(interval);
+      }
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [minLoadTime]);
+
+  return (
+    <>
+      {/* Top Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gradient-to-r from-blue-50 to-purple-50 overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300 ease-out shadow-lg"
+          style={{
+            width: `${progress}%`,
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
+          }}
+        >
+          {/* Animated shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
         </div>
       </div>
-    </header>
 
-    {/* Main Content */}
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Hero Section Skeleton */}
-      <section className="mb-12">
-        <div className="text-center space-y-6">
-          {/* "Seamless" Title Skeleton */}
-          <div className="flex justify-center">
-            <div className="relative">
-              <h1 className="text-5xl md:text-7xl font-bold text-transparent bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 bg-clip-text select-none">
-                Seamless
-              </h1>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-400/30 dark:via-gray-500/30 to-transparent animate-[shimmer_3s_infinite] -skew-x-12" />
+      {/* Main Loading Content */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
+        <div className="text-center space-y-8 max-w-md mx-auto">
+          {/* Animated Logo/Icon */}
+          <div className="relative">
+            <div className="w-24 h-24 mx-auto mb-6 relative">
+              {/* Outer ring */}
+              <div className="absolute inset-0 rounded-full border-4 border-blue-200 animate-spin-slow">
+                <div className="absolute top-0 left-1/2 w-2 h-2 bg-blue-500 rounded-full transform -translate-x-1/2 -translate-y-1" />
+              </div>
+
+              {/* Inner ring */}
+              <div className="absolute inset-2 rounded-full border-4 border-purple-200 animate-spin-reverse">
+                <div className="absolute top-0 left-1/2 w-1.5 h-1.5 bg-purple-500 rounded-full transform -translate-x-1/2 -translate-y-0.5" />
+              </div>
+
+              {/* Center dot */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" />
+              </div>
             </div>
           </div>
 
-          {/* Subtitle Skeleton */}
+          {/* Loading Text */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-gray-800 animate-fade-in">
+              Loading
+              <span className="inline-block animate-bounce-dots">.</span>
+              <span className="inline-block animate-bounce-dots" style={{ animationDelay: '0.1s' }}>
+                .
+              </span>
+              <span className="inline-block animate-bounce-dots" style={{ animationDelay: '0.2s' }}>
+                .
+              </span>
+            </h2>
+
+            <p className="text-gray-600 animate-fade-in-delay">Preparing your experience</p>
+          </div>
+
+          {/* Progress Percentage */}
           <div className="space-y-3">
-            <div className="relative h-6 w-96 max-w-full mx-auto bg-gray-200 dark:bg-gray-700 rounded">
-              <ShimmerEffect className="h-full w-full rounded" />
-            </div>
-            <div className="relative h-6 w-80 max-w-full mx-auto bg-gray-200 dark:bg-gray-700 rounded">
-              <ShimmerEffect className="h-full w-full rounded" />
-            </div>
-          </div>
-
-          {/* CTA Buttons Skeleton */}
-          <div className="flex justify-center space-x-4 pt-4">
-            <div className="relative h-12 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg">
-              <ShimmerEffect className="h-full w-full rounded-lg" />
-            </div>
-            <div className="relative h-12 w-28 bg-gray-200 dark:bg-gray-700 rounded-lg">
-              <ShimmerEffect className="h-full w-full rounded-lg" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Content Grid Skeleton */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 space-y-4 border border-gray-200 dark:border-gray-700"
-          >
-            {/* Card Image Skeleton */}
-            <div className="relative h-48 bg-gray-200 dark:bg-gray-700 rounded-lg">
-              <ShimmerEffect className="h-full w-full rounded-lg" />
+            <div className="text-sm font-medium text-gray-500">
+              {Math.round(progress)}% Complete
             </div>
 
-            {/* Card Content Skeleton */}
-            <div className="space-y-3">
-              <div className="relative h-6 w-3/4 bg-gray-200 dark:bg-gray-700 rounded">
-                <ShimmerEffect className="h-full w-full rounded" />
-              </div>
-              <div className="space-y-2">
-                <div className="relative h-4 w-full bg-gray-200 dark:bg-gray-700 rounded">
-                  <ShimmerEffect className="h-full w-full rounded" />
-                </div>
-                <div className="relative h-4 w-5/6 bg-gray-200 dark:bg-gray-700 rounded">
-                  <ShimmerEffect className="h-full w-full rounded" />
-                </div>
-              </div>
-
-              {/* Card Footer Skeleton */}
-              <div className="flex justify-between items-center pt-2">
-                <div className="relative h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded">
-                  <ShimmerEffect className="h-full w-full rounded" />
-                </div>
-                <div className="relative h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded-md">
-                  <ShimmerEffect className="h-full w-full rounded-md" />
-                </div>
+            {/* Secondary Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              >
+                <div className="h-full bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
               </div>
             </div>
           </div>
-        ))}
-      </section>
 
-      {/* Stats Section Skeleton */}
-      <section className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="text-center space-y-2">
-              <div className="relative h-12 w-20 mx-auto bg-gray-200 dark:bg-gray-700 rounded">
-                <ShimmerEffect className="h-full w-full rounded" />
-              </div>
-              <div className="relative h-4 w-24 mx-auto bg-gray-200 dark:bg-gray-700 rounded">
-                <ShimmerEffect className="h-full w-full rounded" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
-
-    {/* Footer Skeleton */}
-    <footer className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="space-y-4">
-              <div className="relative h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded">
-                <ShimmerEffect className="h-full w-full rounded" />
-              </div>
-              <div className="space-y-2">
-                {[...Array(4)].map((_, j) => (
-                  <div key={j} className="relative h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded">
-                    <ShimmerEffect className="h-full w-full rounded" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer Bottom */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-8 mt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="relative h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded">
-              <ShimmerEffect className="h-full w-full rounded" />
-            </div>
-            <div className="flex space-x-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="relative h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full">
-                  <ShimmerEffect className="h-full w-full rounded-full" />
-                </div>
-              ))}
-            </div>
+          {/* Floating particles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-blue-400 rounded-full opacity-20 animate-float"
+                style={{
+                  left: `${20 + i * 10}%`,
+                  animationDelay: `${i * 0.5}s`,
+                  animationDuration: `${3 + i * 0.5}s`,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
-    </footer>
 
-    {/* Custom CSS for shimmer animation */}
-    <style>
-      {`
+      {/* Custom Styles */}
+      <style>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        @keyframes spin-reverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+        
         @keyframes shimmer {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
-      `}
-    </style>
-  </div>
-);
+        
+        @keyframes bounce-dots {
+          0%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-8px); }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fade-in-delay {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .animate-spin-slow {
+          animation: spin-slow 3s linear infinite;
+        }
+        
+        .animate-spin-reverse {
+          animation: spin-reverse 2s linear infinite;
+        }
+        
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+        
+        .animate-bounce-dots {
+          animation: bounce-dots 1.4s infinite ease-in-out;
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+        
+        .animate-fade-in-delay {
+          animation: fade-in-delay 0.8s ease-out 0.2s both;
+        }
+        
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
+    </>
+  );
+};
 
 /**
  * Wraps a lazy-loaded component with Suspense and shows skeleton for at least 5 seconds

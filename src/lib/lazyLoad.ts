@@ -7,7 +7,9 @@ import { Loadable } from '@/components';
  * @returns Wrapped component with Suspense
  */
 const lazyLoad = (importFunc: () => Promise<any>) => {
-  return Loadable(lazy(importFunc));
+  return Loadable(
+    lazy(() => new Promise(resolve => setTimeout(() => resolve(importFunc()), 10000)))
+  );
 };
 
 export default lazyLoad;

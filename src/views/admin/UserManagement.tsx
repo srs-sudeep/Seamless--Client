@@ -1,7 +1,7 @@
 import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } from '@/components';
 import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser, useUserFilter } from '@/hooks';
 import { Loader2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
 
 const UserManagement = () => {
@@ -16,12 +16,44 @@ const UserManagement = () => {
     limit,
     offset: (page - 1) * limit,
   });
-  const users = data?.users ?? [];
+  const users: UserAPI[] = Array.isArray(data)
+    ? data
+    : data && Array.isArray((data as { users?: UserAPI[] }).users)
+      ? (data as { users: UserAPI[] }).users
+      : [];
   const totalCount = data?.total_count ?? 0;
   const assignRoleToUser = useAssignRoleToUser();
   const removeRoleFromUser = useRemoveRoleFromUser();
 
   const [editUser, setEditUser] = useState<UserAPI | null>(null);
+  const [selectedRoleNames, setSelectedRoleNames] = useState<string[]>([]);
+  const [selectedStatusLabel, setSelectedStatusLabel] = useState<string | undefined>(undefined);
+
+  // FIX: Use Record<string, any> for columnFilters
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({
+    Active: selectedStatusLabel,
+    Roles: selectedRoleNames,
+  });
+
+  useEffect(() => {
+    if (filterOptions?.roles) {
+      setSelectedRoleNames(prev =>
+        prev.filter(roleName => filterOptions.roles.some(r => r.name === roleName))
+      );
+    }
+    if (filterOptions?.status) {
+      setSelectedStatusLabel(prev =>
+        filterOptions.status.some(s => s.label === prev) ? prev : undefined
+      );
+    }
+  }, [filterOptions]);
+
+  useEffect(() => {
+    setColumnFilters({
+      Active: selectedStatusLabel,
+      Roles: selectedRoleNames,
+    });
+  }, [selectedStatusLabel, selectedRoleNames]);
 
   useEffect(() => {
     if (!editUser) return;
@@ -44,32 +76,40 @@ const UserManagement = () => {
       _row: user,
     }));
 
-  const filterConfig: FilterConfig[] = [
-    {
-      column: 'Active',
-      type: 'dropdown',
-      options: filterOptions?.status?.map(s => s.label) ?? [],
-    },
-    {
-      column: 'Roles',
-      type: 'multi-select',
-      options: filterOptions?.roles?.map(r => r.name) ?? [],
-    },
-  ];
-  const handleFilterChange = (columnFilters: Record<string, any>) => {
-    const statusLabel = columnFilters['Active'];
-    const statusValue = filterOptions?.status?.find(s => s.label === statusLabel)?.value;
-    const rawRoles = columnFilters['Roles'];
+  const filterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Active',
+        type: 'dropdown',
+        options: filterOptions?.status?.map(s => s.label) ?? [],
+      },
+      {
+        column: 'Roles',
+        type: 'multi-select',
+        options: filterOptions?.roles?.map(r => r.name) ?? [],
+      },
+    ],
+    [filterOptions]
+  );
+
+  const handleFilterChange = (newFilters: Record<string, any>) => {
+    const statusLabel = newFilters['Active'];
+    const rawRoles = newFilters['Roles'];
     const rolesArray = Array.isArray(rawRoles) ? rawRoles : rawRoles ? [rawRoles] : [];
+
+    setSelectedRoleNames(rolesArray);
+    setSelectedStatusLabel(statusLabel);
 
     const roles = rolesArray
       .map((roleName: string) => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
       .filter((id: any): id is number => typeof id === 'number');
+
     setFilters({
-      status: statusValue,
+      status: statusLabel,
       roles: roles.length ? roles : undefined,
     });
   };
+
   const customRender = {
     Active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -103,29 +143,26 @@ const UserManagement = () => {
       subHeading="Manage users, roles, and permissions for your organization."
     >
       <div className="mx-auto p-6">
-        {usersLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(users).map(row => ({
-              ...row,
-            }))}
-            customRender={customRender}
-            onRowClick={row => setEditUser(row._row)}
-            filterConfig={filterConfig}
-            onFilterChange={handleFilterChange}
-            filterMode="ui"
-            search={search}
-            onSearchChange={setSearch}
-            page={page}
-            onPageChange={setPage}
-            limit={limit}
-            onLimitChange={setLimit}
-            total={totalCount}
-          />
-        )}
+        <DynamicTable
+          data={getTableData(users).map(row => ({
+            ...row,
+          }))}
+          customRender={customRender}
+          onRowClick={row => setEditUser(row._row)}
+          filterConfig={filterConfig}
+          onFilterChange={handleFilterChange}
+          filterMode="ui"
+          search={search}
+          onSearchChange={setSearch}
+          page={page}
+          onPageChange={setPage}
+          limit={limit}
+          onLimitChange={setLimit}
+          total={totalCount}
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          isLoading={usersLoading}
+        />
         <Sheet open={!!editUser} onOpenChange={open => !open && setEditUser(null)}>
           <SheetTitle style={{ display: 'none' }} />
           <SheetContent

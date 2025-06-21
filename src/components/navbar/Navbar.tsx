@@ -41,7 +41,7 @@ import { notifications, UserRole } from '@/types';
 import { Bell, ChevronDown, HelpCircle, LogOut, Mail, Menu, Settings, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-const Navbar = () => {
+export const Navbar = () => {
   const { user, logout, setCurrentRole, currentRole } = useAuthStore();
   const { toast } = useToast();
   const location = useLocation();
@@ -449,5 +449,3 @@ const Navbar = () => {
     </>
   );
 };
-
-export default Navbar;

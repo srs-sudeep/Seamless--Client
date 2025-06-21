@@ -9,18 +9,19 @@ import {
   ScrollArea,
   Checkbox,
   Button,
+  TableShimmer,
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
   customRender?: {
     [key: string]: (value: any, row: Record<string, any>) => React.ReactNode;
   };
-  loading?: boolean;
+  isLoading?: boolean;
   filterConfig?: FilterConfig[];
   className?: string;
   expandableRows?: boolean;
@@ -39,6 +40,10 @@ type DynamicTableProps = {
   limit?: number;
   onLimitChange?: (limit: number) => void;
   total?: number;
+  columnFilters?: Record<string, any>;
+  setColumnFilters?: (
+    filters: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)
+  ) => void;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -51,7 +56,7 @@ function toSentenceCase(str: string) {
 const DynamicTable: React.FC<DynamicTableProps> = ({
   data,
   customRender = {},
-  loading = false,
+  isLoading = false,
   filterConfig = [],
   className = '',
   expandableRows = false,
@@ -70,15 +75,35 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   limit = 10,
   onLimitChange,
   total = 0,
+  columnFilters: controlledColumnFilters,
+  setColumnFilters: controlledSetColumnFilters,
 }) => {
+  // Use controlled filters if provided, otherwise manage internally
+  const [uncontrolledColumnFilters, setUncontrolledColumnFilters] = useState<Record<string, any>>(
+    {}
+  );
+  const isControlled =
+    controlledColumnFilters !== undefined && controlledSetColumnFilters !== undefined;
+  const columnFilters = isControlled ? controlledColumnFilters : uncontrolledColumnFilters;
+  const setColumnFilters = isControlled ? controlledSetColumnFilters : setUncontrolledColumnFilters;
+
+  // Memoize columnFilters to avoid unnecessary rerenders and keep dropdowns in sync
+  useEffect(() => {
+    if (isControlled && controlledColumnFilters) {
+      setUncontrolledColumnFilters(controlledColumnFilters);
+    }
+  }, [controlledColumnFilters]);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
-  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
   const [localLimit, setLocalLimit] = useState(10);
-
+  const handleSearch = () => {
+    if (filterMode === 'ui' && onSearchChange) {
+      onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
+    }
+  };
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -94,14 +119,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     }
   };
   const clearFilter = (column: string) => {
-    setColumnFilters(prev => {
+    setColumnFilters((prev: Record<string, any>) => {
       const newFilters = { ...prev };
       delete newFilters[column];
       return newFilters;
     });
   };
   const updateColumnFilters = (updater: (prev: Record<string, any>) => Record<string, any>) => {
-    setColumnFilters(prev => {
+    setColumnFilters((prev: Record<string, any>) => {
       const newFilters = updater(prev);
       if (filterMode === 'ui' && onFilterChange) {
         onFilterChange(newFilters);
@@ -271,9 +296,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return (
           <div key={filter.column} className="min-w-[250px] relative">
             <DateRangePicker
-              // selected={currentValue}
               onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-              // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
               <button
@@ -378,9 +401,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             );
             if (!hasMatch) return false;
           }
-        }
-        // Regular string/dropdown filter
-        else {
+        } else {
           if (Array.isArray(rowValue)) {
             const hasMatch = rowValue.some(v =>
               typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -477,6 +498,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     return result;
   }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
 
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
@@ -503,19 +526,28 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
                 <div className="flex-1 min-w-[300px]">
-                  <Input
+                  <input
                     placeholder="Search across all columns..."
-                    value={filterMode === 'ui' && typeof search === 'string' ? search : searchTerm}
-                    onChange={e =>
-                      filterMode === 'ui' && onSearchChange
-                        ? onSearchChange(e.target.value)
-                        : setSearchTerm(e.target.value)
-                    }
-                    className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-               focus:border-blue-500 dark:focus:border-blue-400 
-               focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-               transition-all duration-200"
+                    value={searchTerm}
+                    onChange={e => {
+                      setSearchTerm(e.target.value);
+                      if (e.target.value.trim() === '') handleSearch();
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleSearch();
+                    }}
+                    onBlur={handleSearch}
+                    className="h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
+          focus:border-blue-500 dark:focus:border-blue-400 
+          focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+          transition-all duration-200 px-3 rounded"
                   />
+                  <button
+                    onClick={handleSearch}
+                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Search
+                  </button>
                 </div>
               )}
               {filterConfig.map(renderFilter)}
@@ -532,13 +564,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
-                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading data...</span>
-              </div>
-            </div>
+          {isLoading ? (
+            <TableShimmer />
           ) : (
             <div className="overflow-x-auto">
               <Table>

@@ -99,7 +99,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
   const [localLimit, setLocalLimit] = useState(10);
-
+  const handleSearch = () => {
+    if (filterMode === 'ui' && onSearchChange) {
+      onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
+    }
+  };
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -292,9 +296,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return (
           <div key={filter.column} className="min-w-[250px] relative">
             <DateRangePicker
-              // selected={currentValue}
               onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-              // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
               <button
@@ -399,9 +401,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             );
             if (!hasMatch) return false;
           }
-        }
-        // Regular string/dropdown filter
-        else {
+        } else {
           if (Array.isArray(rowValue)) {
             const hasMatch = rowValue.some(v =>
               typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -526,19 +526,28 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
                 <div className="flex-1 min-w-[300px]">
-                  <Input
+                  <input
                     placeholder="Search across all columns..."
-                    value={filterMode === 'ui' && typeof search === 'string' ? search : searchTerm}
-                    onChange={e =>
-                      filterMode === 'ui' && onSearchChange
-                        ? onSearchChange(e.target.value)
-                        : setSearchTerm(e.target.value)
-                    }
-                    className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-               focus:border-blue-500 dark:focus:border-blue-400 
-               focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-               transition-all duration-200"
+                    value={searchTerm}
+                    onChange={e => {
+                      setSearchTerm(e.target.value);
+                      if (e.target.value.trim() === '') handleSearch();
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleSearch();
+                    }}
+                    onBlur={handleSearch}
+                    className="h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
+          focus:border-blue-500 dark:focus:border-blue-400 
+          focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+          transition-all duration-200 px-3 rounded"
                   />
+                  <button
+                    onClick={handleSearch}
+                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Search
+                  </button>
                 </div>
               )}
               {filterConfig.map(renderFilter)}

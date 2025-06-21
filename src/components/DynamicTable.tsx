@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
+import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
 import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
@@ -9,12 +9,10 @@ import {
   ScrollArea,
   Checkbox,
   Button,
-  TableShimmer,
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
-import { Transitions } from './Transitions';
 import { FilterConfig } from '@/types';
 
 type DynamicTableProps = {
@@ -34,6 +32,7 @@ type DynamicTableProps = {
   rowExpandable?: (row: Record<string, any>) => boolean;
   filterMode?: 'local' | 'ui';
   onFilterChange?: (filters: Record<string, any>) => void;
+  search?: string;
   onSearchChange?: (val: string) => void;
   page?: number;
   onPageChange?: (page: number) => void;
@@ -64,6 +63,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   rowExpandable,
   filterMode = 'local',
   onFilterChange,
+  search = '',
   onSearchChange,
   page = 1,
   onPageChange,
@@ -71,18 +71,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   onLimitChange,
   total = 0,
 }) => {
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
-
   const [searchTerm, setSearchTerm] = useState('');
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
   const [localLimit, setLocalLimit] = useState(10);
-  const handleSearch = () => {
-    if (filterMode === 'ui' && onSearchChange) {
-      onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
-    }
-  };
+
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -98,25 +94,30 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     }
   };
   const clearFilter = (column: string) => {
-    setColumnFilters((prev: Record<string, any>) => {
+    setColumnFilters(prev => {
       const newFilters = { ...prev };
       delete newFilters[column];
       return newFilters;
     });
   };
-  const updateColumnFilters = (updater: (prev: Record<string, any>) => Record<string, any>) => {
-    setColumnFilters((prev: Record<string, any>) => {
-      const newFilters = updater(prev);
-      if (filterMode === 'ui' && onFilterChange) {
-        onFilterChange(newFilters);
-      }
-      return newFilters;
-    });
+  const handleSearch = () => {
+    if (filterMode === 'ui' && onSearchChange) {
+      onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
+    }
   };
-
-  // Render filter using filterConfig's value and onChange
   const renderFilter = (filter: FilterConfig) => {
-    const currentValue = filter.value;
+    // Use filter.value if provided, else fallback to columnFilters for local mode
+    const currentValue = filter.value !== undefined ? filter.value : columnFilters[filter.column];
+
+    // Use the provided onChange or fallback to local state update
+    const onChange =
+      filter.onChange ??
+      ((val: any) => {
+        setColumnFilters(prev => ({
+          ...prev,
+          [filter.column]: val,
+        }));
+      });
 
     switch (filter.type) {
       case 'multi-select': {
@@ -144,9 +145,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                       onClick={() => {
-                        if (!filter.onChange) return;
                         const exists = selectedValues.includes(opt);
-                        filter.onChange(
+                        onChange(
                           exists
                             ? selectedValues.filter((v: string) => v !== opt)
                             : [...selectedValues, opt]
@@ -156,9 +156,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       <Checkbox
                         checked={selectedValues.includes(opt)}
                         onCheckedChange={() => {
-                          if (!filter.onChange) return;
                           const exists = selectedValues.includes(opt);
-                          filter.onChange(
+                          onChange(
                             exists
                               ? selectedValues.filter((v: string) => v !== opt)
                               : [...selectedValues, opt]
@@ -177,7 +176,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     variant="ghost"
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => filter.onChange && filter.onChange([])}
+                    onClick={() => onChange([])}
                   >
                     Clear All
                   </Button>
@@ -203,15 +202,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     <div
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                      onClick={() =>
-                        filter.onChange && filter.onChange(opt === currentValue ? undefined : opt)
-                      }
+                      onClick={() => onChange(opt === currentValue ? undefined : opt)}
                     >
                       <Checkbox
                         checked={currentValue === opt}
-                        onCheckedChange={() =>
-                          filter.onChange && filter.onChange(opt === currentValue ? undefined : opt)
-                        }
+                        onCheckedChange={() => onChange(opt === currentValue ? undefined : opt)}
                         className="mr-2"
                         tabIndex={-1}
                         aria-label={opt}
@@ -225,7 +220,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     variant="ghost"
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => filter.onChange && filter.onChange(undefined)}
+                    onClick={() => onChange(undefined)}
                   >
                     Clear
                   </Button>
@@ -238,10 +233,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       case 'date':
         return (
           <div key={filter.column} className="min-w-[180px] relative">
-            <DatePicker
-              value={currentValue}
-              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-            />
+            <DatePicker value={currentValue} onChange={val => onChange(val)} />
             {currentValue && (
               <button
                 onClick={e => {
@@ -260,7 +252,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return (
           <div key={filter.column} className="min-w-[250px] relative">
             <DateRangePicker
-              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              // selected={currentValue}
+              onChange={val => onChange(val)}
+              // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
               <button
@@ -279,9 +273,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       case 'datetime':
         return (
           <div key={filter.column} className="min-w-[250px] relative">
-            <DateTimePicker
-              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-            />
+            <DateTimePicker onChange={val => onChange(val)} />
             {currentValue && (
               <button
                 onClick={e => {
@@ -397,7 +389,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
       return true;
     });
-
     // Sort the filtered data
     if (sortColumn && sortDirection) {
       result = [...result].sort((a, b) => {
@@ -462,8 +453,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     return result;
   }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
 
-  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
-
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
@@ -489,8 +478,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
             <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
-                <div className="flex-1 min-w-[300px] flex items-center gap-2">
-                  <div className="relative w-full">
+                <div className="flex-1 min-w-[300px] relative">
+                  <div className="relative w-full group">
                     <input
                       placeholder="Search across all columns..."
                       value={searchTerm}
@@ -502,26 +491,97 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         if (e.key === 'Enter') handleSearch();
                       }}
                       onBlur={handleSearch}
-                      className="w-full h-10 pl-10 pr-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
-        rounded-lg shadow-sm focus:border-blue-500 dark:focus:border-blue-400 
-        focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-        text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-        transition-all duration-200"
+                      className="w-full h-12 pl-4 pr-16 bg-white dark:bg-gray-900/50 
+                 border border-gray-200/60 dark:border-gray-700/60 
+                 rounded-xl shadow-sm backdrop-blur-sm
+                 focus:border-blue-500 dark:focus:border-blue-400 
+                 focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-blue-900/30
+                 text-gray-900 dark:text-gray-100 
+                 placeholder-gray-400 dark:placeholder-gray-500
+                 transition-all duration-300 ease-out
+                 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                 group-hover:shadow-lg"
                     />
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
+
+                    {/* Right side icons */}
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      {/* Clear Button */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => {
+                            setSearchTerm('');
+                            handleSearch();
+                          }}
+                          className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300
+                     transition-colors duration-200 p-1 rounded-full
+                     hover:bg-gray-100 dark:hover:bg-gray-800"
+                          type="button"
+                          title="Clear search"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            viewBox="0 0 24 24"
+                          >
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      )}
+
+                      {/* Search Icon Button */}
+                      <button
+                        onClick={handleSearch}
+                        className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300
+                   transition-colors duration-200 p-1.5 rounded-lg
+                   hover:bg-blue-50 dark:hover:bg-blue-900/20
+                   focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
+                        type="button"
+                        title="Search"
                       >
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                      </svg>
-                    </span>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          viewBox="0 0 24 24"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Subtle gradient border effect */}
+                    <div
+                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/10 to-blue-500/20 
+                    opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none -z-10 blur-sm"
+                    />
                   </div>
-                  <Button onClick={handleSearch}>Search</Button>
+
+                  {/* Tooltip for searched text */}
+                  {searchTerm && (
+                    <div className="absolute top-full left-4 mt-2 z-50 group/tooltip">
+                      <div
+                        className="px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg shadow-lg
+                      border border-gray-700 dark:border-gray-600 whitespace-nowrap
+                      opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span>Searching for:</span>
+                          <span className="font-medium text-blue-300">"{searchTerm}"</span>
+                        </div>
+                        {/* Tooltip arrow */}
+                        <div
+                          className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 dark:bg-gray-800 
+                        border-l border-t border-gray-700 dark:border-gray-600 
+                        rotate-45 transform"
+                        ></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               {filterConfig.map(renderFilter)}
@@ -539,9 +599,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
           {isLoading ? (
-            <Transitions type="slide" direction="down" position="top" show={true}>
-              <TableShimmer />
-            </Transitions>
+            <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
+                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-sm font-medium">Loading data...</span>
+              </div>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>

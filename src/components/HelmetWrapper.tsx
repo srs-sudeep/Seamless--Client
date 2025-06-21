@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-
+import { Transitions } from './Transitions';
 type HelmetWrapperProps = {
   title?: string;
   description?: string;
@@ -21,7 +21,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
   children,
 }) => {
   return (
-    <>
+    <Transitions type="slide" direction="down" position="top" show={true}>
       <Helmet>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -52,7 +52,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
       )}
 
       {children}
-    </>
+    </Transitions>
   );
 };
 

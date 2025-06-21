@@ -107,30 +107,23 @@ const SupportPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 mt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            How can we help you?
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Find answers to common questions or get in touch with our support team
-          </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative">
-            <input
-              type="text"
-              placeholder="Search for answers..."
-              className="w-full px-6 py-4 text-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg"
-            />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 dark:bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
-              Search
-            </button>
+        <div className=" flex justify-center pt-8 pb-8">
+          <div className="relative group ">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
+              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                How can we help you?
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+              </span>
+            </h2>
+            <p className=" text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center text-sm">
+              Find answers to common questions or get in touch with our support team
+            </p>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Contact Options */}
           <div className="lg:col-span-1">

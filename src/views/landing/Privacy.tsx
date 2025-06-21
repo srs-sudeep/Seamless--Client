@@ -106,11 +106,11 @@ const Privacy: React.FC = () => {
     <div>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 mt-24">
         {/* Main Privacy Policy Heading */}
-        <div className="pt-16 pb-8 flex justify-center">
+        <div className="flex justify-center pt-8 pb-8">
           <div className="relative group">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
               <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
-                PRIVACY POLICY
+                Privacy policies
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>

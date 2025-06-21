@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { HelmetWrapper, DynamicForm, toast } from '@/components';
-import { useCreateCourse } from '@/hooks/bodhika/useCourse.hook';
+import { useCreateCourse } from '@/hooks';
 import { type FieldType as BaseFieldType } from '@/types';
 
 type FieldType = BaseFieldType & {
@@ -157,7 +157,7 @@ const CreateCourse = () => {
       sem: formData.sem,
       slot_room_id,
       instructors: validInstructors,
-    });
+    } as any);
     toast({ title: 'Course created' });
     // Optionally reset form or redirect
   };

@@ -1,5 +1,5 @@
-import { apiClient } from '@/core/apiClient';
-import type { GetUsersParams, UserAPI, UserFiltersResponse } from '@/types';
+import { apiClient } from '@/core';
+import type { UserAPI, UserFiltersResponse, GetUsersParams } from '@/types';
 
 export async function getUsers(params: GetUsersParams = {}): Promise<UserAPI[]> {
   const { search, status, roles, limit = 10, offset = 0 } = params;

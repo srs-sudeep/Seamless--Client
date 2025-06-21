@@ -17,7 +17,7 @@ import {
   useCreateInstructor,
   useUpdateInstructor,
   useDeleteInstructor,
-} from '@/hooks/bodhika/useInstructor.hook';
+} from '@/hooks';
 import { FieldType } from '@/types';
 
 const createSchema: FieldType[] = [

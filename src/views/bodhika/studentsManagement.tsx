@@ -12,7 +12,7 @@ import {
   toast,
   HelmetWrapper,
 } from '@/components';
-import { useStudents, useCreateStudent } from '@/hooks/bodhika/useStudents.hook';
+import { useStudents, useCreateStudent } from '@/hooks';
 import { type FieldType as BaseFieldType } from '@/types';
 
 type FieldType = BaseFieldType & {

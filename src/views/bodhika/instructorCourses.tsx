@@ -1,5 +1,5 @@
 import { HelmetWrapper, DynamicTable } from '@/components';
-import { useMyInstructorCourses } from '@/hooks/bodhika/useCourse.hook';
+import { useMyInstructorCourses } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

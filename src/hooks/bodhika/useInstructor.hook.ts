@@ -1,11 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getInstructors,
-  createInstructor,
-  updateInstructor,
-  deleteInstructor,
-} from '@/api/bodhika/instructor.api';
-import type { Instructor } from '@/types/bodhika/instructor.types';
+import { getInstructors, createInstructor, updateInstructor, deleteInstructor } from '@/api';
+import type { Instructor } from '@/types';
 
 export function useInstructors() {
   return useQuery<Instructor[]>({

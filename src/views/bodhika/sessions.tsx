@@ -14,7 +14,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/components';
-import { useSessions, useSessionAttendance } from '@/hooks/bodhika/useSession.hook';
+import { useSessions, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
 

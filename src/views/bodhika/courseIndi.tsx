@@ -12,7 +12,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/components';
-import { useSessionsByCourseId, useSessionAttendance } from '@/hooks/bodhika/useSession.hook';
+import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
 
 const truncateId = (id: string, len = 10) =>

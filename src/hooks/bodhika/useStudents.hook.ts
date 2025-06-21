@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getStudents, createStudent } from '@/api/bodhika/students.api';
-import type { Student } from '@/types/bodhika/students.types';
+import { getStudents, createStudent } from '@/api';
+import type { Student } from '@/types';
 
 export function useStudents() {
   return useQuery<Student[]>({

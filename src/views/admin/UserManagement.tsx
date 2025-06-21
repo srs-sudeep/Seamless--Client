@@ -2,7 +2,7 @@ import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } f
 import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser, useUserFilter } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
-import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
+import type { FilterConfig, UserAPI, UserRoleAPI } from '@/types';
 
 const UserManagement = () => {
   const [filters, setFilters] = useState<{ status?: boolean; roles?: number[] }>({});
@@ -26,14 +26,10 @@ const UserManagement = () => {
   const removeRoleFromUser = useRemoveRoleFromUser();
 
   const [editUser, setEditUser] = useState<UserAPI | null>(null);
+
+  // Filter state for filterConfig
   const [selectedRoleNames, setSelectedRoleNames] = useState<string[]>([]);
   const [selectedStatusLabel, setSelectedStatusLabel] = useState<string | undefined>(undefined);
-
-  // FIX: Use Record<string, any> for columnFilters
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({
-    Active: selectedStatusLabel,
-    Roles: selectedRoleNames,
-  });
 
   useEffect(() => {
     if (filterOptions?.roles) {
@@ -47,13 +43,6 @@ const UserManagement = () => {
       );
     }
   }, [filterOptions]);
-
-  useEffect(() => {
-    setColumnFilters({
-      Active: selectedStatusLabel,
-      Roles: selectedRoleNames,
-    });
-  }, [selectedStatusLabel, selectedRoleNames]);
 
   useEffect(() => {
     if (!editUser) return;
@@ -76,39 +65,36 @@ const UserManagement = () => {
       _row: user,
     }));
 
+  // FilterConfig with value and onChange for each filter
   const filterConfig: FilterConfig[] = useMemo(
     () => [
       {
         column: 'Active',
         type: 'dropdown',
         options: filterOptions?.status?.map(s => s.label) ?? [],
+        value: selectedStatusLabel,
+        onChange: (val: string | undefined) => {
+          setSelectedStatusLabel(val);
+          const statusValue = filterOptions?.status?.find(s => s.label === val)?.value;
+          setFilters(f => ({ ...f, status: statusValue }));
+        },
       },
       {
         column: 'Roles',
         type: 'multi-select',
         options: filterOptions?.roles?.map(r => r.name) ?? [],
+        value: selectedRoleNames,
+        onChange: (val: string[]) => {
+          setSelectedRoleNames(val);
+          const roles = val
+            .map(roleName => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
+            .filter((id): id is number => typeof id === 'number');
+          setFilters(f => ({ ...f, roles: roles.length ? roles : undefined }));
+        },
       },
     ],
-    [filterOptions]
+    [filterOptions, selectedStatusLabel, selectedRoleNames]
   );
-
-  const handleFilterChange = (newFilters: Record<string, any>) => {
-    const statusLabel = newFilters['Active'];
-    const rawRoles = newFilters['Roles'];
-    const rolesArray = Array.isArray(rawRoles) ? rawRoles : rawRoles ? [rawRoles] : [];
-
-    setSelectedRoleNames(rolesArray);
-    setSelectedStatusLabel(statusLabel);
-
-    const roles = rolesArray
-      .map((roleName: string) => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
-      .filter((id: any): id is number => typeof id === 'number');
-
-    setFilters({
-      status: statusLabel,
-      roles: roles.length ? roles : undefined,
-    });
-  };
 
   const customRender = {
     Active: (value: boolean) => (
@@ -144,13 +130,10 @@ const UserManagement = () => {
     >
       <div className="mx-auto p-6">
         <DynamicTable
-          data={getTableData(users).map(row => ({
-            ...row,
-          }))}
+          data={getTableData(users)}
           customRender={customRender}
           onRowClick={row => setEditUser(row._row)}
           filterConfig={filterConfig}
-          onFilterChange={handleFilterChange}
           filterMode="ui"
           search={search}
           onSearchChange={setSearch}
@@ -159,8 +142,6 @@ const UserManagement = () => {
           limit={limit}
           onLimitChange={setLimit}
           total={totalCount}
-          columnFilters={columnFilters}
-          setColumnFilters={setColumnFilters}
           isLoading={usersLoading}
         />
         <Sheet open={!!editUser} onOpenChange={open => !open && setEditUser(null)}>

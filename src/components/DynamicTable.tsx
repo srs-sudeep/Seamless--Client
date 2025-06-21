@@ -1,4 +1,4 @@
-import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
 import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
@@ -13,8 +13,15 @@ import {
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { type FilterConfig } from '@/types';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
+
+type FilterConfig = {
+  column: string;
+  type: 'dropdown' | 'multi-select' | 'date' | 'date-range' | 'datetime';
+  options?: string[];
+  value?: any;
+  onChange?: (val: any) => void;
+};
 
 type DynamicTableProps = {
   data: Record<string, any>[];
@@ -33,17 +40,12 @@ type DynamicTableProps = {
   rowExpandable?: (row: Record<string, any>) => boolean;
   filterMode?: 'local' | 'ui';
   onFilterChange?: (filters: Record<string, any>) => void;
-  search?: string;
   onSearchChange?: (val: string) => void;
   page?: number;
   onPageChange?: (page: number) => void;
   limit?: number;
   onLimitChange?: (limit: number) => void;
   total?: number;
-  columnFilters?: Record<string, any>;
-  setColumnFilters?: (
-    filters: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)
-  ) => void;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -68,31 +70,17 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   rowExpandable,
   filterMode = 'local',
   onFilterChange,
-  search = '',
   onSearchChange,
   page = 1,
   onPageChange,
   limit = 10,
   onLimitChange,
   total = 0,
-  columnFilters: controlledColumnFilters,
-  setColumnFilters: controlledSetColumnFilters,
 }) => {
   // Use controlled filters if provided, otherwise manage internally
-  const [uncontrolledColumnFilters, setUncontrolledColumnFilters] = useState<Record<string, any>>(
-    {}
-  );
-  const isControlled =
-    controlledColumnFilters !== undefined && controlledSetColumnFilters !== undefined;
-  const columnFilters = isControlled ? controlledColumnFilters : uncontrolledColumnFilters;
-  const setColumnFilters = isControlled ? controlledSetColumnFilters : setUncontrolledColumnFilters;
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
 
-  // Memoize columnFilters to avoid unnecessary rerenders and keep dropdowns in sync
-  useEffect(() => {
-    if (isControlled && controlledColumnFilters) {
-      setUncontrolledColumnFilters(controlledColumnFilters);
-    }
-  }, [controlledColumnFilters]);
+  // No controlled filters, so no need for useEffect or isControlled logic
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -135,8 +123,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     });
   };
 
+  // Render filter using filterConfig's value and onChange
   const renderFilter = (filter: FilterConfig) => {
-    const currentValue = columnFilters[filter.column];
+    const currentValue = filter.value;
 
     switch (filter.type) {
       case 'multi-select': {
@@ -164,35 +153,25 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                       onClick={() => {
-                        updateColumnFilters(prev => {
-                          const prevArr = Array.isArray(prev[filter.column])
-                            ? prev[filter.column]
-                            : [];
-                          const exists = prevArr.includes(opt);
-                          return {
-                            ...prev,
-                            [filter.column]: exists
-                              ? prevArr.filter((v: string) => v !== opt)
-                              : [...prevArr, opt],
-                          };
-                        });
+                        if (!filter.onChange) return;
+                        const exists = selectedValues.includes(opt);
+                        filter.onChange(
+                          exists
+                            ? selectedValues.filter((v: string) => v !== opt)
+                            : [...selectedValues, opt]
+                        );
                       }}
                     >
                       <Checkbox
                         checked={selectedValues.includes(opt)}
                         onCheckedChange={() => {
-                          updateColumnFilters(prev => {
-                            const prevArr = Array.isArray(prev[filter.column])
-                              ? prev[filter.column]
-                              : [];
-                            const exists = prevArr.includes(opt);
-                            return {
-                              ...prev,
-                              [filter.column]: exists
-                                ? prevArr.filter((v: string) => v !== opt)
-                                : [...prevArr, opt],
-                            };
-                          });
+                          if (!filter.onChange) return;
+                          const exists = selectedValues.includes(opt);
+                          filter.onChange(
+                            exists
+                              ? selectedValues.filter((v: string) => v !== opt)
+                              : [...selectedValues, opt]
+                          );
                         }}
                         className="mr-2"
                         tabIndex={-1}
@@ -207,7 +186,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     variant="ghost"
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => updateColumnFilters(prev => ({ ...prev, [filter.column]: [] }))}
+                    onClick={() => filter.onChange && filter.onChange([])}
                   >
                     Clear All
                   </Button>
@@ -233,21 +212,15 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     <div
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                      onClick={() => {
-                        updateColumnFilters(prev => ({
-                          ...prev,
-                          [filter.column]: prev[filter.column] === opt ? undefined : opt,
-                        }));
-                      }}
+                      onClick={() =>
+                        filter.onChange && filter.onChange(opt === currentValue ? undefined : opt)
+                      }
                     >
                       <Checkbox
                         checked={currentValue === opt}
-                        onCheckedChange={() => {
-                          updateColumnFilters(prev => ({
-                            ...prev,
-                            [filter.column]: prev[filter.column] === opt ? undefined : opt,
-                          }));
-                        }}
+                        onCheckedChange={() =>
+                          filter.onChange && filter.onChange(opt === currentValue ? undefined : opt)
+                        }
                         className="mr-2"
                         tabIndex={-1}
                         aria-label={opt}
@@ -261,7 +234,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     variant="ghost"
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => clearFilter(filter.column)}
+                    onClick={() => filter.onChange && filter.onChange(undefined)}
                   >
                     Clear
                   </Button>
@@ -525,29 +498,39 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
             <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
-                <div className="flex-1 min-w-[300px]">
-                  <input
-                    placeholder="Search across all columns..."
-                    value={searchTerm}
-                    onChange={e => {
-                      setSearchTerm(e.target.value);
-                      if (e.target.value.trim() === '') handleSearch();
-                    }}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') handleSearch();
-                    }}
-                    onBlur={handleSearch}
-                    className="h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
-          focus:border-blue-500 dark:focus:border-blue-400 
-          focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-          transition-all duration-200 px-3 rounded"
-                  />
-                  <button
-                    onClick={handleSearch}
-                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Search
-                  </button>
+                <div className="flex-1 min-w-[300px] flex items-center gap-2">
+                  <div className="relative w-full">
+                    <input
+                      placeholder="Search across all columns..."
+                      value={searchTerm}
+                      onChange={e => {
+                        setSearchTerm(e.target.value);
+                        if (e.target.value.trim() === '') handleSearch();
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') handleSearch();
+                      }}
+                      onBlur={handleSearch}
+                      className="w-full h-10 pl-10 pr-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
+        rounded-lg shadow-sm focus:border-blue-500 dark:focus:border-blue-400 
+        focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+        text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
+        transition-all duration-200"
+                    />
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      </svg>
+                    </span>
+                  </div>
+                  <Button onClick={handleSearch}>Search</Button>
                 </div>
               )}
               {filterConfig.map(renderFilter)}

@@ -32,6 +32,13 @@ type DynamicTableProps = {
   rowExpandable?: (row: Record<string, any>) => boolean;
   filterMode?: 'local' | 'ui';
   onFilterChange?: (filters: Record<string, any>) => void;
+  search?: string;
+  onSearchChange?: (val: string) => void;
+  page?: number;
+  onPageChange?: (page: number) => void;
+  limit?: number;
+  onLimitChange?: (limit: number) => void;
+  total?: number;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -56,16 +63,23 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   rowExpandable,
   filterMode = 'local',
   onFilterChange,
+  search = '',
+  onSearchChange,
+  page = 1,
+  onPageChange,
+  limit = 10,
+  onLimitChange,
+  total = 0,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [localPage, setLocalPage] = useState(1);
+  const [localLimit, setLocalLimit] = useState(10);
 
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
-
-  // Handle column sorting
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       if (sortDirection === 'asc') {
@@ -79,8 +93,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       setSortDirection('asc');
     }
   };
-
-  // Clear a specific filter
   const clearFilter = (column: string) => {
     setColumnFilters(prev => {
       const newFilters = { ...prev };
@@ -98,7 +110,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     });
   };
 
-  // Fixed filter rendering
   const renderFilter = (filter: FilterConfig) => {
     const currentValue = columnFilters[filter.column];
 
@@ -282,9 +293,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return (
           <div key={filter.column} className="min-w-[250px] relative">
             <DateTimePicker
-              // selected={currentValue}
               onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-              // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (
               <button
@@ -293,9 +302,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   clearFilter(filter.column);
                 }}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
-              >
-                {/* <XIcon className="h-4 w-4" /> */}
-              </button>
+              ></button>
             )}
           </div>
         );
@@ -308,7 +315,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const filteredData = useMemo(() => {
     if (filterMode === 'ui') return data;
     let result = data.filter(row => {
-      // Search filter
       let searchMatch = true;
       if (!disableSearch && searchTerm) {
         searchMatch = Object.values(row).some(val => {
@@ -326,21 +332,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           return String(val).toLowerCase().includes(searchTerm.toLowerCase());
         });
       }
-
-      // If search is enabled and no match found, skip this row
       if (!disableSearch && searchTerm && !searchMatch) {
         return false;
       }
-
-      // Column filters
       for (const [col, val] of Object.entries(columnFilters)) {
-        // Skip empty/null/undefined filters, but allow 0 and false
         if (val === null || val === undefined || val === '') continue;
-
-        // Skip empty arrays
         if (Array.isArray(val) && val.length === 0) continue;
-
-        // Skip empty objects (but not Date objects)
         if (typeof val === 'object' && !(val instanceof Date) && !Array.isArray(val)) {
           if (Object.keys(val).length === 0) continue;
         }
@@ -363,25 +360,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         } else if (val instanceof Date) {
           const rowDate = new Date(rowValue);
           if (isNaN(rowDate.getTime())) return false;
-
-          // Compare dates only (ignore time)
           const filterDate = new Date(val);
           filterDate.setHours(0, 0, 0, 0);
           const comparableRowDate = new Date(rowDate);
           comparableRowDate.setHours(0, 0, 0, 0);
 
           if (comparableRowDate.getTime() !== filterDate.getTime()) return false;
-        }
-        // Multi-select filter
-        else if (Array.isArray(val)) {
+        } else if (Array.isArray(val)) {
           if (Array.isArray(rowValue)) {
-            // Both filter and row value are arrays
             const hasMatch = val.some(selected =>
               rowValue.some(rv => String(rv.label).toLowerCase() === String(selected).toLowerCase())
             );
             if (!hasMatch) return false;
           } else {
-            // Row value is not array, check if it matches any selected value
             const hasMatch = val.some(
               selected => String(rowValue).toLowerCase() === String(selected).toLowerCase()
             );
@@ -492,6 +483,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
   const hasActiveFilters = Object.keys(columnFilters).length > 0;
 
+  const paginatedData = useMemo(() => {
+    if (filterMode === 'ui') return filteredData;
+    const start = (localPage - 1) * localLimit;
+    return filteredData.slice(start, start + localLimit);
+  }, [filteredData, filterMode, localPage, localLimit]);
+
   return (
     <div className={cn('w-full', className)}>
       <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 space-y-4 transition-all duration-300">
@@ -508,16 +505,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 <div className="flex-1 min-w-[300px]">
                   <Input
                     placeholder="Search across all columns..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
+                    value={filterMode === 'ui' && typeof search === 'string' ? search : searchTerm}
+                    onChange={e =>
+                      filterMode === 'ui' && onSearchChange
+                        ? onSearchChange(e.target.value)
+                        : setSearchTerm(e.target.value)
+                    }
                     className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-                             focus:border-blue-500 dark:focus:border-blue-400 
-                             focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-                             transition-all duration-200"
+               focus:border-blue-500 dark:focus:border-blue-400 
+               focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+               transition-all duration-200"
                   />
                 </div>
               )}
-
               {filterConfig.map(renderFilter)}
             </div>
             {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
@@ -593,7 +593,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredData.length === 0 ? (
+                  {paginatedData.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={headers.length + (expandableRows ? 1 : 0)}
@@ -625,7 +625,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredData.map((row, i) => {
+                    paginatedData.map((row, i) => {
                       const canExpand = rowExpandable ? rowExpandable(row) : expandableRows;
                       const isExpanded = expandedRows[i] || false;
 
@@ -744,18 +744,79 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             </div>
           )}
         </div>
+        {(filterMode === 'ui' ? total : paginatedData.length) > 0 && (
+          <div className="flex items-center justify-between mt-4">
+            <div>
+              <span>Rows per page: </span>
+              <select
+                value={filterMode === 'ui' ? limit : localLimit}
+                onChange={e => {
+                  const newLimit = Number(e.target.value);
+                  if (filterMode === 'ui' && onLimitChange) {
+                    onLimitChange(newLimit);
+                    if (onPageChange) onPageChange(1);
+                  } else {
+                    setLocalLimit(newLimit);
+                    setLocalPage(1);
+                  }
+                }}
+                className="border rounded px-2 py-1 ml-2"
+              >
+                {[2, 5, 10, 20, 50, 100].map(opt => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <button
+                onClick={() =>
+                  filterMode === 'ui' && onPageChange
+                    ? onPageChange(Math.max(1, (page || 1) - 1))
+                    : setLocalPage(Math.max(1, localPage - 1))
+                }
+                disabled={(filterMode === 'ui' ? page : localPage) === 1}
+                className="px-3 py-1 border rounded mx-1"
+              >
+                Prev
+              </button>
+              <span>
+                Page {filterMode === 'ui' ? page : localPage} of{' '}
+                {Math.ceil(
+                  (filterMode === 'ui' ? total || 0 : paginatedData.length) /
+                    (filterMode === 'ui' ? limit : localLimit)
+                )}
+              </span>
+              <button
+                onClick={() =>
+                  filterMode === 'ui' && onPageChange
+                    ? onPageChange((page || 1) + 1)
+                    : setLocalPage(localPage + 1)
+                }
+                disabled={
+                  filterMode === 'ui'
+                    ? page >= Math.ceil((total || 0) / limit)
+                    : localPage >= Math.ceil(paginatedData.length / localLimit)
+                }
+                className="px-3 py-1 border rounded mx-1"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* Table Footer Info - refined styling */}
-        {filteredData.length > 0 && (
+        {paginatedData.length > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2 px-1 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <span className="text-sm">Showing</span>
               <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {filteredData.length}
+                {paginatedData.length}
               </span>
               <span>of</span>
               <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {data.length}
+                {total}
               </span>
               <span>results</span>
             </div>

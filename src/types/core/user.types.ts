@@ -18,6 +18,10 @@ export interface UserAPI {
   is_active: boolean;
   roles: UserRoleAPI[];
 }
+export interface UserListResponse {
+  total_count: number;
+  users: UserAPI[];
+}
 
 export interface UserRoleFilter {
   role_id: number;

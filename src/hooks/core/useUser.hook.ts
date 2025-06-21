@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUsers, getUserFilters, assignRoleToUser, removeRoleFromUser } from '@/api';
-import type { UserAPI, GetUsersParams, UserFiltersResponse } from '@/types';
+import type { UserListResponse, GetUsersParams, UserFiltersResponse } from '@/types';
 
 export function useUsers(params: GetUsersParams = {}) {
-  return useQuery<UserAPI[]>({
+  return useQuery<UserListResponse>({
     queryKey: ['users', params],
     queryFn: () => getUsers(params),
   });

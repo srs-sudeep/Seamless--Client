@@ -6,9 +6,18 @@ import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
 
 const UserManagement = () => {
   const [filters, setFilters] = useState<{ status?: boolean; roles?: number[] }>({});
-  const { data: filterOptions, isLoading: filtersLoading } = useUserFilter();
-  const { data: users = [], isLoading: usersLoading } = useUsers(filters);
-
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data: filterOptions } = useUserFilter();
+  const { data, isLoading: usersLoading } = useUsers({
+    ...filters,
+    search: search || undefined,
+    limit,
+    offset: (page - 1) * limit,
+  });
+  const users = data?.users ?? [];
+  const totalCount = data?.total_count ?? 0;
   const assignRoleToUser = useAssignRoleToUser();
   const removeRoleFromUser = useRemoveRoleFromUser();
 
@@ -56,11 +65,6 @@ const UserManagement = () => {
     const roles = rolesArray
       .map((roleName: string) => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
       .filter((id: any): id is number => typeof id === 'number');
-
-    setFilters({
-      status: statusValue,
-      roles: roles.length ? roles : undefined,
-    });
     setFilters({
       status: statusValue,
       roles: roles.length ? roles : undefined,
@@ -113,10 +117,15 @@ const UserManagement = () => {
             filterConfig={filterConfig}
             onFilterChange={handleFilterChange}
             filterMode="ui"
+            search={search}
+            onSearchChange={setSearch}
+            page={page}
+            onPageChange={setPage}
+            limit={limit}
+            onLimitChange={setLimit}
+            total={totalCount}
           />
         )}
-
-        {/* Edit Roles Side Panel */}
         <Sheet open={!!editUser} onOpenChange={open => !open && setEditUser(null)}>
           <SheetTitle style={{ display: 'none' }} />
           <SheetContent
@@ -138,15 +147,12 @@ const UserManagement = () => {
               <div className="p-8 space-y-6">
                 {editUser && (
                   <>
-                    {/* Header */}
                     <div className="border-b border-border pb-4">
                       <h2 className="text-3xl font-bold text-foreground mb-2">User Details</h2>
                       <p className="text-sm text-muted-foreground">
                         Manage user information and role assignments
                       </p>
                     </div>
-
-                    {/* User Information Card */}
                     <div className="bg-muted/50 rounded-lg p-6 space-y-4">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Basic Information
@@ -186,8 +192,6 @@ const UserManagement = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Current Roles Display */}
                     <div className="bg-muted/50 rounded-lg p-6">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Currently Assigned Roles
@@ -213,8 +217,6 @@ const UserManagement = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* Role Management */}
                     <div className="bg-muted/50 rounded-lg p-6">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Manage Role Assignments

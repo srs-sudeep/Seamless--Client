@@ -1,15 +1,13 @@
 import { apiClient } from '@/core';
-import type { UserAPI, UserFiltersResponse, GetUsersParams } from '@/types';
+import type { UserListResponse, UserFiltersResponse, GetUsersParams } from '@/types';
 
-export async function getUsers(params: GetUsersParams = {}): Promise<UserAPI[]> {
+export async function getUsers(params: GetUsersParams = {}): Promise<UserListResponse> {
   const { search, status, roles, limit = 10, offset = 0 } = params;
 
   const query: Record<string, any> = { limit, offset };
   if (search) query.search = search;
   if (typeof status === 'boolean') query.status = status;
   if (roles && roles.length > 0) {
-    // Remove this: query.roles = roles;
-    // Instead, add each role as a separate param
     roles.forEach((roleId, idx) => {
       query[`roles[${idx}]`] = roleId;
     });
@@ -28,7 +26,7 @@ export async function getUsers(params: GetUsersParams = {}): Promise<UserAPI[]> 
     return usp.toString();
   };
 
-  const { data } = await apiClient.get<UserAPI[]>('/core/api/v1/users/', {
+  const { data } = await apiClient.get<UserListResponse>('/core/api/v1/users/', {
     params: query,
     paramsSerializer,
   });

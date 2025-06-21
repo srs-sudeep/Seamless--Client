@@ -1,11 +1,14 @@
 import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } from '@/components';
-import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks';
+import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser, useUserFilter } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
 
 const UserManagement = () => {
-  const { data: users = [], isLoading } = useUsers();
+  const [filters, setFilters] = useState<{ status?: boolean; roles?: number[] }>({});
+  const { data: filterOptions, isLoading: filtersLoading } = useUserFilter();
+  const { data: users = [], isLoading: usersLoading } = useUsers(filters);
+
   const assignRoleToUser = useAssignRoleToUser();
   const removeRoleFromUser = useRemoveRoleFromUser();
 
@@ -31,21 +34,38 @@ const UserManagement = () => {
         })),
       _row: user,
     }));
-  const allRoles = Array.from(new Set(users.flatMap(u => u.roles.map(r => r.name)))).sort();
 
   const filterConfig: FilterConfig[] = [
     {
       column: 'Active',
       type: 'dropdown',
-      options: ['Active', 'Inactive'],
+      options: filterOptions?.status?.map(s => s.label) ?? [],
     },
     {
       column: 'Roles',
       type: 'multi-select',
-      options: allRoles,
+      options: filterOptions?.roles?.map(r => r.name) ?? [],
     },
   ];
+  const handleFilterChange = (columnFilters: Record<string, any>) => {
+    const statusLabel = columnFilters['Active'];
+    const statusValue = filterOptions?.status?.find(s => s.label === statusLabel)?.value;
+    const rawRoles = columnFilters['Roles'];
+    const rolesArray = Array.isArray(rawRoles) ? rawRoles : rawRoles ? [rawRoles] : [];
 
+    const roles = rolesArray
+      .map((roleName: string) => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
+      .filter((id: any): id is number => typeof id === 'number');
+
+    setFilters({
+      status: statusValue,
+      roles: roles.length ? roles : undefined,
+    });
+    setFilters({
+      status: statusValue,
+      roles: roles.length ? roles : undefined,
+    });
+  };
   const customRender = {
     Active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -79,7 +99,7 @@ const UserManagement = () => {
       subHeading="Manage users, roles, and permissions for your organization."
     >
       <div className="mx-auto p-6">
-        {isLoading ? (
+        {usersLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
           </div>
@@ -91,6 +111,8 @@ const UserManagement = () => {
             customRender={customRender}
             onRowClick={row => setEditUser(row._row)}
             filterConfig={filterConfig}
+            onFilterChange={handleFilterChange}
+            filterMode="ui"
           />
         )}
 

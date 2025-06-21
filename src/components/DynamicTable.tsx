@@ -30,6 +30,8 @@ type DynamicTableProps = {
   headerActions?: React.ReactNode;
   tableHeading?: string;
   rowExpandable?: (row: Record<string, any>) => boolean;
+  filterMode?: 'local' | 'ui';
+  onFilterChange?: (filters: Record<string, any>) => void;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -52,6 +54,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   headerActions,
   tableHeading,
   rowExpandable,
+  filterMode = 'local',
+  onFilterChange,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
@@ -81,6 +85,15 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     setColumnFilters(prev => {
       const newFilters = { ...prev };
       delete newFilters[column];
+      return newFilters;
+    });
+  };
+  const updateColumnFilters = (updater: (prev: Record<string, any>) => Record<string, any>) => {
+    setColumnFilters(prev => {
+      const newFilters = updater(prev);
+      if (filterMode === 'ui' && onFilterChange) {
+        onFilterChange(newFilters);
+      }
       return newFilters;
     });
   };
@@ -115,7 +128,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                       onClick={() => {
-                        setColumnFilters(prev => {
+                        updateColumnFilters(prev => {
                           const prevArr = Array.isArray(prev[filter.column])
                             ? prev[filter.column]
                             : [];
@@ -132,7 +145,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       <Checkbox
                         checked={selectedValues.includes(opt)}
                         onCheckedChange={() => {
-                          setColumnFilters(prev => {
+                          updateColumnFilters(prev => {
                             const prevArr = Array.isArray(prev[filter.column])
                               ? prev[filter.column]
                               : [];
@@ -158,7 +171,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     variant="ghost"
                     size="sm"
                     className="mt-2 w-full"
-                    onClick={() => clearFilter(filter.column)}
+                    onClick={() => updateColumnFilters(prev => ({ ...prev, [filter.column]: [] }))}
                   >
                     Clear All
                   </Button>
@@ -179,13 +192,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
-                <ScrollArea className="h-32">
+                <ScrollArea className="h-16">
                   {filter.options?.map(opt => (
                     <div
                       key={opt}
                       className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                       onClick={() => {
-                        setColumnFilters(prev => ({
+                        updateColumnFilters(prev => ({
                           ...prev,
                           [filter.column]: prev[filter.column] === opt ? undefined : opt,
                         }));
@@ -194,7 +207,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       <Checkbox
                         checked={currentValue === opt}
                         onCheckedChange={() => {
-                          setColumnFilters(prev => ({
+                          updateColumnFilters(prev => ({
                             ...prev,
                             [filter.column]: prev[filter.column] === opt ? undefined : opt,
                           }));
@@ -227,7 +240,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div key={filter.column} className="min-w-[180px] relative">
             <DatePicker
               value={currentValue}
-              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
             />
             {currentValue && (
               <button
@@ -248,7 +261,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div key={filter.column} className="min-w-[250px] relative">
             <DateRangePicker
               // selected={currentValue}
-              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
               // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
@@ -270,7 +283,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div key={filter.column} className="min-w-[250px] relative">
             <DateTimePicker
               // selected={currentValue}
-              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
               // placeholder={`Filter ${filter.column}`}
             />
             {currentValue && (
@@ -293,6 +306,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   };
 
   const filteredData = useMemo(() => {
+    if (filterMode === 'ui') return data;
     let result = data.filter(row => {
       // Search filter
       let searchMatch = true;
@@ -470,7 +484,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     }
 
     return result;
-  }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection]);
+  }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
 
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));

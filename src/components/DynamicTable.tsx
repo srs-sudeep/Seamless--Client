@@ -49,7 +49,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
-  // Add sorting state
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
@@ -57,7 +56,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
   // Handle column sorting
   const handleSort = (column: string) => {
-    // If clicking the same column, cycle through: asc -> desc -> null
     if (sortColumn === column) {
       if (sortDirection === 'asc') {
         setSortDirection('desc');
@@ -66,63 +64,349 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         setSortDirection(null);
       }
     } else {
-      // New column, start with ascending
       setSortColumn(column);
       setSortDirection('asc');
     }
   };
 
-  const filteredData = useMemo(() => {
-    // First filter the data
-    let result = data.filter(row => {
-      if (
-        !disableSearch &&
-        searchTerm &&
-        !Object.values(row).some(val =>
-          String(val).toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      )
-        return false;
+  // Clear a specific filter
+  const clearFilter = (column: string) => {
+    setColumnFilters(prev => {
+      const newFilters = { ...prev };
+      delete newFilters[column];
+      return newFilters;
+    });
+  };
 
+  // Clear all filters
+  const clearAllFilters = () => {
+    setColumnFilters({});
+  };
+
+  // Fixed filter rendering
+  const renderFilter = (filter: FilterConfig) => {
+    const currentValue = columnFilters[filter.column];
+
+    switch (filter.type) {
+      case 'multi-select': {
+        const selectedValues = Array.isArray(currentValue) ? currentValue : [];
+        return (
+          <div key={filter.column} className="min-w-[220px] relative">
+            <div className="relative">
+              <Select
+                onValueChange={val => {
+                  setColumnFilters(prev => {
+                    const prevArr = Array.isArray(prev[filter.column]) ? prev[filter.column] : [];
+                    const exists = prevArr.includes(val);
+                    return {
+                      ...prev,
+                      [filter.column]: exists
+                        ? prevArr.filter((v: string) => v !== val)
+                        : [...prevArr, val],
+                    };
+                  });
+                }}
+              >
+                <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                  <span className="text-gray-700 dark:text-gray-300 truncate">
+                    {selectedValues.length > 0
+                      ? selectedValues.length === 1
+                        ? selectedValues[0]
+                        : `${selectedValues.length} selected`
+                      : `Filter ${filter.column}`}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  {filter.options?.map(opt => (
+                    <SelectItem key={opt} value={opt}>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedValues.includes(opt)}
+                          readOnly
+                          className="form-checkbox accent-blue-600"
+                        />
+                        <span>{opt}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedValues.length > 0 && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    clearFilter(filter.column);
+                  }}
+                  className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  {/* <XIcon className="h-4 w-4" /> */}
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      }
+      case 'dropdown':
+        return (
+          <div key={filter.column} className="min-w-[180px] relative">
+            <Select
+              value={currentValue || ''}
+              onValueChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+            >
+              <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                <span className="text-gray-700 dark:text-gray-300">
+                  {currentValue || `Filter ${filter.column}`}
+                </span>
+              </SelectTrigger>
+              <SelectContent>
+                {filter.options?.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {currentValue && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div key={filter.column} className="min-w-[180px] relative">
+            <DatePicker
+              value={currentValue}
+              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+            />
+            {currentValue && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      case 'date-range':
+        return (
+          <div key={filter.column} className="min-w-[250px] relative">
+            <DateRangePicker
+              // selected={currentValue}
+              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              // placeholder={`Filter ${filter.column}`}
+            />
+            {currentValue && (currentValue.startDate || currentValue.endDate) && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      case 'datetime':
+        return (
+          <div key={filter.column} className="min-w-[250px] relative">
+            <DateTimePicker
+              // selected={currentValue}
+              onChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+              // placeholder={`Filter ${filter.column}`}
+            />
+            {currentValue && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const filteredData = useMemo(() => {
+    let result = data.filter(row => {
+      // Search filter
+      let searchMatch = true;
+      if (!disableSearch && searchTerm) {
+        searchMatch = Object.values(row).some(val => {
+          if (val == null) return false;
+          if (Array.isArray(val)) {
+            return val.some(item => String(item).toLowerCase().includes(searchTerm.toLowerCase()));
+          }
+          if (typeof val === 'object') {
+            try {
+              return JSON.stringify(val).toLowerCase().includes(searchTerm.toLowerCase());
+            } catch {
+              return false;
+            }
+          }
+          return String(val).toLowerCase().includes(searchTerm.toLowerCase());
+        });
+      }
+
+      // If search is enabled and no match found, skip this row
+      if (!disableSearch && searchTerm && !searchMatch) {
+        return false;
+      }
+
+      // Column filters
       for (const [col, val] of Object.entries(columnFilters)) {
-        if (val?.startDate && val?.endDate) {
-          const rowDate = new Date(row[col]);
-          if (rowDate < val.startDate || rowDate > val.endDate) return false;
+        // Skip empty/null/undefined filters, but allow 0 and false
+        if (val === null || val === undefined || val === '') continue;
+
+        // Skip empty arrays
+        if (Array.isArray(val) && val.length === 0) continue;
+
+        // Skip empty objects (but not Date objects)
+        if (typeof val === 'object' && !(val instanceof Date) && !Array.isArray(val)) {
+          if (Object.keys(val).length === 0) continue;
+        }
+        const rowValue = row[col];
+        if (val && typeof val === 'object' && (val.startDate || val.endDate)) {
+          const rowDate = new Date(rowValue);
+          if (isNaN(rowDate.getTime())) return false;
+
+          if (val.startDate) {
+            const startDate = new Date(val.startDate);
+            startDate.setHours(0, 0, 0, 0);
+            if (rowDate < startDate) return false;
+          }
+
+          if (val.endDate) {
+            const endDate = new Date(val.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            if (rowDate > endDate) return false;
+          }
         } else if (val instanceof Date) {
-          const rowDate = new Date(row[col]);
-          if (rowDate.toDateString() !== val.toDateString()) return false;
-        } else if (val && String(row[col]).toLowerCase() !== String(val).toLowerCase()) {
-          return false;
+          const rowDate = new Date(rowValue);
+          if (isNaN(rowDate.getTime())) return false;
+
+          // Compare dates only (ignore time)
+          const filterDate = new Date(val);
+          filterDate.setHours(0, 0, 0, 0);
+          const comparableRowDate = new Date(rowDate);
+          comparableRowDate.setHours(0, 0, 0, 0);
+
+          if (comparableRowDate.getTime() !== filterDate.getTime()) return false;
+        }
+        // Multi-select filter
+        else if (Array.isArray(val)) {
+          if (Array.isArray(rowValue)) {
+            // Both filter and row value are arrays
+            const hasMatch = val.some(selected =>
+              rowValue.some(rv => String(rv.label).toLowerCase() === String(selected).toLowerCase())
+            );
+            if (!hasMatch) return false;
+          } else {
+            // Row value is not array, check if it matches any selected value
+            const hasMatch = val.some(
+              selected => String(rowValue).toLowerCase() === String(selected).toLowerCase()
+            );
+            if (!hasMatch) return false;
+          }
+        }
+        // Regular string/dropdown filter
+        else {
+          if (Array.isArray(rowValue)) {
+            const hasMatch = rowValue.some(v =>
+              typeof v === 'object' && v !== null && !Array.isArray(v)
+                ? JSON.stringify(v).toLowerCase().includes(String(val).toLowerCase())
+                : String(v).toLowerCase().includes(String(val).toLowerCase())
+            );
+            if (!hasMatch) return false;
+          } else if (
+            typeof rowValue === 'object' &&
+            rowValue !== null &&
+            !Array.isArray(rowValue) &&
+            !React.isValidElement(rowValue)
+          ) {
+            // For plain objects (not React elements), stringify and check
+            if (!JSON.stringify(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
+              return false;
+            }
+          } else if (React.isValidElement(rowValue)) {
+            // For React elements, skip filtering (or you can add custom logic if needed)
+            return false;
+          } else {
+            // Regular string/number/boolean comparison
+            if (!String(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
+              return false;
+            }
+          }
         }
       }
 
       return true;
     });
 
-    // Then sort the filtered data
+    // Sort the filtered data
     if (sortColumn && sortDirection) {
       result = [...result].sort((a, b) => {
-        // Get values to compare
         const aVal = a[sortColumn];
         const bVal = b[sortColumn];
 
         // Handle nulls/undefined
+        if (aVal == null && bVal == null) return 0;
         if (aVal == null) return sortDirection === 'asc' ? -1 : 1;
         if (bVal == null) return sortDirection === 'asc' ? 1 : -1;
 
-        // Handle different types of values
+        // Handle dates
         if (aVal instanceof Date && bVal instanceof Date) {
           return sortDirection === 'asc'
             ? aVal.getTime() - bVal.getTime()
             : bVal.getTime() - aVal.getTime();
         }
 
-        // Numbers
+        // Try to parse as dates if they're strings
+        const aDate = new Date(aVal);
+        const bDate = new Date(bVal);
+        if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
+          return sortDirection === 'asc'
+            ? aDate.getTime() - bDate.getTime()
+            : bDate.getTime() - aDate.getTime();
+        }
+
+        // Handle numbers
         if (typeof aVal === 'number' && typeof bVal === 'number') {
           return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
         }
 
-        // Boolean
+        // Try to parse as numbers
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return sortDirection === 'asc' ? aNum - bNum : bNum - aNum;
+        }
+
+        // Handle booleans
         if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
           return sortDirection === 'asc'
             ? aVal === bVal
@@ -137,10 +421,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 : 1;
         }
 
-        // Default to string comparison
+        // Default string comparison
         const aStr = String(aVal).toLowerCase();
         const bStr = String(bVal).toLowerCase();
-
         return sortDirection === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
@@ -151,6 +434,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
+
+  const hasActiveFilters = Object.keys(columnFilters).length > 0;
 
   return (
     <div className={cn('w-full', className)}>
@@ -163,9 +448,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
         {(!disableSearch || filterConfig.length > 0 || headerActions) && (
           <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
-            <div className="flex flex-wrap items-end  md:gap-4">
+            <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
-                <div className="flex-1 min-w-full">
+                <div className="flex-1 min-w-[300px]">
                   <Input
                     placeholder="Search across all columns..."
                     value={searchTerm}
@@ -178,78 +463,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </div>
               )}
 
-              {filterConfig.map(filter => {
-                switch (filter.type) {
-                  case 'dropdown':
-                    return (
-                      <div key={filter.column} className="min-w-[180px]">
-                        <Select
-                          onValueChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        >
-                          <SelectTrigger
-                            className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-                                                   hover:border-gray-300 dark:hover:border-gray-600
-                                                   focus:border-blue-500 dark:focus:border-blue-400
-                                                   transition-all duration-200"
-                          >
-                            <span className="text-gray-700 dark:text-gray-300">
-                              {columnFilters[filter.column] || `Filter ${filter.column}`}
-                            </span>
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                            {filter.options?.map(opt => (
-                              <SelectItem
-                                key={opt}
-                                value={opt}
-                                className="hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800"
-                              >
-                                {opt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    );
+              {filterConfig.map(renderFilter)}
 
-                  case 'date':
-                    return (
-                      <div key={filter.column} className="min-w-[180px]">
-                        <DatePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  case 'date-range':
-                    return (
-                      <div key={filter.column} className="min-w-[250px]">
-                        <DateRangePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  case 'datetime':
-                    return (
-                      <div key={filter.column} className="min-w-[250px]">
-                        <DateTimePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  default:
-                    return null;
-                }
-              })}
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 
+                           hover:text-gray-900 dark:hover:text-gray-100 
+                           hover:bg-gray-100 dark:hover:bg-gray-800 
+                           rounded-md transition-colors duration-200"
+                >
+                  Clear all
+                </button>
+              )}
             </div>
             {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
           </div>
@@ -348,7 +574,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           </div>
                           <p className="text-base font-medium">No data found</p>
                           <p className="text-sm text-gray-400 dark:text-gray-500 max-w-xs text-center">
-                            {searchTerm || Object.keys(columnFilters).length > 0
+                            {searchTerm || hasActiveFilters
                               ? "Try adjusting your search or filters to find what you're looking for."
                               : 'No records are currently available in this table.'}
                           </p>

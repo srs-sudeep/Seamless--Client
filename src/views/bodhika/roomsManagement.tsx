@@ -77,13 +77,11 @@ const RoomsManagement = () => {
       await Promise.all(
         importedRooms
           .filter(room => room.room_id && room.room_name)
-          .map(
-            room =>
-              createMutation.mutateAsync({
-                room_id: room.room_id,
-                room_name: room.room_name,
-              }),
-            console.log(importedRooms)
+          .map(room =>
+            createMutation.mutateAsync({
+              room_id: room.room_id,
+              room_name: room.room_name,
+            })
           )
       );
       toast({ title: 'Rooms imported' });

@@ -465,10 +465,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                                 placeholder="Search options..."
                                 onClick={e => e.stopPropagation()}
-                                onChange={e => {
-                                  // Add a filter state for dropdown search
-                                  // Implementation would go here
-                                }}
                               />
                             </div>
 

@@ -34,7 +34,6 @@ const CourseManagement = () => {
   }>({ type: null, course: null });
 
   const { data: courses = [], isLoading } = useCourses();
-  console.log(courses);
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
   const navigate = useNavigate();

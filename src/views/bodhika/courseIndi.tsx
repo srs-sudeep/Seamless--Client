@@ -190,7 +190,7 @@ const CourseIndi = () => {
         </span>
       );
     },
-    ViewAttendance: (session_id: string, row: any) => (
+    ViewAttendance: (session_id: string, _: any) => (
       <Button size="sm" variant="outline" onClick={() => setEditSessionId(session_id)}>
         <Eye className="w-4 h-4" />
       </Button>

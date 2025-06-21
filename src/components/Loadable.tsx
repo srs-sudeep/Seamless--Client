@@ -1,13 +1,10 @@
-import React, { Suspense, useState, useEffect } from 'react';
-
-// Shimmer animation component
+import React, { Suspense } from 'react';
 const ShimmerEffect = ({ className }: { className?: string }) => (
   <div className={`relative overflow-hidden ${className}`}>
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent dark:via-white/10" />
   </div>
 );
 
-// Enhanced full-page skeleton with dark/light theme support
 const LoadingFallback = () => (
   <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
     {/* Header Skeleton */}
@@ -199,17 +196,6 @@ const Loadable = <P extends object>(
   Component: React.LazyExoticComponent<React.ComponentType<P>>
 ) => {
   return (props: P) => {
-    // const [showRealComponent, setShowRealComponent] = useState(false);
-
-    // useEffect(() => {
-    //   const timer = setTimeout(() => setShowRealComponent(true), 5000);
-    //   return () => clearTimeout(timer);
-    // }, []);
-
-    // if (!showRealComponent) {
-    //   return <LoadingFallback />;
-    // }
-
     return (
       <Suspense fallback={<LoadingFallback />}>
         <Component {...props} />

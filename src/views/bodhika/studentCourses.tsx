@@ -1,30 +1,6 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Loader2, Clock, MapPin, User } from 'lucide-react';
-import { useSlots } from '@/hooks/bodhika/useSlots.hook';
-
-// Mock data with multi-period slots and multiple courses per slot
-const mockSlots = [
-  // Regular single-period slots
-  { time: '08:30AM - 09:25AM', day: 'Monday', slot_id: 'A1' },
-  { time: '09:30AM - 10:25AM', day: 'Wednesday', slot_id: 'A2' },
-  { time: '09:30AM - 10:25AM', day: 'Monday', slot_id: 'B1' },
-  { time: '09:30AM - 10:25AM', day: 'Tuesday', slot_id: 'B2' },
-
-  // Multi-period slots (like N in your image that spans 3 periods)
-  { time: '11:30AM - 12:25PM', day: 'Monday', slot_id: 'N1', duration: 1 },
-  { time: '12:30PM - 01:25PM', day: 'Monday', slot_id: 'N1', duration: 1 },
-  { time: '02:30PM - 03:25PM', day: 'Monday', slot_id: 'N1', duration: 1 },
-
-  { time: '10:30AM - 11:25AM', day: 'Tuesday', slot_id: 'V1', duration: 1 },
-  { time: '11:30AM - 12:25PM', day: 'Tuesday', slot_id: 'V1', duration: 1 },
-
-  // More regular slots
-  { time: '10:30AM - 11:25AM', day: 'Monday', slot_id: 'C1' },
-  { time: '11:30AM - 12:25PM', day: 'Tuesday', slot_id: 'C2' },
-  { time: '12:30PM - 01:25PM', day: 'Wednesday', slot_id: 'D1' },
-  { time: '02:30PM - 03:25PM', day: 'Thursday', slot_id: 'E1' },
-  { time: '03:30PM - 04:25PM', day: 'Friday', slot_id: 'F1' },
-];
+import { useSlots } from '@/hooks';
 
 const mockCourses = [
   {
@@ -88,13 +64,6 @@ interface Course {
   instructors: { instructor_ldap: string; instruction_type: string }[];
 }
 
-interface Slot {
-  time: string;
-  day: string;
-  slot_id: string;
-  duration?: number;
-}
-
 interface TimetableCell {
   courses: Course[];
   isMultiPeriod: boolean;
@@ -138,7 +107,7 @@ const StudentCourses = () => {
   }, [slots]);
 
   // Analyze multi-period slots
-  const getSlotAnalysis = (semCourses: Course[]) => {
+  const getSlotAnalysis = (_: Course[]) => {
     const slotPeriods: Record<string, { periods: string[]; days: string[] }> = {};
 
     // Group periods by slot_id

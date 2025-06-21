@@ -8,8 +8,20 @@ import LandingRoutes from '@/routes/LandingRoutes';
 import { allRouteObjects } from '@/routes/routeModuleMap';
 import { useRoutes } from 'react-router-dom';
 
+import { useEffect, useState } from 'react';
+
 const Router = () => {
   const { availableRoutes, isLoading } = useAvailableRoutes();
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinTimeElapsed(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const filteredRoutes = filterNestedRoutesByAvailable(allRouteObjects, availableRoutes);
   const routes = useRoutes([
     LandingRoutes,
@@ -21,9 +33,12 @@ const Router = () => {
     ...filteredRoutes,
     ...ErrorRoutes,
   ]);
-  if (isLoading) {
+
+  // Show loader until both conditions are met: data is loaded AND minimum time has elapsed
+  if (isLoading || !minTimeElapsed) {
     return <FullPageLoader />;
   }
+
   return routes;
 };
 

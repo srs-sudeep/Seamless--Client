@@ -1,24 +1,66 @@
 import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } from '@/components';
-import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks';
+import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser, useUserFilter } from '@/hooks';
 import { Loader2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import type { UserAPI, UserRoleAPI } from '@/types';
+import { useState, useEffect, useMemo } from 'react';
+import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
 
 const UserManagement = () => {
-  const { data: users = [], isLoading } = useUsers();
+  const [filters, setFilters] = useState<{ status?: boolean; roles?: number[] }>({});
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data: filterOptions } = useUserFilter();
+  const { data, isLoading: usersLoading } = useUsers({
+    ...filters,
+    search: search || undefined,
+    limit,
+    offset: (page - 1) * limit,
+  });
+  const users: UserAPI[] = Array.isArray(data)
+    ? data
+    : data && Array.isArray((data as { users?: UserAPI[] }).users)
+      ? (data as { users: UserAPI[] }).users
+      : [];
+  const totalCount = data?.total_count ?? 0;
   const assignRoleToUser = useAssignRoleToUser();
   const removeRoleFromUser = useRemoveRoleFromUser();
 
   const [editUser, setEditUser] = useState<UserAPI | null>(null);
+  const [selectedRoleNames, setSelectedRoleNames] = useState<string[]>([]);
+  const [selectedStatusLabel, setSelectedStatusLabel] = useState<string | undefined>(undefined);
 
-  // Sync editUser with latest users data after mutation
+  // FIX: Use Record<string, any> for columnFilters
+  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({
+    Active: selectedStatusLabel,
+    Roles: selectedRoleNames,
+  });
+
+  useEffect(() => {
+    if (filterOptions?.roles) {
+      setSelectedRoleNames(prev =>
+        prev.filter(roleName => filterOptions.roles.some(r => r.name === roleName))
+      );
+    }
+    if (filterOptions?.status) {
+      setSelectedStatusLabel(prev =>
+        filterOptions.status.some(s => s.label === prev) ? prev : undefined
+      );
+    }
+  }, [filterOptions]);
+
+  useEffect(() => {
+    setColumnFilters({
+      Active: selectedStatusLabel,
+      Roles: selectedRoleNames,
+    });
+  }, [selectedStatusLabel, selectedRoleNames]);
+
   useEffect(() => {
     if (!editUser) return;
     const updated = users.find(u => u.ldapid === editUser.ldapid);
     if (updated) setEditUser(updated);
   }, [users, editUser?.ldapid]);
 
-  // Table data
   const getTableData = (users: UserAPI[]) =>
     users.map(user => ({
       Name: user.name,
@@ -34,7 +76,40 @@ const UserManagement = () => {
       _row: user,
     }));
 
-  // Custom render for table
+  const filterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Active',
+        type: 'dropdown',
+        options: filterOptions?.status?.map(s => s.label) ?? [],
+      },
+      {
+        column: 'Roles',
+        type: 'multi-select',
+        options: filterOptions?.roles?.map(r => r.name) ?? [],
+      },
+    ],
+    [filterOptions]
+  );
+
+  const handleFilterChange = (newFilters: Record<string, any>) => {
+    const statusLabel = newFilters['Active'];
+    const rawRoles = newFilters['Roles'];
+    const rolesArray = Array.isArray(rawRoles) ? rawRoles : rawRoles ? [rawRoles] : [];
+
+    setSelectedRoleNames(rolesArray);
+    setSelectedStatusLabel(statusLabel);
+
+    const roles = rolesArray
+      .map((roleName: string) => filterOptions?.roles?.find(r => r.name === roleName)?.role_id)
+      .filter((id: any): id is number => typeof id === 'number');
+
+    setFilters({
+      status: statusLabel,
+      roles: roles.length ? roles : undefined,
+    });
+  };
+
   const customRender = {
     Active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -68,23 +143,26 @@ const UserManagement = () => {
       subHeading="Manage users, roles, and permissions for your organization."
     >
       <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(users).map(row => ({
-              ...row,
-              Roles: customRender.Roles('', row),
-              Active: customRender.Active(row.Active),
-            }))}
-            customRender={{}}
-            onRowClick={row => setEditUser(row._row)}
-          />
-        )}
-
-        {/* Edit Roles Side Panel */}
+        <DynamicTable
+          data={getTableData(users).map(row => ({
+            ...row,
+          }))}
+          customRender={customRender}
+          onRowClick={row => setEditUser(row._row)}
+          filterConfig={filterConfig}
+          onFilterChange={handleFilterChange}
+          filterMode="ui"
+          search={search}
+          onSearchChange={setSearch}
+          page={page}
+          onPageChange={setPage}
+          limit={limit}
+          onLimitChange={setLimit}
+          total={totalCount}
+          columnFilters={columnFilters}
+          setColumnFilters={setColumnFilters}
+          isLoading={usersLoading}
+        />
         <Sheet open={!!editUser} onOpenChange={open => !open && setEditUser(null)}>
           <SheetTitle style={{ display: 'none' }} />
           <SheetContent
@@ -106,15 +184,12 @@ const UserManagement = () => {
               <div className="p-8 space-y-6">
                 {editUser && (
                   <>
-                    {/* Header */}
                     <div className="border-b border-border pb-4">
                       <h2 className="text-3xl font-bold text-foreground mb-2">User Details</h2>
                       <p className="text-sm text-muted-foreground">
                         Manage user information and role assignments
                       </p>
                     </div>
-
-                    {/* User Information Card */}
                     <div className="bg-muted/50 rounded-lg p-6 space-y-4">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Basic Information
@@ -154,8 +229,6 @@ const UserManagement = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Current Roles Display */}
                     <div className="bg-muted/50 rounded-lg p-6">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Currently Assigned Roles
@@ -181,8 +254,6 @@ const UserManagement = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* Role Management */}
                     <div className="bg-muted/50 rounded-lg p-6">
                       <h3 className="text-lg font-semibold text-foreground mb-4">
                         Manage Role Assignments

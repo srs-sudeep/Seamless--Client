@@ -12,7 +12,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/components';
-import { useSessionsByCourseId, useSessionAttendance } from '@/hooks/bodhika/useSession.hook';
+import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
 
 const truncateId = (id: string, len = 10) =>
@@ -190,7 +190,7 @@ const CourseIndi = () => {
         </span>
       );
     },
-    ViewAttendance: (session_id: string, row: any) => (
+    ViewAttendance: (session_id: string, _: any) => (
       <Button size="sm" variant="outline" onClick={() => setEditSessionId(session_id)}>
         <Eye className="w-4 h-4" />
       </Button>

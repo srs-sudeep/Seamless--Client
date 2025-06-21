@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSlots, createSlot, updateSlot, deleteSlot } from '@/api/bodhika/slots.api';
-import type { Slot } from '@/types/bodhika/slots.types';
+import { getSlots, createSlot, updateSlot, deleteSlot } from '@/api';
+import type { Slot } from '@/types';
 
 export function useSlots() {
   return useQuery<Slot[]>({

@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from '@/components/navbar/Navbar';
-import ModuleSidebar from '@/components/sidebar/ModuleSidebar';
-import { SidebarProvider } from '@/core/context/sidebarContext';
+import { ModuleSidebar, Navbar } from '@/components';
+import { SidebarProvider } from '@/core';
 import MainFooter from '@/components/footer/MainFooter';
 
 const MainLayout = () => {

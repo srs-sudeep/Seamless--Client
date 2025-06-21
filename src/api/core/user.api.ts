@@ -1,18 +1,46 @@
-import { apiClient } from '@/core/apiClient';
-import type { User } from '@/types/core/user.types';
+import { apiClient } from '@/core';
+import type { UserListResponse, UserFiltersResponse, GetUsersParams } from '@/types';
 
-// GET all users
-export async function getUsers(): Promise<User[]> {
-  const { data } = await apiClient.get<User[]>('/core/api/v1/users/');
+export async function getUsers(params: GetUsersParams = {}): Promise<UserListResponse> {
+  const { search, status, roles, limit = 10, offset = 0 } = params;
+
+  const query: Record<string, any> = { limit, offset };
+  if (search) query.search = search;
+  if (typeof status === 'boolean') query.status = status;
+  if (roles && roles.length > 0) {
+    roles.forEach((roleId, idx) => {
+      query[`roles[${idx}]`] = roleId;
+    });
+  }
+
+  // Convert roles[0]=1&roles[1]=2 to roles=1&roles=2
+  const paramsSerializer = (paramsObj: Record<string, any>) => {
+    const usp = new URLSearchParams();
+    Object.entries(paramsObj).forEach(([key, value]) => {
+      if (key.startsWith('roles[')) {
+        usp.append('roles', value as any);
+      } else {
+        usp.append(key, value as any);
+      }
+    });
+    return usp.toString();
+  };
+
+  const { data } = await apiClient.get<UserListResponse>('/core/api/v1/users/', {
+    params: query,
+    paramsSerializer,
+  });
   return data;
 }
-
-// POST assign role to user
 export async function assignRoleToUser(user_id: string, role_id: number) {
   await apiClient.post(`/core/api/v1/users/${user_id}/roles/${role_id}`);
 }
 
-// DELETE remove role from user
 export async function removeRoleFromUser(user_id: string, role_id: number) {
   await apiClient.delete(`/core/api/v1/users/${user_id}/roles/${role_id}`);
+}
+
+export async function getUserFilters(): Promise<UserFiltersResponse> {
+  const { data } = await apiClient.get<UserFiltersResponse>('/core/api/v1/users/filters');
+  return data;
 }

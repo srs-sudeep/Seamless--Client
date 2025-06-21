@@ -177,7 +177,7 @@ const ServiceManagement = () => {
                       Create Service
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50">
+                  <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Create Service</DialogTitle>
                     </DialogHeader>
@@ -199,7 +199,7 @@ const ServiceManagement = () => {
             if (!open) setEditService(null);
           }}
         >
-          <DialogContent className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Service</DialogTitle>
             </DialogHeader>

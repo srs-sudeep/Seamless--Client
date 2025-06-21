@@ -14,7 +14,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/components';
-import { useSessions, useSessionAttendance } from '@/hooks/bodhika/useSession.hook';
+import { useSessions, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -126,7 +126,7 @@ const Sessions = () => {
         <TooltipContent>{formatDateTime(value)}</TooltipContent>
       </Tooltip>
     ),
-    'End Time': (value: string, row: any) =>
+    'End Time': (value: string, _: any) =>
       !value ? (
         <span className="inline-block px-3 py-1 rounded-full border text-xs font-semibold bg-green-100 text-green-800 border-green-300">
           Ongoing

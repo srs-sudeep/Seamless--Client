@@ -1,37 +1,34 @@
-import { useState } from 'react';
-import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import {
-  DynamicForm,
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DynamicForm,
   DynamicTable,
-  Button,
-  toast,
   HelmetWrapper,
+  toast,
 } from '@/components';
-import { useDevices, useUpdateDevice, useDeleteDevice } from '@/hooks';
-import { useServices } from '@/hooks';
-import type { Device } from '@/types';
+import { useDeleteDevice, useDevices, useServices, useUpdateDevice } from '@/hooks';
+import type { Device, FilterConfig } from '@/types';
+import { Loader2, Pencil, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const DevicesManagement = () => {
   const { data: devices = [], isLoading } = useDevices();
   const updateMutation = useUpdateDevice();
   const deleteMutation = useDeleteDevice();
-
-  const [editDevice, setEditDevice] = useState<Device | null>(null);
-
-  // Fetch all services for the multi-select
   const { data: allServices = [] } = useServices();
+  const [editDevice, setEditDevice] = useState<Device | null>(null);
+  const serviceOptions = useMemo(
+    () =>
+      allServices.map(service => ({
+        label: service.name,
+        value: String(service.id),
+      })),
+    [allServices]
+  );
 
-  // Build options for the multi-select
-  const serviceOptions = allServices.map(service => ({
-    label: service.name,
-    value: String(service.id),
-  }));
-
-  // Custom edit schema for the modal
   const editSchema = [
     {
       name: 'device_id',
@@ -48,13 +45,6 @@ const DevicesManagement = () => {
       required: true,
       columns: 2,
       disabled: true,
-      render: (value: string) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${value === 'new' ? 'bg-blue-100 text-blue-800' : value === 'approved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
-        >
-          {value}
-        </span>
-      ),
     },
     { name: 'token', label: 'Token', type: 'text', required: true, columns: 2, disabled: true },
     { name: 'ip', label: 'IP', type: 'text', required: true, columns: 2, disabled: true },
@@ -73,7 +63,6 @@ const DevicesManagement = () => {
 
   const handleUpdate = async (formData: Record<string, any>) => {
     if (!editDevice) return;
-    // Only send the array of service IDs
     await updateMutation.mutateAsync({
       device_id: editDevice.device.device_id,
       payload: formData.service_ids || [],
@@ -87,49 +76,45 @@ const DevicesManagement = () => {
     toast({ title: 'Device deleted' });
   };
 
-  // Helper component to fetch and display service name
-  const ServiceName = ({ id }: { id: string }) => {
-    const { data: services = [], isLoading } = useServices();
-    if (isLoading) return <span className="text-xs text-gray-400">Loading...</span>;
-    const service = services.find((s: any) => s.id === id);
-    return <span>{service?.name || id}</span>;
-  };
-
   const customRender = {
-    status: (value: string) => (
+    Status: (value: string) => (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-semibold ${value === 'new' ? 'bg-blue-100 text-blue-800' : value === 'approved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+          value === 'new'
+            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'
+            : value === 'approved'
+              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+        }`}
       >
         {value}
       </span>
     ),
-    service_ids: (value: string[] = []) => (
+    'Service Ids': (value: string[] = []) => (
       <div className="flex flex-wrap gap-1">
         {value.length === 0 ? (
-          <span className="text-xs text-gray-400">None</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500">None</span>
         ) : (
-          value.map((id, idx) => (
-            <span key={idx} className="px-2 py-0.5 bg-gray-200 rounded-full text-xs">
-              <ServiceName id={id} />
+          value.map((name, idx) => (
+            <span
+              key={idx}
+              className="px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 rounded-full text-xs"
+            >
+              {name}
             </span>
           ))
         )}
       </div>
     ),
     token: (value: string) => (
-      <span
-        title={value}
-        style={{
-          maxWidth: 120,
-          display: 'inline-block',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          verticalAlign: 'middle',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {value}
-      </span>
+      <div className="flex items-center">
+        <span
+          title={value}
+          className="max-w-[120px] inline-block overflow-hidden text-ellipsis whitespace-nowrap"
+        >
+          {value}
+        </span>
+      </div>
     ),
     Edit: (_: any, row: Record<string, any>) => (
       <Button
@@ -139,7 +124,6 @@ const DevicesManagement = () => {
           e.stopPropagation();
           handleEdit(row._row);
         }}
-        // disabled={(row._row.device.status === 'approved')}
       >
         <Pencil className="w-4 h-4" />
       </Button>
@@ -169,7 +153,9 @@ const DevicesManagement = () => {
       Status: deviceData.device.status,
       Token: deviceData.device.token,
       IP: deviceData.device.ip,
-      'Service IDs': deviceData.service_ids,
+      'Service Ids': deviceData.service_ids.map(
+        id => serviceOptions.find(opt => opt.value === id)?.label || id
+      ),
       Edit: '',
       Delete: '',
       _row: deviceData,
@@ -183,6 +169,18 @@ const DevicesManagement = () => {
     ip: device.device.ip,
     service_ids: device.service_ids,
   });
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Status',
+      type: 'dropdown',
+      options: Array.from(new Set(devices.map(d => d.device.status))).sort(),
+    },
+    {
+      column: 'Service IDs',
+      type: 'dropdown',
+      options: serviceOptions.map(opt => opt.label),
+    },
+  ];
 
   return (
     <HelmetWrapper
@@ -199,13 +197,13 @@ const DevicesManagement = () => {
           <DynamicTable
             data={getTableData(devices).map(row => ({
               ...row,
-              Status: customRender.status(row._row.device.status),
-              Token: customRender.token(row._row.device.token),
-              'Service IDs': customRender.service_ids(row._row.service_ids),
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
+              Token: customRender.token(row.Token),
+              Edit: customRender.Edit('', row),
+              Delete: customRender.Delete('', row),
             }))}
             customRender={customRender}
+            filterConfig={filterConfig}
+            loading={isLoading}
           />
         )}
         <Dialog

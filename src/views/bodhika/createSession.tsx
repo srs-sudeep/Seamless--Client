@@ -5,9 +5,9 @@ import {
   useMyActiveSessions,
   useSessionAttendance,
   useSessionUpdate,
-} from '@/hooks/bodhika/useSession.hook';
-import { useMyInstructorCourses } from '@/hooks/bodhika/useCourse.hook';
-import { useRooms } from '@/hooks/bodhika/useRooms.hook';
+  useMyInstructorCourses,
+  useRooms,
+} from '@/hooks';
 import { type FieldType as BaseFieldType } from '@/types';
 import { BookOpen, User, Clock, Activity, MapPin, Monitor, Hash, Pause } from 'lucide-react';
 

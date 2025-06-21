@@ -7,8 +7,8 @@ import {
   getRoomDeviceMappings,
   createRoomDeviceMapping,
   deleteRoomDeviceMapping,
-} from '@/api/bodhika/rooms.api';
-import type { Room } from '@/types/bodhika/rooms.types';
+} from '@/api';
+import type { Room } from '@/types';
 
 export function useRooms() {
   return useQuery<Room[]>({

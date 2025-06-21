@@ -7,14 +7,21 @@ import {
   DynamicForm,
   DynamicTable,
   HelmetWrapper,
+  Input,
   toast,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  ScrollArea,
+  Checkbox,
+  Badge,
 } from '@/components';
 import { useCreateRoute, useDeleteRoute, useRoles, useSidebarItems, useUpdateRoute } from '@/hooks';
-import { FieldType } from '@/types';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { FieldType, FilterConfig } from '@/types';
+import { Pencil, Plus, Trash2, Search, X, ChevronDownIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const baseSchema: FieldType[] = [
@@ -54,6 +61,7 @@ const RouteManagement = () => {
     module_id: number;
     parent_id: number | null;
   } | null>(null);
+  const [globalSearch, setGlobalSearch] = useState('');
 
   const allRoles = useMemo(
     () =>
@@ -83,15 +91,15 @@ const RouteManagement = () => {
       Label: sub.label,
       Path: sub.path || '',
       Icon: sub.icon,
-      Active: sub.isActive,
+      Status: sub.isActive,
       Roles: (sub.roles || []).map((role: any) => ({
         label: role.role_name || role.name || role.label || role,
         value: role.role_id || role.value || role,
       })),
+      'Is Sidebar': sub.is_sidebar,
       Edit: '',
       Delete: '',
       Create: '',
-      'Is Sidebar': sub.is_sidebar,
       _row: sub,
       _subModules: sub.children || [],
       _module_id: sub.module_id,
@@ -161,9 +169,18 @@ const RouteManagement = () => {
         <TooltipContent>Add Child Route</TooltipContent>
       </Tooltip>
     ),
-    Active: (value: boolean) => (
-      <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+    Status: (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border`}
+      >
         {value ? 'Active' : 'Inactive'}
+      </span>
+    ),
+    'Is Sidebar': (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border `}
+      >
+        {String(value)}
       </span>
     ),
     Icon: (value: string) => (
@@ -189,22 +206,303 @@ const RouteManagement = () => {
     ),
   };
 
+  // Dropdown filter options
+  const statusOptions = ['Active', 'Inactive'];
+  const isSidebarOptions = ['true', 'false'];
+
+  // Global filter state
+  const [globalFilters, setGlobalFilters] = useState<{
+    Status?: string;
+    Roles?: string[];
+    'Is Sidebar'?: string;
+  }>({});
+
+  // Prepare filterConfig for DynamicTable
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Roles',
+      type: 'multi-select',
+      options: allRoles.map(r => r.label),
+    },
+  ];
+
+  // Recursive filter function for submodules
+  const filterTableData = (data: any[]): any[] => {
+    return data
+      .map(row => {
+        // Recursively filter children
+        let filteredChildren = [];
+        if (Array.isArray(row._subModules) && row._subModules.length > 0) {
+          filteredChildren = filterTableData(row._subModules);
+        }
+
+        // Filtering logic for this row
+        let matches = true;
+        if (globalFilters.Status) {
+          const statusValue = row.Status ? 'Active' : 'Inactive';
+          if (statusValue !== globalFilters.Status) matches = false;
+        }
+        if (globalFilters['Is Sidebar']) {
+          if (String(row['Is Sidebar']) !== globalFilters['Is Sidebar']) matches = false;
+        }
+        if (
+          globalFilters.Roles &&
+          Array.isArray(globalFilters.Roles) &&
+          globalFilters.Roles.length > 0
+        ) {
+          const rowRoles = (row.Roles || []).map((r: any) => r.label);
+          if (!globalFilters.Roles.some((role: string) => rowRoles.includes(role))) matches = false;
+        }
+
+        // Keep row if it matches or has matching children
+        if (matches || filteredChildren.length > 0) {
+          return {
+            ...row,
+            _subModules: filteredChildren,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  };
+
+  // Filtered sidebarItems based on global search
+  const filteredSidebarItems = useMemo(() => {
+    if (!globalSearch.trim()) return sidebarItems;
+    const search = globalSearch.toLowerCase();
+    // Filter modules and their submodules
+    return sidebarItems
+      .map((mod: any) => {
+        const filteredSubModules = (mod.subModules || []).filter(
+          (sub: any) =>
+            (sub.label || '').toLowerCase().includes(search) ||
+            (sub.path || '').toLowerCase().includes(search) ||
+            (sub.icon || '').toLowerCase().includes(search) ||
+            (sub.roles || []).some((role: any) =>
+              (role.role_name || role.name || role.label || '').toLowerCase().includes(search)
+            )
+        );
+        if (mod.label.toLowerCase().includes(search) || filteredSubModules.length > 0) {
+          return { ...mod, subModules: filteredSubModules };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }, [sidebarItems, globalSearch]);
+
+  // Render global filters (remove badges from inside the role filter)
+  const renderGlobalFilters = () => (
+    <div className="flex flex-wrap md:flex-nowrap gap-4 items-center">
+      {/* Search Bar */}
+      <div className="relative flex-1 w-full min-w-[250px]">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-4 w-4 text-gray-400" />
+        </div>
+        <Input
+          type="text"
+          placeholder="Search routes by label, path, icon, or role..."
+          value={globalSearch}
+          onChange={e => setGlobalSearch(e.target.value)}
+          className="pl-10 pr-10 py-2 h-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md"
+        />
+        {globalSearch && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setGlobalSearch('')}
+              className="h-6 w-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+      {/* Status Filter */}
+      <div className="min-w-[180px]">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full flex justify-between items-center h-10">
+              <span>{globalFilters.Status || 'Filter Status'}</span>
+              <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2">
+            <ScrollArea className="h-16">
+              {statusOptions.map(opt => (
+                <div
+                  key={opt}
+                  className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() => {
+                    setGlobalFilters(f => ({
+                      ...f,
+                      Status: f.Status === opt ? undefined : opt,
+                    }));
+                  }}
+                >
+                  <Checkbox
+                    checked={globalFilters.Status === opt}
+                    onCheckedChange={() => {
+                      setGlobalFilters(f => ({
+                        ...f,
+                        Status: f.Status === opt ? undefined : opt,
+                      }));
+                    }}
+                    className="mr-2"
+                    tabIndex={-1}
+                    aria-label={opt}
+                  />
+                  <span>{opt}</span>
+                </div>
+              ))}
+            </ScrollArea>
+            {globalFilters.Status && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => setGlobalFilters(f => ({ ...f, Status: undefined }))}
+              >
+                Clear
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+      {/* Is Sidebar Filter */}
+      <div className="min-w-[180px]">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full flex justify-between items-center h-10">
+              <span>{globalFilters['Is Sidebar'] || 'Filter Is Sidebar'}</span>
+              <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2">
+            <ScrollArea className="h-16">
+              {isSidebarOptions.map(opt => (
+                <div
+                  key={opt}
+                  className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() => {
+                    setGlobalFilters(f => ({
+                      ...f,
+                      'Is Sidebar': f['Is Sidebar'] === opt ? undefined : opt,
+                    }));
+                  }}
+                >
+                  <Checkbox
+                    checked={globalFilters['Is Sidebar'] === opt}
+                    onCheckedChange={() => {
+                      setGlobalFilters(f => ({
+                        ...f,
+                        'Is Sidebar': f['Is Sidebar'] === opt ? undefined : opt,
+                      }));
+                    }}
+                    className="mr-2"
+                    tabIndex={-1}
+                    aria-label={opt}
+                  />
+                  <span>{opt}</span>
+                </div>
+              ))}
+            </ScrollArea>
+            {globalFilters['Is Sidebar'] && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => setGlobalFilters(f => ({ ...f, 'Is Sidebar': undefined }))}
+              >
+                Clear
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+      {/* Roles Filter */}
+      <div className="min-w-[180px]">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="min-w-[180px] flex justify-between items-center h-10"
+            >
+              <span>
+                {globalFilters.Roles && globalFilters.Roles.length > 0
+                  ? `Roles (${globalFilters.Roles.length})`
+                  : 'Filter by Roles'}
+              </span>
+              <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-2">
+            <ScrollArea className="h-48">
+              {allRoles.map(role => (
+                <div
+                  key={role.label}
+                  className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={() => {
+                    setGlobalFilters(prev => {
+                      const prevRoles = prev.Roles || [];
+                      return {
+                        ...prev,
+                        Roles: prevRoles.includes(role.label)
+                          ? prevRoles.filter((r: string) => r !== role.label)
+                          : [...prevRoles, role.label],
+                      };
+                    });
+                  }}
+                >
+                  <Checkbox
+                    checked={globalFilters.Roles?.includes(role.label) || false}
+                    onCheckedChange={() => {
+                      setGlobalFilters(prev => {
+                        const prevRoles = prev.Roles || [];
+                        return {
+                          ...prev,
+                          Roles: prevRoles.includes(role.label)
+                            ? prevRoles.filter((r: string) => r !== role.label)
+                            : [...prevRoles, role.label],
+                        };
+                      });
+                    }}
+                    className="mr-2"
+                    tabIndex={-1}
+                    aria-label={role.label}
+                  />
+                  <span>{role.label}</span>
+                </div>
+              ))}
+            </ScrollArea>
+            {globalFilters.Roles && globalFilters.Roles.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => setGlobalFilters(f => ({ ...f, Roles: undefined }))}
+              >
+                Clear All
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  );
+
+  // Render expanded component with recursive filtering
   const renderExpandedComponent = (row: Record<string, any>) => {
     if (!row._subModules || row._subModules.length === 0) return null;
     return (
       <DynamicTable
-        data={getSubModuleTableData(row._subModules).map(childRow => ({
-          ...childRow,
-          Edit: customRender.Edit('', childRow),
-          Delete: customRender.Delete('', childRow),
-          Create: customRender.Create('', childRow),
-          Icon: customRender.Icon(childRow.Icon),
-        }))}
+        data={filterTableData(getSubModuleTableData(row._subModules))}
         customRender={customRender}
         expandableRows={true}
         expandedComponent={renderExpandedComponent}
         rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
         disableSearch={true}
+        filterConfig={filterConfig}
       />
     );
   };
@@ -215,18 +513,41 @@ const RouteManagement = () => {
       heading="Path Management"
       subHeading="Manage application paths and their access control."
     >
+      {/* Global Search Bar and Filters in a single row */}
+      <div className="mx-6 mt-3 mb-6">
+        <div className="rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
+          {renderGlobalFilters()}
+          {/* Selected Roles as Badges below the whole search/filter panel */}
+          {globalFilters.Roles && globalFilters.Roles.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {globalFilters.Roles.map(role => (
+                <Badge key={role} variant="secondary" className="flex items-center gap-1 px-2 py-1">
+                  <span>{role}</span>
+                  <button
+                    className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setGlobalFilters(prev => ({
+                        ...prev,
+                        Roles: (prev.Roles || []).filter((r: string) => r !== role) || undefined,
+                      }));
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="mx-auto p-6">
-        {sidebarItems.map((mod: any) => (
+        {filteredSidebarItems.map((mod: any) => (
           <div key={mod.id} className="mb-8">
             <DynamicTable
               tableHeading={mod.label}
-              data={getSubModuleTableData(mod.subModules || []).map(row => ({
-                ...row,
-                Edit: customRender.Edit('', row),
-                Delete: customRender.Delete('', row),
-                Create: customRender.Create('', row),
-                Icon: customRender.Icon(row.Icon),
-              }))}
+              data={filterTableData(getSubModuleTableData(mod.subModules || []))}
               customRender={customRender}
               expandableRows={true}
               expandedComponent={renderExpandedComponent}
@@ -244,6 +565,7 @@ const RouteManagement = () => {
                 </Button>
               }
               onRowClick={() => {}}
+              filterConfig={filterConfig}
             />
           </div>
         ))}

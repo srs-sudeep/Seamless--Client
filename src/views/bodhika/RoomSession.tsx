@@ -1,5 +1,5 @@
 import { HelmetWrapper, DynamicTable } from '@/components';
-import { useRoomsActiveSessions } from '@/hooks/bodhika/useSession.hook';
+import { useRoomsActiveSessions } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 
 const getStatusChipClass = (status: string) => {

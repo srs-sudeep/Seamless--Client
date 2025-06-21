@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Loader2, Pencil, Plus, Trash2, Download, Upload } from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -12,13 +12,8 @@ import {
   toast,
   HelmetWrapper,
 } from '@/components';
-import {
-  useSlots,
-  useCreateSlot,
-  useUpdateSlot,
-  useDeleteSlot,
-} from '@/hooks/bodhika/useSlots.hook';
-import { FieldType } from '@/types';
+import { useSlots, useCreateSlot, useUpdateSlot, useDeleteSlot } from '@/hooks';
+import { FieldType, FilterConfig } from '@/types';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -81,6 +76,29 @@ const formatTimeRange = (range: { start?: Date; end?: Date }) => {
   return `${format(range.start)} - ${format(range.end)}`;
 };
 
+const parseTimeRange = (timeStr: string) => {
+  // Expects format: "hh:mmAM/PM - hh:mmAM/PM"
+  if (!timeStr || typeof timeStr !== 'string') return { start: undefined, end: undefined };
+  const [startStr, endStr] = timeStr.split(' - ');
+  const parse = (str: string) => {
+    const match = str.match(/(\d{1,2}):(\d{2})(AM|PM)/i);
+    if (!match) return undefined;
+    const [_, h, m, ampm] = match;
+    let hour = parseInt(h, 10);
+    if (ampm.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+    if (ampm.toUpperCase() === 'AM' && hour === 12) hour = 0;
+    const date = new Date();
+    date.setHours(hour, parseInt(m, 10), 0, 0);
+    return date;
+  };
+  return {
+    start: parse(startStr),
+    end: parse(endStr),
+  };
+};
+
+const csvTemplate = 'slot_id,day,time\n';
+
 const SlotsManagement = () => {
   const { data: slots = [], isLoading } = useSlots();
   const createMutation = useCreateSlot();
@@ -89,6 +107,7 @@ const SlotsManagement = () => {
 
   const [editSlot, setEditSlot] = useState<any | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEdit = (slot: any) => setEditSlot(slot);
 
@@ -118,6 +137,53 @@ const SlotsManagement = () => {
   const handleDelete = async (slot_id: string) => {
     await deleteMutation.mutateAsync(slot_id);
     toast({ title: 'Slot deleted' });
+  };
+
+  // Download CSV template
+  const handleDownloadTemplate = () => {
+    const blob = new Blob([csvTemplate], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'slots_template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Handle CSV import
+  const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async event => {
+      const text = event.target?.result as string;
+      const lines = text.split('\n').filter(Boolean);
+      const [header, ...rows] = lines;
+      const headers = header.split(',').map(h => h.trim());
+      const importedSlots = rows.map(row => {
+        const values = row.split(',').map(v => v.trim());
+        const slot: any = {};
+        headers.forEach((h, i) => {
+          slot[h] = values[i];
+        });
+        return slot;
+      });
+      // Bulk create slots (in parallel, and wait for all)
+      await Promise.all(
+        importedSlots
+          .filter(slot => slot.slot_id && slot.day && slot.time)
+          .map(slot =>
+            createMutation.mutateAsync({
+              slot_id: slot.slot_id,
+              day: slot.day,
+              time: slot.time,
+            })
+          )
+      );
+      toast({ title: 'Slots imported' });
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   const customRender = {
@@ -150,7 +216,7 @@ const SlotsManagement = () => {
         )}
       </Button>
     ),
-    day: (value: string) => <span className="font-semibold">{value}</span>,
+    Day: (value: string) => <span className="font-semibold">{value}</span>,
   };
 
   const getTableData = (slots: any[]) =>
@@ -162,6 +228,14 @@ const SlotsManagement = () => {
       Delete: '',
       _row: { ...slot },
     }));
+
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Day',
+      type: 'multi-select',
+      options: DAYS,
+    },
+  ];
 
   return (
     <HelmetWrapper
@@ -181,11 +255,11 @@ const SlotsManagement = () => {
               ...row,
               Edit: customRender.Edit('', row._row),
               Delete: customRender.Delete('', row._row),
-              Day: customRender.day(row.Day),
             }))}
             customRender={customRender}
+            filterConfig={filterConfig}
             headerActions={
-              <>
+              <div className="flex gap-2">
                 <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
                   <DialogTrigger asChild>
                     <Button>
@@ -200,7 +274,7 @@ const SlotsManagement = () => {
                     <DynamicForm
                       schema={createSchema}
                       defaultValues={{
-                        time: getDefaultTimeRange(), // <-- default value for time slot
+                        time: getDefaultTimeRange(),
                       }}
                       onSubmit={handleCreate}
                       onCancel={() => setCreateDialogOpen(false)}
@@ -208,7 +282,22 @@ const SlotsManagement = () => {
                     />
                   </DialogContent>
                 </Dialog>
-              </>
+                <Button variant="outline" onClick={handleDownloadTemplate}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download CSV Template
+                </Button>
+                <Button onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import CSV
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={handleImportCSV}
+                />
+              </div>
             }
           />
         )}
@@ -225,7 +314,18 @@ const SlotsManagement = () => {
             <DynamicForm
               schema={editSchema}
               onSubmit={handleUpdate}
-              defaultValues={editSlot ?? undefined}
+              // Set defaultValues with parsed time range for editing
+              defaultValues={
+                editSlot
+                  ? {
+                      ...editSlot,
+                      time:
+                        typeof editSlot.time === 'string'
+                          ? parseTimeRange(editSlot.time)
+                          : editSlot.time,
+                    }
+                  : undefined
+              }
               onCancel={() => setEditSlot(null)}
               submitButtonText="Save"
             />

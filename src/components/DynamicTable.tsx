@@ -2,18 +2,26 @@ import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } 
 import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  ScrollArea,
+  Checkbox,
+  Button,
+  TableShimmer,
+} from '@/components';
+import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
-import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
   customRender?: {
     [key: string]: (value: any, row: Record<string, any>) => React.ReactNode;
   };
-  loading?: boolean;
+  isLoading?: boolean;
   filterConfig?: FilterConfig[];
   className?: string;
   expandableRows?: boolean;
@@ -23,6 +31,19 @@ type DynamicTableProps = {
   headerActions?: React.ReactNode;
   tableHeading?: string;
   rowExpandable?: (row: Record<string, any>) => boolean;
+  filterMode?: 'local' | 'ui';
+  onFilterChange?: (filters: Record<string, any>) => void;
+  search?: string;
+  onSearchChange?: (val: string) => void;
+  page?: number;
+  onPageChange?: (page: number) => void;
+  limit?: number;
+  onLimitChange?: (limit: number) => void;
+  total?: number;
+  columnFilters?: Record<string, any>;
+  setColumnFilters?: (
+    filters: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)
+  ) => void;
 };
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -35,7 +56,7 @@ function toSentenceCase(str: string) {
 const DynamicTable: React.FC<DynamicTableProps> = ({
   data,
   customRender = {},
-  loading = false,
+  isLoading = false,
   filterConfig = [],
   className = '',
   expandableRows = false,
@@ -45,19 +66,46 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   headerActions,
   tableHeading,
   rowExpandable,
+  filterMode = 'local',
+  onFilterChange,
+  search = '',
+  onSearchChange,
+  page = 1,
+  onPageChange,
+  limit = 10,
+  onLimitChange,
+  total = 0,
+  columnFilters: controlledColumnFilters,
+  setColumnFilters: controlledSetColumnFilters,
 }) => {
+  // Use controlled filters if provided, otherwise manage internally
+  const [uncontrolledColumnFilters, setUncontrolledColumnFilters] = useState<Record<string, any>>(
+    {}
+  );
+  const isControlled =
+    controlledColumnFilters !== undefined && controlledSetColumnFilters !== undefined;
+  const columnFilters = isControlled ? controlledColumnFilters : uncontrolledColumnFilters;
+  const setColumnFilters = isControlled ? controlledSetColumnFilters : setUncontrolledColumnFilters;
+
+  // Memoize columnFilters to avoid unnecessary rerenders and keep dropdowns in sync
+  useEffect(() => {
+    if (isControlled && controlledColumnFilters) {
+      setUncontrolledColumnFilters(controlledColumnFilters);
+    }
+  }, [controlledColumnFilters]);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
-  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
-  // Add sorting state
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-
+  const [localPage, setLocalPage] = useState(1);
+  const [localLimit, setLocalLimit] = useState(10);
+  const handleSearch = () => {
+    if (filterMode === 'ui' && onSearchChange) {
+      onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
+    }
+  };
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
-
-  // Handle column sorting
   const handleSort = (column: string) => {
-    // If clicking the same column, cycle through: asc -> desc -> null
     if (sortColumn === column) {
       if (sortDirection === 'asc') {
         setSortDirection('desc');
@@ -66,63 +114,366 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         setSortDirection(null);
       }
     } else {
-      // New column, start with ascending
       setSortColumn(column);
       setSortDirection('asc');
     }
   };
+  const clearFilter = (column: string) => {
+    setColumnFilters((prev: Record<string, any>) => {
+      const newFilters = { ...prev };
+      delete newFilters[column];
+      return newFilters;
+    });
+  };
+  const updateColumnFilters = (updater: (prev: Record<string, any>) => Record<string, any>) => {
+    setColumnFilters((prev: Record<string, any>) => {
+      const newFilters = updater(prev);
+      if (filterMode === 'ui' && onFilterChange) {
+        onFilterChange(newFilters);
+      }
+      return newFilters;
+    });
+  };
+
+  const renderFilter = (filter: FilterConfig) => {
+    const currentValue = columnFilters[filter.column];
+
+    switch (filter.type) {
+      case 'multi-select': {
+        const selectedValues = Array.isArray(currentValue) ? currentValue : [];
+        return (
+          <div key={filter.column} className="min-w-[220px] relative">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="min-w-[180px] flex justify-between items-center h-10"
+                >
+                  <span>
+                    {selectedValues.length > 0
+                      ? `${selectedValues.length} selected`
+                      : `Filter ${filter.column}`}
+                  </span>
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <ScrollArea className="h-48">
+                  {filter.options?.map(opt => (
+                    <div
+                      key={opt}
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => {
+                        updateColumnFilters(prev => {
+                          const prevArr = Array.isArray(prev[filter.column])
+                            ? prev[filter.column]
+                            : [];
+                          const exists = prevArr.includes(opt);
+                          return {
+                            ...prev,
+                            [filter.column]: exists
+                              ? prevArr.filter((v: string) => v !== opt)
+                              : [...prevArr, opt],
+                          };
+                        });
+                      }}
+                    >
+                      <Checkbox
+                        checked={selectedValues.includes(opt)}
+                        onCheckedChange={() => {
+                          updateColumnFilters(prev => {
+                            const prevArr = Array.isArray(prev[filter.column])
+                              ? prev[filter.column]
+                              : [];
+                            const exists = prevArr.includes(opt);
+                            return {
+                              ...prev,
+                              [filter.column]: exists
+                                ? prevArr.filter((v: string) => v !== opt)
+                                : [...prevArr, opt],
+                            };
+                          });
+                        }}
+                        className="mr-2"
+                        tabIndex={-1}
+                        aria-label={opt}
+                      />
+                      <span>{opt}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+                {selectedValues.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => updateColumnFilters(prev => ({ ...prev, [filter.column]: [] }))}
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
+        );
+      }
+      case 'dropdown': {
+        return (
+          <div key={filter.column} className="min-w-[180px] relative">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full flex justify-between items-center h-10">
+                  <span>{currentValue || `Filter ${filter.column}`}</span>
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <ScrollArea className="h-16">
+                  {filter.options?.map(opt => (
+                    <div
+                      key={opt}
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => {
+                        updateColumnFilters(prev => ({
+                          ...prev,
+                          [filter.column]: prev[filter.column] === opt ? undefined : opt,
+                        }));
+                      }}
+                    >
+                      <Checkbox
+                        checked={currentValue === opt}
+                        onCheckedChange={() => {
+                          updateColumnFilters(prev => ({
+                            ...prev,
+                            [filter.column]: prev[filter.column] === opt ? undefined : opt,
+                          }));
+                        }}
+                        className="mr-2"
+                        tabIndex={-1}
+                        aria-label={opt}
+                      />
+                      <span>{opt}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+                {currentValue && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => clearFilter(filter.column)}
+                  >
+                    Clear
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
+        );
+      }
+      case 'date':
+        return (
+          <div key={filter.column} className="min-w-[180px] relative">
+            <DatePicker
+              value={currentValue}
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+            />
+            {currentValue && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      case 'date-range':
+        return (
+          <div key={filter.column} className="min-w-[250px] relative">
+            <DateRangePicker
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+            />
+            {currentValue && (currentValue.startDate || currentValue.endDate) && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              >
+                {/* <XIcon className="h-4 w-4" /> */}
+              </button>
+            )}
+          </div>
+        );
+
+      case 'datetime':
+        return (
+          <div key={filter.column} className="min-w-[250px] relative">
+            <DateTimePicker
+              onChange={val => updateColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
+            />
+            {currentValue && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  clearFilter(filter.column);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+              ></button>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   const filteredData = useMemo(() => {
-    // First filter the data
+    if (filterMode === 'ui') return data;
     let result = data.filter(row => {
-      if (
-        !disableSearch &&
-        searchTerm &&
-        !Object.values(row).some(val =>
-          String(val).toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      )
+      let searchMatch = true;
+      if (!disableSearch && searchTerm) {
+        searchMatch = Object.values(row).some(val => {
+          if (val == null) return false;
+          if (Array.isArray(val)) {
+            return val.some(item => String(item).toLowerCase().includes(searchTerm.toLowerCase()));
+          }
+          if (typeof val === 'object') {
+            try {
+              return JSON.stringify(val).toLowerCase().includes(searchTerm.toLowerCase());
+            } catch {
+              return false;
+            }
+          }
+          return String(val).toLowerCase().includes(searchTerm.toLowerCase());
+        });
+      }
+      if (!disableSearch && searchTerm && !searchMatch) {
         return false;
-
+      }
       for (const [col, val] of Object.entries(columnFilters)) {
-        if (val?.startDate && val?.endDate) {
-          const rowDate = new Date(row[col]);
-          if (rowDate < val.startDate || rowDate > val.endDate) return false;
+        if (val === null || val === undefined || val === '') continue;
+        if (Array.isArray(val) && val.length === 0) continue;
+        if (typeof val === 'object' && !(val instanceof Date) && !Array.isArray(val)) {
+          if (Object.keys(val).length === 0) continue;
+        }
+        const rowValue = row[col];
+        if (val && typeof val === 'object' && (val.startDate || val.endDate)) {
+          const rowDate = new Date(rowValue);
+          if (isNaN(rowDate.getTime())) return false;
+
+          if (val.startDate) {
+            const startDate = new Date(val.startDate);
+            startDate.setHours(0, 0, 0, 0);
+            if (rowDate < startDate) return false;
+          }
+
+          if (val.endDate) {
+            const endDate = new Date(val.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            if (rowDate > endDate) return false;
+          }
         } else if (val instanceof Date) {
-          const rowDate = new Date(row[col]);
-          if (rowDate.toDateString() !== val.toDateString()) return false;
-        } else if (val && String(row[col]).toLowerCase() !== String(val).toLowerCase()) {
-          return false;
+          const rowDate = new Date(rowValue);
+          if (isNaN(rowDate.getTime())) return false;
+          const filterDate = new Date(val);
+          filterDate.setHours(0, 0, 0, 0);
+          const comparableRowDate = new Date(rowDate);
+          comparableRowDate.setHours(0, 0, 0, 0);
+
+          if (comparableRowDate.getTime() !== filterDate.getTime()) return false;
+        } else if (Array.isArray(val)) {
+          if (Array.isArray(rowValue)) {
+            const hasMatch = val.some(selected =>
+              rowValue.some(rv => String(rv.label).toLowerCase() === String(selected).toLowerCase())
+            );
+            if (!hasMatch) return false;
+          } else {
+            const hasMatch = val.some(
+              selected => String(rowValue).toLowerCase() === String(selected).toLowerCase()
+            );
+            if (!hasMatch) return false;
+          }
+        } else {
+          if (Array.isArray(rowValue)) {
+            const hasMatch = rowValue.some(v =>
+              typeof v === 'object' && v !== null && !Array.isArray(v)
+                ? JSON.stringify(v).toLowerCase().includes(String(val).toLowerCase())
+                : String(v).toLowerCase().includes(String(val).toLowerCase())
+            );
+            if (!hasMatch) return false;
+          } else if (
+            typeof rowValue === 'object' &&
+            rowValue !== null &&
+            !Array.isArray(rowValue) &&
+            !React.isValidElement(rowValue)
+          ) {
+            // For plain objects (not React elements), stringify and check
+            if (!JSON.stringify(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
+              return false;
+            }
+          } else if (React.isValidElement(rowValue)) {
+            // For React elements, skip filtering (or you can add custom logic if needed)
+            return false;
+          } else {
+            // Regular string/number/boolean comparison
+            if (!String(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
+              return false;
+            }
+          }
         }
       }
 
       return true;
     });
 
-    // Then sort the filtered data
+    // Sort the filtered data
     if (sortColumn && sortDirection) {
       result = [...result].sort((a, b) => {
-        // Get values to compare
         const aVal = a[sortColumn];
         const bVal = b[sortColumn];
 
         // Handle nulls/undefined
+        if (aVal == null && bVal == null) return 0;
         if (aVal == null) return sortDirection === 'asc' ? -1 : 1;
         if (bVal == null) return sortDirection === 'asc' ? 1 : -1;
 
-        // Handle different types of values
+        // Handle dates
         if (aVal instanceof Date && bVal instanceof Date) {
           return sortDirection === 'asc'
             ? aVal.getTime() - bVal.getTime()
             : bVal.getTime() - aVal.getTime();
         }
 
-        // Numbers
+        // Try to parse as dates if they're strings
+        const aDate = new Date(aVal);
+        const bDate = new Date(bVal);
+        if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
+          return sortDirection === 'asc'
+            ? aDate.getTime() - bDate.getTime()
+            : bDate.getTime() - aDate.getTime();
+        }
+
+        // Handle numbers
         if (typeof aVal === 'number' && typeof bVal === 'number') {
           return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
         }
 
-        // Boolean
+        // Try to parse as numbers
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return sortDirection === 'asc' ? aNum - bNum : bNum - aNum;
+        }
+
+        // Handle booleans
         if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
           return sortDirection === 'asc'
             ? aVal === bVal
@@ -137,20 +488,29 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 : 1;
         }
 
-        // Default to string comparison
+        // Default string comparison
         const aStr = String(aVal).toLowerCase();
         const bStr = String(bVal).toLowerCase();
-
         return sortDirection === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
 
     return result;
-  }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection]);
+  }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
+
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
   const toggleRow = (index: number) => {
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
+
+  const hasActiveFilters = Object.keys(columnFilters).length > 0;
+
+  const paginatedData = useMemo(() => {
+    if (filterMode === 'ui') return filteredData;
+    const start = (localPage - 1) * localLimit;
+    return filteredData.slice(start, start + localLimit);
+  }, [filteredData, filterMode, localPage, localLimit]);
 
   return (
     <div className={cn('w-full', className)}>
@@ -163,93 +523,34 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
         {(!disableSearch || filterConfig.length > 0 || headerActions) && (
           <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
-            <div className="flex flex-wrap items-end  md:gap-4">
+            <div className="flex flex-wrap items-end gap-2 md:gap-4">
               {!disableSearch && (
-                <div className="flex-1 min-w-full">
-                  <Input
+                <div className="flex-1 min-w-[300px]">
+                  <input
                     placeholder="Search across all columns..."
                     value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-                             focus:border-blue-500 dark:focus:border-blue-400 
-                             focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
-                             transition-all duration-200"
+                    onChange={e => {
+                      setSearchTerm(e.target.value);
+                      if (e.target.value.trim() === '') handleSearch();
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleSearch();
+                    }}
+                    onBlur={handleSearch}
+                    className="h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
+          focus:border-blue-500 dark:focus:border-blue-400 
+          focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800
+          transition-all duration-200 px-3 rounded"
                   />
+                  <button
+                    onClick={handleSearch}
+                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Search
+                  </button>
                 </div>
               )}
-
-              {filterConfig.map(filter => {
-                switch (filter.type) {
-                  case 'dropdown':
-                    return (
-                      <div key={filter.column} className="min-w-[180px]">
-                        <Select
-                          onValueChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        >
-                          <SelectTrigger
-                            className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 
-                                                   hover:border-gray-300 dark:hover:border-gray-600
-                                                   focus:border-blue-500 dark:focus:border-blue-400
-                                                   transition-all duration-200"
-                          >
-                            <span className="text-gray-700 dark:text-gray-300">
-                              {columnFilters[filter.column] || `Filter ${filter.column}`}
-                            </span>
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                            {filter.options?.map(opt => (
-                              <SelectItem
-                                key={opt}
-                                value={opt}
-                                className="hover:bg-gray-100 dark:hover:bg-gray-800 focus:bg-gray-100 dark:focus:bg-gray-800"
-                              >
-                                {opt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    );
-
-                  case 'date':
-                    return (
-                      <div key={filter.column} className="min-w-[180px]">
-                        <DatePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  case 'date-range':
-                    return (
-                      <div key={filter.column} className="min-w-[250px]">
-                        <DateRangePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  case 'datetime':
-                    return (
-                      <div key={filter.column} className="min-w-[250px]">
-                        <DateTimePicker
-                          onChange={val =>
-                            setColumnFilters(prev => ({ ...prev, [filter.column]: val }))
-                          }
-                        />
-                      </div>
-                    );
-
-                  default:
-                    return null;
-                }
-              })}
+              {filterConfig.map(renderFilter)}
             </div>
             {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
           </div>
@@ -263,13 +564,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
-                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading data...</span>
-              </div>
-            </div>
+          {isLoading ? (
+            <TableShimmer />
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -324,7 +620,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredData.length === 0 ? (
+                  {paginatedData.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={headers.length + (expandableRows ? 1 : 0)}
@@ -348,7 +644,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           </div>
                           <p className="text-base font-medium">No data found</p>
                           <p className="text-sm text-gray-400 dark:text-gray-500 max-w-xs text-center">
-                            {searchTerm || Object.keys(columnFilters).length > 0
+                            {searchTerm || hasActiveFilters
                               ? "Try adjusting your search or filters to find what you're looking for."
                               : 'No records are currently available in this table.'}
                           </p>
@@ -356,7 +652,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredData.map((row, i) => {
+                    paginatedData.map((row, i) => {
                       const canExpand = rowExpandable ? rowExpandable(row) : expandableRows;
                       const isExpanded = expandedRows[i] || false;
 
@@ -475,18 +771,79 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             </div>
           )}
         </div>
+        {(filterMode === 'ui' ? total : paginatedData.length) > 0 && (
+          <div className="flex items-center justify-between mt-4">
+            <div>
+              <span>Rows per page: </span>
+              <select
+                value={filterMode === 'ui' ? limit : localLimit}
+                onChange={e => {
+                  const newLimit = Number(e.target.value);
+                  if (filterMode === 'ui' && onLimitChange) {
+                    onLimitChange(newLimit);
+                    if (onPageChange) onPageChange(1);
+                  } else {
+                    setLocalLimit(newLimit);
+                    setLocalPage(1);
+                  }
+                }}
+                className="border rounded px-2 py-1 ml-2"
+              >
+                {[2, 5, 10, 20, 50, 100].map(opt => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <button
+                onClick={() =>
+                  filterMode === 'ui' && onPageChange
+                    ? onPageChange(Math.max(1, (page || 1) - 1))
+                    : setLocalPage(Math.max(1, localPage - 1))
+                }
+                disabled={(filterMode === 'ui' ? page : localPage) === 1}
+                className="px-3 py-1 border rounded mx-1"
+              >
+                Prev
+              </button>
+              <span>
+                Page {filterMode === 'ui' ? page : localPage} of{' '}
+                {Math.ceil(
+                  (filterMode === 'ui' ? total || 0 : paginatedData.length) /
+                    (filterMode === 'ui' ? limit : localLimit)
+                )}
+              </span>
+              <button
+                onClick={() =>
+                  filterMode === 'ui' && onPageChange
+                    ? onPageChange((page || 1) + 1)
+                    : setLocalPage(localPage + 1)
+                }
+                disabled={
+                  filterMode === 'ui'
+                    ? page >= Math.ceil((total || 0) / limit)
+                    : localPage >= Math.ceil(paginatedData.length / localLimit)
+                }
+                className="px-3 py-1 border rounded mx-1"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
 
-        {/* Table Footer Info - refined styling */}
-        {filteredData.length > 0 && (
+        {paginatedData.length > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2 px-1 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <span className="text-sm">Showing</span>
               <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {filteredData.length}
+                {paginatedData.length}
               </span>
               <span>of</span>
               <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {data.length}
+                {total}
               </span>
               <span>results</span>
             </div>

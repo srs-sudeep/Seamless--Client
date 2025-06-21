@@ -1,14 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUsers, assignRoleToUser, removeRoleFromUser } from '@/api/core/user.api';
-import type { UserAPI } from '@/types/core/user.types';
+import { getUsers, getUserFilters, assignRoleToUser, removeRoleFromUser } from '@/api';
+import type { UserListResponse, GetUsersParams, UserFiltersResponse } from '@/types';
 
-export function useUsers() {
-  return useQuery<UserAPI[]>({
-    queryKey: ['users'],
-    queryFn: getUsers,
+export function useUsers(params: GetUsersParams = {}) {
+  return useQuery<UserListResponse>({
+    queryKey: ['users', params],
+    queryFn: () => getUsers(params),
   });
 }
-
 export function useAssignRoleToUser() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -30,5 +29,12 @@ export function useRemoveRoleFromUser() {
     onSuccess: _data => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
+  });
+}
+
+export function useUserFilter() {
+  return useQuery<UserFiltersResponse>({
+    queryKey: ['user-filters'],
+    queryFn: getUserFilters,
   });
 }

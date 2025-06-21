@@ -236,8 +236,8 @@ const RolesManagement = () => {
 
   const getTableData = (roles: Role[]) =>
     roles.map(role => ({
-      Name: role.name,
       RoleId: role.role_id,
+      Name: role.name,
       Description: role.description,
       'View Permission': '',
       Edit: '',

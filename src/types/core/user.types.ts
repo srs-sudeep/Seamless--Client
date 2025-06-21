@@ -3,6 +3,13 @@ export interface UserRoleAPI {
   name: string;
   isAssigned: boolean;
 }
+export interface GetUsersParams {
+  search?: string;
+  status?: boolean;
+  roles?: number[];
+  limit?: number;
+  offset?: number;
+}
 
 export interface UserAPI {
   ldapid: string;
@@ -10,4 +17,19 @@ export interface UserAPI {
   name: string;
   is_active: boolean;
   roles: UserRoleAPI[];
+}
+
+export interface UserRoleFilter {
+  role_id: number;
+  name: string;
+}
+
+export interface UserStatusFilter {
+  label: string;
+  value: boolean;
+}
+
+export interface UserFiltersResponse {
+  roles: UserRoleFilter[];
+  status: UserStatusFilter[];
 }

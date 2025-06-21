@@ -2,7 +2,7 @@ import { HelmetWrapper, Sheet, SheetContent, SheetTitle, DynamicTable, toast } f
 import { useUsers, useAssignRoleToUser, useRemoveRoleFromUser } from '@/hooks';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import type { UserAPI, UserRoleAPI } from '@/types';
+import type { UserAPI, UserRoleAPI, FilterConfig } from '@/types';
 
 const UserManagement = () => {
   const { data: users = [], isLoading } = useUsers();
@@ -11,14 +11,12 @@ const UserManagement = () => {
 
   const [editUser, setEditUser] = useState<UserAPI | null>(null);
 
-  // Sync editUser with latest users data after mutation
   useEffect(() => {
     if (!editUser) return;
     const updated = users.find(u => u.ldapid === editUser.ldapid);
     if (updated) setEditUser(updated);
   }, [users, editUser?.ldapid]);
 
-  // Table data
   const getTableData = (users: UserAPI[]) =>
     users.map(user => ({
       Name: user.name,
@@ -33,8 +31,21 @@ const UserManagement = () => {
         })),
       _row: user,
     }));
+  const allRoles = Array.from(new Set(users.flatMap(u => u.roles.map(r => r.name)))).sort();
 
-  // Custom render for table
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Active',
+      type: 'dropdown',
+      options: ['Active', 'Inactive'],
+    },
+    {
+      column: 'Roles',
+      type: 'multi-select',
+      options: allRoles,
+    },
+  ];
+
   const customRender = {
     Active: (value: boolean) => (
       <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
@@ -76,11 +87,10 @@ const UserManagement = () => {
           <DynamicTable
             data={getTableData(users).map(row => ({
               ...row,
-              Roles: customRender.Roles('', row),
-              Active: customRender.Active(row.Active),
             }))}
-            customRender={{}}
+            customRender={customRender}
             onRowClick={row => setEditUser(row._row)}
+            filterConfig={filterConfig}
           />
         )}
 

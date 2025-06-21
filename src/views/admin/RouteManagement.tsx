@@ -552,7 +552,7 @@ const RouteManagement = () => {
               expandableRows={true}
               expandedComponent={renderExpandedComponent}
               rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
-              loading={sidebarLoading || rolesLoading}
+              isLoading={sidebarLoading || rolesLoading}
               headerActions={
                 <Button
                   size="sm"

@@ -85,11 +85,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     });
   };
 
-  // Clear all filters
-  const clearAllFilters = () => {
-    setColumnFilters({});
-  };
-
   // Fixed filter rendering
   const renderFilter = (filter: FilterConfig) => {
     const currentValue = columnFilters[filter.column];

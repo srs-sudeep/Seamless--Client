@@ -10,10 +10,6 @@ const Aboutus = lazyLoad(() => import('@/views/landing/Aboutus'));
 const ContactUs = lazyLoad(() => import('@/views/landing/Contactus'));
 // Wrapper component to handle landing page logic
 const LandingWrapper = () => {
-  //   const { isAuthenticated, user } = useAuthStore();
-
-  // If authenticated, stay on landing page (as per requirements)
-  // This is different from most apps where you'd redirect to dashboard
   return <LandingPage />;
 };
 

@@ -22,15 +22,15 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  LoadingFallback,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  useToast,
   UserAvatar,
-  FullPageLoader,
+  useToast,
 } from '@/components';
 import { useSidebar } from '@/core';
 import { useIsMobile } from '@/hooks';
@@ -38,7 +38,7 @@ import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
 import { ThemeSwitcher } from '@/theme';
 import { notifications, UserRole } from '@/types';
-import { Bell, ChevronDown, HelpCircle, LogOut, Mail, Menu, Settings, User } from 'lucide-react';
+import { Bell, ChevronDown, HelpCircle, LogOut, Menu, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 export const Navbar = () => {
@@ -175,14 +175,29 @@ export const Navbar = () => {
 
                 {/* Actions */}
                 <div className="space-y-1 text-sm">
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => navigate('/dashboard/profile')}
+                  >
                     <User className="mr-2 h-4 w-4" /> Profile
                   </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    <Settings className="mr-2 h-4 w-4" /> Settings
-                  </Button>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => navigate('/support')}
+                  >
                     <HelpCircle className="mr-2 h-4 w-4" /> Help & Support
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => navigate('/about')}
+                  >
+                    <span className="mr-2 h-4 w-4">ℹ️</span> About Us
                   </Button>
                   <Button
                     variant="destructive"
@@ -204,7 +219,7 @@ export const Navbar = () => {
   return (
     <>
       {/* Full Page Loader */}
-      {showLoader && <FullPageLoader />}
+      {showLoader && <LoadingFallback />}
 
       <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl dark:bg-gray-50/10 shadow-lg py-3 h-24 px-6 backdrop-blur-sm">
         <div className="flex items-center justify-between w-full">
@@ -419,21 +434,17 @@ export const Navbar = () => {
                 )}
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/profile')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>Messages</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/support')}>
                     <HelpCircle className="mr-2 h-4 w-4" />
                     <span>Help & Support</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/about')}>
+                    <span className="mr-2 h-4 w-4">ℹ️</span>
+                    <span>About Us</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

@@ -1,5 +1,7 @@
 export interface FilterConfig {
-  type: 'search' | 'dropdown' | 'multi-select' | 'date' | 'date-range' | 'datetime';
   column: string;
+  type: 'search' | 'dropdown' | 'multi-select' | 'date' | 'date-range' | 'datetime';
   options?: string[];
+  value?: any;
+  onChange?: (val: any) => void;
 }

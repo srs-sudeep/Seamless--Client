@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/theme';
+import { useNavigate } from 'react-router-dom';
 
 interface AppLogoProps {
   className?: string;
@@ -34,11 +35,17 @@ const AppLogo = ({
 }: AppLogoProps) => {
   const { theme } = useTheme();
   const logoSrc = getLogoSrc(theme, horizontal, name, short);
+  const navigate = useNavigate();
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className="relative">
-        <img src={logoSrc} alt="Logo" className={cn('object-contain', imgClassname)} />
+        <img
+          src={logoSrc}
+          alt="Logo"
+          className={cn('object-contain cursor-pointer', imgClassname)}
+          onClick={() => navigate('/')}
+        />
       </div>
     </div>
   );

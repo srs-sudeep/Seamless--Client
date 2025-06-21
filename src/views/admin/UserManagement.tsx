@@ -12,7 +12,7 @@ const UserManagement = () => {
   const { data: filterOptions } = useUserFilter();
   const { data, isLoading: usersLoading } = useUsers({
     ...filters,
-    search: search || undefined,
+    search,
     limit,
     offset: (page - 1) * limit,
   });
@@ -135,7 +135,6 @@ const UserManagement = () => {
           onRowClick={row => setEditUser(row._row)}
           filterConfig={filterConfig}
           filterMode="ui"
-          search={search}
           onSearchChange={setSearch}
           page={page}
           onPageChange={setPage}

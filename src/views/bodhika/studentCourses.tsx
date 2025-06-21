@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Loader2, Clock, MapPin, User } from 'lucide-react';
-import { useSlots } from '@/hooks/bodhika/useSlots.hook';
+import { useSlots } from '@/hooks';
 
 const mockCourses = [
   {

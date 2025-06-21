@@ -12,12 +12,7 @@ import {
   toast,
   HelmetWrapper,
 } from '@/components';
-import {
-  useRooms,
-  useCreateRoom,
-  useUpdateRoom,
-  useDeleteRoom,
-} from '@/hooks/bodhika/useRooms.hook';
+import { useRooms, useCreateRoom, useUpdateRoom, useDeleteRoom } from '@/hooks';
 import { FieldType } from '@/types';
 
 const createSchema: FieldType[] = [

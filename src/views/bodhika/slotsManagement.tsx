@@ -12,12 +12,7 @@ import {
   toast,
   HelmetWrapper,
 } from '@/components';
-import {
-  useSlots,
-  useCreateSlot,
-  useUpdateSlot,
-  useDeleteSlot,
-} from '@/hooks/bodhika/useSlots.hook';
+import { useSlots, useCreateSlot, useUpdateSlot, useDeleteSlot } from '@/hooks';
 import { FieldType, FilterConfig } from '@/types';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

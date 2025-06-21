@@ -7,9 +7,8 @@ import {
   updateSession,
   getSessionsByCourseId,
   getRoomsActiveSessions,
-} from '@/api/bodhika/session.api';
-import type { Session } from '@/types/bodhika/session.types';
-import { Attendance } from '@/types';
+} from '@/api';
+import type { Session, attendance } from '@/types';
 
 export function useCreateSession() {
   const queryClient = useQueryClient();
@@ -39,7 +38,7 @@ export function useSessions() {
 }
 
 export function useSessionAttendance(session_id?: string) {
-  return useQuery<Attendance[]>({
+  return useQuery<attendance[]>({
     queryKey: ['sessionAttendance', session_id],
     queryFn: () => getSessionAttendance(session_id!),
     enabled: !!session_id,

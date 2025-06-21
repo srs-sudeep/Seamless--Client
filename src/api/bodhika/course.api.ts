@@ -1,12 +1,12 @@
 import { apiClient } from '@/core';
-import type { Course } from '@/types/bodhika/course.types';
+import type { Course } from '@/types';
 
 export async function getCourses(): Promise<Course[]> {
   const { data } = await apiClient.get<Course[]>('bodhika/api/v1/courses/courses-details');
   return data;
 }
 
-export async function createCourse(payload: any) {
+export async function createCourse(payload: Course[]): Promise<Course> {
   const { data } = await apiClient.post<Course>(
     'bodhika/api/v1/courses/create-course-with-instructors',
     payload
@@ -14,7 +14,7 @@ export async function createCourse(payload: any) {
   return data;
 }
 
-export async function updateCourse(course_id: string, payload: Partial<Course>) {
+export async function updateCourse(course_id: string, payload: Partial<Course>): Promise<Course> {
   const { data } = await apiClient.put<Course>(
     `bodhika/api/v1/courses/update-course/${course_id}`,
     payload
@@ -22,7 +22,7 @@ export async function updateCourse(course_id: string, payload: Partial<Course>) 
   return data;
 }
 
-export async function deleteCourse(course_id: string) {
+export async function deleteCourse(course_id: string): Promise<void> {
   await apiClient.delete(`bodhika/api/v1/courses/delete-course/${course_id}`);
 }
 

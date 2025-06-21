@@ -1,4 +1,4 @@
-import { apiClient } from '@/core/apiClient';
+import { apiClient } from '@/core';
 import type { UserAPI, UserFiltersResponse, GetUsersParams } from '@/types';
 
 export async function getUsers(params: GetUsersParams = {}): Promise<UserAPI[]> {

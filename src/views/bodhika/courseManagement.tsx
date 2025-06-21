@@ -14,7 +14,7 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks/bodhika/useCourse.hook';
+import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks';
 import { FieldType } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
@@ -130,7 +130,7 @@ const CourseManagement = () => {
         </span>
       </Button>
     ),
-    'Slot-Room': (value: string, row: any) =>
+    'Slot-Room': (row: any) =>
       Array.isArray(row._row.slot_room_id) ? (
         <div className="flex flex-wrap gap-2">
           {row._row.slot_room_id.map((sr: any, idx: number) => (

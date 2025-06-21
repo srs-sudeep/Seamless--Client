@@ -20,3 +20,12 @@ export * from './core/service.types';
 export * from './device/deviceAdmin.types';
 export * from './device/devices.types';
 export * from './device/attendance.types';
+
+/* Type definitions for bodhika permissions */
+export * from './bodhika/attendances.types';
+export * from './bodhika/course.types';
+export * from './bodhika/instructor.types';
+export * from './bodhika/rooms.types';
+export * from './bodhika/session.types';
+export * from './bodhika/slots.types';
+export * from './bodhika/students.types';

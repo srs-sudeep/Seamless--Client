@@ -6,8 +6,8 @@ import {
   deleteCourse,
   getMyInstructorCourses,
   getMyStudentCourses,
-} from '@/api/bodhika/course.api';
-import type { Course } from '@/types/bodhika/course.types';
+} from '@/api';
+import type { Course } from '@/types';
 
 export function useCourses() {
   return useQuery<Course[]>({

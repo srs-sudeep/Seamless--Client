@@ -16,31 +16,49 @@ export const TableShimmer: React.FC<TableShimmerProps> = ({
   return (
     <div className={`w-full ${className}`}>
       <div className="relative overflow-hidden bg-white rounded-xl shadow-lg border border-gray-100">
-        {/* Animated overlay shimmer */}
-        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        {/* Global shimmer overlay */}
+        <div className="absolute inset-0 shimmer-overlay"></div>
 
         <div className="p-6 space-y-4">
           {/* Header Section */}
           {showHeader && (
-            <div className="animate-pulse shimmer-element">
+            <div className="shimmer-section" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center justify-between mb-6">
-                <div className="h-8 bg-gray-200 rounded-lg w-48 shimmer-bg"></div>
+                <div
+                  className="shimmer-bar h-8 w-48 rounded-lg"
+                  style={{ animationDelay: '0.3s' }}
+                ></div>
                 <div className="flex space-x-3">
-                  <div className="h-10 bg-gray-200 rounded-lg w-24 shimmer-bg"></div>
-                  <div className="h-10 bg-gray-200 rounded-lg w-20 shimmer-bg"></div>
+                  <div
+                    className="shimmer-bar h-10 w-24 rounded-lg"
+                    style={{ animationDelay: '0.4s' }}
+                  ></div>
+                  <div
+                    className="shimmer-bar h-10 w-20 rounded-lg"
+                    style={{ animationDelay: '0.5s' }}
+                  ></div>
                 </div>
               </div>
 
               {/* Search/Filter Bar */}
               <div className="flex items-center space-x-4 mb-6">
-                <div className="h-10 bg-gray-200 rounded-lg flex-1 max-w-md shimmer-bg"></div>
-                <div className="h-10 bg-gray-200 rounded-lg w-32 shimmer-bg"></div>
+                <div
+                  className="shimmer-bar h-10 flex-1 max-w-md rounded-lg"
+                  style={{ animationDelay: '0.6s' }}
+                ></div>
+                <div
+                  className="shimmer-bar h-10 w-32 rounded-lg"
+                  style={{ animationDelay: '0.7s' }}
+                ></div>
               </div>
             </div>
           )}
 
           {/* Table Container */}
-          <div className="overflow-hidden rounded-lg border border-gray-200">
+          <div
+            className="overflow-hidden rounded-lg border border-gray-200 shimmer-section"
+            style={{ animationDelay: '0.8s' }}
+          >
             {/* Table Header */}
             <div className="bg-gray-50/80 border-b border-gray-200">
               <div
@@ -48,15 +66,14 @@ export const TableShimmer: React.FC<TableShimmerProps> = ({
                 style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
               >
                 {Array.from({ length: columns }).map((_, colIndex) => (
-                  <div key={`header-${colIndex}`} className="animate-pulse shimmer-element">
-                    <div
-                      className="h-4 bg-gray-300 rounded shimmer-bg transition-all duration-300"
-                      style={{
-                        width: `${60 + Math.random() * 30}%`,
-                        animationDelay: `${colIndex * 150}ms`,
-                      }}
-                    ></div>
-                  </div>
+                  <div
+                    key={`header-${colIndex}`}
+                    className="shimmer-bar h-4 rounded"
+                    style={{
+                      width: `${60 + Math.random() * 30}%`,
+                      animationDelay: `${0.9 + colIndex * 0.1}s`,
+                    }}
+                  ></div>
                 ))}
               </div>
             </div>
@@ -66,28 +83,28 @@ export const TableShimmer: React.FC<TableShimmerProps> = ({
               {Array.from({ length: rows }).map((_, rowIndex) => (
                 <div
                   key={`row-${rowIndex}`}
-                  className="grid gap-4 p-4 hover:bg-gray-50/50 transition-all duration-500 shimmer-element"
+                  className="grid gap-4 p-4 hover:bg-gray-50/30 transition-all duration-700 shimmer-row"
                   style={{
                     gridTemplateColumns: `repeat(${columns}, 1fr)`,
-                    animationDelay: `${rowIndex * 80}ms`,
+                    animationDelay: `${1.2 + rowIndex * 0.15}s`,
                   }}
                 >
                   {Array.from({ length: columns }).map((_, colIndex) => (
-                    <div key={`cell-${rowIndex}-${colIndex}`} className="animate-pulse">
+                    <div key={`cell-${rowIndex}-${colIndex}`} className="flex flex-col space-y-2">
                       <div
-                        className="h-4 bg-gray-200 rounded shimmer-bg transition-all duration-400"
+                        className="shimmer-bar h-4 rounded"
                         style={{
-                          width: `${40 + Math.random() * 50}%`,
-                          animationDelay: `${(rowIndex * columns + colIndex) * 120}ms`,
+                          width: `${50 + Math.random() * 40}%`,
+                          animationDelay: `${1.3 + rowIndex * 0.15 + colIndex * 0.05}s`,
                         }}
                       ></div>
                       {/* Occasionally add a second line for variety */}
-                      {Math.random() > 0.7 && (
+                      {Math.random() > 0.6 && (
                         <div
-                          className="h-3 bg-gray-200 rounded mt-2 shimmer-bg transition-all duration-400"
+                          className="shimmer-bar h-3 rounded"
                           style={{
-                            width: `${20 + Math.random() * 40}%`,
-                            animationDelay: `${(rowIndex * columns + colIndex) * 120 + 300}ms`,
+                            width: `${25 + Math.random() * 35}%`,
+                            animationDelay: `${1.5 + rowIndex * 0.15 + colIndex * 0.05}s`,
                           }}
                         ></div>
                       )}
@@ -99,14 +116,20 @@ export const TableShimmer: React.FC<TableShimmerProps> = ({
           </div>
 
           {/* Pagination Shimmer */}
-          <div className="flex items-center justify-between pt-4 animate-pulse shimmer-element">
-            <div className="h-5 bg-gray-200 rounded w-32 shimmer-bg"></div>
+          <div
+            className="flex items-center justify-between pt-4 shimmer-section"
+            style={{ animationDelay: `${2 + rows * 0.1}s` }}
+          >
+            <div
+              className="shimmer-bar h-5 w-32 rounded"
+              style={{ animationDelay: `${2.1 + rows * 0.1}s` }}
+            ></div>
             <div className="flex space-x-2">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-8 w-8 bg-gray-200 rounded shimmer-bg transition-all duration-300"
-                  style={{ animationDelay: `${i * 150}ms` }}
+                  className="shimmer-bar h-8 w-8 rounded"
+                  style={{ animationDelay: `${2.2 + rows * 0.1 + i * 0.1}s` }}
                 ></div>
               ))}
             </div>
@@ -115,77 +138,173 @@ export const TableShimmer: React.FC<TableShimmerProps> = ({
       </div>
 
       <style>{`
-        @keyframes shimmer {
+        /* Smooth shimmer wave animation */
+        @keyframes shimmerWave {
           0% {
             transform: translateX(-100%);
             opacity: 0;
           }
+          20% {
+            opacity: 0.3;
+          }
           50% {
-            opacity: 0.4;
+            opacity: 0.6;
+          }
+          80% {
+            opacity: 0.3;
           }
           100% {
             transform: translateX(100%);
             opacity: 0;
           }
         }
-        
-        @keyframes gentle-shimmer {
+
+        /* Gentle background shimmer */
+        @keyframes gentleShimmer {
           0% {
-            background-position: -200% 0;
-            opacity: 0.6;
+            background-position: -300% 0;
+            opacity: 0.4;
+          }
+          25% {
+            opacity: 0.7;
           }
           50% {
+            background-position: 0% 0;
             opacity: 0.8;
           }
+          75% {
+            opacity: 0.7;
+          }
           100% {
-            background-position: 200% 0;
-            opacity: 0.6;
+            background-position: 300% 0;
+            opacity: 0.4;
           }
         }
 
-        @keyframes soft-pulse {
+        /* Smooth fade in with subtle bounce */
+        @keyframes smoothFadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          60% {
+            opacity: 0.8;
+            transform: translateY(-2px) scale(1.01);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* Row cascade animation */
+        @keyframes cascadeFadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(15px);
+          }
+          70% {
+            opacity: 0.9;
+            transform: translateY(-1px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Breathing pulse animation for bars */
+        @keyframes breathingPulse {
           0%, 100% {
-            opacity: 0.6;
-            transform: scale(1);
+            opacity: 0.5;
+            transform: scaleY(1) scaleX(1);
+          }
+          25% {
+            opacity: 0.7;
+            transform: scaleY(1.02) scaleX(1.005);
           }
           50% {
             opacity: 0.9;
-            transform: scale(1.002);
+            transform: scaleY(1.04) scaleX(1.01);
+          }
+          75% {
+            opacity: 0.7;
+            transform: scaleY(1.02) scaleX(1.005);
           }
         }
 
-        .animate-shimmer {
-          animation: shimmer 3s ease-in-out infinite;
-        }
-
-        .shimmer-bg {
+        /* Global shimmer overlay */
+        .shimmer-overlay {
           background: linear-gradient(
-            90deg,
-            rgba(243, 244, 246, 0.8) 0%,
-            rgba(229, 231, 235, 0.9) 25%,
-            rgba(209, 213, 219, 1) 50%,
-            rgba(229, 231, 235, 0.9) 75%,
-            rgba(243, 244, 246, 0.8) 100%
+            45deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.1) 25%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0.1) 75%,
+            transparent 100%
           );
-          background-size: 300% 100%;
-          animation: gentle-shimmer 2.5s ease-in-out infinite;
+          background-size: 400% 400%;
+          animation: shimmerWave 4s ease-in-out infinite;
+          pointer-events: none;
         }
 
-        .animate-pulse {
-          animation: soft-pulse 2.5s ease-in-out infinite;
-        }
-
-        /* Smooth fade-in for elements */
-        .shimmer-element {
-          animation: fadeInUp 0.6s ease-out forwards;
+        /* Individual shimmer bars */
+        .shimmer-bar {
+          background: linear-gradient(
+            110deg,
+            rgba(229, 231, 235, 0.6) 0%,
+            rgba(209, 213, 219, 0.8) 20%,
+            rgba(156, 163, 175, 0.9) 40%,
+            rgba(209, 213, 219, 0.8) 60%,
+            rgba(229, 231, 235, 0.6) 80%,
+            rgba(243, 244, 246, 0.4) 100%
+          );
+          background-size: 400% 100%;
+          animation: 
+            gentleShimmer 3s ease-in-out infinite,
+            breathingPulse 2.5s ease-in-out infinite,
+            smoothFadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           opacity: 0;
-          transform: translateY(10px);
+          transform: translateY(20px) scale(0.95);
         }
 
-        @keyframes fadeInUp {
-          to {
-            opacity: 1;
-            transform: translateY(0);
+        /* Section animations */
+        .shimmer-section {
+          animation: smoothFadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+
+        /* Row animations */
+        .shimmer-row {
+          animation: cascadeFadeIn 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+          opacity: 0;
+          transform: translateY(15px);
+        }
+
+        /* Staggered animation delays for natural loading feel */
+        .shimmer-bar:nth-child(even) {
+          animation-delay: 0.1s;
+        }
+
+        .shimmer-bar:nth-child(3n) {
+          animation-delay: 0.2s;
+        }
+
+        /* Hover effects for interactive feel */
+        .shimmer-row:hover .shimmer-bar {
+          animation-duration: 2s;
+          opacity: 0.9;
+        }
+
+        /* Responsive adjustments */
+        @media (prefers-reduced-motion: reduce) {
+          .shimmer-overlay,
+          .shimmer-bar,
+          .shimmer-section,
+          .shimmer-row {
+            animation-duration: 0.5s;
+            animation-iteration-count: 1;
           }
         }
       `}</style>

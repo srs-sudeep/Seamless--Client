@@ -14,6 +14,7 @@ import {
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
+import { Transitions } from './Transitions';
 
 type FilterConfig = {
   column: string;
@@ -77,10 +78,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   onLimitChange,
   total = 0,
 }) => {
-  // Use controlled filters if provided, otherwise manage internally
   const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
-
-  // No controlled filters, so no need for useEffect or isControlled logic
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -548,7 +546,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
           {isLoading ? (
-            <TableShimmer />
+            <Transitions type="slide" direction="down" position="top" show={true}>
+              <TableShimmer />
+            </Transitions>
           ) : (
             <div className="overflow-x-auto">
               <Table>

@@ -37,15 +37,15 @@ const FaqSlider = () => {
     <div>
       <section className="w-full px-4 py-12">
         <h2 className="text-3xl font-semibold text-center mb-10">Frequently Asked Questions</h2>
-        <div className="grid grid-cols-1 gap-6 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 gap-6 max-w-3xl mx-auto ">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm bg-white dark:bg-gray-900 transition"
+              className="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm bg-white  dark:bg-gray-900 transition "
             >
               <button
                 onClick={() => toggle(index)}
-                className="flex items-center justify-between w-full text-left"
+                className="flex items-center justify-between w-full text-left cursor-pointer"
               >
                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
                   {faq.question}

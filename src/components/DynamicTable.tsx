@@ -2,10 +2,17 @@ import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } 
 import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  ScrollArea,
+  Checkbox,
+  Button,
+} from '@/components';
+import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type FilterConfig } from '@/types';
-import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import React, { useMemo, useState } from 'react';
 
 type DynamicTableProps = {
@@ -92,95 +99,134 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         const selectedValues = Array.isArray(currentValue) ? currentValue : [];
         return (
           <div key={filter.column} className="min-w-[220px] relative">
-            <div className="relative">
-              <Select
-                onValueChange={val => {
-                  setColumnFilters(prev => {
-                    const prevArr = Array.isArray(prev[filter.column]) ? prev[filter.column] : [];
-                    const exists = prevArr.includes(val);
-                    return {
-                      ...prev,
-                      [filter.column]: exists
-                        ? prevArr.filter((v: string) => v !== val)
-                        : [...prevArr, val],
-                    };
-                  });
-                }}
-              >
-                <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                  <span className="text-gray-700 dark:text-gray-300 truncate">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="min-w-[180px] flex justify-between items-center h-10"
+                >
+                  <span>
                     {selectedValues.length > 0
-                      ? selectedValues.length === 1
-                        ? selectedValues[0]
-                        : `${selectedValues.length} selected`
+                      ? `${selectedValues.length} selected`
                       : `Filter ${filter.column}`}
                   </span>
-                </SelectTrigger>
-                <SelectContent>
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <ScrollArea className="h-48">
                   {filter.options?.map(opt => (
-                    <SelectItem key={opt} value={opt}>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedValues.includes(opt)}
-                          readOnly
-                          className="form-checkbox accent-blue-600"
-                        />
-                        <span>{opt}</span>
-                      </div>
-                    </SelectItem>
+                    <div
+                      key={opt}
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => {
+                        setColumnFilters(prev => {
+                          const prevArr = Array.isArray(prev[filter.column])
+                            ? prev[filter.column]
+                            : [];
+                          const exists = prevArr.includes(opt);
+                          return {
+                            ...prev,
+                            [filter.column]: exists
+                              ? prevArr.filter((v: string) => v !== opt)
+                              : [...prevArr, opt],
+                          };
+                        });
+                      }}
+                    >
+                      <Checkbox
+                        checked={selectedValues.includes(opt)}
+                        onCheckedChange={() => {
+                          setColumnFilters(prev => {
+                            const prevArr = Array.isArray(prev[filter.column])
+                              ? prev[filter.column]
+                              : [];
+                            const exists = prevArr.includes(opt);
+                            return {
+                              ...prev,
+                              [filter.column]: exists
+                                ? prevArr.filter((v: string) => v !== opt)
+                                : [...prevArr, opt],
+                            };
+                          });
+                        }}
+                        className="mr-2"
+                        tabIndex={-1}
+                        aria-label={opt}
+                      />
+                      <span>{opt}</span>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
-              {selectedValues.length > 0 && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    clearFilter(filter.column);
-                  }}
-                  className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  {/* <XIcon className="h-4 w-4" /> */}
-                </button>
-              )}
-            </div>
+                </ScrollArea>
+                {selectedValues.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => clearFilter(filter.column)}
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
         );
       }
-      case 'dropdown':
+      case 'dropdown': {
         return (
           <div key={filter.column} className="min-w-[180px] relative">
-            <Select
-              value={currentValue || ''}
-              onValueChange={val => setColumnFilters(prev => ({ ...prev, [filter.column]: val }))}
-            >
-              <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                <span className="text-gray-700 dark:text-gray-300">
-                  {currentValue || `Filter ${filter.column}`}
-                </span>
-              </SelectTrigger>
-              <SelectContent>
-                {filter.options?.map(opt => (
-                  <SelectItem key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {currentValue && (
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  clearFilter(filter.column);
-                }}
-                className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                {/* <XIcon className="h-4 w-4" /> */}
-              </button>
-            )}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full flex justify-between items-center h-10">
+                  <span>{currentValue || `Filter ${filter.column}`}</span>
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <ScrollArea className="h-32">
+                  {filter.options?.map(opt => (
+                    <div
+                      key={opt}
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => {
+                        setColumnFilters(prev => ({
+                          ...prev,
+                          [filter.column]: prev[filter.column] === opt ? undefined : opt,
+                        }));
+                      }}
+                    >
+                      <Checkbox
+                        checked={currentValue === opt}
+                        onCheckedChange={() => {
+                          setColumnFilters(prev => ({
+                            ...prev,
+                            [filter.column]: prev[filter.column] === opt ? undefined : opt,
+                          }));
+                        }}
+                        className="mr-2"
+                        tabIndex={-1}
+                        aria-label={opt}
+                      />
+                      <span>{opt}</span>
+                    </div>
+                  ))}
+                </ScrollArea>
+                {currentValue && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-full"
+                    onClick={() => clearFilter(filter.column)}
+                  >
+                    Clear
+                  </Button>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
         );
-
+      }
       case 'date':
         return (
           <div key={filter.column} className="min-w-[180px] relative">
@@ -464,18 +510,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               )}
 
               {filterConfig.map(renderFilter)}
-
-              {hasActiveFilters && (
-                <button
-                  onClick={clearAllFilters}
-                  className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 
-                           hover:text-gray-900 dark:hover:text-gray-100 
-                           hover:bg-gray-100 dark:hover:bg-gray-800 
-                           rounded-md transition-colors duration-200"
-                >
-                  Clear all
-                </button>
-              )}
             </div>
             {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
           </div>

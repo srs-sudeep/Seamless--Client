@@ -15,14 +15,7 @@ import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
 import { Transitions } from './Transitions';
-
-type FilterConfig = {
-  column: string;
-  type: 'dropdown' | 'multi-select' | 'date' | 'date-range' | 'datetime';
-  options?: string[];
-  value?: any;
-  onChange?: (val: any) => void;
-};
+import { FilterConfig } from '@/types';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
@@ -650,7 +643,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                               'hover:bg-blue-50/50 dark:hover:bg-blue-900/10',
                               isExpanded && 'bg-blue-50/50 dark:bg-blue-900/10 shadow-sm',
                               onRowClick &&
-                                'cursor-pointer hover:scale-[1.005] active:scale-[0.995]'
+                                'cursor-pointer hover:scale-[1.0005] active:scale-[0.995]'
                             )}
                             onClick={() => onRowClick && onRowClick(row, i)}
                           >

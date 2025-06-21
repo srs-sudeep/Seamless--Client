@@ -5,9 +5,7 @@ import { LandingNavbar } from '@/components/navbar/LandingNavbar';
 const LandingLayout = () => {
   return (
     <div className="flex flex-col">
-      {/* Header */}
       <LandingNavbar />
-      {/* Main content */}
       <main>
         <Outlet />
       </main>

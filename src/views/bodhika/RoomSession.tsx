@@ -1,6 +1,5 @@
 import { HelmetWrapper, DynamicTable } from '@/components';
 import { useRoomsActiveSessions } from '@/hooks';
-import { Loader2 } from 'lucide-react';
 
 const getStatusChipClass = (status: string) => {
   switch (status?.toLowerCase()) {
@@ -14,7 +13,7 @@ const getStatusChipClass = (status: string) => {
 };
 
 const RoomSession = () => {
-  const { data = [], isLoading } = useRoomsActiveSessions();
+  const { data = [], isFetching } = useRoomsActiveSessions();
 
   // Adjust columns as per your API response structure
   const getTableData = (rooms: any[]) =>
@@ -47,19 +46,12 @@ const RoomSession = () => {
       heading="Active Room Sessions"
       subHeading="All active sessions for rooms."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Active Room Sessions"
-            data={getTableData(data)}
-            customRender={customRender}
-          />
-        )}
-      </div>
+      <DynamicTable
+        tableHeading="Active Room Sessions"
+        data={getTableData(data)}
+        customRender={customRender}
+        isLoading={isFetching}
+      />
     </HelmetWrapper>
   );
 };

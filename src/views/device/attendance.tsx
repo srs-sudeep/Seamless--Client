@@ -21,14 +21,12 @@ const AttendanceManagement = () => {
       heading="Attendance Management"
       subHeading="View device attendance logs."
     >
-      <div className="mx-auto p-6">
-        <DynamicTable
-          data={getTableData(attendances).map(row => ({
-            ...row,
-          }))}
-          isLoading={isFetching}
-        />
-      </div>
+      <DynamicTable
+        data={getTableData(attendances).map(row => ({
+          ...row,
+        }))}
+        isLoading={isFetching}
+      />
     </HelmetWrapper>
   );
 };

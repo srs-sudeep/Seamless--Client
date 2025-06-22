@@ -25,7 +25,7 @@ const editSchema: FieldType[] = [
 ];
 
 const RoomsManagement = () => {
-  const { data: rooms = [], isLoading } = useRooms();
+  const { data: rooms = [], isFetching } = useRooms();
   const createMutation = useCreateRoom();
   const updateMutation = useUpdateRoom();
   const deleteMutation = useDeleteRoom();
@@ -177,76 +177,69 @@ const RoomsManagement = () => {
       heading="Rooms List"
       subHeading="List of rooms for Bodhika."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Rooms"
-            data={getTableData(rooms)}
-            customRender={customRender}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Room
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Room</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={createSchema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-                <Button variant="outline" onClick={handleDownloadTemplate}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download CSV Template
+      <DynamicTable
+        tableHeading="Rooms"
+        data={getTableData(rooms)}
+        customRender={customRender}
+        isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
+        headerActions={
+          <div className="flex gap-2">
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Room
                 </Button>
-                <Button onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Import CSV
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv"
-                  className="hidden"
-                  onChange={handleImportCSV}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Room</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={createSchema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
                 />
-              </div>
-            }
-          />
-        )}
-        <Dialog
-          open={!!editRoom}
-          onOpenChange={open => {
-            if (!open) setEditRoom(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Room</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              defaultValues={editRoom ?? undefined}
-              onCancel={() => setEditRoom(null)}
-              submitButtonText="Save"
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" onClick={handleDownloadTemplate}>
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV Template
+            </Button>
+            <Button onClick={() => fileInputRef.current?.click()}>
+              <Upload className="w-4 h-4 mr-2" />
+              Import CSV
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={handleImportCSV}
             />
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+        }
+      />
+      <Dialog
+        open={!!editRoom}
+        onOpenChange={open => {
+          if (!open) setEditRoom(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Room</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            defaultValues={editRoom ?? undefined}
+            onCancel={() => setEditRoom(null)}
+            submitButtonText="Save"
+          />
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

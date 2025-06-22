@@ -72,13 +72,11 @@ const RoomDevicesManagement = () => {
       heading="Room Device Mapping"
       subHeading="Assign and manage devices for each room."
     >
-      <div className="mx-auto p-6">
-        <DynamicTable
-          tableHeading="Room Device Mappings"
-          data={getTableData()}
-          isLoading={isRoomsLoading || isMappingsLoading}
-        />
-      </div>
+      <DynamicTable
+        tableHeading="Room Device Mappings"
+        data={getTableData()}
+        isLoading={isRoomsLoading || isMappingsLoading}
+      />
     </HelmetWrapper>
   );
 };

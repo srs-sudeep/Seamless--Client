@@ -168,7 +168,7 @@ const CreateCourse = () => {
       heading="Create Course"
       subHeading="Add a new course with instructors."
     >
-      <div className="mx-6 p-6 bg-background rounded-xl">
+      <div className=" bg-background rounded-xl">
         <DynamicForm
           schema={schema}
           onSubmit={handleSubmit}

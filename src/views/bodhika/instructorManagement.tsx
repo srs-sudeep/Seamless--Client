@@ -56,7 +56,7 @@ const editSchema: FieldType[] = [
 ];
 
 const InstructorManagement = () => {
-  const { data: instructors = [], isLoading } = useInstructors();
+  const { data: instructors = [], isFetching } = useInstructors();
   const createMutation = useCreateInstructor();
   const updateMutation = useUpdateInstructor();
   const deleteMutation = useDeleteInstructor();
@@ -175,64 +175,57 @@ const InstructorManagement = () => {
       heading="Instructors List"
       subHeading="List of instructors for Bodhika."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+      <DynamicTable
+        tableHeading="Instructors"
+        data={getTableData(instructors)}
+        isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
+        customRender={customRender}
+        headerActions={
+          <div className="flex gap-2">
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Instructor
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Instructor</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={createSchema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
+                  defaultValues={createFormValues}
+                  onChange={setCreateFormValues}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Instructors"
-            data={getTableData(instructors)}
-            customRender={customRender}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Instructor
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Instructor</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={createSchema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                      defaultValues={createFormValues}
-                      onChange={setCreateFormValues}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            }
+        }
+      />
+      <Dialog
+        open={!!editInstructor}
+        onOpenChange={open => {
+          if (!open) setEditInstructor(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Instructor</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            defaultValues={editFormValues}
+            onCancel={() => setEditInstructor(null)}
+            submitButtonText="Save"
+            onChange={setEditFormValues}
           />
-        )}
-        <Dialog
-          open={!!editInstructor}
-          onOpenChange={open => {
-            if (!open) setEditInstructor(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Instructor</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              defaultValues={editFormValues}
-              onCancel={() => setEditInstructor(null)}
-              submitButtonText="Save"
-              onChange={setEditFormValues}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

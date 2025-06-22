@@ -611,139 +611,134 @@ const RouteManagement = () => {
       heading="Path Management"
       subHeading="Manage application paths and their access control."
     >
-      {/* Global Search Bar and Filters in a single row */}
-      <div className="mx-6 mt-3 mb-6">
-        <div className="rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
-          {renderGlobalFilters()}
-        </div>
+      <div className="mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
+        {renderGlobalFilters()}
       </div>
 
-      <div className="mx-auto p-6">
-        {filteredSidebarItems.map((mod: any) => (
-          <div key={mod.id} className="mb-8">
-            <DynamicTable
-              tableHeading={mod.label}
-              data={filterTableData(getSubModuleTableData(mod.subModules || []))}
-              customRender={customRender}
-              expandableRows={true}
-              expandedComponent={renderExpandedComponent}
-              rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
-              isLoading={sidebarLoading || rolesLoading}
-              headerActions={
-                <Button
-                  size="sm"
-                  className="ml-4"
-                  onClick={() => {
-                    setCreateDialogParent({ module_id: mod.id, parent_id: null });
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-1" /> Add Route
-                </Button>
-              }
-              onRowClick={() => {}}
-              filterConfig={filterConfig}
-            />
-          </div>
-        ))}
-        {/* Edit Route Dialog */}
-        <Dialog
-          open={!!editRoute}
-          onOpenChange={open => {
-            if (!open) setEditRoute(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Route</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={getSchema()}
-              defaultValues={{
-                ...editRoute,
-                module_id: editRoute?.module_id ?? '',
-                parent_id: editRoute?.parent_id ?? '',
-                is_active: !!editRoute?.isActive,
-                role_ids: Array.isArray(editRoute?.role_ids)
-                  ? editRoute.role_ids.map(String)
-                  : (editRoute?.roles || []).map((r: any) => String(r.role_id)),
-              }}
-              onSubmit={async (formData: Record<string, any>) => {
-                if (!editRoute) return;
-                await updateMutation.mutateAsync({
-                  route_id: editRoute.id || editRoute.route_id,
-                  payload: {
-                    path: formData.path,
-                    label: formData.label,
-                    icon: formData.icon,
-                    is_active: !!formData.is_active,
-                    is_sidebar: !!formData.is_sidebar,
-                    module_id: Number(editRoute.module_id),
-                    parent_id:
-                      editRoute.parent_id === null || editRoute.parent_id === undefined
-                        ? null
-                        : Number(editRoute.parent_id),
-                    role_ids: Array.isArray(formData.role_ids)
-                      ? formData.role_ids.map((id: string) => Number(id))
-                      : typeof formData.role_ids === 'string'
-                        ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
-                        : [],
-                  },
-                });
-                toast({ title: 'Route updated' });
-                setEditRoute(null);
-              }}
-              onCancel={() => setEditRoute(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-        {/* Create Route Dialog */}
-        <Dialog
-          open={!!createDialogParent}
-          onOpenChange={open => {
-            if (!open) setCreateDialogParent(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Route</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={getSchema()}
-              defaultValues={{
-                module_id: createDialogParent?.module_id,
-                parent_id: createDialogParent?.parent_id ?? '',
-                role_ids: [],
-              }}
-              onSubmit={async (formData: Record<string, any>) => {
-                if (!createDialogParent) return;
-                await createMutation.mutateAsync({
+      {filteredSidebarItems.map((mod: any) => (
+        <div key={mod.id} className="mb-8">
+          <DynamicTable
+            tableHeading={mod.label}
+            data={filterTableData(getSubModuleTableData(mod.subModules || []))}
+            customRender={customRender}
+            expandableRows={true}
+            expandedComponent={renderExpandedComponent}
+            rowExpandable={row => Array.isArray(row._subModules) && row._subModules.length > 0}
+            isLoading={sidebarLoading || rolesLoading}
+            headerActions={
+              <Button
+                size="sm"
+                className="ml-4"
+                onClick={() => {
+                  setCreateDialogParent({ module_id: mod.id, parent_id: null });
+                }}
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Route
+              </Button>
+            }
+            onRowClick={() => {}}
+            filterConfig={filterConfig}
+          />
+        </div>
+      ))}
+      {/* Edit Route Dialog */}
+      <Dialog
+        open={!!editRoute}
+        onOpenChange={open => {
+          if (!open) setEditRoute(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Route</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={getSchema()}
+            defaultValues={{
+              ...editRoute,
+              module_id: editRoute?.module_id ?? '',
+              parent_id: editRoute?.parent_id ?? '',
+              is_active: !!editRoute?.isActive,
+              role_ids: Array.isArray(editRoute?.role_ids)
+                ? editRoute.role_ids.map(String)
+                : (editRoute?.roles || []).map((r: any) => String(r.role_id)),
+            }}
+            onSubmit={async (formData: Record<string, any>) => {
+              if (!editRoute) return;
+              await updateMutation.mutateAsync({
+                route_id: editRoute.id || editRoute.route_id,
+                payload: {
                   path: formData.path,
                   label: formData.label,
                   icon: formData.icon,
                   is_active: !!formData.is_active,
                   is_sidebar: !!formData.is_sidebar,
-                  module_id: Number(createDialogParent.module_id),
+                  module_id: Number(editRoute.module_id),
                   parent_id:
-                    createDialogParent.parent_id !== null &&
-                    createDialogParent.parent_id !== undefined
-                      ? Number(createDialogParent.parent_id)
-                      : null,
+                    editRoute.parent_id === null || editRoute.parent_id === undefined
+                      ? null
+                      : Number(editRoute.parent_id),
                   role_ids: Array.isArray(formData.role_ids)
                     ? formData.role_ids.map((id: string) => Number(id))
                     : typeof formData.role_ids === 'string'
                       ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
                       : [],
-                });
-                toast({ title: 'Route created' });
-                setCreateDialogParent(null);
-              }}
-              onCancel={() => setCreateDialogParent(null)}
-              submitButtonText="Create"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+                },
+              });
+              toast({ title: 'Route updated' });
+              setEditRoute(null);
+            }}
+            onCancel={() => setEditRoute(null)}
+            submitButtonText="Save"
+          />
+        </DialogContent>
+      </Dialog>
+      {/* Create Route Dialog */}
+      <Dialog
+        open={!!createDialogParent}
+        onOpenChange={open => {
+          if (!open) setCreateDialogParent(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Route</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={getSchema()}
+            defaultValues={{
+              module_id: createDialogParent?.module_id,
+              parent_id: createDialogParent?.parent_id ?? '',
+              role_ids: [],
+            }}
+            onSubmit={async (formData: Record<string, any>) => {
+              if (!createDialogParent) return;
+              await createMutation.mutateAsync({
+                path: formData.path,
+                label: formData.label,
+                icon: formData.icon,
+                is_active: !!formData.is_active,
+                is_sidebar: !!formData.is_sidebar,
+                module_id: Number(createDialogParent.module_id),
+                parent_id:
+                  createDialogParent.parent_id !== null &&
+                  createDialogParent.parent_id !== undefined
+                    ? Number(createDialogParent.parent_id)
+                    : null,
+                role_ids: Array.isArray(formData.role_ids)
+                  ? formData.role_ids.map((id: string) => Number(id))
+                  : typeof formData.role_ids === 'string'
+                    ? formData.role_ids.split(',').map((id: string) => Number(id.trim()))
+                    : [],
+              });
+              toast({ title: 'Route created' });
+              setCreateDialogParent(null);
+            }}
+            onCancel={() => setCreateDialogParent(null)}
+            submitButtonText="Create"
+          />
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

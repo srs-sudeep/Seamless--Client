@@ -26,7 +26,7 @@ const schema: FieldType[] = [
 ];
 
 const ModuleManagement = () => {
-  const { data: modules = [], isLoading } = useModules();
+  const { data: modules = [], isFetching } = useModules();
   const createMutation = useCreateModule();
   const updateMutation = useUpdateModule();
   const deleteMutation = useDeleteModule();
@@ -138,67 +138,60 @@ const ModuleManagement = () => {
       heading="Module Management"
       subHeading="Manage modules and their visibility in the application."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(modules).map(row => ({
-              ...row,
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-              Active: customRender.is_active(row.Active),
-              Icon: customRender.icon(row.Icon),
-            }))}
-            customRender={customRender}
-            onRowClick={() => {}}
-            headerActions={
-              <>
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Module
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Module</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={schema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-              </>
-            }
+      <DynamicTable
+        data={getTableData(modules).map(row => ({
+          ...row,
+          Edit: customRender.Edit('', row._row),
+          Delete: customRender.Delete('', row._row),
+          Active: customRender.is_active(row.Active),
+          Icon: customRender.icon(row.Icon),
+        }))}
+        customRender={customRender}
+        isLoading={isFetching}
+        onRowClick={() => {}}
+        headerActions={
+          <>
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Module
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Module</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={schema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
+                />
+              </DialogContent>
+            </Dialog>
+          </>
+        }
+      />
+      <Dialog
+        open={!!editModule}
+        onOpenChange={open => {
+          if (!open) setEditModule(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Module</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={schema}
+            onSubmit={handleUpdate}
+            defaultValues={editModule ?? undefined}
+            onCancel={() => setEditModule(null)}
+            submitButtonText="Save"
           />
-        )}
-        <Dialog
-          open={!!editModule}
-          onOpenChange={open => {
-            if (!open) setEditModule(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Module</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={schema}
-              onSubmit={handleUpdate}
-              defaultValues={editModule ?? undefined}
-              onCancel={() => setEditModule(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

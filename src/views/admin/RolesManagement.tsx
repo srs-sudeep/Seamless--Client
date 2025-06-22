@@ -39,14 +39,14 @@ type Permission = {
 };
 
 const RolesManagement = () => {
-  const { data: roles = [], isLoading } = useRoles();
+  const { data: roles = [], isFetching } = useRoles();
   const createMutation = useCreateRole();
   const updateMutation = useUpdateRole();
   const deleteMutation = useDeleteRole();
   const [editRole, setEditRole] = useState<Role | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [viewPermissionRole, setViewPermissionRole] = useState<Role | null>(null);
-  const { data: permissions = [], isLoading: permLoading } = usePermissionByRole(
+  const { data: permissions = [], isFetching: permLoading } = usePermissionByRole(
     viewPermissionRole?.role_id
   );
   const addPermissionToRole = useAddPermissionToRole();
@@ -251,57 +251,51 @@ const RolesManagement = () => {
       heading="Role Management"
       subHeading="Manage roles and their associated permissions within the application."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(roles).map(row => ({
-              ...row,
-              'View Permission': customRender.ViewPermission('', row._row),
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-            }))}
-            customRender={{}}
-            onRowClick={() => {}}
-            headerActions={
-              <>
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Role
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Role</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={schema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-                {/* You can add more custom buttons here */}
-              </>
-            }
-          />
-        )}
+      <DynamicTable
+        data={getTableData(roles).map(row => ({
+          ...row,
+          'View Permission': customRender.ViewPermission('', row._row),
+          Edit: customRender.Edit('', row._row),
+          Delete: customRender.Delete('', row._row),
+        }))}
+        isLoading={isFetching}
+        customRender={{}}
+        onRowClick={() => {}}
+        headerActions={
+          <>
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Role
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Role</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={schema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
+                />
+              </DialogContent>
+            </Dialog>
+            {/* You can add more custom buttons here */}
+          </>
+        }
+      />
 
-        {/* Permission Management Side Panel */}
-        <Sheet
-          open={!!viewPermissionRole}
-          onOpenChange={open => !open && setViewPermissionRole(null)}
-        >
-          <SheetTitle style={{ display: 'none' }} />
-          <SheetContent
-            side="right"
-            className="
+      {/* Permission Management Side Panel */}
+      <Sheet
+        open={!!viewPermissionRole}
+        onOpenChange={open => !open && setViewPermissionRole(null)}
+      >
+        <SheetTitle style={{ display: 'none' }} />
+        <SheetContent
+          side="right"
+          className="
               p-0 
               fixed right-0 top-1/2 -translate-y-1/2
               min-h-fit max-h-[100vh]
@@ -312,134 +306,129 @@ const RolesManagement = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '90vw', maxWidth: '1200px' }}
-          >
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-8 space-y-6">
-                {viewPermissionRole && (
-                  <>
-                    {/* Header */}
-                    <div className="border-b border-border pb-4">
-                      <h2 className="text-2xl font-bold text-foreground mb-2">
-                        Permission Management
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        Configure permissions for{' '}
-                        <span className="font-semibold text-foreground">
-                          {viewPermissionRole.name}
-                        </span>{' '}
-                        role
-                      </p>
-                    </div>
+          style={{ width: '90vw', maxWidth: '1200px' }}
+        >
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-8 space-y-6">
+              {viewPermissionRole && (
+                <>
+                  {/* Header */}
+                  <div className="border-b border-border pb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">
+                      Permission Management
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Configure permissions for{' '}
+                      <span className="font-semibold text-foreground">
+                        {viewPermissionRole.name}
+                      </span>{' '}
+                      role
+                    </p>
+                  </div>
 
-                    {/* Role Information Card */}
-                    <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                      <h3 className="text-lg font-semibold text-foreground mb-4">
-                        Role Information
-                      </h3>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex justify-between items-center py-2 border-b border-border/50">
-                          <span className="text-sm font-medium text-muted-foreground">
-                            Role Name
-                          </span>
-                          <span className="text-sm font-semibold text-foreground">
-                            {viewPermissionRole.name}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center py-2 border-b border-border/50">
-                          <span className="text-sm font-medium text-muted-foreground">Role ID</span>
-                          <span className="text-sm font-mono text-foreground">
-                            {viewPermissionRole.role_id}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-start py-2">
-                          <span className="text-sm font-medium text-muted-foreground">
-                            Description
-                          </span>
-                          <span className="text-sm text-foreground text-right max-w-[200px]">
-                            {viewPermissionRole.description}
-                          </span>
-                        </div>
+                  {/* Role Information Card */}
+                  <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Role Information</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex justify-between items-center py-2 border-b border-border/50">
+                        <span className="text-sm font-medium text-muted-foreground">Role Name</span>
+                        <span className="text-sm font-semibold text-foreground">
+                          {viewPermissionRole.name}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-border/50">
+                        <span className="text-sm font-medium text-muted-foreground">Role ID</span>
+                        <span className="text-sm font-mono text-foreground">
+                          {viewPermissionRole.role_id}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-start py-2">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Description
+                        </span>
+                        <span className="text-sm text-foreground text-right max-w-[200px]">
+                          {viewPermissionRole.description}
+                        </span>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Permissions Table */}
-                    <div className="bg-muted/50 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-foreground mb-4">
-                        Resource Permissions
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-6">
-                        Grant or revoke specific permissions for each resource. Toggle the switches
-                        to control access levels.
-                      </p>
+                  {/* Permissions Table */}
+                  <div className="bg-muted/50 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">
+                      Resource Permissions
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-6">
+                      Grant or revoke specific permissions for each resource. Toggle the switches to
+                      control access levels.
+                    </p>
 
-                      {permLoading ? (
-                        <div className="flex justify-center items-center h-32">
-                          <div className="text-center">
-                            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">Loading permissions...</p>
-                          </div>
+                    {permLoading ? (
+                      <div className="flex justify-center items-center h-32">
+                        <div className="text-center">
+                          <Loader2 className="animate-spin h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">Loading permissions...</p>
                         </div>
-                      ) : permissionTableData.length === 0 ? (
-                        <div className="text-center py-12">
-                          <div className="text-muted-foreground mb-2">
-                            <View className="md:w-12 md:h-12 mx-auto mb-4 opacity-50" />
-                            <p className="text-sm">No permissions available</p>
-                            <p className="text-xs">
-                              Contact your administrator to configure permissions
-                            </p>
-                          </div>
+                      </div>
+                    ) : permissionTableData.length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="text-muted-foreground mb-2">
+                          <View className="md:w-12 md:h-12 mx-auto mb-4 opacity-50" />
+                          <p className="text-sm">No permissions available</p>
+                          <p className="text-xs">
+                            Contact your administrator to configure permissions
+                          </p>
                         </div>
-                      ) : (
-                        <div className="bg-background rounded-xl overflow-hidden">
-                          <DynamicTable
-                            data={permissionTableData}
-                            customRender={permissionCustomRender}
-                            disableSearch
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Permission Legend */}
-                    {!permLoading && permissionTableData.length > 0 && (
-                      <div className="bg-muted/50 rounded-lg p-6">
-                        <h3 className="text-lg font-semibold text-foreground mb-4">
-                          Permission Legend
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-3 bg-primary rounded-full flex items-center p-0.5">
-                              <div className="w-2 h-2 bg-background rounded-full ml-auto" />
-                            </div>
-                            <span className="text-muted-foreground">Permission Granted</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-3 bg-muted-foreground/20 rounded-full flex items-center p-0.5">
-                              <div className="w-2 h-2 bg-background rounded-full" />
-                            </div>
-                            <span className="text-muted-foreground">Permission Denied</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-3 bg-muted-foreground/20 rounded-full flex items-center p-0.5 opacity-50">
-                              <div className="w-2 h-2 bg-background rounded-full" />
-                            </div>
-                            <span className="text-muted-foreground">Wildcard Override</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-                            <span className="text-muted-foreground">Processing Changes</span>
-                          </div>
-                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-background rounded-xl overflow-hidden">
+                        <DynamicTable
+                          data={permissionTableData}
+                          customRender={permissionCustomRender}
+                          disableSearch
+                        />
                       </div>
                     )}
-                  </>
-                )}
-              </div>
+                  </div>
+
+                  {/* Permission Legend */}
+                  {!permLoading && permissionTableData.length > 0 && (
+                    <div className="bg-muted/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
+                        Permission Legend
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-3 bg-primary rounded-full flex items-center p-0.5">
+                            <div className="w-2 h-2 bg-background rounded-full ml-auto" />
+                          </div>
+                          <span className="text-muted-foreground">Permission Granted</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-3 bg-muted-foreground/20 rounded-full flex items-center p-0.5">
+                            <div className="w-2 h-2 bg-background rounded-full" />
+                          </div>
+                          <span className="text-muted-foreground">Permission Denied</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-3 bg-muted-foreground/20 rounded-full flex items-center p-0.5 opacity-50">
+                            <div className="w-2 h-2 bg-background rounded-full" />
+                          </div>
+                          <span className="text-muted-foreground">Wildcard Override</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                          <span className="text-muted-foreground">Processing Changes</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </HelmetWrapper>
   );
 };

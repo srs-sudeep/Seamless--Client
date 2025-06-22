@@ -31,6 +31,23 @@ function findSubModuleByPath(subModules: SidebarSubModuleTreeItem[], pathname: s
   return false;
 }
 
+// Helper to find the exact submodule that matches the path
+function findActiveSubModule(
+  subModules: SidebarSubModuleTreeItem[],
+  pathname: string
+): SidebarSubModuleTreeItem | null {
+  for (const subModule of subModules) {
+    if (subModule.path && pathname.startsWith(subModule.path)) {
+      return subModule;
+    }
+    if (subModule.children) {
+      const found = findActiveSubModule(subModule.children, pathname);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 // Helper to find the path of parent IDs to the active submodule
 function findParentIds(
   items: SidebarSubModuleTreeItem[],
@@ -54,6 +71,12 @@ export const ModuleSidebar = () => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Store the last active submodule for each module
+  const [lastActiveSubModules, setLastActiveSubModules] = useState<
+    Record<string, SidebarSubModuleTreeItem>
+  >({});
+
   const isMobile = useIsMobile();
   const { isOpen, closeSidebar } = useSidebar();
   const location = useLocation();
@@ -69,18 +92,65 @@ export const ModuleSidebar = () => {
     }
   }, [isLoading, modules, location.pathname]);
 
+  // Track last active submodule when path changes
+  useEffect(() => {
+    if (!isLoading && modules.length > 0 && activeModule) {
+      const module = modules.find(m => m.id === activeModule);
+      if (module) {
+        const activeSubModule = findActiveSubModule(module.subModules, location.pathname);
+        if (activeSubModule) {
+          // Update the last active submodule for this module
+          setLastActiveSubModules(prev => ({
+            ...prev,
+            [activeModule]: activeSubModule,
+          }));
+        }
+      }
+    }
+  }, [isLoading, modules, activeModule, location.pathname]);
+
   // Auto-expand parent items based on current path (batch state update)
   useEffect(() => {
     if (!isLoading && modules.length > 0 && activeModule) {
       const module = modules.find(m => m.id === activeModule);
       if (module) {
         const parentIds = findParentIds(module.subModules, location.pathname) || [];
-        setExpandedItems(prev => Array.from(new Set([...prev, ...parentIds])));
+
+        // If no current path match, expand parents of last active submodule
+        if (parentIds.length === 0 && lastActiveSubModules[activeModule]) {
+          const lastActiveParentIds =
+            findParentIds(module.subModules, lastActiveSubModules[activeModule].path || '') || [];
+          setExpandedItems(prev => Array.from(new Set([...prev, ...lastActiveParentIds])));
+        } else {
+          setExpandedItems(prev => Array.from(new Set([...prev, ...parentIds])));
+        }
       }
     }
-  }, [isLoading, modules, activeModule, location.pathname]);
+  }, [isLoading, modules, activeModule, location.pathname, lastActiveSubModules]);
 
-  const isActivePath = (path?: string) => path && location.pathname === path;
+  const isActivePath = (path?: string) => {
+    if (!path) return false;
+
+    // Check if current path matches exactly
+    const exactMatch = location.pathname === path || location.pathname.startsWith(path);
+    if (exactMatch) return true;
+
+    // If no exact match and this is the last active submodule for current module, show as active
+    if (
+      activeModule &&
+      lastActiveSubModules[activeModule] &&
+      lastActiveSubModules[activeModule].path === path
+    ) {
+      // Only show as active if current path doesn't match any other submodule
+      const module = modules.find(m => m.id === activeModule);
+      if (module && !findActiveSubModule(module.subModules, location.pathname)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const isActiveOrParent = (path?: string) => path && location.pathname.startsWith(path);
 
   const toggleExpanded = (itemId: string) => {
@@ -206,7 +276,7 @@ export const ModuleSidebar = () => {
 
   const sideBarcontent = (
     <div className="h-full flex">
-      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-sidebar-accent-foreground z-40">
+      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-background z-40">
         <div className="mb-6">
           <AppLogo short className=" text-sidebar-foreground" imgClassname="w-13 h-15" />
         </div>
@@ -242,7 +312,7 @@ export const ModuleSidebar = () => {
           style={{ overflow: 'hidden' }}
           className={cn(
             'h-full flex flex-col',
-            'bg-sidebar-accent-foreground backdrop-blur-sm overflow-hidden',
+            'bg-background backdrop-blur-sm overflow-hidden',
             'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
           )}
         >

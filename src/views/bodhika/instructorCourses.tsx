@@ -15,7 +15,7 @@ const InstructorCourses = () => {
           Semester: course.sem,
           Slot: course.slot_id,
           Room: course.room_id,
-          _row: course, // keep the full course object for navigation
+          _row: course,
         }))
       : [];
 

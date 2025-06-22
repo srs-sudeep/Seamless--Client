@@ -35,7 +35,6 @@ const CourseManagement = () => {
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
   const navigate = useNavigate();
-  console.log(courses);
   const handleEdit = (course: any) => setEditCourse(course);
 
   const handleUpdate = async (formData: Record<string, any>) => {
@@ -200,42 +199,41 @@ const CourseManagement = () => {
       heading="Courses List"
       subHeading="List of courses for Bodhika."
     >
-      <div className="mx-auto p-6">
-        <DynamicTable
-          tableHeading="Courses"
-          data={getTableData(courses)}
-          customRender={customRender}
-          isLoading={isFetching}
-        />
-        <Dialog
-          open={!!editCourse}
-          onOpenChange={open => {
-            if (!open) setEditCourse(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Course</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              defaultValues={editCourse ?? undefined}
-              onCancel={() => setEditCourse(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
+      <DynamicTable
+        tableHeading="Courses"
+        data={getTableData(courses)}
+        customRender={customRender}
+        isLoading={isFetching}
+      />
+      <Dialog
+        open={!!editCourse}
+        onOpenChange={open => {
+          if (!open) setEditCourse(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Course</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            defaultValues={editCourse ?? undefined}
+            onCancel={() => setEditCourse(null)}
+            submitButtonText="Save"
+          />
+        </DialogContent>
+      </Dialog>
 
-        {/* Side Panel for Instructors/Students */}
-        <Sheet
-          open={!!sidePanel.type}
-          onOpenChange={open => !open && setSidePanel({ type: null, course: null })}
-        >
-          <SheetTitle style={{ display: 'none' }} />
-          <SheetContent
-            side="right"
-            className="
+      {/* Side Panel for Instructors/Students */}
+      <Sheet
+        open={!!sidePanel.type}
+        onOpenChange={open => !open && setSidePanel({ type: null, course: null })}
+      >
+        <SheetTitle style={{ display: 'none' }} />
+        <SheetContent
+          side="right"
+          className="
               p-0 
               fixed right-0 top-1/2 -translate-y-1/2
               min-h-fit max-h-[100vh]
@@ -246,80 +244,77 @@ const CourseManagement = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '90vw', maxWidth: '1200px' }}
-          >
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-8 space-y-6">
-                {sidePanel.type === 'instructors' && sidePanel.course && (
-                  <>
-                    <div className="border-b border-border pb-4">
-                      <h2 className="text-2xl font-bold text-foreground mb-2">Instructors</h2>
-                      <p className="text-sm text-muted-foreground">
-                        List of instructors for{' '}
-                        <span className="font-semibold">{sidePanel.course.name}</span>
-                      </p>
-                    </div>
-                    <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                      {Array.isArray(sidePanel.course.instructors) &&
-                      sidePanel.course.instructors.length > 0 ? (
-                        sidePanel.course.instructors.map((inst: any, idx: number) => (
-                          <div
-                            key={idx}
-                            className="flex justify-between items-center py-2 border-b border-border/50"
-                          >
-                            <span className="text-sm font-medium text-muted-foreground">
-                              {inst.instructor_ldap}
-                            </span>
-                            <span className="text-sm font-semibold text-foreground">
-                              {inst.instruction_type}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="w-full text-center py-8">
-                          <span className="text-muted-foreground text-sm">
-                            No instructors assigned
+          style={{ width: '90vw', maxWidth: '1200px' }}
+        >
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-8 space-y-6">
+              {sidePanel.type === 'instructors' && sidePanel.course && (
+                <>
+                  <div className="border-b border-border pb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">Instructors</h2>
+                    <p className="text-sm text-muted-foreground">
+                      List of instructors for{' '}
+                      <span className="font-semibold">{sidePanel.course.name}</span>
+                    </p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+                    {Array.isArray(sidePanel.course.instructors) &&
+                    sidePanel.course.instructors.length > 0 ? (
+                      sidePanel.course.instructors.map((inst: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center py-2 border-b border-border/50"
+                        >
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {inst.instructor_ldap}
+                          </span>
+                          <span className="text-sm font-semibold text-foreground">
+                            {inst.instruction_type}
                           </span>
                         </div>
-                      )}
-                    </div>
-                  </>
-                )}
-                {sidePanel.type === 'students' && sidePanel.course && (
-                  <>
-                    <div className="border-b border-border pb-4">
-                      <h2 className="text-2xl font-bold text-foreground mb-2">Students</h2>
-                      <p className="text-sm text-muted-foreground">
-                        List of students for{' '}
-                        <span className="font-semibold">{sidePanel.course.name}</span>
-                      </p>
-                    </div>
-                    <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                      {Array.isArray(sidePanel.course.students) &&
-                      sidePanel.course.students.length > 0 ? (
-                        sidePanel.course.students.map((student: string, idx: number) => (
-                          <div
-                            key={idx}
-                            className="flex justify-between items-center py-2 border-b border-border/50"
-                          >
-                            <span className="text-sm font-medium text-foreground">{student}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="w-full text-center py-8">
-                          <span className="text-muted-foreground text-sm">
-                            No students assigned
-                          </span>
+                      ))
+                    ) : (
+                      <div className="w-full text-center py-8">
+                        <span className="text-muted-foreground text-sm">
+                          No instructors assigned
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {sidePanel.type === 'students' && sidePanel.course && (
+                <>
+                  <div className="border-b border-border pb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">Students</h2>
+                    <p className="text-sm text-muted-foreground">
+                      List of students for{' '}
+                      <span className="font-semibold">{sidePanel.course.name}</span>
+                    </p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+                    {Array.isArray(sidePanel.course.students) &&
+                    sidePanel.course.students.length > 0 ? (
+                      sidePanel.course.students.map((student: string, idx: number) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center py-2 border-b border-border/50"
+                        >
+                          <span className="text-sm font-medium text-foreground">{student}</span>
                         </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
+                      ))
+                    ) : (
+                      <div className="w-full text-center py-8">
+                        <span className="text-muted-foreground text-sm">No students assigned</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </HelmetWrapper>
   );
 };

@@ -100,7 +100,7 @@ const parseTimeRange = (timeStr: string) => {
 const csvTemplate = 'slot_id,day,time\n';
 
 const SlotsManagement = () => {
-  const { data: slots = [], isLoading } = useSlots();
+  const { data: slots = [], isFetching } = useSlots();
   const createMutation = useCreateSlot();
   const updateMutation = useUpdateSlot();
   const deleteMutation = useDeleteSlot();
@@ -243,95 +243,88 @@ const SlotsManagement = () => {
       heading="Slots Management"
       subHeading="Manage slots for Bodhika."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Slots"
-            data={getTableData(slots).map(row => ({
-              ...row,
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-            }))}
-            customRender={customRender}
-            filterConfig={filterConfig}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Slot
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Slot</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={createSchema}
-                      defaultValues={{
-                        time: getDefaultTimeRange(),
-                      }}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-                <Button variant="outline" onClick={handleDownloadTemplate}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download CSV Template
+      <DynamicTable
+        tableHeading="Slots"
+        data={getTableData(slots).map(row => ({
+          ...row,
+          Edit: customRender.Edit('', row._row),
+          Delete: customRender.Delete('', row._row),
+        }))}
+        customRender={customRender}
+        filterConfig={filterConfig}
+        isLoading={isFetching}
+        headerActions={
+          <div className="flex gap-2">
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Slot
                 </Button>
-                <Button onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Import CSV
-                </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv"
-                  className="hidden"
-                  onChange={handleImportCSV}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Slot</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={createSchema}
+                  defaultValues={{
+                    time: getDefaultTimeRange(),
+                  }}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
                 />
-              </div>
-            }
-          />
-        )}
-        <Dialog
-          open={!!editSlot}
-          onOpenChange={open => {
-            if (!open) setEditSlot(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Slot</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              // Set defaultValues with parsed time range for editing
-              defaultValues={
-                editSlot
-                  ? {
-                      ...editSlot,
-                      time:
-                        typeof editSlot.time === 'string'
-                          ? parseTimeRange(editSlot.time)
-                          : editSlot.time,
-                    }
-                  : undefined
-              }
-              onCancel={() => setEditSlot(null)}
-              submitButtonText="Save"
+              </DialogContent>
+            </Dialog>
+            <Button variant="outline" onClick={handleDownloadTemplate}>
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV Template
+            </Button>
+            <Button onClick={() => fileInputRef.current?.click()}>
+              <Upload className="w-4 h-4 mr-2" />
+              Import CSV
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={handleImportCSV}
             />
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
+        }
+      />
+      <Dialog
+        open={!!editSlot}
+        onOpenChange={open => {
+          if (!open) setEditSlot(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Slot</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            // Set defaultValues with parsed time range for editing
+            defaultValues={
+              editSlot
+                ? {
+                    ...editSlot,
+                    time:
+                      typeof editSlot.time === 'string'
+                        ? parseTimeRange(editSlot.time)
+                        : editSlot.time,
+                  }
+                : undefined
+            }
+            onCancel={() => setEditSlot(null)}
+            submitButtonText="Save"
+          />
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

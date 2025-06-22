@@ -115,62 +115,55 @@ const DeviceAdminManagement = () => {
       heading="Device Admin Management"
       subHeading="Manage device administrators and their institute assignments."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(admins).map(row => ({
-              ...row,
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-            }))}
-            customRender={customRender}
-            headerActions={
-              <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Device Admin
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create Device Admin</DialogTitle>
-                  </DialogHeader>
-                  <DynamicForm
-                    schema={createSchema}
-                    onSubmit={handleCreate}
-                    onCancel={() => setCreateDialogOpen(false)}
-                    submitButtonText="Create"
-                  />
-                </DialogContent>
-              </Dialog>
-            }
+      <DynamicTable
+        data={getTableData(admins).map(row => ({
+          ...row,
+          Edit: customRender.Edit('', row._row),
+          Delete: customRender.Delete('', row._row),
+        }))}
+        isLoading={isLoading || createMutation.isPending || updateMutation.isPending}
+        customRender={customRender}
+        headerActions={
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Device Admin
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Device Admin</DialogTitle>
+              </DialogHeader>
+              <DynamicForm
+                schema={createSchema}
+                onSubmit={handleCreate}
+                onCancel={() => setCreateDialogOpen(false)}
+                submitButtonText="Create"
+              />
+            </DialogContent>
+          </Dialog>
+        }
+      />
+      <Dialog
+        open={!!editAdmin}
+        onOpenChange={open => {
+          if (!open) setEditAdmin(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Device Admin</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            defaultValues={editAdmin ?? undefined}
+            onCancel={() => setEditAdmin(null)}
+            submitButtonText="Save"
           />
-        )}
-        <Dialog
-          open={!!editAdmin}
-          onOpenChange={open => {
-            if (!open) setEditAdmin(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Device Admin</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              defaultValues={editAdmin ?? undefined}
-              onCancel={() => setEditAdmin(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

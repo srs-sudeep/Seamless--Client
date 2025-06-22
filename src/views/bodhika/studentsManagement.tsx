@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -38,7 +38,7 @@ const createSchema: FieldType[] = [
 ];
 
 const StudentsManagement = () => {
-  const { data: students = [], isLoading } = useStudents();
+  const { data: students = [], isFetching } = useStudents();
   const createMutation = useCreateStudent();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
@@ -92,41 +92,34 @@ const StudentsManagement = () => {
       heading="Students List"
       subHeading="List of students for Bodhika."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+      <DynamicTable
+        tableHeading="Students"
+        data={getTableData(students)}
+        isLoading={isFetching || createMutation.isPending}
+        headerActions={
+          <div className="flex gap-2">
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Student
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Student</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={createSchema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
+                />
+              </DialogContent>
+            </Dialog>
           </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Students"
-            data={getTableData(students)}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Student
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Student</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={createSchema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            }
-          />
-        )}
-      </div>
+        }
+      />
     </HelmetWrapper>
   );
 };

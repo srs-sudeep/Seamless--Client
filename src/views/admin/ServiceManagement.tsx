@@ -26,7 +26,7 @@ const schema = [
 ];
 
 const ServiceManagement = () => {
-  const { data: services = [], isLoading } = useServices();
+  const { data: services = [], isFetching } = useServices();
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
   const deleteMutation = useDeleteService();
@@ -150,69 +150,66 @@ const ServiceManagement = () => {
   };
 
   return (
-    <HelmetWrapper title="Services | Seamless">
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(services).map(row => ({
-              ...row,
-              ID: customRender.ID(String(row.ID)),
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-              Active: customRender.active(row.Active),
-              'Health URL': customRender.health_url(row['Health URL']),
-            }))}
-            customRender={customRender}
-            onRowClick={() => {}}
-            headerActions={
-              <>
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Service
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Service</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={schema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-              </>
-            }
+    <HelmetWrapper
+      title="Services | Seamless"
+      heading="Service Management"
+      subHeading="Manage services and their configurations."
+    >
+      <DynamicTable
+        data={getTableData(services).map(row => ({
+          ...row,
+          ID: customRender.ID(String(row.ID)),
+          Edit: customRender.Edit('', row._row),
+          Delete: customRender.Delete('', row._row),
+          Active: customRender.active(row.Active),
+          'Health URL': customRender.health_url(row['Health URL']),
+        }))}
+        isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
+        customRender={customRender}
+        onRowClick={() => {}}
+        headerActions={
+          <>
+            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Service
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create Service</DialogTitle>
+                </DialogHeader>
+                <DynamicForm
+                  schema={schema}
+                  onSubmit={handleCreate}
+                  onCancel={() => setCreateDialogOpen(false)}
+                  submitButtonText="Create"
+                />
+              </DialogContent>
+            </Dialog>
+          </>
+        }
+      />
+      <Dialog
+        open={!!editService}
+        onOpenChange={open => {
+          if (!open) setEditService(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Service</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={schema}
+            onSubmit={handleUpdate}
+            defaultValues={editService ?? undefined}
+            onCancel={() => setEditService(null)}
+            submitButtonText="Save"
           />
-        )}
-        <Dialog
-          open={!!editService}
-          onOpenChange={open => {
-            if (!open) setEditService(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Service</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={schema}
-              onSubmit={handleUpdate}
-              defaultValues={editService ?? undefined}
-              onCancel={() => setEditService(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

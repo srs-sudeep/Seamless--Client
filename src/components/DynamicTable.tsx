@@ -811,31 +811,51 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           )}
         </div>
         {total > 0 && (
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              <span>Rows per page: </span>
-              <select
-                value={filterMode === 'ui' ? limit : localLimit}
-                onChange={e => {
-                  const newLimit = Number(e.target.value);
-                  if (filterMode === 'ui' && onLimitChange) {
-                    onLimitChange(newLimit);
-                    if (onPageChange) onPageChange(1);
-                  } else {
-                    setLocalLimit(newLimit);
-                    setLocalPage(1);
-                  }
-                }}
-                className="border rounded px-2 py-1 ml-2"
-              >
-                {[2, 5, 10, 20, 50, 100].map(opt => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
+          <div className="flex items-center justify-between mt-8 p-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-slate-100/50 dark:shadow-slate-900/20 backdrop-blur-sm">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 tracking-wide">
+                Rows per page
+              </span>
+              <div className="relative">
+                <select
+                  value={filterMode === 'ui' ? limit : localLimit}
+                  onChange={e => {
+                    const newLimit = Number(e.target.value);
+                    if (filterMode === 'ui' && onLimitChange) {
+                      onLimitChange(newLimit);
+                      if (onPageChange) onPageChange(1);
+                    } else {
+                      setLocalLimit(newLimit);
+                      setLocalPage(1);
+                    }
+                  }}
+                  className="appearance-none bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-2.5 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 shadow-md hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-600 focus:ring-2 focus:ring-violet-500/30 dark:focus:ring-violet-400/30 focus:border-violet-500 dark:focus:border-violet-400 transition-all duration-200 cursor-pointer"
+                >
+                  {[2, 5, 10, 20, 50, 100].map(opt => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-slate-400 dark:text-slate-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <div>
+
+            <div className="flex items-center gap-3">
               <button
                 onClick={() =>
                   filterMode === 'ui' && onPageChange
@@ -843,17 +863,36 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     : setLocalPage(Math.max(1, localPage - 1))
                 }
                 disabled={(filterMode === 'ui' ? page : localPage) === 1}
-                className="px-3 py-1 border rounded mx-1"
+                className="group flex items-center justify-center w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-700 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:border-slate-200 dark:disabled:hover:border-slate-700 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:hover:scale-100"
               >
-                Prev
+                <svg
+                  className="w-5 h-5 transition-transform group-hover:-translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
               </button>
-              <span>
-                Page {filterMode === 'ui' ? page : localPage} of{' '}
-                {Math.ceil(
-                  (filterMode === 'ui' ? total || 0 : paginatedData.length) /
-                    (filterMode === 'ui' ? limit : localLimit)
-                )}
-              </span>
+
+              <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 border border-violet-200 dark:border-violet-800 rounded-xl shadow-md backdrop-blur-sm">
+                <span className="text-sm font-bold text-violet-900 dark:text-violet-100">
+                  Page {filterMode === 'ui' ? page : localPage}
+                </span>
+                <div className="w-1 h-1 bg-violet-400 dark:bg-violet-500 rounded-full"></div>
+                <span className="text-sm font-bold text-violet-900 dark:text-violet-100">
+                  {Math.ceil(
+                    (filterMode === 'ui' ? total || 0 : paginatedData.length) /
+                      (filterMode === 'ui' ? limit : localLimit)
+                  )}
+                </span>
+              </div>
+
               <button
                 onClick={() =>
                   filterMode === 'ui' && onPageChange
@@ -865,69 +904,114 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     ? page >= Math.ceil((total || 0) / limit)
                     : localPage >= Math.ceil(paginatedData.length / localLimit)
                 }
-                className="px-3 py-1 border rounded mx-1"
+                className="group flex items-center justify-center w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-700 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:border-slate-200 dark:disabled:hover:border-slate-700 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:hover:scale-100"
               >
-                Next
+                <svg
+                  className="w-5 h-5 transition-transform group-hover:translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </button>
             </div>
           </div>
         )}
 
         {paginatedData.length > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 px-1 text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">Showing</span>
-              <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {paginatedData.length}
+          <div className="flex flex-wrap items-center justify-between gap-6 pt-6 px-6 pb-4">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                Showing
               </span>
-              <span>of</span>
-              <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100">
-                {total}
-              </span>
-              <span>results</span>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-xl blur opacity-30"></div>
+                  <span className="relative inline-flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-50 to-cyan-50 dark:from-emerald-900/40 dark:to-cyan-900/40 border border-emerald-200 dark:border-emerald-800 font-bold text-emerald-800 dark:text-emerald-200 text-sm shadow-lg">
+                    {paginatedData.length}
+                  </span>
+                </div>
+                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">of</span>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-purple-400 rounded-xl blur opacity-30"></div>
+                  <span className="relative inline-flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/40 dark:to-purple-900/40 border border-violet-200 dark:border-violet-800 font-bold text-violet-800 dark:text-violet-200 text-sm shadow-lg">
+                    {total}
+                  </span>
+                </div>
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  results
+                </span>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+
+            <div className="flex flex-wrap items-center gap-3">
               {sortColumn && (
-                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
-                  <svg
-                    className="w-3.5 h-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d={
-                        sortDirection === 'asc'
-                          ? 'M8 10L12 6M12 6L16 10M12 6V18'
-                          : 'M8 14L12 18M12 18L16 14M12 18V6'
-                      }
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Sorted by {sortColumn} ({sortDirection === 'asc' ? 'A to Z' : 'Z to A'})
-                </span>
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                  <div className="relative inline-flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 dark:from-blue-900/30 dark:via-indigo-900/30 dark:to-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-700 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-7 h-7 bg-gradient-to-br from-blue-200 to-indigo-200 dark:from-blue-800 dark:to-indigo-800 rounded-full shadow-md">
+                      <svg
+                        className="w-3.5 h-3.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d={
+                            sortDirection === 'asc'
+                              ? 'M8 10L12 6M12 6L16 10M12 6V18'
+                              : 'M8 14L12 18M12 18L16 14M12 18V6'
+                          }
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span>Sorted by</span>
+                      <span className="font-bold text-blue-900 dark:text-blue-100">
+                        {sortColumn}
+                      </span>
+                    </div>
+                    <span className="px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 rounded-lg text-blue-900 dark:text-blue-100 shadow-inner">
+                      {sortDirection === 'asc' ? 'A→Z' : 'Z→A'}
+                    </span>
+                  </div>
+                </div>
               )}
+
               {(searchTerm || Object.keys(columnFilters).length > 0) && (
-                <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200">
-                  <svg
-                    className="w-3.5 h-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75M3 18h14.25M16.5 8.25L19.5 11.25L16.5 14.25"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  Filtered results
-                </span>
+                <div className="group relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                  <div className="relative inline-flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold bg-gradient-to-r from-rose-50 via-pink-50 to-rose-50 dark:from-rose-900/30 dark:via-pink-900/30 dark:to-rose-900/30 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-700 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center justify-center w-7 h-7 bg-gradient-to-br from-rose-200 to-pink-200 dark:from-rose-800 dark:to-pink-800 rounded-full shadow-md">
+                      <svg
+                        className="w-3.5 h-3.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75M3 18h14.25M16.5 8.25L19.5 11.25L16.5 14.25"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <span>Filtered results</span>
+                    <div className="w-2.5 h-2.5 bg-gradient-to-r from-rose-400 to-pink-400 rounded-full shadow-md animate-pulse"></div>
+                  </div>
+                </div>
               )}
             </div>
           </div>

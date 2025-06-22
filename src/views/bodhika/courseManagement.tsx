@@ -26,18 +26,16 @@ const editSchema: FieldType[] = [
 
 const CourseManagement = () => {
   const [editCourse, setEditCourse] = useState<any | null>(null);
-
-  // Side panel state for instructors and students
   const [sidePanel, setSidePanel] = useState<{
     type: 'instructors' | 'students' | null;
     course: any | null;
   }>({ type: null, course: null });
 
-  const { data: courses = [], isLoading } = useCourses();
+  const { data: courses = [], isFetching } = useCourses();
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
   const navigate = useNavigate();
-
+  console.log(courses);
   const handleEdit = (course: any) => setEditCourse(course);
 
   const handleUpdate = async (formData: Record<string, any>) => {
@@ -130,24 +128,56 @@ const CourseManagement = () => {
         </span>
       </Button>
     ),
-    'Slot-Room': (row: any) =>
-      Array.isArray(row._row.slot_room_id) ? (
-        <div className="flex flex-wrap gap-2">
-          {row._row.slot_room_id.map((sr: any, idx: number) => (
-            <span
-              key={idx}
-              className="inline-block px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono"
-            >
-              {sr.slot_id}
-              {Array.isArray(sr.room_id) && sr.room_id.length > 0
-                ? `: ${sr.room_id.join(', ')}`
-                : ''}
+    'Slot-Room': (row: any) => {
+      // Add comprehensive null/undefined checks
+      const slotRoomData = row?._row?.slot_room_id;
+
+      // Return empty div if data doesn't exist or isn't an array
+      if (!slotRoomData || !Array.isArray(slotRoomData) || slotRoomData.length === 0) {
+        return (
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-block px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs italic">
+              No slot data
             </span>
-          ))}
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex flex-wrap gap-2">
+          {slotRoomData.map((sr: any, idx: number) => {
+            // Additional safety check for each slot room item
+            if (!sr) {
+              return (
+                <span
+                  key={idx}
+                  className="inline-block px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs italic"
+                >
+                  Invalid data
+                </span>
+              );
+            }
+
+            // Build the display text safely
+            const slotId = sr?.slot_id || 'No slot';
+            const roomIds =
+              Array.isArray(sr?.room_id) && sr.room_id.length > 0
+                ? sr.room_id.filter((id: null) => id != null).join(', ')
+                : '';
+
+            return (
+              <span
+                key={idx}
+                className="inline-block px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono"
+              >
+                {slotId}
+                {roomIds && `: ${roomIds}`}
+              </span>
+            );
+          })}
         </div>
-      ) : (
-        <span className="text-muted-foreground text-xs">-</span>
-      ),
+      );
+    },
   };
 
   const getTableData = (courses: any[]) =>
@@ -155,15 +185,7 @@ const CourseManagement = () => {
       'Course Code': course.course_code,
       Name: course.name,
       Semester: course.sem,
-      'Slot-Room': Array.isArray(course.slot_room_id)
-        ? course.slot_room_id
-            .map((sr: any) =>
-              sr.slot_id && Array.isArray(sr.room_id)
-                ? `${sr.slot_id}: ${sr.room_id.join(', ')}`
-                : sr.slot_id
-            )
-            .join(' | ')
-        : '',
+      'Slot-Room': '',
       Instructors: '',
       Students: '',
       'View Sessions': '',
@@ -179,27 +201,12 @@ const CourseManagement = () => {
       subHeading="List of courses for Bodhika."
     >
       <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Courses"
-            data={getTableData(courses).map(row => ({
-              ...row,
-              Instructors: customRender.Instructors('', row),
-              Students: customRender.Students('', row),
-              'View Sessions': customRender['View Sessions']('', row),
-              Edit: customRender.Edit('', row._row),
-              Delete: customRender.Delete('', row._row),
-            }))}
-            customRender={{
-              ...customRender,
-              'Slot-Room': customRender['Slot-Room'],
-            }}
-          />
-        )}
+        <DynamicTable
+          tableHeading="Courses"
+          data={getTableData(courses)}
+          customRender={customRender}
+          isLoading={isFetching}
+        />
         <Dialog
           open={!!editCourse}
           onOpenChange={open => {

@@ -1,10 +1,9 @@
-import { Loader2 } from 'lucide-react';
 import { DynamicTable, HelmetWrapper } from '@/components';
 import { useAttendances } from '@/hooks';
 import type { Attendance } from '@/types';
 
 const AttendanceManagement = () => {
-  const { data: attendances = [], isLoading } = useAttendances();
+  const { data: attendances = [], isFetching } = useAttendances();
 
   const getTableData = (attendances: Attendance[]) =>
     attendances.map(att => ({
@@ -23,17 +22,12 @@ const AttendanceManagement = () => {
       subHeading="View device attendance logs."
     >
       <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(attendances).map(row => ({
-              ...row,
-            }))}
-          />
-        )}
+        <DynamicTable
+          data={getTableData(attendances).map(row => ({
+            ...row,
+          }))}
+          isLoading={isFetching}
+        />
       </div>
     </HelmetWrapper>
   );

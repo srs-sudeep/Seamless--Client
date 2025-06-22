@@ -1,6 +1,6 @@
 export interface CourseSlotRoom {
   slot_id: string;
-  room_id: string[]; // Always an array of strings
+  room_id: string[];
 }
 
 export interface CourseInstructor {

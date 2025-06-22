@@ -229,7 +229,7 @@ export const Navbar = () => {
               className="flex flex-nowrap items-center space-x-1 text-base font-medium text-muted-foreground overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted-foreground/20"
               style={{ maxWidth: '100vw' }}
             >
-              <BreadcrumbList>
+              <BreadcrumbList className="flex flex-row items-center flex-nowrap">
                 <BreadcrumbItem>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -241,76 +241,27 @@ export const Navbar = () => {
                   </Tooltip>
                 </BreadcrumbItem>
 
-                {/* Responsive: show all on md+, only first and last on mobile */}
-                {getBreadcrumbItems().length > 2 ? (
-                  <>
-                    {/* On mobile, show first, ellipsis, last */}
-                    <span className="block md:hidden">
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <span className="px-2 text-muted-foreground">...</span>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <BreadcrumbLink
-                              href={getBreadcrumbItems()[getBreadcrumbItems().length - 1].url}
-                              className="hover:text-primary"
-                            >
-                              {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
-                            </BreadcrumbLink>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {getBreadcrumbItems()[getBreadcrumbItems().length - 1].name}
-                          </TooltipContent>
-                        </Tooltip>
-                      </BreadcrumbItem>
-                    </span>
-                    {/* On md+, show all */}
-                    <span className="hidden md:inline">
-                      {getBreadcrumbItems().map((item, index) => (
-                        <React.Fragment key={index}>
-                          <BreadcrumbSeparator />
-                          <BreadcrumbItem>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <BreadcrumbLink href={item.url} className="hover:text-primary">
-                                  {item.name}
-                                </BreadcrumbLink>
-                              </TooltipTrigger>
-                              <TooltipContent>{item.name}</TooltipContent>
-                            </Tooltip>
-                          </BreadcrumbItem>
-                        </React.Fragment>
-                      ))}
-                    </span>
-                  </>
-                ) : (
-                  // If only 1 or 2 items, show all
-                  getBreadcrumbItems().map((item, index) => (
-                    <React.Fragment key={index}>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <BreadcrumbLink href={item.url} className="hover:text-primary">
-                              {item.name}
-                            </BreadcrumbLink>
-                          </TooltipTrigger>
-                          <TooltipContent>{item.name}</TooltipContent>
-                        </Tooltip>
-                      </BreadcrumbItem>
-                    </React.Fragment>
-                  ))
-                )}
+                {getBreadcrumbItems().map((item, index) => (
+                  <React.Fragment key={index}>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <BreadcrumbLink href={item.url} className="hover:text-primary">
+                            {item.name}
+                          </BreadcrumbLink>
+                        </TooltipTrigger>
+                        <TooltipContent>{item.name}</TooltipContent>
+                      </Tooltip>
+                    </BreadcrumbItem>
+                  </React.Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
             <h1 className="xl:text-3xl text-lg md:text-2xl font-bold text-foreground truncate">
               {getPageName()}
             </h1>
           </div>
-
           {/* Right side - Actions */}
           <div className="flex items-center xl:gap-4">
             <Tooltip>

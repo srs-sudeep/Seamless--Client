@@ -15,7 +15,7 @@ import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const DevicesManagement = () => {
-  const { data: devices = [], isLoading } = useDevices();
+  const { data: devices = [], isFetching } = useDevices();
   const updateMutation = useUpdateDevice();
   const deleteMutation = useDeleteDevice();
   const { data: allServices = [] } = useServices();
@@ -188,44 +188,36 @@ const DevicesManagement = () => {
       heading="Device Management"
       subHeading="Manage all devices and their assigned services."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            data={getTableData(devices).map(row => ({
-              ...row,
-              Token: customRender.token(row.Token),
-              Edit: customRender.Edit('', row),
-              Delete: customRender.Delete('', row),
-            }))}
-            customRender={customRender}
-            filterConfig={filterConfig}
-            isLoading={isLoading}
+      <DynamicTable
+        data={getTableData(devices).map(row => ({
+          ...row,
+          Token: customRender.token(row.Token),
+          Edit: customRender.Edit('', row),
+          Delete: customRender.Delete('', row),
+        }))}
+        customRender={customRender}
+        filterConfig={filterConfig}
+        isLoading={isFetching}
+      />
+      <Dialog
+        open={!!editDevice}
+        onOpenChange={open => {
+          if (!open) setEditDevice(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Device Services</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editSchema}
+            onSubmit={handleUpdate}
+            defaultValues={editDevice ? getEditDefaultValues(editDevice) : undefined}
+            onCancel={() => setEditDevice(null)}
+            submitButtonText="Save"
           />
-        )}
-        <Dialog
-          open={!!editDevice}
-          onOpenChange={open => {
-            if (!open) setEditDevice(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Device Services</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={editSchema}
-              onSubmit={handleUpdate}
-              defaultValues={editDevice ? getEditDefaultValues(editDevice) : undefined}
-              onCancel={() => setEditDevice(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

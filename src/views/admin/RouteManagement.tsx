@@ -54,7 +54,7 @@ const RouteManagement = () => {
   const updateMutation = useUpdateRoute();
   const deleteMutation = useDeleteRoute();
 
-  const { data: allRolesApi = [], isLoading: rolesLoading } = useRoles();
+  const { data: allRolesApi = [], isFetching: rolesLoading } = useRoles();
 
   const [editRoute, setEditRoute] = useState<any | null>(null);
   const [createDialogParent, setCreateDialogParent] = useState<{

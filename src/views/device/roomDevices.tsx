@@ -1,16 +1,15 @@
 import { useMemo } from 'react';
-import { Loader2 } from 'lucide-react';
 import { DynamicTable, HelmetWrapper } from '@/components';
 import {
   useRoomDeviceMappings,
   useRooms,
   useCreateRoomDeviceMapping,
   useDeleteRoomDeviceMapping,
-} from '@/hooks/bodhika/useRooms.hook';
+} from '@/hooks';
 
 const RoomDevicesManagement = () => {
-  const { data: rooms = [], isLoading: isRoomsLoading } = useRooms();
-  const { data: mappings = [], isLoading: isMappingsLoading } = useRoomDeviceMappings();
+  const { data: rooms = [], isFetching: isRoomsLoading } = useRooms();
+  const { data: mappings = [], isFetching: isMappingsLoading } = useRoomDeviceMappings();
   const createMapping = useCreateRoomDeviceMapping();
   const deleteMapping = useDeleteRoomDeviceMapping();
 
@@ -74,13 +73,11 @@ const RoomDevicesManagement = () => {
       subHeading="Assign and manage devices for each room."
     >
       <div className="mx-auto p-6">
-        {isRoomsLoading || isMappingsLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable tableHeading="Room Device Mappings" data={getTableData()} />
-        )}
+        <DynamicTable
+          tableHeading="Room Device Mappings"
+          data={getTableData()}
+          isLoading={isRoomsLoading || isMappingsLoading}
+        />
       </div>
     </HelmetWrapper>
   );

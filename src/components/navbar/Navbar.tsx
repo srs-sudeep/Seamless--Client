@@ -234,10 +234,10 @@ export const Navbar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <BreadcrumbLink href="/" className="hover:text-primary">
-                        HorizonX
+                        Seamless
                       </BreadcrumbLink>
                     </TooltipTrigger>
-                    <TooltipContent>HorizonX</TooltipContent>
+                    <TooltipContent>Seamless</TooltipContent>
                   </Tooltip>
                 </BreadcrumbItem>
 

@@ -203,7 +203,7 @@ const DevicesManagement = () => {
             }))}
             customRender={customRender}
             filterConfig={filterConfig}
-            loading={isLoading}
+            isLoading={isLoading}
           />
         )}
         <Dialog

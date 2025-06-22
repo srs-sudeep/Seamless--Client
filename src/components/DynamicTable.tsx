@@ -1,4 +1,13 @@
-import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableShimmer,
+  Transitions,
+} from '@/components';
 import { DateTimePicker } from '@/components/ui/date-timePicker';
 import { DatePicker } from '@/components/ui/datePicker';
 import { DateRangePicker } from '@/components/ui/dateRangePicker';
@@ -594,12 +603,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                      bg-white dark:bg-gray-900 transition-all duration-300"
         >
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex flex-col items-center space-y-3 text-gray-500 dark:text-gray-400">
-                <div className="w-8 h-8 border-3 border-current border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading data...</span>
-              </div>
-            </div>
+            <Transitions type="slide" direction="down" position="top" show={true}>
+              <TableShimmer />
+            </Transitions>
           ) : (
             <div className="overflow-x-auto">
               <Table>

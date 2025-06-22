@@ -128,19 +128,22 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       case 'multi-select': {
         const selectedValues = Array.isArray(currentValue) ? currentValue : [];
         return (
-          <div key={filter.column} className="min-w-[220px] relative">
+          <div
+            key={filter.column}
+            className="w-full sm:w-auto sm:min-w-[180px] lg:min-w-[200px] xl:min-w-[220px] relative"
+          >
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="min-w-[180px] flex justify-between items-center h-10"
+                  className="w-full sm:min-w-[180px] lg:min-w-[200px] flex justify-between items-center h-10 sm:h-11 text-sm"
                 >
-                  <span>
+                  <span className="truncate">
                     {selectedValues.length > 0
                       ? `${selectedValues.length} selected`
                       : `Filter ${filter.column}`}
                   </span>
-                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                  <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
@@ -172,7 +175,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         tabIndex={-1}
                         aria-label={opt}
                       />
-                      <span>{opt}</span>
+                      <span className="text-sm">{opt}</span>
                     </div>
                   ))}
                 </ScrollArea>
@@ -180,7 +183,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="mt-2 w-full"
+                    className="mt-2 w-full text-sm"
                     onClick={() => onChange([])}
                   >
                     Clear All
@@ -191,14 +194,21 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </div>
         );
       }
+
       case 'dropdown': {
         return (
-          <div key={filter.column} className="min-w-[180px] relative">
+          <div
+            key={filter.column}
+            className="w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] relative"
+          >
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full flex justify-between items-center h-10">
-                  <span>{currentValue || `Filter ${filter.column}`}</span>
-                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="w-full flex justify-between items-center h-10 sm:h-11 text-sm"
+                >
+                  <span className="truncate">{currentValue || `Filter ${filter.column}`}</span>
+                  <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
@@ -216,7 +226,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         tabIndex={-1}
                         aria-label={opt}
                       />
-                      <span>{opt}</span>
+                      <span className="text-sm">{opt}</span>
                     </div>
                   ))}
                 </ScrollArea>
@@ -224,7 +234,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="mt-2 w-full"
+                    className="mt-2 w-full text-sm"
                     onClick={() => onChange(undefined)}
                   >
                     Clear
@@ -235,10 +245,18 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </div>
         );
       }
+
       case 'date':
         return (
-          <div key={filter.column} className="min-w-[180px] relative">
-            <DatePicker value={currentValue} onChange={val => onChange(val)} />
+          <div
+            key={filter.column}
+            className="w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] relative"
+          >
+            <DatePicker
+              value={currentValue}
+              onChange={val => onChange(val)}
+              //   className="w-full h-10 sm:h-11"
+            />
             {currentValue && (
               <button
                 onClick={e => {
@@ -255,12 +273,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
       case 'date-range':
         return (
-          <div key={filter.column} className="min-w-[250px] relative">
-            <DateRangePicker
-              // selected={currentValue}
-              onChange={val => onChange(val)}
-              // placeholder={`Filter ${filter.column}`}
-            />
+          <div
+            key={filter.column}
+            className="w-full sm:w-auto sm:min-w-[220px] lg:min-w-[250px] relative"
+          >
+            <DateRangePicker onChange={val => onChange(val)} className="w-full h-10 sm:h-11" />
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
               <button
                 onClick={e => {
@@ -277,7 +294,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
       case 'datetime':
         return (
-          <div key={filter.column} className="min-w-[250px] relative">
+          <div
+            key={filter.column}
+            className="w-full sm:w-auto sm:min-w-[220px] lg:min-w-[250px] relative"
+          >
             <DateTimePicker onChange={val => onChange(val)} />
             {currentValue && (
               <button
@@ -472,7 +492,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             .map(f => [f.column, f.value])
         )
       : columnFilters;
-  console.log(activeColumnFilters);
 
   const paginatedData = useMemo(() => {
     if (filterMode === 'ui') return filteredData;
@@ -490,10 +509,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         )}
 
         {(!disableSearch || filterConfig.length > 0 || headerActions) && (
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-2">
-            <div className="flex flex-wrap items-end gap-2 md:gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-2">
+            {/* Search and Filters Container */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap items-stretch sm:items-end gap-2 sm:gap-3 lg:gap-4 flex-1">
+              {/* Search Bar - Always first and takes full width on mobile */}
               {!disableSearch && (
-                <div className="flex-1 min-w-[300px] relative">
+                <div className="w-full sm:flex-1 sm:min-w-[280px] lg:min-w-[320px] xl:min-w-[400px] relative order-1">
                   <div className="relative w-full group">
                     <input
                       placeholder="Search across all columns..."
@@ -506,16 +527,16 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         if (e.key === 'Enter') handleSearch();
                       }}
                       onBlur={handleSearch}
-                      className="w-full h-12 pl-4 pr-16 bg-white dark:bg-gray-900/50 
-                 border border-gray-200/60 dark:border-gray-700/60 
-                 rounded-xl shadow-sm backdrop-blur-sm
-                 focus:border-blue-500 dark:focus:border-blue-400 
-                 focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-blue-900/30
-                 text-gray-900 dark:text-gray-100 
-                 placeholder-gray-400 dark:placeholder-gray-500
-                 transition-all duration-300 ease-out
-                 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
-                 group-hover:shadow-lg"
+                      className="w-full h-11 sm:h-12 pl-4 pr-16 bg-white dark:bg-gray-900/50 
+                border border-gray-200/60 dark:border-gray-700/60 
+                rounded-xl shadow-sm backdrop-blur-sm
+                focus:border-blue-500 dark:focus:border-blue-400 
+                focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-blue-900/30
+                text-gray-900 dark:text-gray-100 
+                placeholder-gray-400 dark:placeholder-gray-500
+                transition-all duration-300 ease-out
+                hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                group-hover:shadow-lg text-sm sm:text-base"
                     />
 
                     {/* Right side icons */}
@@ -528,8 +549,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                             handleSearch();
                           }}
                           className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300
-                     transition-colors duration-200 p-1 rounded-full
-                     hover:bg-gray-100 dark:hover:bg-gray-800"
+                    transition-colors duration-200 p-1 rounded-full
+                    hover:bg-gray-100 dark:hover:bg-gray-800"
                           type="button"
                           title="Clear search"
                         >
@@ -550,14 +571,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       <button
                         onClick={handleSearch}
                         className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300
-                   transition-colors duration-200 p-1.5 rounded-lg
-                   hover:bg-blue-50 dark:hover:bg-blue-900/20
-                   focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
+                  transition-colors duration-200 p-1.5 rounded-lg
+                  hover:bg-blue-50 dark:hover:bg-blue-900/20
+                  focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
                         type="button"
                         title="Search"
                       >
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4 sm:w-5 sm:h-5"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth={2}
@@ -572,36 +593,26 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     {/* Subtle gradient border effect */}
                     <div
                       className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/10 to-blue-500/20 
-                    opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none -z-10 blur-sm"
+                opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none -z-10 blur-sm"
                     />
                   </div>
-
-                  {/* Tooltip for searched text */}
-                  {searchTerm && (
-                    <div className="absolute top-full left-4 mt-2 z-50 group/tooltip">
-                      <div
-                        className="px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg shadow-lg
-                      border border-gray-700 dark:border-gray-600 whitespace-nowrap
-                      opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span>Searching for:</span>
-                          <span className="font-medium text-blue-300">"{searchTerm}"</span>
-                        </div>
-                        {/* Tooltip arrow */}
-                        <div
-                          className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 dark:bg-gray-800 
-                        border-l border-t border-gray-700 dark:border-gray-600 
-                        rotate-45 transform"
-                        ></div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
-              {filterConfig.map(renderFilter)}
+
+              {/* Filters Container - Responsive grid layout */}
+              {filterConfig.length > 0 && (
+                <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap gap-2 sm:gap-3 order-2">
+                  {filterConfig.map(renderFilter)}
+                </div>
+              )}
             </div>
-            {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
+
+            {/* Header Actions - Always on the right on larger screens, below on mobile */}
+            {headerActions && (
+              <div className="flex items-center justify-end sm:justify-start lg:justify-end gap-3 order-3 lg:order-none">
+                {headerActions}
+              </div>
+            )}
           </div>
         )}
 

@@ -4,6 +4,6 @@ export interface Permission {
   description: string;
   resource: string;
   action: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }

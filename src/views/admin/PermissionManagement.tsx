@@ -41,13 +41,11 @@ const PermissionManagement = () => {
   const [globalSearch, setGlobalSearch] = useState('');
   const [resourceFilter, setResourceFilter] = useState<string[]>([]);
 
-  // Get all unique resources from permissions
   const allResources = useMemo(
     () => Array.from(new Set(permissions.map(p => p.resource))).sort(),
     [permissions]
   );
 
-  // Filter permissions based on global search and resource filter
   const filteredPermissions = useMemo(() => {
     let perms = permissions;
     if (resourceFilter.length > 0) {
@@ -66,7 +64,6 @@ const PermissionManagement = () => {
     return perms;
   }, [permissions, globalSearch, resourceFilter]);
 
-  // Group filtered permissions by resource
   const grouped = useMemo(() => {
     if (!groupByResource) return { All: filteredPermissions };
     return filteredPermissions.reduce<Record<string, Permission[]>>((acc, perm) => {
@@ -218,11 +215,9 @@ const PermissionManagement = () => {
       heading="Permission Management"
       subHeading="Manage permissions for modules and user actions in the system."
     >
-      {/* Filter & Search Card */}
       <div className="mx-6 mt-3 mb-6">
         <div className="rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
           <div className="flex flex-col md:flex-row gap-4 items-center">
-            {/* Resource Multi-Select Filter */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -281,28 +276,6 @@ const PermissionManagement = () => {
               </PopoverContent>
             </Popover>
 
-            {/* Selected Filters as Badges */}
-            <div className="flex flex-wrap gap-2">
-              {resourceFilter.map(resource => (
-                <Badge
-                  key={resource}
-                  variant="secondary"
-                  className="flex items-center gap-1 px-2 py-1"
-                >
-                  <span className="capitalize">{resource}</span>
-                  <button
-                    className="ml-1 text-xs text-gray-500 hover:text-red-500"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setResourceFilter(prev => prev.filter(r => r !== resource));
-                    }}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-
             {/* Global Search */}
             <div className="relative flex-1 w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -342,7 +315,7 @@ const PermissionManagement = () => {
 
           {/* Search results summary - inside the card */}
           {(globalSearch || resourceFilter.length > 0) && (
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-row gap-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3">
                   <Search className="h-4 w-4 text-blue-600 dark:text-blue-400" />
@@ -352,6 +325,26 @@ const PermissionManagement = () => {
                     ? 'No permissions found for your search/filter.'
                     : `Found ${totalPermissions} permission${totalPermissions !== 1 ? 's' : ''} in ${resourceCount} resource${resourceCount !== 1 ? 's' : ''}.`}
                 </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {resourceFilter.map(resource => (
+                  <Badge
+                    key={resource}
+                    variant="secondary"
+                    className="flex items-center gap-1 bg-black dark:bg-white text-white dark:text-black hover:text-black dark:hover:text-white px-2 py-1 dark:hover:bg-black"
+                  >
+                    <span className="capitalize">{resource}</span>
+                    <button
+                      className="ml-1 text-xs text-gray-400 hover:text-red-500 "
+                      onClick={e => {
+                        e.stopPropagation();
+                        setResourceFilter(prev => prev.filter(r => r !== resource));
+                      }}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
               </div>
             </div>
           )}

@@ -152,8 +152,8 @@ export const Navbar = () => {
                 {/* Role Switch */}
                 {user?.roles && user.roles.length > 1 && (
                   <div className="space-y-2">
-                    <p className="text-muted-foreground text-sm font-medium">Switch Role</p>
-                    <div className="space-y-1">
+                    <p className="text-muted-foreground text-sm font-medium ">Switch Role</p>
+                    <div className="max-h-48 overflow-y-auto border rounded-md space-y-2">
                       {user.roles.map(role => (
                         <Button
                           key={role}

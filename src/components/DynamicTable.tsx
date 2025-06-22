@@ -82,8 +82,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [localPage, setLocalPage] = useState(1);
-  const [localLimit, setLocalLimit] = useState(2);
+  const [localLimit, setLocalLimit] = useState(10);
   const headers = data.length ? Object.keys(data[0]).filter(key => !key.startsWith('_')) : [];
+  const [totalRecords, setTotalRecords] = useState(total);
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       if (sortDirection === 'asc') {
@@ -294,9 +295,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return null;
     }
   };
-
   const filteredData = useMemo(() => {
-    if (filterMode === 'ui') return data;
+    if (filterMode === 'ui') {
+      setTotalRecords(data.length);
+      return data;
+    }
     let result = data.filter(row => {
       let searchMatch = true;
       if (!disableSearch && searchTerm) {
@@ -453,7 +456,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         return sortDirection === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
       });
     }
-
+    setTotalRecords(result.length);
     return result;
   }, [data, searchTerm, columnFilters, disableSearch, sortColumn, sortDirection, filterMode]);
 
@@ -810,7 +813,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             </div>
           )}
         </div>
-        {total > 0 && (
+        {totalRecords > 0 && (
           <div className="flex items-center justify-between mt-8 p-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-slate-100/50 dark:shadow-slate-900/20 backdrop-blur-sm">
             <div className="flex items-center gap-4">
               <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 tracking-wide">
@@ -887,7 +890,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 <div className="w-1 h-1 bg-violet-400 dark:bg-violet-500 rounded-full"></div>
                 <span className="text-sm font-bold text-violet-900 dark:text-violet-100">
                   {Math.ceil(
-                    (filterMode === 'ui' ? total || 0 : paginatedData.length) /
+                    (filterMode === 'ui' ? total || 0 : totalRecords) /
                       (filterMode === 'ui' ? limit : localLimit)
                   )}
                 </span>
@@ -902,7 +905,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 disabled={
                   filterMode === 'ui'
                     ? page >= Math.ceil((total || 0) / limit)
-                    : localPage >= Math.ceil(paginatedData.length / localLimit)
+                    : localPage >= Math.ceil(totalRecords / localLimit)
                 }
                 className="group flex items-center justify-center w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-700 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:border-slate-200 dark:disabled:hover:border-slate-700 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:hover:scale-100"
               >
@@ -941,7 +944,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-purple-400 rounded-xl blur opacity-30"></div>
                   <span className="relative inline-flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/40 dark:to-purple-900/40 border border-violet-200 dark:border-violet-800 font-bold text-violet-800 dark:text-violet-200 text-sm shadow-lg">
-                    {total}
+                    {totalRecords}
                   </span>
                 </div>
                 <span className="text-sm font-medium text-slate-600 dark:text-slate-400">

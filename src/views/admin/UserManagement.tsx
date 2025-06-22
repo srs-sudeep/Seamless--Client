@@ -10,7 +10,7 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const { data: filterOptions } = useUserFilter();
-  const { data, isLoading: usersLoading } = useUsers({
+  const { data, isPending: usersLoading } = useUsers({
     ...filters,
     search,
     limit,

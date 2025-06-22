@@ -464,7 +464,15 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     setExpandedRows(prev => ({ ...prev, [index]: !prev[index] }));
   };
 
-  const hasActiveFilters = Object.keys(columnFilters).length > 0;
+  const activeColumnFilters =
+    filterMode === 'ui'
+      ? Object.fromEntries(
+          (filterConfig || [])
+            .filter(f => f.value && f.column !== 'search')
+            .map(f => [f.column, f.value])
+        )
+      : columnFilters;
+  console.log(activeColumnFilters);
 
   const paginatedData = useMemo(() => {
     if (filterMode === 'ui') return filteredData;
@@ -601,10 +609,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
         )}
 
-        <div
-          className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 
-                     bg-white dark:bg-gray-900 transition-all duration-300"
-        >
+        <div className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
           {isLoading ? (
             <Transitions type="slide" direction="down" position="top" show={true}>
               <TableShimmer />
@@ -687,7 +692,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           </div>
                           <p className="text-base font-medium">No data found</p>
                           <p className="text-sm text-gray-400 dark:text-gray-500 max-w-xs text-center">
-                            {searchTerm || hasActiveFilters
+                            {searchTerm ||
+                            Object.values(activeColumnFilters).some(
+                              v =>
+                                v !== undefined &&
+                                v !== null &&
+                                !(Array.isArray(v) && v.length === 0) &&
+                                !(
+                                  typeof v === 'object' &&
+                                  !Array.isArray(v) &&
+                                  Object.keys(v).length === 0
+                                ) &&
+                                v !== ''
+                            )
                               ? "Try adjusting your search or filters to find what you're looking for."
                               : 'No records are currently available in this table.'}
                           </p>
@@ -814,9 +831,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           )}
         </div>
         {totalRecords > 0 && (
-          <div className="flex items-center justify-between mt-8 p-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-slate-100/50 dark:shadow-slate-900/20 backdrop-blur-sm">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 tracking-wide">
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-4 mb-4 sm:mb-0">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 Rows per page
               </span>
               <div className="relative">
@@ -832,7 +849,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       setLocalPage(1);
                     }
                   }}
-                  className="appearance-none bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-2.5 pr-10 text-sm font-semibold text-slate-900 dark:text-slate-100 shadow-md hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-600 focus:ring-2 focus:ring-violet-500/30 dark:focus:ring-violet-400/30 focus:border-violet-500 dark:focus:border-violet-400 transition-all duration-200 cursor-pointer"
+                  className="appearance-none bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 pr-8 text-sm text-slate-900 dark:text-slate-100 hover:border-blue-400 dark:hover:border-pink-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-pink-500 focus:border-blue-500 dark:focus:border-pink-500 transition-colors cursor-pointer"
                 >
                   {[2, 5, 10, 20, 50, 100].map(opt => (
                     <option key={opt} value={opt}>
@@ -840,9 +857,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     </option>
                   ))}
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                   <svg
-                    className="w-4 h-4 text-slate-400 dark:text-slate-500"
+                    className="w-4 h-4 text-slate-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -858,7 +875,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() =>
                   filterMode === 'ui' && onPageChange
@@ -866,29 +883,24 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     : setLocalPage(Math.max(1, localPage - 1))
                 }
                 disabled={(filterMode === 'ui' ? page : localPage) === 1}
-                className="group flex items-center justify-center w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-700 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:border-slate-200 dark:disabled:hover:border-slate-700 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:hover:scale-100"
+                className="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-pink-900/20 hover:border-blue-300 dark:hover:border-pink-500 hover:text-blue-600 dark:hover:text-pink-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-700 disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-colors"
               >
-                <svg
-                  className="w-5 h-5 transition-transform group-hover:-translate-x-0.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
               </button>
 
-              <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 border border-violet-200 dark:border-violet-800 rounded-xl shadow-md backdrop-blur-sm">
-                <span className="text-sm font-bold text-violet-900 dark:text-violet-100">
-                  Page {filterMode === 'ui' ? page : localPage}
+              <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-purple-100 border border-blue-200 dark:border-pink-700 rounded-md">
+                <span className="text-sm font-medium text-blue-800 dark:text-purple-800">
+                  {filterMode === 'ui' ? page : localPage}
                 </span>
-                <div className="w-1 h-1 bg-violet-400 dark:bg-violet-500 rounded-full"></div>
-                <span className="text-sm font-bold text-violet-900 dark:text-violet-100">
+                <span className="text-sm text-blue-600 dark:text-purple-800">of</span>
+                <span className="text-sm font-medium text-blue-800 dark:text-purple-800">
                   {Math.ceil(
                     (filterMode === 'ui' ? total || 0 : totalRecords) /
                       (filterMode === 'ui' ? limit : localLimit)
@@ -907,18 +919,13 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     ? page >= Math.ceil((total || 0) / limit)
                     : localPage >= Math.ceil(totalRecords / localLimit)
                 }
-                className="group flex items-center justify-center w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:border-violet-200 dark:hover:border-violet-700 hover:text-violet-600 dark:hover:text-violet-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:border-slate-200 dark:disabled:hover:border-slate-700 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:hover:scale-100"
+                className="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-pink-900/20 hover:border-blue-300 dark:hover:border-pink-500 hover:text-blue-600 dark:hover:text-pink-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-700 disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-colors"
               >
-                <svg
-                  className="w-5 h-5 transition-transform group-hover:translate-x-0.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
@@ -928,92 +935,73 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         )}
 
         {paginatedData.length > 0 && (
-          <div className="flex flex-wrap items-center justify-between gap-6 pt-6 px-6 pb-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                Showing
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 px-4 sm:px-6 pb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-600 dark:text-slate-400">Showing</span>
+              <span className="px-2 py-1 rounded dark:bg-purple-100 bg-blue-50 dark:text-purple-800 text-blue-900 text-sm font-medium">
+                {paginatedData.length}
               </span>
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-xl blur opacity-30"></div>
-                  <span className="relative inline-flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-50 to-cyan-50 dark:from-emerald-900/40 dark:to-cyan-900/40 border border-emerald-200 dark:border-emerald-800 font-bold text-emerald-800 dark:text-emerald-200 text-sm shadow-lg">
-                    {paginatedData.length}
-                  </span>
-                </div>
-                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">of</span>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-purple-400 rounded-xl blur opacity-30"></div>
-                  <span className="relative inline-flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/40 dark:to-purple-900/40 border border-violet-200 dark:border-violet-800 font-bold text-violet-800 dark:text-violet-200 text-sm shadow-lg">
-                    {totalRecords}
-                  </span>
-                </div>
-                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  results
-                </span>
-              </div>
+              <span className="text-sm text-slate-600 dark:text-slate-400">of</span>
+              <span className="px-2 py-1 rounded dark:bg-purple-100 bg-blue-50 dark:text-purple-800 text-blue-900 text-sm font-medium">
+                {totalRecords}
+              </span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">results</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               {sortColumn && (
-                <div className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                  <div className="relative inline-flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 dark:from-blue-900/30 dark:via-indigo-900/30 dark:to-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-700 shadow-lg backdrop-blur-sm">
-                    <div className="flex items-center justify-center w-7 h-7 bg-gradient-to-br from-blue-200 to-indigo-200 dark:from-blue-800 dark:to-indigo-800 rounded-full shadow-md">
-                      <svg
-                        className="w-3.5 h-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d={
-                            sortDirection === 'asc'
-                              ? 'M8 10L12 6M12 6L16 10M12 6V18'
-                              : 'M8 14L12 18M12 18L16 14M12 18V6'
-                          }
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>Sorted by</span>
-                      <span className="font-bold text-blue-900 dark:text-blue-100">
-                        {sortColumn}
-                      </span>
-                    </div>
-                    <span className="px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800 rounded-lg text-blue-900 dark:text-blue-100 shadow-inner">
-                      {sortDirection === 'asc' ? 'A→Z' : 'Z→A'}
-                    </span>
-                  </div>
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium dark:bg-purple-50 bg-blue-50 dark:text-purple-800 text-blue-900 border dark:border-purple-200 border-blue-700">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d={
+                        sortDirection === 'asc'
+                          ? 'M8 10L12 6M12 6L16 10M12 6V18'
+                          : 'M8 14L12 18M12 18L16 14M12 18V6'
+                      }
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Sorted by {sortColumn}</span>
+                  <span className="px-1.5 py-0.5 text-xs dark:bg-purple-100 bg-blue-800 rounded dark:text-purple-800 text-blue-200">
+                    {sortDirection === 'asc' ? 'A→Z' : 'Z→A'}
+                  </span>
                 </div>
               )}
 
-              {(searchTerm || Object.keys(columnFilters).length > 0) && (
-                <div className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-rose-400 to-pink-400 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                  <div className="relative inline-flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold bg-gradient-to-r from-rose-50 via-pink-50 to-rose-50 dark:from-rose-900/30 dark:via-pink-900/30 dark:to-rose-900/30 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-700 shadow-lg backdrop-blur-sm">
-                    <div className="flex items-center justify-center w-7 h-7 bg-gradient-to-br from-rose-200 to-pink-200 dark:from-rose-800 dark:to-pink-800 rounded-full shadow-md">
-                      <svg
-                        className="w-3.5 h-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75M3 18h14.25M16.5 8.25L19.5 11.25L16.5 14.25"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span>Filtered results</span>
-                    <div className="w-2.5 h-2.5 bg-gradient-to-r from-rose-400 to-pink-400 rounded-full shadow-md animate-pulse"></div>
-                  </div>
+              {(searchTerm ||
+                Object.keys(columnFilters).length > 0 ||
+                Object.values(activeColumnFilters).some(
+                  v =>
+                    v !== undefined &&
+                    v !== null &&
+                    !(Array.isArray(v) && v.length === 0) &&
+                    !(typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) &&
+                    v !== ''
+                )) && (
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium dark:bg-purple-50 bg-blue-50 dark:text-purple-800 text-blue-900 border dark:border-purple-200 border-blue-700">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75M3 18h14.25"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Filtered results</span>
                 </div>
               )}
             </div>

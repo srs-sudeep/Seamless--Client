@@ -13,7 +13,6 @@ export async function getUsers(params: GetUsersParams = {}): Promise<UserListRes
     });
   }
 
-  // Convert roles[0]=1&roles[1]=2 to roles=1&roles=2
   const paramsSerializer = (paramsObj: Record<string, any>) => {
     const usp = new URLSearchParams();
     Object.entries(paramsObj).forEach(([key, value]) => {

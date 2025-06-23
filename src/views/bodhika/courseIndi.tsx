@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   HelmetWrapper,
@@ -14,6 +14,7 @@ import {
 } from '@/components';
 import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
+import { FilterConfig } from '@/types';
 
 const truncateId = (id: string, len = 10) =>
   id && id.length > len ? id.slice(0, len) + '...' : id;
@@ -49,7 +50,7 @@ const CourseIndi = () => {
   };
 
   const { data: attendances = {}, isLoading: attendanceLoading } = useSessionAttendance(
-    editSessionId || undefined
+    typeof editSessionId === 'string' && editSessionId ? editSessionId : undefined
   ) as {
     data: AttendanceData;
     isLoading: boolean;
@@ -59,10 +60,6 @@ const CourseIndi = () => {
     switch (status?.toLowerCase()) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-300';
-      case 'paused':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'ended':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
       default:
         return 'bg-blue-100 text-blue-800 border-blue-300';
     }
@@ -151,6 +148,9 @@ const CourseIndi = () => {
           Status: session.status,
           ViewAttendance: session.session_id,
           _row: session,
+          _roomIds: Array.isArray(session.rooms)
+            ? session.rooms.map((room: any) => room.room_id)
+            : [],
         }))
       : [];
 
@@ -163,7 +163,7 @@ const CourseIndi = () => {
         {Array.isArray(row._row.rooms) && row._row.rooms.length > 0 ? (
           row._row.rooms.map((room: any, idx: number) => (
             <div key={idx} className="mb-1">
-              <span className="font-mono">{room.room_id}</span>
+              <span>{room.room_id}</span>
               {room.room_name && (
                 <div>
                   <span className="inline-block mt-1 px-2 py-0.5 rounded-xl bg-gray-200 text-gray-700 text-xs">
@@ -231,13 +231,37 @@ const CourseIndi = () => {
     ),
   };
 
-  // Custom render for all records/latest (always show Student Id)
   const attendanceCustomRender = {
     'Student Id': (value: string) => <span className="font-mono">{truncateId(value)}</span>,
     'Device Id': (value: string) => <span className="font-mono">{truncateId(value)}</span>,
     'Room Id': (value: string) => <span className="font-mono">{truncateId(value)}</span>,
     Time: (value: string) => <span>{value}</span>,
   };
+
+  const allRoomIds = useMemo(() => {
+    const set = new Set<string>();
+    sessions.forEach(session => {
+      if (Array.isArray(session.rooms)) {
+        session.rooms.forEach((room: any) => {
+          if (room?.room_id) set.add(room.room_id);
+        });
+      }
+    });
+    return Array.from(set);
+  }, [sessions]);
+
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Rooms',
+      type: 'multi-select',
+      options: allRoomIds,
+    },
+    {
+      column: 'Status',
+      type: 'dropdown',
+      options: ['active', 'completed'],
+    },
+  ];
 
   return (
     <HelmetWrapper
@@ -253,16 +277,10 @@ const CourseIndi = () => {
           ViewAttendance: customRender.ViewAttendance(row['Session Id'], row),
         }))}
         isLoading={isFetching}
-        customRender={{
-          'Session Id': customRender['Session Id'],
-          'Start Time': customRender['Start Time'],
-          'End Time': customRender['End Time'],
-          Rooms: customRender['Rooms'],
-          Status: customRender['Status'],
-        }}
+        customRender={customRender}
+        filterConfig={filterConfig}
       />
 
-      {/* Attendance Side Panel */}
       <Sheet open={!!editSessionId} onOpenChange={open => !open && setEditSessionId(null)}>
         <SheetTitle style={{ display: 'none' }} />
         <SheetContent

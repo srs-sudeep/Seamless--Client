@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Loader2, Pencil, Trash2, Users, UserPen } from 'lucide-react';
 import {
   DynamicForm,
@@ -14,8 +14,8 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks';
-import { FieldType } from '@/types';
+import { useCourses, useCourseFilters, useUpdateCourse, useDeleteCourse } from '@/hooks';
+import { FieldType, FilterConfig } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
 const editSchema: FieldType[] = [
@@ -25,13 +25,85 @@ const editSchema: FieldType[] = [
 ];
 
 const CourseManagement = () => {
+  // Filter state
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string | undefined>(undefined);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | undefined>(undefined);
+  const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>(undefined);
+  const [selectedSem, setSelectedSem] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // Fetch filter options
+  const { data: filterOptions } = useCourseFilters();
+
+  // Fetch courses with backend filters
+  const { data, isFetching } = useCourses({
+    search,
+    sem: selectedSem,
+    slot_id: selectedSlotId,
+    room_id: selectedRoomId,
+    course_code: selectedCourseCode,
+    page,
+    page_size: limit,
+  });
+
+  const courses = data?.results ?? [];
+  const totalCount = data?.total ?? 0;
+
+  // FilterConfig for DynamicTable
+  const filterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Course Code',
+        type: 'dropdown',
+        options: filterOptions?.course_codes ?? [],
+        value: selectedCourseCode,
+        onChange: (val: string | undefined) => {
+          setSelectedCourseCode(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Slot',
+        type: 'dropdown',
+        options: filterOptions?.slots?.map(s => s.slot_id) ?? [],
+        value: selectedSlotId,
+        onChange: (val: string | undefined) => {
+          setSelectedSlotId(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Room',
+        type: 'dropdown',
+        options: filterOptions?.rooms?.map(r => r.room_id) ?? [],
+        value: selectedRoomId,
+        onChange: (val: string | undefined) => {
+          setSelectedRoomId(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Semester',
+        type: 'dropdown',
+        options: filterOptions?.sems ?? [],
+        value: selectedSem,
+        onChange: (val: string | undefined) => {
+          setSelectedSem(val);
+          setPage(1);
+        },
+      },
+    ],
+    [filterOptions, selectedCourseCode, selectedSlotId, selectedRoomId, selectedSem]
+  );
+
   const [editCourse, setEditCourse] = useState<any | null>(null);
   const [sidePanel, setSidePanel] = useState<{
     type: 'instructors' | 'students' | null;
     course: any | null;
   }>({ type: null, course: null });
 
-  const { data: courses = [], isFetching } = useCourses();
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
   const navigate = useNavigate();
@@ -179,18 +251,20 @@ const CourseManagement = () => {
   };
 
   const getTableData = (courses: any[]) =>
-    courses.map(course => ({
-      'Course Code': course.course_code,
-      Name: course.name,
-      Semester: course.sem,
-      'Slot-Room': '',
-      Instructors: '',
-      Students: '',
-      'View Sessions': '',
-      Edit: '',
-      Delete: '',
-      _row: { ...course },
-    }));
+    Array.isArray(courses)
+      ? courses.map(course => ({
+          'Course Code': course.course_code,
+          Name: course.name,
+          Semester: course.sem,
+          'Slot-Room': '',
+          Instructors: '',
+          Students: '',
+          'View Sessions': '',
+          Edit: '',
+          Delete: '',
+          _row: { ...course },
+        }))
+      : [];
 
   return (
     <HelmetWrapper
@@ -203,6 +277,14 @@ const CourseManagement = () => {
         data={getTableData(courses)}
         customRender={customRender}
         isLoading={isFetching}
+        filterConfig={filterConfig}
+        filterMode="ui"
+        onSearchChange={setSearch}
+        page={page}
+        onPageChange={setPage}
+        limit={limit}
+        onLimitChange={setLimit}
+        total={totalCount}
       />
       <Dialog
         open={!!editCourse}

@@ -7,12 +7,12 @@ import {
   getMyInstructorCourses,
   getMyStudentCourses,
 } from '@/api';
-import type { Course } from '@/types';
+import type { GetCoursesParams, CourseListResponse, Course } from '@/types';
 
-export function useCourses() {
-  return useQuery<Course[]>({
-    queryKey: ['courses'],
-    queryFn: getCourses,
+export function useCourses(params: GetCoursesParams = {}) {
+  return useQuery<CourseListResponse>({
+    queryKey: ['courses', params],
+    queryFn: () => getCourses(params),
   });
 }
 

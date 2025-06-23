@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Loader2, Pencil, Trash2, Users, UserPen } from 'lucide-react';
 import {
   DynamicForm,
@@ -15,7 +15,7 @@ import {
   toast,
 } from '@/components';
 import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks';
-import { FieldType } from '@/types';
+import { Course, FieldType, FilterConfig } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
 const editSchema: FieldType[] = [
@@ -25,16 +25,68 @@ const editSchema: FieldType[] = [
 ];
 
 const CourseManagement = () => {
+  const navigate = useNavigate();
   const [editCourse, setEditCourse] = useState<any | null>(null);
   const [sidePanel, setSidePanel] = useState<{
     type: 'instructors' | 'students' | null;
     course: any | null;
   }>({ type: null, course: null });
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [selectedSemester, setSelectedSemester] = useState<string | undefined>(undefined);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
 
-  const { data: courses = [], isFetching } = useCourses();
+  // Fetch courses with filters and pagination
+  const { data, isFetching } = useCourses({
+    search,
+    semester: selectedSemester,
+    rooms: selectedRooms,
+    limit,
+    offset: (page - 1) * limit,
+  });
+
+  const courses: Course[] = Array.isArray(data?.results) ? data!.results : [];
+  const totalCount = data?.total ?? 0;
+
+  // Extract all unique semesters and rooms for filter options
+  const allSemesters = useMemo(() => {
+    const set = new Set<string>();
+    courses.forEach(course => set.add(course.sem));
+    return Array.from(set);
+  }, [courses]);
+
+  const allRooms = useMemo(() => {
+    const set = new Set<string>();
+    courses.forEach(course => {
+      course.slot_room_id?.forEach((slotRoom: any) => {
+        slotRoom.room_id?.forEach((roomId: string) => set.add(roomId));
+      });
+    });
+    return Array.from(set);
+  }, [courses]);
+
+  // FilterConfig for table
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Semester',
+      type: 'dropdown',
+      options: allSemesters,
+      value: selectedSemester,
+      onChange: (val: string | undefined) => setSelectedSemester(val),
+    },
+    {
+      column: 'Rooms',
+      type: 'multi-select',
+      options: allRooms,
+      value: selectedRooms,
+      onChange: (val: string[]) => setSelectedRooms(val),
+    },
+  ];
+
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
-  const navigate = useNavigate();
+
   const handleEdit = (course: any) => setEditCourse(course);
 
   const handleUpdate = async (formData: Record<string, any>) => {
@@ -178,18 +230,19 @@ const CourseManagement = () => {
     },
   };
 
-  const getTableData = (courses: any[]) =>
+  const getTableData = (courses: Course[]) =>
     courses.map(course => ({
       'Course Code': course.course_code,
       Name: course.name,
       Semester: course.sem,
-      'Slot-Room': '',
-      Instructors: '',
-      Students: '',
+      'Slot-Room': '', // handled by customRender
+      Instructors: '', // handled by customRender
+      Students: '', // handled by customRender
       'View Sessions': '',
       Edit: '',
       Delete: '',
-      _row: { ...course },
+      _row: course,
+      _roomIds: course.slot_room_id ? course.slot_room_id.flatMap(sr => sr.room_id) : [],
     }));
 
   return (
@@ -203,6 +256,14 @@ const CourseManagement = () => {
         data={getTableData(courses)}
         customRender={customRender}
         isLoading={isFetching}
+        filterConfig={filterConfig}
+        filterMode="ui"
+        onSearchChange={setSearch}
+        page={page}
+        onPageChange={setPage}
+        limit={limit}
+        onLimitChange={setLimit}
+        total={totalCount}
       />
       <Dialog
         open={!!editCourse}

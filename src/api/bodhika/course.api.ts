@@ -1,8 +1,37 @@
 import { apiClient } from '@/core';
-import type { Course } from '@/types';
+import type { Course, GetCoursesParams, CourseListResponse } from '@/types';
 
-export async function getCourses(): Promise<Course[]> {
-  const { data } = await apiClient.get<Course[]>('bodhika/api/v1/courses/courses-details');
+export async function getCourses(params: GetCoursesParams = {}): Promise<CourseListResponse> {
+  const { search, semester, rooms, limit = 10, offset = 0 } = params;
+
+  const query: Record<string, any> = { limit, offset };
+  if (search) query.search = search;
+  if (semester) query.semester = semester;
+  if (rooms && rooms.length > 0) {
+    rooms.forEach((roomId, idx) => {
+      query[`rooms[${idx}]`] = roomId;
+    });
+  }
+
+  const paramsSerializer = (paramsObj: Record<string, any>) => {
+    const usp = new URLSearchParams();
+    Object.entries(paramsObj).forEach(([key, value]) => {
+      if (key.startsWith('rooms[')) {
+        usp.append('rooms', value as any);
+      } else {
+        usp.append(key, value as any);
+      }
+    });
+    return usp.toString();
+  };
+
+  const { data } = await apiClient.get<CourseListResponse>(
+    'bodhika/api/v1/courses/courses-details',
+    {
+      params: query,
+      paramsSerializer,
+    }
+  );
   return data;
 }
 

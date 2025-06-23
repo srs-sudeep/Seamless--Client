@@ -17,3 +17,18 @@ export interface Course {
   instructors: CourseInstructor[];
   students?: string[];
 }
+
+export interface GetCoursesParams {
+  search?: string;
+  semester?: string;
+  rooms?: string[];
+  limit?: number;
+  offset?: number;
+}
+
+export interface CourseListResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  results: Course[];
+}

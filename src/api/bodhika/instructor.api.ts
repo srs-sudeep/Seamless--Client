@@ -1,8 +1,32 @@
 import { apiClient } from '@/core';
-import type { Instructor } from '@/types';
+import type {
+  Instructor,
+  GetInstructorsParams,
+  InstructorListResponse,
+  InstructorFiltersResponse,
+} from '@/types';
 
-export async function getInstructors(): Promise<Instructor[]> {
-  const { data } = await apiClient.get<Instructor[]>('/bodhika/api/v1/courses/all-instructors');
+export async function getInstructors(
+  params: GetInstructorsParams = {}
+): Promise<InstructorListResponse> {
+  const { search, course_code, sem, instruction_type, page = 1, page_size = 10 } = params;
+  const query: Record<string, any> = { page, page_size };
+  if (search) query.search = search;
+  if (course_code) query.course_code = course_code;
+  if (sem) query.sem = sem;
+  if (instruction_type) query.instruction_type = instruction_type;
+
+  const { data } = await apiClient.get<InstructorListResponse>(
+    '/bodhika/api/v1/courses/all-instructors',
+    { params: query }
+  );
+  return data;
+}
+
+export async function getInstructorFilters(): Promise<InstructorFiltersResponse> {
+  const { data } = await apiClient.get<InstructorFiltersResponse>(
+    '/bodhika/api/v1/courses/instructor-filters'
+  );
   return data;
 }
 

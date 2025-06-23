@@ -1,11 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getInstructors, createInstructor, updateInstructor, deleteInstructor } from '@/api';
-import type { Instructor } from '@/types';
+import {
+  getInstructors,
+  createInstructor,
+  updateInstructor,
+  deleteInstructor,
+  getInstructorFilters,
+} from '@/api';
+import type {
+  GetInstructorsParams,
+  InstructorListResponse,
+  InstructorFiltersResponse,
+} from '@/types';
 
-export function useInstructors() {
-  return useQuery<Instructor[]>({
-    queryKey: ['instructors'],
-    queryFn: getInstructors,
+export function useInstructors(params: GetInstructorsParams = {}) {
+  return useQuery<InstructorListResponse>({
+    queryKey: ['instructors', params],
+    queryFn: () => getInstructors(params),
+  });
+}
+
+export function useInstructorFilters() {
+  return useQuery<InstructorFiltersResponse>({
+    queryKey: ['instructor-filters'],
+    queryFn: getInstructorFilters,
   });
 }
 

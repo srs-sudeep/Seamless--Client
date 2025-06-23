@@ -127,10 +127,9 @@ const CourseManagement = () => {
         </span>
       </Button>
     ),
-    'Slot-Room': (row: any) => {
+    'Slot-Room': (_: any, row: Record<string, any>) => {
       // Add comprehensive null/undefined checks
       const slotRoomData = row?._row?.slot_room_id;
-
       // Return empty div if data doesn't exist or isn't an array
       if (!slotRoomData || !Array.isArray(slotRoomData) || slotRoomData.length === 0) {
         return (

@@ -25,13 +25,34 @@ const truncateId = (id: string, len = 10) =>
 const formatDateTime = (dateString: string) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleString('en-IN', {
+  const newDate = date.toLocaleString('en-IN', {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
+  });
+  return newDate;
+}; // 2025-06-18T11:18:44.265900
+
+const formatDateOnly = (dateString: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+  });
+};
+
+const formatTimeOnly = (dateString: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
   });
 };
 
@@ -91,6 +112,7 @@ const Sessions = () => {
           'Session Id': session.session_id,
           'Course Id': session.course_id,
           'Instructor Ldap': session.instructor_ldap,
+          Date: session.start_time,
           'Start Time': session.start_time,
           'End Time': session.end_time,
           Status: session.status,
@@ -119,12 +141,20 @@ const Sessions = () => {
         <TooltipContent>{value}</TooltipContent>
       </Tooltip>
     ),
+    Date: (value: string) => (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="cursor-pointer">{formatDateOnly(value)}</span>
+        </TooltipTrigger>
+        <TooltipContent>{formatDateOnly(value)}</TooltipContent>
+      </Tooltip>
+    ),
     'Start Time': (value: string) => (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-pointer">{formatDateTime(value)}</span>
+          <span className="cursor-pointer">{formatTimeOnly(value)}</span>
         </TooltipTrigger>
-        <TooltipContent>{formatDateTime(value)}</TooltipContent>
+        <TooltipContent>{formatTimeOnly(value)}</TooltipContent>
       </Tooltip>
     ),
     'End Time': (value: string, _: any) =>
@@ -135,9 +165,9 @@ const Sessions = () => {
       ) : (
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="cursor-pointer">{formatDateTime(value)}</span>
+            <span className="cursor-pointer">{formatTimeOnly(value)}</span>
           </TooltipTrigger>
-          <TooltipContent>{formatDateTime(value)}</TooltipContent>
+          <TooltipContent>{formatTimeOnly(value)}</TooltipContent>
         </Tooltip>
       ),
     Status: (value: string) => (
@@ -303,6 +333,17 @@ const Sessions = () => {
     return Array.from(set);
   }, [sessions]);
 
+  // 1. Extract all unique Instructor Ldap for filter options
+  const allInstructorLdaps = useMemo(() => {
+    const set = new Set<string>();
+    sessions.forEach(session => {
+      if (session?.instructor_ldap) {
+        set.add(session.instructor_ldap);
+      }
+    });
+    return Array.from(set);
+  }, [sessions]);
+
   // 2. Add filterConfig for Rooms
   const filterConfig: FilterConfig[] = [
     {
@@ -314,6 +355,11 @@ const Sessions = () => {
       column: 'Status',
       type: 'dropdown',
       options: ['completed', 'ongoing'],
+    },
+    {
+      column: 'Instructor Ldap',
+      type: 'dropdown',
+      options: allInstructorLdaps,
     },
   ];
 

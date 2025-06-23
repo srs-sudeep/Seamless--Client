@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import {
   DynamicForm,
@@ -14,11 +14,12 @@ import {
 } from '@/components';
 import {
   useInstructors,
+  useInstructorFilters,
   useCreateInstructor,
   useUpdateInstructor,
   useDeleteInstructor,
 } from '@/hooks';
-import { FieldType } from '@/types';
+import { FieldType, FilterConfig } from '@/types';
 
 const createSchema: FieldType[] = [
   { name: 'instructor_ldap', label: 'Instructor LDAP', type: 'text', required: true, columns: 2 },
@@ -56,13 +57,76 @@ const editSchema: FieldType[] = [
 ];
 
 const InstructorManagement = () => {
-  const { data: instructors = [], isFetching } = useInstructors();
-  const createMutation = useCreateInstructor();
-  const updateMutation = useUpdateInstructor();
-  const deleteMutation = useDeleteInstructor();
+  // Filter state
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string | undefined>(undefined);
+  const [selectedInstructionType, setSelectedInstructionType] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedSem, setSelectedSem] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // Fetch filter options
+  const { data: filterOptions } = useInstructorFilters();
+
+  // Fetch instructors with backend filters
+  const { data, isFetching } = useInstructors({
+    search,
+    course_code: selectedCourseCode,
+    sem: selectedSem,
+    instruction_type: selectedInstructionType,
+    page,
+    page_size: limit,
+  });
+
+  const instructors = data?.results ?? [];
+  const totalCount = data?.total ?? 0;
+
+  // FilterConfig for DynamicTable
+  const filterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Course Code',
+        type: 'dropdown',
+        options: filterOptions?.course_codes ?? [],
+        value: selectedCourseCode,
+        onChange: (val: string | undefined) => {
+          setSelectedCourseCode(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Instruction Type',
+        type: 'dropdown',
+        options: filterOptions?.instruction_types ?? [],
+        value: selectedInstructionType,
+        onChange: (val: string | undefined) => {
+          setSelectedInstructionType(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Semester',
+        type: 'dropdown',
+        options: filterOptions?.sems ?? [],
+        value: selectedSem,
+        onChange: (val: string | undefined) => {
+          setSelectedSem(val);
+          setPage(1);
+        },
+      },
+    ],
+    [filterOptions, selectedCourseCode, selectedInstructionType, selectedSem]
+  );
 
   const [editInstructor, setEditInstructor] = useState<any | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  // Mutations
+  const createMutation = useCreateInstructor();
+  const updateMutation = useUpdateInstructor();
+  const deleteMutation = useDeleteInstructor();
 
   // For create form values
   const [createFormValues, setCreateFormValues] = useState<Record<string, any>>({});
@@ -149,6 +213,7 @@ const InstructorManagement = () => {
     ),
   };
 
+  // Table data mapping
   const getTableData = (instructors: any[]) =>
     instructors.map(inst => {
       let course_code = '';
@@ -178,8 +243,16 @@ const InstructorManagement = () => {
       <DynamicTable
         tableHeading="Instructors"
         data={getTableData(instructors)}
-        isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
+        isLoading={isFetching}
         customRender={customRender}
+        filterConfig={filterConfig}
+        filterMode="ui"
+        onSearchChange={setSearch}
+        page={page}
+        onPageChange={setPage}
+        limit={limit}
+        onLimitChange={setLimit}
+        total={totalCount}
         headerActions={
           <div className="flex gap-2">
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

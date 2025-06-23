@@ -509,12 +509,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         )}
 
         {(!disableSearch || filterConfig.length > 0 || headerActions) && (
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-2">
-            {/* Search and Filters Container */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap items-stretch sm:items-end gap-2 sm:gap-3 lg:gap-4 flex-1">
-              {/* Search Bar - Always first and takes full width on mobile */}
+          <div className="mb-2 space-y-2">
+            {/* First row: Search bar and header actions */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3 lg:gap-4">
+              {/* Search Bar */}
               {!disableSearch && (
-                <div className="w-full sm:flex-1 sm:min-w-[280px] lg:min-w-[320px] xl:min-w-[400px] relative order-1">
+                <div className="w-full sm:flex-1 sm:min-w-[280px] lg:min-w-[320px] xl:min-w-[400px] relative">
                   <div className="relative w-full group">
                     <input
                       placeholder="Search across all columns..."
@@ -598,19 +598,15 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   </div>
                 </div>
               )}
-
-              {/* Filters Container - Responsive grid layout */}
-              {filterConfig.length > 0 && (
-                <div className="w-full sm:w-auto flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap gap-2 sm:gap-3 order-2">
-                  {filterConfig.map(renderFilter)}
-                </div>
+              {/* Header Actions */}
+              {headerActions && (
+                <div className="flex items-center justify-end gap-3">{headerActions}</div>
               )}
             </div>
-
-            {/* Header Actions - Always on the right on larger screens, below on mobile */}
-            {headerActions && (
-              <div className="flex items-center justify-end sm:justify-start lg:justify-end gap-3 order-3 lg:order-none">
-                {headerActions}
+            {/* Second row: Filters */}
+            {filterConfig.length > 0 && (
+              <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap gap-2 sm:gap-3">
+                {filterConfig.map(renderFilter)}
               </div>
             )}
           </div>

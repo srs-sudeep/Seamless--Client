@@ -84,7 +84,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
           </div>
         </div>
       )}
-      <div className="mx-auto p-0">{children}</div>
+      <div className="mx-auto p-6">{children}</div>
     </Transitions>
   );
 };

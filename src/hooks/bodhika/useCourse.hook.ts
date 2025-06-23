@@ -6,6 +6,7 @@ import {
   deleteCourse,
   getMyInstructorCourses,
   getMyStudentCourses,
+  getCourseFilters,
 } from '@/api';
 import type { GetCoursesParams, CourseListResponse, Course } from '@/types';
 
@@ -58,5 +59,12 @@ export function useDeleteCourse() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] });
     },
+  });
+}
+
+export function useCourseFilters() {
+  return useQuery({
+    queryKey: ['course-filters'],
+    queryFn: getCourseFilters,
   });
 }

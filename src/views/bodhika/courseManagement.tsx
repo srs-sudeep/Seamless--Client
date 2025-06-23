@@ -14,8 +14,8 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import { useCourses, useUpdateCourse, useDeleteCourse } from '@/hooks';
-import { Course, FieldType, FilterConfig } from '@/types';
+import { useCourses, useCourseFilters, useUpdateCourse, useDeleteCourse } from '@/hooks';
+import { FieldType, FilterConfig } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
 const editSchema: FieldType[] = [
@@ -25,68 +25,88 @@ const editSchema: FieldType[] = [
 ];
 
 const CourseManagement = () => {
-  const navigate = useNavigate();
+  // Filter state
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string | undefined>(undefined);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | undefined>(undefined);
+  const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>(undefined);
+  const [selectedSem, setSelectedSem] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  // Fetch filter options
+  const { data: filterOptions } = useCourseFilters();
+
+  // Fetch courses with backend filters
+  const { data, isFetching } = useCourses({
+    search,
+    sem: selectedSem,
+    slot_id: selectedSlotId,
+    room_id: selectedRoomId,
+    course_code: selectedCourseCode,
+    page,
+    page_size: limit,
+  });
+
+  const courses = data?.results ?? [];
+  const totalCount = data?.total ?? 0;
+
+  // FilterConfig for DynamicTable
+  const filterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Course Code',
+        type: 'dropdown',
+        options: filterOptions?.course_codes ?? [],
+        value: selectedCourseCode,
+        onChange: (val: string | undefined) => {
+          setSelectedCourseCode(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Slot',
+        type: 'dropdown',
+        options: filterOptions?.slots?.map(s => s.slot_id) ?? [],
+        value: selectedSlotId,
+        onChange: (val: string | undefined) => {
+          setSelectedSlotId(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Room',
+        type: 'dropdown',
+        options: filterOptions?.rooms?.map(r => r.room_id) ?? [],
+        value: selectedRoomId,
+        onChange: (val: string | undefined) => {
+          setSelectedRoomId(val);
+          setPage(1);
+        },
+      },
+      {
+        column: 'Semester',
+        type: 'dropdown',
+        options: filterOptions?.sems ?? [],
+        value: selectedSem,
+        onChange: (val: string | undefined) => {
+          setSelectedSem(val);
+          setPage(1);
+        },
+      },
+    ],
+    [filterOptions, selectedCourseCode, selectedSlotId, selectedRoomId, selectedSem]
+  );
+
   const [editCourse, setEditCourse] = useState<any | null>(null);
   const [sidePanel, setSidePanel] = useState<{
     type: 'instructors' | 'students' | null;
     course: any | null;
   }>({ type: null, course: null });
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [selectedSemester, setSelectedSemester] = useState<string | undefined>(undefined);
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
-
-  // Fetch courses with filters and pagination
-  const { data, isFetching } = useCourses({
-    search,
-    semester: selectedSemester,
-    rooms: selectedRooms,
-    limit,
-    offset: (page - 1) * limit,
-  });
-
-  const courses: Course[] = Array.isArray(data?.results) ? data!.results : [];
-  const totalCount = data?.total ?? 0;
-
-  // Extract all unique semesters and rooms for filter options
-  const allSemesters = useMemo(() => {
-    const set = new Set<string>();
-    courses.forEach(course => set.add(course.sem));
-    return Array.from(set);
-  }, [courses]);
-
-  const allRooms = useMemo(() => {
-    const set = new Set<string>();
-    courses.forEach(course => {
-      course.slot_room_id?.forEach((slotRoom: any) => {
-        slotRoom.room_id?.forEach((roomId: string) => set.add(roomId));
-      });
-    });
-    return Array.from(set);
-  }, [courses]);
-
-  // FilterConfig for table
-  const filterConfig: FilterConfig[] = [
-    {
-      column: 'Semester',
-      type: 'dropdown',
-      options: allSemesters,
-      value: selectedSemester,
-      onChange: (val: string | undefined) => setSelectedSemester(val),
-    },
-    {
-      column: 'Rooms',
-      type: 'multi-select',
-      options: allRooms,
-      value: selectedRooms,
-      onChange: (val: string[]) => setSelectedRooms(val),
-    },
-  ];
 
   const updateMutation = useUpdateCourse();
   const deleteMutation = useDeleteCourse();
-
+  const navigate = useNavigate();
   const handleEdit = (course: any) => setEditCourse(course);
 
   const handleUpdate = async (formData: Record<string, any>) => {
@@ -230,20 +250,21 @@ const CourseManagement = () => {
     },
   };
 
-  const getTableData = (courses: Course[]) =>
-    courses.map(course => ({
-      'Course Code': course.course_code,
-      Name: course.name,
-      Semester: course.sem,
-      'Slot-Room': '', // handled by customRender
-      Instructors: '', // handled by customRender
-      Students: '', // handled by customRender
-      'View Sessions': '',
-      Edit: '',
-      Delete: '',
-      _row: course,
-      _roomIds: course.slot_room_id ? course.slot_room_id.flatMap(sr => sr.room_id) : [],
-    }));
+  const getTableData = (courses: any[]) =>
+    Array.isArray(courses)
+      ? courses.map(course => ({
+          'Course Code': course.course_code,
+          Name: course.name,
+          Semester: course.sem,
+          'Slot-Room': '',
+          Instructors: '',
+          Students: '',
+          'View Sessions': '',
+          Edit: '',
+          Delete: '',
+          _row: { ...course },
+        }))
+      : [];
 
   return (
     <HelmetWrapper

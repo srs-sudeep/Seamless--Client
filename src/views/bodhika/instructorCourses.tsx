@@ -6,15 +6,19 @@ import { useNavigate } from 'react-router-dom';
 const InstructorCourses = () => {
   const { data: courses = [], isLoading } = useMyInstructorCourses();
   const navigate = useNavigate();
-
+  console.log(courses);
   const getTableData = (courses: any[]) =>
     Array.isArray(courses)
       ? courses.map(course => ({
           'Course Code': course.course_code,
           Name: course.name,
           Semester: course.sem,
-          Slot: course.slot_id,
-          Room: course.room_id,
+          Slot: Array.isArray(course.slot_room_id)
+            ? course.slot_room_id.map((sr: any) => sr.slot_id).join(', ')
+            : '',
+          Room: Array.isArray(course.slot_room_id)
+            ? course.slot_room_id.flatMap((sr: any) => sr.room_id).join(', ')
+            : '',
           _row: course,
         }))
       : [];

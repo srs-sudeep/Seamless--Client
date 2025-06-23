@@ -68,11 +68,11 @@ function findParentIds(
 
 export const ModuleSidebar = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null);
+  const [lastValidModule, setLastValidModule] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Store the last active submodule for each module
   const [lastActiveSubModules, setLastActiveSubModules] = useState<
     Record<string, SidebarSubModuleTreeItem>
   >({});
@@ -82,24 +82,28 @@ export const ModuleSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch sidebar modules from API
   const { sidebarItems: modules = [], isLoading } = useSidebarItems({ is_active: true });
 
-  // Set active module based on current path
   useEffect(() => {
     if (!isLoading && modules.length > 0) {
-      setActiveModule(findModuleIdByPath(modules, location.pathname));
+      const found = findModuleIdByPath(modules, location.pathname);
+      if (found && found !== modules[0]?.id) {
+        setActiveModule(found);
+        setLastValidModule(found);
+      } else if (lastValidModule) {
+        setActiveModule(lastValidModule);
+      } else {
+        setActiveModule(modules[0]?.id ?? null);
+      }
     }
   }, [isLoading, modules, location.pathname]);
 
-  // Track last active submodule when path changes
   useEffect(() => {
     if (!isLoading && modules.length > 0 && activeModule) {
       const module = modules.find(m => m.id === activeModule);
       if (module) {
         const activeSubModule = findActiveSubModule(module.subModules, location.pathname);
         if (activeSubModule) {
-          // Update the last active submodule for this module
           setLastActiveSubModules(prev => ({
             ...prev,
             [activeModule]: activeSubModule,

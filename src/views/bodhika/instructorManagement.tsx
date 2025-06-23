@@ -211,6 +211,21 @@ const InstructorManagement = () => {
         )}
       </Button>
     ),
+    'Instruction Type': (value: string) => {
+      const colorClass =
+        value === 'Lecture'
+          ? 'text-teal-800 bg-teal-100 border-teal-200'
+          : value === 'Tutorial'
+            ? 'text-yellow-800 bg-yellow-100 border-yellow-200'
+            : value === 'Lab'
+              ? 'text-rose-800 bg-rose-100 border-rose-200'
+              : 'text-gray-600';
+      return (
+        <span className={`px-2 py-0.5 rounded-full ${colorClass}  text-xs font-medium border `}>
+          {value}
+        </span>
+      );
+    },
   };
 
   // Table data mapping

@@ -344,7 +344,7 @@ const Sessions = () => {
     return Array.from(set);
   }, [sessions]);
 
-  // 2. Add filterConfig for Rooms
+  // 2. Add filterConfig for Rooms and Date Range
   const filterConfig: FilterConfig[] = [
     {
       column: 'Rooms',
@@ -360,6 +360,10 @@ const Sessions = () => {
       column: 'Instructor Ldap',
       type: 'dropdown',
       options: allInstructorLdaps,
+    },
+    {
+      column: 'Date',
+      type: 'date-range',
     },
   ];
 
@@ -380,7 +384,7 @@ const Sessions = () => {
           ...customRender,
           'View Attendance': customRender['View Attendance'],
         }}
-        filterConfig={filterConfig} // 3. Pass filterConfig here
+        filterConfig={filterConfig}
       />
 
       {/* Attendance Side Panel */}

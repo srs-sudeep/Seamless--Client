@@ -42,7 +42,7 @@ export function useSessionAttendance(session_id?: string) {
     queryKey: ['sessionAttendance', session_id],
     queryFn: () => getSessionAttendance(session_id!),
     enabled: !!session_id,
-    // refetchInterval: 1000,
+    refetchInterval: 1000,
   });
 }
 

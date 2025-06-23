@@ -33,8 +33,7 @@ const formatDateTime = (dateString: string) => {
 
 const CourseIndi = () => {
   const { course_id } = useParams<{ course_id: string }>();
-  const { data: sessions = [], isLoading } = useSessionsByCourseId(course_id);
-  // State for attendance side panel
+  const { data: sessions = [], isFetching } = useSessionsByCourseId(course_id);
   const [editSessionId, setEditSessionId] = useState<string | null>(null);
   const [attendanceTab, setAttendanceTab] = useState<
     'registered_present' | 'registered_absent' | 'unregistered_present'
@@ -245,34 +244,28 @@ const CourseIndi = () => {
       heading={`Sessions for Course: ${course_id}`}
       subHeading="All sessions for this course."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Sessions"
-            data={getTableData(sessions).map(row => ({
-              ...row,
-              ViewAttendance: customRender.ViewAttendance(row['Session Id'], row),
-            }))}
-            customRender={{
-              'Session Id': customRender['Session Id'],
-              'Start Time': customRender['Start Time'],
-              'End Time': customRender['End Time'],
-              Rooms: customRender['Rooms'],
-              Status: customRender['Status'],
-            }}
-          />
-        )}
+      <DynamicTable
+        tableHeading="Sessions"
+        data={getTableData(sessions).map(row => ({
+          ...row,
+          ViewAttendance: customRender.ViewAttendance(row['Session Id'], row),
+        }))}
+        isLoading={isFetching}
+        customRender={{
+          'Session Id': customRender['Session Id'],
+          'Start Time': customRender['Start Time'],
+          'End Time': customRender['End Time'],
+          Rooms: customRender['Rooms'],
+          Status: customRender['Status'],
+        }}
+      />
 
-        {/* Attendance Side Panel */}
-        <Sheet open={!!editSessionId} onOpenChange={open => !open && setEditSessionId(null)}>
-          <SheetTitle style={{ display: 'none' }} />
-          <SheetContent
-            side="right"
-            className="
+      {/* Attendance Side Panel */}
+      <Sheet open={!!editSessionId} onOpenChange={open => !open && setEditSessionId(null)}>
+        <SheetTitle style={{ display: 'none' }} />
+        <SheetContent
+          side="right"
+          className="
               p-0 
               fixed right-0 top-1/2 -translate-y-1/2
               min-h-fit max-h-[100vh]
@@ -283,222 +276,221 @@ const CourseIndi = () => {
               flex flex-col
               rounded-l-xl
             "
-            style={{ width: '90vw', maxWidth: '1200px' }}
-          >
-            <div className="flex-1 overflow-y-auto">
-              <div className="p-8 space-y-6">
-                {editSessionId && (
-                  <>
-                    {/* Header */}
-                    <div className="border-b border-border pb-4">
-                      <h2 className="text-2xl font-bold text-foreground mb-2">Attendance</h2>
-                      <p className="text-sm text-muted-foreground">
-                        Attendance for session <span className="font-mono">{editSessionId}</span>
-                      </p>
-                    </div>
-                    {/* Attendance Tabs */}
-                    <Tabs
-                      value={attendanceTab}
-                      onValueChange={v => {
-                        setAttendanceTab(v as any);
-                        setAttendanceSubTab('validated');
-                      }}
-                      className="w-full"
-                    >
-                      <TabsList className="mb-4">
-                        <TabsTrigger value="registered_present">
-                          Registered Present ({attendances.registered_present?.length || 0})
-                        </TabsTrigger>
-                        <TabsTrigger value="registered_absent">
-                          Registered Absent ({attendances.registered_absent?.length || 0})
-                        </TabsTrigger>
-                        <TabsTrigger value="unregistered_present">
-                          Unregistered Present ({attendances.unregistered_present?.length || 0})
-                        </TabsTrigger>
-                      </TabsList>
-                      {/* Sub Tabs for all three categories */}
-                      <TabsContent value="registered_present">
-                        <Tabs
-                          value={attendanceSubTab}
-                          onValueChange={v => setAttendanceSubTab(v as any)}
-                          className="w-full"
-                        >
-                          <TabsList className="mb-2">
-                            <TabsTrigger value="validated">Validated</TabsTrigger>
-                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                            <TabsTrigger value="all">All Records</TabsTrigger>
-                          </TabsList>
-                          <TabsContent value="validated">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Validated"
-                                data={getRegisteredPresentTableData(
-                                  attendances.registered_present || []
-                                )}
-                                customRender={validatedCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="latest">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Latest Only"
-                                data={getRegisteredPresentTableData(
-                                  attendances.registered_present || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="all">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="All Records"
-                                data={getRegisteredPresentTableData(
-                                  attendances.registered_present || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                        </Tabs>
-                      </TabsContent>
-                      <TabsContent value="registered_absent">
-                        <Tabs
-                          value={attendanceSubTab}
-                          onValueChange={v => setAttendanceSubTab(v as any)}
-                          className="w-full"
-                        >
-                          <TabsList className="mb-2">
-                            <TabsTrigger value="validated">Validated</TabsTrigger>
-                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                            <TabsTrigger value="all">All Records</TabsTrigger>
-                          </TabsList>
-                          <TabsContent value="validated">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Validated"
-                                data={getRegisteredAbsentTableData(
-                                  attendances.registered_absent || []
-                                )}
-                                customRender={validatedCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="latest">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Latest Only"
-                                data={getRegisteredAbsentTableData(
-                                  attendances.registered_absent || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="all">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="All Records"
-                                data={getRegisteredAbsentTableData(
-                                  attendances.registered_absent || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                        </Tabs>
-                      </TabsContent>
-                      <TabsContent value="unregistered_present">
-                        <Tabs
-                          value={attendanceSubTab}
-                          onValueChange={v => setAttendanceSubTab(v as any)}
-                          className="w-full"
-                        >
-                          <TabsList className="mb-2">
-                            <TabsTrigger value="validated">Validated</TabsTrigger>
-                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                            <TabsTrigger value="all">All Records</TabsTrigger>
-                          </TabsList>
-                          <TabsContent value="validated">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Validated"
-                                data={getUnregisteredPresentTableData(
-                                  attendances.unregistered_present || []
-                                )}
-                                customRender={validatedCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="latest">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="Latest Only"
-                                data={getUnregisteredPresentTableData(
-                                  attendances.unregistered_present || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                          <TabsContent value="all">
-                            {attendanceLoading ? (
-                              <div className="flex justify-center items-center h-40">
-                                <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                              </div>
-                            ) : (
-                              <DynamicTable
-                                tableHeading="All Records"
-                                data={getUnregisteredPresentTableData(
-                                  attendances.unregistered_present || []
-                                )}
-                                customRender={attendanceCustomRender}
-                              />
-                            )}
-                          </TabsContent>
-                        </Tabs>
-                      </TabsContent>
-                    </Tabs>
-                  </>
-                )}
-              </div>
+          style={{ width: '90vw', maxWidth: '1200px' }}
+        >
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-8 space-y-6">
+              {editSessionId && (
+                <>
+                  {/* Header */}
+                  <div className="border-b border-border pb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">Attendance</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Attendance for session <span className="font-mono">{editSessionId}</span>
+                    </p>
+                  </div>
+                  {/* Attendance Tabs */}
+                  <Tabs
+                    value={attendanceTab}
+                    onValueChange={v => {
+                      setAttendanceTab(v as any);
+                      setAttendanceSubTab('validated');
+                    }}
+                    className="w-full"
+                  >
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="registered_present">
+                        Registered Present ({attendances.registered_present?.length || 0})
+                      </TabsTrigger>
+                      <TabsTrigger value="registered_absent">
+                        Registered Absent ({attendances.registered_absent?.length || 0})
+                      </TabsTrigger>
+                      <TabsTrigger value="unregistered_present">
+                        Unregistered Present ({attendances.unregistered_present?.length || 0})
+                      </TabsTrigger>
+                    </TabsList>
+                    {/* Sub Tabs for all three categories */}
+                    <TabsContent value="registered_present">
+                      <Tabs
+                        value={attendanceSubTab}
+                        onValueChange={v => setAttendanceSubTab(v as any)}
+                        className="w-full"
+                      >
+                        <TabsList className="mb-2">
+                          <TabsTrigger value="validated">Validated</TabsTrigger>
+                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                          <TabsTrigger value="all">All Records</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="validated">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Validated"
+                              data={getRegisteredPresentTableData(
+                                attendances.registered_present || []
+                              )}
+                              customRender={validatedCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="latest">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Latest Only"
+                              data={getRegisteredPresentTableData(
+                                attendances.registered_present || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="all">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="All Records"
+                              data={getRegisteredPresentTableData(
+                                attendances.registered_present || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </TabsContent>
+                    <TabsContent value="registered_absent">
+                      <Tabs
+                        value={attendanceSubTab}
+                        onValueChange={v => setAttendanceSubTab(v as any)}
+                        className="w-full"
+                      >
+                        <TabsList className="mb-2">
+                          <TabsTrigger value="validated">Validated</TabsTrigger>
+                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                          <TabsTrigger value="all">All Records</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="validated">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Validated"
+                              data={getRegisteredAbsentTableData(
+                                attendances.registered_absent || []
+                              )}
+                              customRender={validatedCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="latest">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Latest Only"
+                              data={getRegisteredAbsentTableData(
+                                attendances.registered_absent || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="all">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="All Records"
+                              data={getRegisteredAbsentTableData(
+                                attendances.registered_absent || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </TabsContent>
+                    <TabsContent value="unregistered_present">
+                      <Tabs
+                        value={attendanceSubTab}
+                        onValueChange={v => setAttendanceSubTab(v as any)}
+                        className="w-full"
+                      >
+                        <TabsList className="mb-2">
+                          <TabsTrigger value="validated">Validated</TabsTrigger>
+                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                          <TabsTrigger value="all">All Records</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="validated">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Validated"
+                              data={getUnregisteredPresentTableData(
+                                attendances.unregistered_present || []
+                              )}
+                              customRender={validatedCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="latest">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="Latest Only"
+                              data={getUnregisteredPresentTableData(
+                                attendances.unregistered_present || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                        <TabsContent value="all">
+                          {attendanceLoading ? (
+                            <div className="flex justify-center items-center h-40">
+                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <DynamicTable
+                              tableHeading="All Records"
+                              data={getUnregisteredPresentTableData(
+                                attendances.unregistered_present || []
+                              )}
+                              customRender={attendanceCustomRender}
+                            />
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </TabsContent>
+                  </Tabs>
+                </>
+              )}
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </HelmetWrapper>
   );
 };

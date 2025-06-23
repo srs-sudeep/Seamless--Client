@@ -50,7 +50,7 @@ const CourseIndi = () => {
   };
 
   const { data: attendances = {}, isLoading: attendanceLoading } = useSessionAttendance(
-    editSessionId || undefined
+    typeof editSessionId === 'string' && editSessionId ? editSessionId : undefined
   ) as {
     data: AttendanceData;
     isLoading: boolean;

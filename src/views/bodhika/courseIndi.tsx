@@ -243,6 +243,7 @@ const CourseIndi = () => {
       title="Course Sessions | Seamless"
       heading={`Sessions for Course: ${course_id}`}
       subHeading="All sessions for this course."
+      isBackbuttonVisible={true}
     >
       <DynamicTable
         tableHeading="Sessions"

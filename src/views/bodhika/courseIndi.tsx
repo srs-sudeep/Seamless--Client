@@ -140,6 +140,7 @@ const CourseIndi = () => {
           'Session Id': session.session_id,
           'Start Time': session.start_time,
           'End Time': session.end_time,
+          'Instructor Ldap': session.instructor_ldap,
           Rooms: Array.isArray(session.rooms)
             ? session.rooms
                 .map(

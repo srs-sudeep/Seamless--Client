@@ -17,6 +17,7 @@ import {
 import { useSessions, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
+import { FilterConfig } from '@/types';
 
 const truncateId = (id: string, len = 10) =>
   id && id.length > len ? id.slice(0, len) + '...' : id;
@@ -289,6 +290,33 @@ const Sessions = () => {
     setAttendanceSubTab('validated');
   };
 
+  // 1. Extract all unique room IDs for filter options
+  const allRoomIds = useMemo(() => {
+    const set = new Set<string>();
+    sessions.forEach(session => {
+      if (Array.isArray(session.rooms)) {
+        session.rooms.forEach((room: any) => {
+          if (room?.room_id) set.add(room.room_id);
+        });
+      }
+    });
+    return Array.from(set);
+  }, [sessions]);
+
+  // 2. Add filterConfig for Rooms
+  const filterConfig: FilterConfig[] = [
+    {
+      column: 'Rooms',
+      type: 'multi-select',
+      options: allRoomIds,
+    },
+    {
+      column: 'Status',
+      type: 'dropdown',
+      options: ['completed', 'ongoing'],
+    },
+  ];
+
   return (
     <HelmetWrapper
       title="All Sessions | Seamless"
@@ -306,6 +334,7 @@ const Sessions = () => {
           ...customRender,
           'View Attendance': customRender['View Attendance'],
         }}
+        filterConfig={filterConfig} // 3. Pass filterConfig here
       />
 
       {/* Attendance Side Panel */}

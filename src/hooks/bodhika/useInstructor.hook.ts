@@ -5,6 +5,7 @@ import {
   updateInstructor,
   deleteInstructor,
   getInstructorFilters,
+  downloadCSV,
 } from '@/api';
 import type {
   GetInstructorsParams,
@@ -54,5 +55,13 @@ export function useDeleteInstructor() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['instructors'] });
     },
+  });
+}
+
+export function useDownloadCSV(course_id: string) {
+  return useQuery<any>({
+    queryKey: ['csvData', course_id],
+    queryFn: () => downloadCSV(course_id),
+    enabled: !!course_id,
   });
 }

@@ -1,14 +1,20 @@
-import { HelmetWrapper, DynamicTable } from '@/components';
-import { useMyInstructorCourses } from '@/hooks';
+import { HelmetWrapper, DynamicTable, Button } from '@/components';
+import { useDownloadCSV, useMyInstructorCourses } from '@/hooks';
 import { FilterConfig } from '@/types';
-import { Loader2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { Download, Loader2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const InstructorCourses = () => {
   const { data: courses = [], isLoading } = useMyInstructorCourses();
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string>('');
   const navigate = useNavigate();
-  console.log(courses);
+  const handleCSVDownload = async (row: any) => {
+    setSelectedCourseCode(row?._row?.course_id);
+  };
+
+  const { data: csvData = {} } = useDownloadCSV(selectedCourseCode);
+
   const getTableData = (courses: any[]) =>
     Array.isArray(courses)
       ? courses.map(course => ({
@@ -21,9 +27,25 @@ const InstructorCourses = () => {
           Room: Array.isArray(course.slot_room_id)
             ? course.slot_room_id.flatMap((sr: any) => sr.room_id).join(', ')
             : '',
+          'Download CSV': '',
           _row: course,
         }))
       : [];
+
+  const customRender = {
+    'Download CSV': (_: any, _row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={e => {
+          e.stopPropagation();
+          handleCSVDownload(_row);
+        }}
+      >
+        <Download className="w-4 h-4" />
+      </Button>
+    ),
+  };
 
   // 1. Extract all unique semesters for filter options
   const allSemesters = useMemo(() => {
@@ -102,6 +124,7 @@ const InstructorCourses = () => {
             data={getTableData(courses)}
             onRowClick={row => navigate(`/bodhika/course-session/${row._row.course_id}`)}
             filterConfig={filterConfig} // 3. Pass filterConfig here
+            customRender={customRender}
           />
         )}
       </div>

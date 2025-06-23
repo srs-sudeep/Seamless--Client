@@ -226,39 +226,57 @@ const RouteManagement = () => {
     },
   ];
 
-  // Recursive filter function for submodules
-  const filterTableData = (data: any[]): any[] => {
-    return data
-      .map(row => {
-        // Recursively filter children
-        let filteredChildren = [];
-        if (Array.isArray(row._subModules) && row._subModules.length > 0) {
-          filteredChildren = filterTableData(row._subModules);
+  // Recursive filter function for modules and submodules
+  const recursiveFilter = (items: any[]): any[] => {
+    const search = globalSearch.trim().toLowerCase();
+
+    return items
+      .map(mod => {
+        // Prepare submodules for recursive filtering
+        const subModules = mod.subModules || mod._subModules || [];
+        const filteredSubModules = recursiveFilter(subModules);
+
+        // Prepare row data for filtering
+        const row = mod._row || mod;
+        const roles = (row.roles || row.Roles || []).map((role: any) =>
+          typeof role === 'object' ? role.role_name || role.name || role.label || role : role
+        );
+        const statusValue = (row.isActive ?? row.Status) ? 'Active' : 'Inactive';
+        const isSidebarValue = String(row.is_sidebar ?? row['Is Sidebar']);
+
+        // Check global search match
+        let matches = true;
+        if (search) {
+          matches =
+            (row.label || '').toLowerCase().includes(search) ||
+            (row.path || '').toLowerCase().includes(search) ||
+            (row.icon || '').toLowerCase().includes(search) ||
+            roles.some((role: any) => (role || '').toLowerCase().includes(search));
         }
 
-        // Filtering logic for this row
-        let matches = true;
-        if (globalFilters.Status) {
-          const statusValue = row.Status ? 'Active' : 'Inactive';
-          if (statusValue !== globalFilters.Status) matches = false;
+        // Check global filters
+        if (matches && globalFilters.Status) {
+          matches = statusValue === globalFilters.Status;
         }
-        if (globalFilters['Is Sidebar']) {
-          if (String(row['Is Sidebar']) !== globalFilters['Is Sidebar']) matches = false;
+        if (matches && globalFilters['Is Sidebar']) {
+          matches = isSidebarValue === globalFilters['Is Sidebar'];
         }
         if (
+          matches &&
           globalFilters.Roles &&
           Array.isArray(globalFilters.Roles) &&
           globalFilters.Roles.length > 0
         ) {
-          const rowRoles = (row.Roles || []).map((r: any) => r.label);
-          if (!globalFilters.Roles.some((role: string) => rowRoles.includes(role))) matches = false;
+          const rowRoleLabels = roles.map((r: any) => (typeof r === 'object' ? r.label : r));
+          matches = globalFilters.Roles.some((role: string) => rowRoleLabels.includes(role));
         }
 
-        // Keep row if it matches or has matching children
-        if (matches || filteredChildren.length > 0) {
+        // Keep node if it matches or has matching children
+        if (matches || filteredSubModules.length > 0) {
           return {
-            ...row,
-            _subModules: filteredChildren,
+            ...mod,
+            subModules: filteredSubModules,
+            _subModules: filteredSubModules, // for nested tables
           };
         }
         return null;
@@ -267,28 +285,10 @@ const RouteManagement = () => {
   };
 
   // Filtered sidebarItems based on global search
-  const filteredSidebarItems = useMemo(() => {
-    if (!globalSearch.trim()) return sidebarItems;
-    const search = globalSearch.toLowerCase();
-    // Filter modules and their submodules
-    return sidebarItems
-      .map((mod: any) => {
-        const filteredSubModules = (mod.subModules || []).filter(
-          (sub: any) =>
-            (sub.label || '').toLowerCase().includes(search) ||
-            (sub.path || '').toLowerCase().includes(search) ||
-            (sub.icon || '').toLowerCase().includes(search) ||
-            (sub.roles || []).some((role: any) =>
-              (role.role_name || role.name || role.label || '').toLowerCase().includes(search)
-            )
-        );
-        if (mod.label.toLowerCase().includes(search) || filteredSubModules.length > 0) {
-          return { ...mod, subModules: filteredSubModules };
-        }
-        return null;
-      })
-      .filter(Boolean);
-  }, [sidebarItems, globalSearch]);
+  const filteredSidebarItems = useMemo(
+    () => recursiveFilter(sidebarItems),
+    [sidebarItems, globalSearch, globalFilters]
+  );
 
   // Render global filters (remove badges from inside the role filter)
   const renderGlobalFilters = () => (
@@ -594,7 +594,7 @@ const RouteManagement = () => {
     if (!row._subModules || row._subModules.length === 0) return null;
     return (
       <DynamicTable
-        data={filterTableData(getSubModuleTableData(row._subModules))}
+        data={getSubModuleTableData(recursiveFilter(row._subModules))}
         customRender={customRender}
         expandableRows={true}
         expandedComponent={renderExpandedComponent}
@@ -619,7 +619,7 @@ const RouteManagement = () => {
         <div key={mod.id} className="mb-8">
           <DynamicTable
             tableHeading={mod.label}
-            data={filterTableData(getSubModuleTableData(mod.subModules || []))}
+            data={getSubModuleTableData(mod.subModules || [])}
             customRender={customRender}
             expandableRows={true}
             expandedComponent={renderExpandedComponent}

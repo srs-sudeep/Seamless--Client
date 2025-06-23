@@ -212,7 +212,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
-                <ScrollArea className="h-16">
+                <ScrollArea className="min-h-16">
                   {filter.options?.map(opt => (
                     <div
                       key={opt}

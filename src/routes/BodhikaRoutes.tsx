@@ -16,6 +16,7 @@ const CourseIndi = lazy(() => import('@/views/bodhika/courseIndi'));
 const RoomSession = lazy(() => import('@/views/bodhika/RoomSession'));
 const InstructorCourses = lazy(() => import('@/views/bodhika/instructorCourses'));
 const StudentCourses = lazy(() => import('@/views/bodhika/studentCourses'));
+const CourseAnalysis = lazy(() => import('@/views/bodhika/courseAnalysis'));
 
 const BodhikaRoutes: RouteObject = {
   path: '/bodhika',
@@ -74,6 +75,10 @@ const BodhikaRoutes: RouteObject = {
     {
       path: 'student-courses',
       element: <StudentCourses />,
+    },
+    {
+      path: 'course-analysis',
+      element: <CourseAnalysis />,
     },
   ],
 };

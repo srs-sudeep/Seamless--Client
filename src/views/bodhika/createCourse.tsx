@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import Papa from 'papaparse';
-import { HelmetWrapper, DynamicForm, toast } from '@/components';
+import { DynamicForm, HelmetWrapper, toast } from '@/components';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useCreateCourse } from '@/hooks';
 import { type FieldType as BaseFieldType } from '@/types';
+import { Download, FileSpreadsheet, Upload } from 'lucide-react';
+import Papa from 'papaparse';
+import { useState } from 'react';
 
 type FieldType = BaseFieldType & {
   fields?: FieldType[];
@@ -262,62 +265,78 @@ const CreateCourse = () => {
       heading="Create Course"
       subHeading="Add a new course with instructors."
     >
-      {/* CSV Upload Button */}
-      <div className="mb-8 p-6 rounded-xl shadow-lg bg-white border border-gray-200 max-w-7xl w-full">
-        <div className="flex items-center gap-4 mb-0">
-          <button
-            type="button"
-            onClick={handleDownloadCsvFormat}
-            className="flex items-center gap-2 px-4 py-2 rounded bg-primary text-white text-sm shadow hover:bg-primary-dark transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      {/* CSV Upload Section with shadcn/ui components */}
+      <Card className="mb-8 border border-border dark:bg-gray-800/50">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={handleDownloadCsvFormat}
+              className="w-full sm:w-auto flex items-center gap-2 bg-background dark:bg-gray-700/50 border-muted-foreground/20 hover:bg-muted hover:text-accent-foreground transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
-              />
-            </svg>
-            Download CSV Format
-          </button>
-          {/* Custom Upload Button */}
-          <label className="flex items-center gap-2 px-4 py-2 rounded bg-primary text-white text-sm shadow hover:bg-primary-dark transition cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v16h16V4H4zm4 8h8m-4-4v8"
-              />
-            </svg>
-            Upload File
-            <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
-          </label>
-        </div>
-      </div>
+              <Download className="h-4 w-4" />
+              <span>Download CSV Template</span>
+            </Button>
 
-      <div className=" bg-background rounded-xl">
-        <DynamicForm
-          schema={schema}
-          onSubmit={handleSubmit}
-          submitButtonText={createMutation.isPending ? 'Creating...' : 'Create Course'}
-          disabled={createMutation.isPending}
-          defaultValues={formValues}
-          onChange={handleFormChange}
-        />
-      </div>
+            <div className="relative w-full sm:w-auto">
+              <Button
+                variant="default"
+                className="w-full sm:w-auto flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+              >
+                <Upload className="h-4 w-4" />
+                <span>Upload CSV File</span>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleCsvUpload}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  aria-label="Upload CSV file"
+                />
+              </Button>
+            </div>
+
+            <div className="hidden sm:block">
+              <FileSpreadsheet className="h-5 w-5 text-muted-foreground" />
+            </div>
+          </div>
+
+          <div className="mt-4 text-sm text-muted-foreground bg-muted/30 dark:bg-gray-700/30 p-3 rounded-md">
+            <p className="flex items-start">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2 text-blue-500 flex-shrink-0"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Upload a CSV file with the required columns:{' '}
+              <span className="font-mono font-medium">course_code</span>,{' '}
+              <span className="font-mono font-medium">name</span>,{' '}
+              <span className="font-mono font-medium">sem</span>,{' '}
+              <span className="font-mono font-medium">slot_room_id</span>, and{' '}
+              <span className="font-mono font-medium">instructors</span>.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border border-border dark:bg-gray-800/50">
+        <CardContent className="p-0">
+          <DynamicForm
+            schema={schema}
+            onSubmit={handleSubmit}
+            submitButtonText={createMutation.isPending ? 'Creating...' : 'Create Course'}
+            disabled={createMutation.isPending}
+            defaultValues={formValues}
+            onChange={handleFormChange}
+          />
+        </CardContent>
+      </Card>
     </HelmetWrapper>
   );
 };

@@ -1,19 +1,29 @@
 import { HelmetWrapper, DynamicTable, Button } from '@/components';
 import { useDownloadCSV, useMyInstructorCourses } from '@/hooks';
+import { downloadAttendanceExcel } from '@/lib/downloadAttendanceExcel';
 import { FilterConfig } from '@/types';
 import { Download, Loader2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const InstructorCourses = () => {
   const { data: courses = [], isLoading } = useMyInstructorCourses();
   const [selectedCourseCode, setSelectedCourseCode] = useState<string>('');
   const navigate = useNavigate();
+
   const handleCSVDownload = async (row: any) => {
-    setSelectedCourseCode(row?._row?.course_id);
+    const courseId = row?._row?.course_id;
+    setSelectedCourseCode(courseId);
   };
 
   const { data: csvData = {} } = useDownloadCSV(selectedCourseCode);
+
+  useEffect(() => {
+    if (csvData && selectedCourseCode) {
+      downloadAttendanceExcel(csvData);
+      setSelectedCourseCode('');
+    }
+  }, [csvData, selectedCourseCode]);
 
   const getTableData = (courses: any[]) =>
     Array.isArray(courses)

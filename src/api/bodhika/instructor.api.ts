@@ -55,7 +55,7 @@ export async function deleteInstructor(instructor_ldap: string): Promise<void> {
   await apiClient.delete(`/bodhika/api/v1/courses/delete-instructor/${instructor_ldap}`);
 }
 
-export async function downloadCSV(course_id: string) {
+export async function fetchCourseData(course_id: string) {
   const { data } = await apiClient.get(
     `/bodhika/api/v1/sessions/consolidated-attendance/${course_id}`
   );

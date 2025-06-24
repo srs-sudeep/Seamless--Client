@@ -42,9 +42,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   defaultValues,
   submitButtonText = 'Submit',
   disabled,
-  onChange, // <-- Add this line
+  onChange,
 }) => {
-  // If editing and timerange, convert string to {start, end} for picker
   const initialFormData = { ...(defaultValues || {}) };
   schema.forEach(field => {
     if (
@@ -199,9 +198,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     if (defaultValues) {
       setFormData(defaultValues);
     }
-  }, [defaultValues]); // <- Now it updates when formValues changes
+  }, [defaultValues]);
 
-  // Group fields by section
   const sectionMap: Record<string, FieldType[]> = {};
   schema.forEach(field => {
     const section = field.section || 'General';

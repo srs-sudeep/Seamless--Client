@@ -5,3 +5,9 @@ export interface Attendance {
   insti_id: string;
   remark: string;
 }
+
+export interface Bulk {
+  device_id: string;
+  insti_ids: string[];
+  remark: string;
+}

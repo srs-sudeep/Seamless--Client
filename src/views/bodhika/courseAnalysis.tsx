@@ -42,13 +42,17 @@ const CourseAnalysis = () => {
       'Attendance %': course.attendance_percentage,
       'Consecutive Absences': course.consecutive_absence_count,
       Status: course.has_consecutive_absences ? (
-        <span className="px-2 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium border border-amber-200">
-          Has Consecutive Absences
-        </span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-amber-500 dark:bg-red-700"></div>
+          <span className="text-amber-700 dark:text-red-700 text-xs font-medium">
+            Consecutive Absences
+          </span>
+        </div>
       ) : (
-        <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium border border-green-200">
-          No Consecutive Absences
-        </span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+          <span className="text-green-700 text-xs font-medium">Regular Attendance</span>
+        </div>
       ),
       Actions: (
         <Button

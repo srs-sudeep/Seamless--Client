@@ -212,7 +212,7 @@ const StudentCourses = () => {
   };
 
   // Enhanced color scheme with dark mode support
-  const getSlotTypeColor = (duration: number, instructionType: string = '') => {
+  const getSlotTypeColor = (duration: number) => {
     if (duration >= 3) {
       // Long sessions (3+ hours) - Labs, Projects
       return {
@@ -257,11 +257,9 @@ const StudentCourses = () => {
     slot_id: string,
     rooms: string[],
     duration: number,
-    isMultiple: boolean,
-    colspan: number
+    isMultiple: boolean
   ) => {
-    const instructionType = course.instructors?.[0]?.instruction_type || '';
-    const colors = getSlotTypeColor(duration, instructionType);
+    const colors = getSlotTypeColor(duration);
     const cardClass = `rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${colors.bg} border-2 ${colors.border} ${colors.hover} ${isMultiple ? 'mb-3 last:mb-0' : ''}`;
 
     return (
@@ -336,7 +334,7 @@ const StudentCourses = () => {
             </div>
           )}
           {cell.courses.map(({ course, slot_id, rooms, duration }) =>
-            renderCourseCard(course, slot_id, rooms, duration, hasMultipleCourses, cell.colspan)
+            renderCourseCard(course, slot_id, rooms, duration, hasMultipleCourses)
           )}
         </div>
       </td>

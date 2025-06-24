@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Plus, Download, Upload } from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -41,6 +41,65 @@ const StudentsManagement = () => {
   const { data: students = [], isFetching } = useStudents();
   const createMutation = useCreateStudent();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  // CSV Template headers
+  const csvTemplate = 'student_id,course_code,sem\n';
+
+  // Ref for file input
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Download CSV template
+  const handleDownloadTemplate = () => {
+    const blob = new Blob([csvTemplate], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'students_template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Handle CSV import
+  const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async event => {
+      const text = event.target?.result as string;
+      const lines = text.split('\n').filter(Boolean);
+      const [header, ...rows] = lines;
+      const headers = header.split(',').map(h => h.trim());
+      const importedStudents = rows.map(row => {
+        const values = row.split(',').map(v => v.trim());
+        const student: any = {};
+        headers.forEach((h, i) => {
+          student[h] = values[i];
+        });
+        return student;
+      });
+      // Group by student_id
+      const grouped: Record<string, { student_id: string; courses: string[] }> = {};
+      importedStudents.forEach(s => {
+        if (!s.student_id || !s.course_code || !s.sem) return;
+        if (!grouped[s.student_id]) {
+          grouped[s.student_id] = { student_id: s.student_id, courses: [] };
+        }
+        grouped[s.student_id].courses.push(`${s.course_code}-${s.sem}`);
+      });
+      // Bulk create students (in parallel, and wait for all)
+      await Promise.all(
+        Object.values(grouped).map(student =>
+          createMutation.mutateAsync({
+            student_id: student.student_id,
+            course_ids: student.courses,
+          })
+        )
+      );
+      toast({ title: 'Students imported' });
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
 
   const handleCreate = async (formData: Record<string, any>) => {
     // Join course_code and sem for each course
@@ -117,6 +176,21 @@ const StudentsManagement = () => {
                 />
               </DialogContent>
             </Dialog>
+            <Button variant="outline" onClick={handleDownloadTemplate}>
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV Template
+            </Button>
+            <Button onClick={() => fileInputRef.current?.click()}>
+              <Upload className="w-4 h-4 mr-2" />
+              Import CSV
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={handleImportCSV}
+            />
           </div>
         }
       />

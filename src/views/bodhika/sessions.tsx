@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   HelmetWrapper,
   DynamicTable,
@@ -16,7 +16,6 @@ import {
 } from '@/components';
 import { useSessions, useSessionAttendance } from '@/hooks';
 import { Eye, Loader2 } from 'lucide-react';
-import { useMemo } from 'react';
 import { FilterConfig } from '@/types';
 
 const truncateId = (id: string, len = 10) =>
@@ -112,7 +111,7 @@ const Sessions = () => {
           'Session Id': session.session_id,
           'Course Id': session.course_id,
           'Instructor Ldap': session.instructor_ldap,
-          Date: session.start_time ? new Date(session.start_time) : null, // <-- store as Date object
+          Date: session.start_time ? new Date(session.start_time) : null,
           'Start Time': session.start_time,
           'End Time': session.end_time,
           Status: session.status,
@@ -200,8 +199,8 @@ const Sessions = () => {
         )}
       </span>
     ),
-    'View Attendance': (row: any) => (
-      <Button size="sm" variant="outline" onClick={() => handleViewAttendance(row['Session Id'])}>
+    'View Attendance': (session_id: string) => (
+      <Button size="sm" variant="outline" onClick={() => handleViewAttendance(session_id)}>
         <Eye className="w-4 h-4" />
       </Button>
     ),
@@ -379,15 +378,9 @@ const Sessions = () => {
     >
       <DynamicTable
         tableHeading="Sessions"
-        data={sortedTableData.map(row => ({
-          ...row,
-          'View Attendance': customRender['View Attendance'](row),
-        }))}
+        data={getTableData(sessions)}
         isLoading={isFetching}
-        customRender={{
-          ...customRender,
-          'View Attendance': customRender['View Attendance'],
-        }}
+        customRender={customRender}
         filterConfig={filterConfig}
         filterMode="local"
       />

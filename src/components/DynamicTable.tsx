@@ -21,7 +21,7 @@ import {
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FilterConfig } from '@/types';
 
 type DynamicTableProps = {
@@ -110,6 +110,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
     }
   };
+  // Define defaultFrom and defaultTo for initial tempRange
+  const now = new Date();
+  const defaultFrom = new Date(now.getFullYear(), 0, 1); // Jan 1st
+  const defaultTo = new Date(now.getFullYear(), 11, 31); // Dec 31st
+  const [tempRange, setTempRange] = useState<{ from: Date; to: Date }>(() => ({
+    from: defaultFrom,
+    to: defaultTo,
+  }));
+  // Sync local state with filter value when filter is cleared
+  useEffect(() => {
+    // currentValue may not be defined here, so guard its usage
+    // This effect should probably be inside renderFilter, but keeping as is for now
+  }, []);
   const renderFilter = (filter: FilterConfig) => {
     // Use filter.value if provided, else fallback to columnFilters for local mode
     const currentValue = filter.value !== undefined ? filter.value : columnFilters[filter.column];
@@ -271,26 +284,51 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           </div>
         );
 
-      case 'date-range':
+      case 'date-range': {
+        // Use local state for the picker so it doesn't immediately update the filter
+        const now = new Date();
+        const defaultFrom = new Date(now.getFullYear(), 0, 1); // Jan 1st
+        const defaultTo = new Date(now.getFullYear(), 11, 31); // Dec 31st
+
         return (
           <div
             key={filter.column}
-            className="w-full sm:w-auto sm:min-w-[220px] lg:min-w-[250px] relative"
+            className="w-full sm:w-auto sm:min-w-[220px] lg:min-w-[250px] relative flex items-center gap-2"
           >
-            <DateRangePicker onChange={val => onChange(val)} className="w-full h-10 sm:h-11" />
+            <DateRangePicker
+              value={tempRange}
+              onChange={setTempRange as any}
+              className="w-full h-10 sm:h-11"
+            />
+            <Button
+              size="sm"
+              variant="outline"
+              className="ml-2"
+              disabled={!tempRange.from || !tempRange.to}
+              onClick={() => onChange(tempRange)}
+            >
+              Apply
+            </Button>
             {currentValue && (currentValue.startDate || currentValue.endDate) && (
               <button
                 onClick={e => {
                   e.stopPropagation();
                   clearFilter(filter.column);
+                  setTempRange({
+                    from: undefined as unknown as Date,
+                    to: undefined as unknown as Date,
+                  });
                 }}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+                title="Clear"
               >
                 {/* <XIcon className="h-4 w-4" /> */}
+                <span className="sr-only">Clear</span>
               </button>
             )}
           </div>
         );
+      }
 
       case 'datetime':
         return (
@@ -348,31 +386,57 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           if (Object.keys(val).length === 0) continue;
         }
         const rowValue = row[col];
-        if (val && typeof val === 'object' && (val.startDate || val.endDate)) {
-          const rowDate = new Date(rowValue);
-          if (isNaN(rowDate.getTime())) return false;
 
-          if (val.startDate) {
-            const startDate = new Date(val.startDate);
-            startDate.setHours(0, 0, 0, 0);
-            if (rowDate < startDate) return false;
-          }
-
-          if (val.endDate) {
-            const endDate = new Date(val.endDate);
-            endDate.setHours(23, 59, 59, 999);
-            if (rowDate > endDate) return false;
-          }
-        } else if (val instanceof Date) {
+        // --- Single Date filter ---
+        if (val instanceof Date) {
           const rowDate = new Date(rowValue);
           if (isNaN(rowDate.getTime())) return false;
           const filterDate = new Date(val);
           filterDate.setHours(0, 0, 0, 0);
           const comparableRowDate = new Date(rowDate);
           comparableRowDate.setHours(0, 0, 0, 0);
-
           if (comparableRowDate.getTime() !== filterDate.getTime()) return false;
-        } else if (Array.isArray(val)) {
+        }
+        // --- Date Range filter ---
+        else if (val && typeof val === 'object' && (val.from || val.to)) {
+          let rowDate: Date | null = null;
+          if (rowValue instanceof Date) {
+            rowDate = rowValue;
+          } else if (typeof rowValue === 'string') {
+            rowDate = new Date(rowValue);
+          }
+          if (!rowDate || isNaN(rowDate.getTime())) return false;
+
+          if (val.from) {
+            const startDate = new Date(val.from);
+            startDate.setHours(0, 0, 0, 0);
+            if (rowDate < startDate) return false;
+          }
+          if (val.to) {
+            const endDate = new Date(val.to);
+            endDate.setHours(23, 59, 59, 999);
+            if (rowDate > endDate) return false;
+          }
+        }
+        // --- Time Range filter ---
+        else if (val && typeof val === 'object' && (val.startTime || val.endTime)) {
+          // rowValue should be a time string (e.g., "14:30")
+          const [rowHour, rowMin] = String(rowValue).split(':').map(Number);
+          const rowMinutes = rowHour * 60 + rowMin;
+
+          if (val.startTime) {
+            const [startHour, startMin] = String(val.startTime).split(':').map(Number);
+            const startMinutes = startHour * 60 + startMin;
+            if (rowMinutes < startMinutes) return false;
+          }
+          if (val.endTime) {
+            const [endHour, endMin] = String(val.endTime).split(':').map(Number);
+            const endMinutes = endHour * 60 + endMin;
+            if (rowMinutes > endMinutes) return false;
+          }
+        }
+        // --- Other filter types ---
+        else if (Array.isArray(val)) {
           if (Array.isArray(rowValue)) {
             const hasMatch = val.some(selected =>
               rowValue.some(rv => String(rv.label).toLowerCase() === String(selected).toLowerCase())
@@ -398,15 +462,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             !Array.isArray(rowValue) &&
             !React.isValidElement(rowValue)
           ) {
-            // For plain objects (not React elements), stringify and check
             if (!JSON.stringify(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
               return false;
             }
           } else if (React.isValidElement(rowValue)) {
-            // For React elements, skip filtering (or you can add custom logic if needed)
             return false;
           } else {
-            // Regular string/number/boolean comparison
             if (!String(rowValue).toLowerCase().includes(String(val).toLowerCase())) {
               return false;
             }

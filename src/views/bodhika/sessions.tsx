@@ -112,7 +112,7 @@ const Sessions = () => {
           'Session Id': session.session_id,
           'Course Id': session.course_id,
           'Instructor Ldap': session.instructor_ldap,
-          Date: session.start_time,
+          Date: session.start_time ? new Date(session.start_time) : null, // <-- store as Date object
           'Start Time': session.start_time,
           'End Time': session.end_time,
           Status: session.status,
@@ -141,12 +141,16 @@ const Sessions = () => {
         <TooltipContent>{value}</TooltipContent>
       </Tooltip>
     ),
-    Date: (value: string) => (
+    Date: (value: Date | string) => (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="cursor-pointer">{formatDateOnly(value)}</span>
+          <span className="cursor-pointer">
+            {value instanceof Date ? formatDateOnly(value.toISOString()) : formatDateOnly(value)}
+          </span>
         </TooltipTrigger>
-        <TooltipContent>{formatDateOnly(value)}</TooltipContent>
+        <TooltipContent>
+          {value instanceof Date ? formatDateOnly(value.toISOString()) : formatDateOnly(value)}
+        </TooltipContent>
       </Tooltip>
     ),
     'Start Time': (value: string) => (
@@ -344,7 +348,7 @@ const Sessions = () => {
     return Array.from(set);
   }, [sessions]);
 
-  // 2. Add filterConfig for Rooms
+  // 2. Add filterConfig for Rooms and Date Range
   const filterConfig: FilterConfig[] = [
     {
       column: 'Rooms',
@@ -360,6 +364,10 @@ const Sessions = () => {
       column: 'Instructor Ldap',
       type: 'dropdown',
       options: allInstructorLdaps,
+    },
+    {
+      column: 'Date',
+      type: 'date-range',
     },
   ];
 
@@ -380,7 +388,8 @@ const Sessions = () => {
           ...customRender,
           'View Attendance': customRender['View Attendance'],
         }}
-        filterConfig={filterConfig} // 3. Pass filterConfig here
+        filterConfig={filterConfig}
+        filterMode="local"
       />
 
       {/* Attendance Side Panel */}

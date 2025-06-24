@@ -139,22 +139,6 @@ const CreateSession = () => {
   // Helper to get room details for the active session
   const getRoomDetails = (room_id: string) => rooms.find((r: any) => r.room_id === room_id);
 
-  // Format date/time
-  const formatDateTime = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
   // Get status color
   const getStatusColor = (status: string | undefined) => {
     switch (status?.toLowerCase()) {
@@ -184,16 +168,48 @@ const CreateSession = () => {
   })();
 
   const sessionId = session?.session_id;
-  const { data: attendanceData = [], isLoading: attendanceLoading } =
-    useSessionAttendance(sessionId);
+  type AttendanceDataType = {
+    registered_present?: any[];
+    unregistered_present?: any[];
+    [key: string]: any;
+  };
+  const attendanceResponse = useSessionAttendance(sessionId);
+  const attendanceData: AttendanceDataType =
+    attendanceResponse?.data && !Array.isArray(attendanceResponse.data)
+      ? attendanceResponse.data
+      : {};
 
+  // Helper to format date/time
+  const formatDateTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Combine both registered_present and unregistered_present into a single array
+  const allAttendance: AttendanceDataType[] = [
+    ...(attendanceData.registered_present ?? []),
+    ...(attendanceData.unregistered_present ?? []),
+  ];
+
+  // Attendance table data
   const getAttendanceTableData = (attendance: any[]) =>
     Array.isArray(attendance)
       ? attendance.map((a: any) => ({
-          'Student Ldap': a.insti_id,
+          'Student Id': a.student_id,
+          'Device Id': a.device_id,
+          'Room Id': a.room_id,
+          'Room Name': a.room_name,
           Timestamp: formatDateTime(a.timestamp),
-          Device: a.device_id,
-          'Attendance Id': a.attendance_id,
         }))
       : [];
 
@@ -351,13 +367,13 @@ const CreateSession = () => {
               </div>
             </div>
 
-            {/* Attendance Section */}
+            {/* Attendance Section - Single Table */}
             <div className="mt-8">
               <h3 className="font-medium text-gray-900 dark:text-white mb-2">Attendance</h3>
               <DynamicTable
-                data={getAttendanceTableData(attendanceData)}
-                loading={attendanceLoading}
-                tableHeading="Live Attendance"
+                tableHeading="All Attendance"
+                data={getAttendanceTableData(allAttendance)}
+                disableSearch
               />
             </div>
           </div>

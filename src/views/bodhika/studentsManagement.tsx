@@ -51,7 +51,7 @@ const StudentsManagement = () => {
       : [];
     await createMutation.mutateAsync({
       student_id: formData.student_id,
-      courses: course_ids,
+      course_ids,
     });
     toast({ title: 'Student created' });
     setCreateDialogOpen(false);

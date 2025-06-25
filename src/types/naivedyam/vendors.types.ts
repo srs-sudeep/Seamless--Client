@@ -1,6 +1,5 @@
 export interface Vendor {
-  id: string;
-  ldap: string;
+  ldapid: string;
   email: string;
   address: string;
   description: string;

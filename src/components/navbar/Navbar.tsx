@@ -221,7 +221,7 @@ export const Navbar = () => {
       {/* Full Page Loader */}
       {showLoader && <LoadingFallback />}
 
-      <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-card/50 shadow-lg py-3 h-24 px-6 backdrop-blur-sm">
+      <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-card/50 shadow-lg py-3 h-24 px-6 backdrop-blur-sm border dark:border-border">
         <div className="flex items-center justify-between w-full">
           {/* Left side with breadcrumbs and page title */}
           <div className="flex flex-col justify-center">

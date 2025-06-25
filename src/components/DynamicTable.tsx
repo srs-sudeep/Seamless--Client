@@ -1,4 +1,9 @@
 import {
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
   Table,
   TableBody,
   TableCell,
@@ -19,7 +24,7 @@ import {
   Checkbox,
   Button,
 } from '@/components';
-import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
+import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon, XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
 import { FilterConfig } from '@/types';
@@ -220,7 +225,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   {filter.options?.map(opt => (
                     <div
                       key={opt}
-                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                       onClick={() => onChange(opt === currentValue ? undefined : opt)}
                     >
                       <Checkbox
@@ -256,20 +261,16 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
             key={filter.column}
             className="w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] relative"
           >
-            <DatePicker
-              value={currentValue}
-              onChange={val => onChange(val)}
-              //   className="w-full h-10 sm:h-11"
-            />
+            <DatePicker value={currentValue} onChange={val => onChange(val)} />
             {currentValue && (
               <button
                 onClick={e => {
                   e.stopPropagation();
                   clearFilter(filter.column);
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted hover:text-muted-foreground z-10"
               >
-                {/* <XIcon className="h-4 w-4" /> */}
+                <XIcon className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -305,10 +306,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     to: undefined as unknown as Date,
                   });
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted hover:text-muted-foreground z-10"
                 title="Clear"
               >
-                {/* <XIcon className="h-4 w-4" /> */}
+                <XIcon className="h-4 w-4" />
                 <span className="sr-only">Clear</span>
               </button>
             )}
@@ -329,8 +330,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   e.stopPropagation();
                   clearFilter(filter.column);
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 z-10"
-              ></button>
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted hover:text-muted-foreground z-10"
+              >
+                <XIcon className="h-4 w-4" />
+              </button>
             )}
           </div>
         );
@@ -548,9 +551,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 space-y-4 transition-all duration-300">
+      <div className="rounded-2xl shadow-lg border border-border bg-card p-6 space-y-4 transition-all duration-300">
         {tableHeading && (
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">
             {toSentenceCase(tableHeading)}
           </h2>
         )}
@@ -563,7 +566,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               {!disableSearch && (
                 <div className="w-full sm:flex-1 sm:min-w-[280px] lg:min-w-[320px] xl:min-w-[400px] relative">
                   <div className="relative w-full group">
-                    <input
+                    <Input
                       placeholder="Search across all columns..."
                       value={searchTerm}
                       onChange={e => {
@@ -574,16 +577,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         if (e.key === 'Enter') handleSearch();
                       }}
                       onBlur={handleSearch}
-                      className="w-full h-11 sm:h-12 pl-4 pr-16 bg-white dark:bg-gray-900/50 
-                border border-gray-200/60 dark:border-gray-700/60 
-                rounded-xl shadow-sm backdrop-blur-sm
-                focus:border-blue-500 dark:focus:border-blue-400 
-                focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-blue-900/30
-                text-gray-900 dark:text-gray-100 
-                placeholder-gray-400 dark:placeholder-gray-500
-                transition-all duration-300 ease-out
-                hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
-                group-hover:shadow-lg text-sm sm:text-base"
+                      className="w-full h-11 sm:h-12 pl-4 pr-16 bg-background 
+                rounded-xl
+                text-foreground
+                placeholder-muted-foreground"
                     />
 
                     {/* Right side icons */}
@@ -595,9 +592,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                             setSearchTerm('');
                             handleSearch();
                           }}
-                          className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300
+                          className="text-muted-foreground hover:text-foreground
                     transition-colors duration-200 p-1 rounded-full
-                    hover:bg-gray-100 dark:hover:bg-gray-800"
+                    hover:bg-primary"
                           type="button"
                           title="Clear search"
                         >
@@ -617,10 +614,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       {/* Search Icon Button */}
                       <button
                         onClick={handleSearch}
-                        className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300
+                        className="text-primary hover:text-foreground
                   transition-colors duration-200 p-1.5 rounded-lg
-                  hover:bg-blue-50 dark:hover:bg-blue-900/20
-                  focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
+                  hover:bg-primary/10  hover:border border-primary focus-visible:bg-primary focus-visible:border focus-visible:border-primary"
                         type="button"
                         title="Search"
                       >
@@ -636,12 +632,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         </svg>
                       </button>
                     </div>
-
-                    {/* Subtle gradient border effect */}
-                    <div
-                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/10 to-blue-500/20 
-                opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none -z-10 blur-sm"
-                    />
                   </div>
                 </div>
               )}
@@ -660,10 +650,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         )}
 
         {(!disableSearch || filterConfig.length > 0) && (
-          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="border-t border-muted-foreground/60 my-6 "></div>
         )}
 
-        <div className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="relative overflow-hidden rounded-xl border border-muted-foreground/40 ">
           {isLoading ? (
             <Transitions type="slide" direction="down" position="top" show={true}>
               <TableShimmer />
@@ -673,9 +663,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               <Table>
                 <TableHeader>
                   <TableRow
-                    className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-gray-800 dark:to-gray-700 
-                                     hover:from-gray-100 hover:to-gray-150 
-                                     border-b border-gray-200 dark:border-gray-700 transition-all duration-200"
+                    className="bg-primary/60
+                                     hover:bg-accent"
                   >
                     {expandableRows && (
                       <TableHead className="w-12 px-4 py-4 text-center">
@@ -685,7 +674,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     {headers.map(key => (
                       <TableHead
                         key={key}
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-100 
+                        className="px-6 py-4 text-left text-xs font-semibold text-foreground 
                                  uppercase tracking-wider bg-transparent cursor-pointer group"
                         onClick={() => handleSort(key)}
                       >
@@ -696,9 +685,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           <div className="opacity-0 group-hover:opacity-70 transition-opacity">
                             {sortColumn === key ? (
                               sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                <ArrowUpIcon className="w-4 h-4 text-foreground" />
                               ) : (
-                                <ArrowDownIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                <ArrowDownIcon className="w-4 h-4 text-foreground" />
                               )
                             ) : (
                               <div className="w-4 h-4 flex flex-col">
@@ -710,9 +699,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           {sortColumn === key && (
                             <div className="ml-1">
                               {sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                <ArrowUpIcon className="w-4 h-4 text-foreground" />
                               ) : (
-                                <ArrowDownIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                <ArrowDownIcon className="w-4 h-4 text-foreground" />
                               )}
                             </div>
                           )}
@@ -726,12 +715,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     <TableRow>
                       <TableCell
                         colSpan={headers.length + (expandableRows ? 1 : 0)}
-                        className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
+                        className="px-6 py-12 text-center text-muted-foreground"
                       >
                         <div className="flex flex-col items-center space-y-3">
-                          <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center">
                             <svg
-                              className="w-8 h-8 text-gray-400 dark:text-gray-500"
+                              className="w-8 h-8 text-foreground"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -744,8 +733,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                               />
                             </svg>
                           </div>
-                          <p className="text-base font-medium">No data found</p>
-                          <p className="text-sm text-gray-400 dark:text-gray-500 max-w-xs text-center">
+                          <p className="text-foreground font-medium">No data found</p>
+                          <p className="text-sm text-muted-foreground max-w-xs text-center">
                             {searchTerm ||
                             Object.values(activeColumnFilters).some(
                               v =>
@@ -774,12 +763,10 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                         <React.Fragment key={i}>
                           <TableRow
                             className={cn(
-                              'group transition-all duration-200 border-b border-gray-100 md:overflow-scroll dark:border-gray-800',
-                              i % 2 === 0
-                                ? 'bg-white dark:bg-gray-900'
-                                : 'bg-gray-50/50 dark:bg-gray-800/30',
-                              'hover:bg-blue-50/50 dark:hover:bg-blue-900/10',
-                              isExpanded && 'bg-blue-50/50 dark:bg-blue-900/10 shadow-sm',
+                              'group transition-all duration-200 border-b border-border md:overflow-scroll',
+                              i % 2 === 0 ? 'bg-sidebar' : 'bg-sidebar-accent/10',
+                              'hover:bg-sidebar-accent/30',
+                              isExpanded && 'bg-sidebar-accent/20 shadow-sm',
                               onRowClick && 'cursor-pointer active:scale-[0.995]'
                             )}
                             onClick={() => onRowClick && onRowClick(row, i)}
@@ -792,25 +779,22 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                 }}
                                 className={cn(
                                   'px-4 py-4 text-center transition-colors duration-200',
-                                  canExpand &&
-                                    'cursor-pointer hover:bg-blue-100/50 dark:hover:bg-blue-900/20 rounded-l-lg'
+                                  canExpand && 'cursor-pointer hover:bg-sidebar-accent/30'
                                 )}
                               >
                                 {canExpand ? (
                                   <div
                                     className={cn(
                                       'flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300',
-                                      isExpanded
-                                        ? 'bg-blue-100 dark:bg-blue-900/30'
-                                        : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30'
+                                      isExpanded ? 'border border-primary' : 'bg-muted'
                                     )}
                                   >
                                     <ChevronDownIcon
                                       className={cn(
                                         'h-4 w-4 transition-all duration-300',
                                         isExpanded
-                                          ? 'text-blue-600 dark:text-blue-400 rotate-180'
-                                          : 'text-gray-500 dark:text-gray-400 rotate-0 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                          ? 'text-foreground rotate-180'
+                                          : 'text-muted-foreground rotate-0 group-hover:text-primary'
                                       )}
                                     />
                                   </div>
@@ -826,9 +810,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                 <TableCell
                                   key={key}
                                   className={cn(
-                                    'px-6 py-4 text-sm text-gray-900 dark:text-gray-100 font-medium',
+                                    'px-6 py-4 text-sm text-foreground font-medium',
                                     isLastColumn && !expandableRows && 'rounded-r-lg',
-                                    isActiveSortColumn && 'bg-blue-50/70 dark:bg-blue-900/20'
+                                    isActiveSortColumn && 'bg-sidebar-accent/5'
                                   )}
                                 >
                                   {customRender[key] ? (
@@ -836,11 +820,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                                   ) : React.isValidElement(value) ? (
                                     value
                                   ) : value instanceof Date ? (
-                                    <span className="text-gray-600 dark:text-gray-300">
+                                    <span className="text-muted-foreground">
                                       {value.toLocaleString()}
                                     </span>
                                   ) : typeof value === 'object' && value !== null ? (
-                                    <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono">
+                                    <code className="px-2 py-1 bg-muted rounded text-xs font-mono">
                                       {(() => {
                                         try {
                                           return JSON.stringify(value);
@@ -858,19 +842,9 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           </TableRow>
                           {expandableRows && isExpanded && expandedComponent && canExpand && (
                             <TableRow className="transition-all duration-300">
-                              <TableCell
-                                colSpan={headers.length + 1}
-                                className="p-0 border-b-0 bg-transparent"
-                              >
-                                <div className="mx-4 mt-0 mb-4 overflow-hidden rounded-b-lg border border-t-0 border-blue-200 dark:border-blue-900 dark:bg-gray-900/50">
-                                  <div className="p-5 bg-white/80 dark:bg-gray-900/50 border-t-2 border-blue-400 dark:border-blue-700">
-                                    <div className="pb-1 mb-3 border-b border-gray-100 dark:border-gray-800">
-                                      <span className="inline-block px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-                                        Details
-                                      </span>
-                                    </div>
-                                    {expandedComponent(row)}
-                                  </div>
+                              <TableCell colSpan={headers.length + 1} className="p-0">
+                                <div className="mx-4 mt-0 mb-4 overflow-hidden rounded-b-lg">
+                                  <div className="p-5">{expandedComponent(row)}</div>
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -885,16 +859,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
           )}
         </div>
         {totalRecords > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-8 p-4 sm:p-6 bg-sidebar rounded-lg border border-muted-foreground/50">
             <div className="flex items-center gap-4 mb-4 sm:mb-0">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                Rows per page
-              </span>
+              <span className="text-sm font-medium text-muted-foreground">Rows per page</span>
               <div className="relative">
-                <select
-                  value={filterMode === 'ui' ? limit : localLimit}
-                  onChange={e => {
-                    const newLimit = Number(e.target.value);
+                <Select
+                  value={String(filterMode === 'ui' ? limit : localLimit)}
+                  onValueChange={val => {
+                    const newLimit = Number(val);
                     if (filterMode === 'ui' && onLimitChange) {
                       onLimitChange(newLimit);
                       if (onPageChange) onPageChange(1);
@@ -903,29 +875,18 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                       setLocalPage(1);
                     }
                   }}
-                  className="appearance-none bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md px-3 py-2 pr-8 text-sm text-slate-900 dark:text-slate-100 hover:border-blue-400 dark:hover:border-pink-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-pink-500 focus:border-blue-500 dark:focus:border-pink-500 transition-colors cursor-pointer"
                 >
-                  {[2, 5, 10, 20, 50, 100].map(opt => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                  <svg
-                    className="w-4 h-4 text-slate-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
+                  <SelectTrigger className="w-24 bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary transition-colors cursor-pointer">
+                    {String(filterMode === 'ui' ? limit : localLimit)}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[2, 5, 10, 20, 50, 100].map(opt => (
+                      <SelectItem key={opt} value={String(opt)} className="text-muted-foreground">
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -937,7 +898,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     : setLocalPage(Math.max(1, localPage - 1))
                 }
                 disabled={(filterMode === 'ui' ? page : localPage) === 1}
-                className="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-pink-900/20 hover:border-blue-300 dark:hover:border-pink-500 hover:text-blue-600 dark:hover:text-pink-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-700 disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-colors"
+                className="flex items-center justify-center w-9 h-9 bg-background border-2 border-border rounded-md text-muted-foreground hover:bg-primary/10 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-muted disabled:hover:border-muted-foreground
+                disabled:hover:text-muted-foreground transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -949,12 +911,12 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </svg>
               </button>
 
-              <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-purple-100 border border-blue-200 dark:border-pink-700 rounded-md">
-                <span className="text-sm font-medium text-blue-800 dark:text-purple-800">
+              <div className="flex items-center gap-2 px-3 py-2 bg-accent-foreground border-2 border-primary rounded-md">
+                <span className="text-sm font-medium text-primary">
                   {filterMode === 'ui' ? page : localPage}
                 </span>
-                <span className="text-sm text-blue-600 dark:text-purple-800">of</span>
-                <span className="text-sm font-medium text-blue-800 dark:text-purple-800">
+                <span className="text-sm text-primary">of</span>
+                <span className="text-sm font-medium text-primary">
                   {Math.ceil(
                     (filterMode === 'ui' ? total || 0 : totalRecords) /
                       (filterMode === 'ui' ? limit : localLimit)
@@ -973,7 +935,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     ? page >= Math.ceil((total || 0) / limit)
                     : localPage >= Math.ceil(totalRecords / localLimit)
                 }
-                className="flex items-center justify-center w-9 h-9 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-pink-900/20 hover:border-blue-300 dark:hover:border-pink-500 hover:text-blue-600 dark:hover:text-pink-400 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-700 disabled:hover:border-slate-300 dark:disabled:hover:border-slate-600 disabled:hover:text-slate-600 dark:disabled:hover:text-slate-400 transition-colors"
+                className="flex items-center justify-center w-9 h-9 bg-background border-2 border-border rounded-md text-muted-foreground hover:bg-primary/10 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-muted disabled:hover:border-muted-foreground
+                disabled:hover:text-muted-foreground transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -991,20 +954,20 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         {paginatedData.length > 0 && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 px-4 sm:px-6 pb-4">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-slate-600 dark:text-slate-400">Showing</span>
-              <span className="px-2 py-1 rounded dark:bg-purple-100 bg-blue-50 dark:text-purple-800 text-blue-900 text-sm font-medium">
+              <span className="text-sm text-muted-foreground">Showing</span>
+              <span className="px-2 py-1 rounded bg-accent-foreground border-2 border-primary text-primary text-sm font-medium">
                 {paginatedData.length}
               </span>
-              <span className="text-sm text-slate-600 dark:text-slate-400">of</span>
-              <span className="px-2 py-1 rounded dark:bg-purple-100 bg-blue-50 dark:text-purple-800 text-blue-900 text-sm font-medium">
+              <span className="text-sm text-muted-foreground">of</span>
+              <span className="px-2 py-1 rounded bg-accent-foreground border-2 border-primary text-primary text-sm font-medium">
                 {totalRecords}
               </span>
-              <span className="text-sm text-slate-600 dark:text-slate-400">results</span>
+              <span className="text-sm text-muted-foreground">results</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               {sortColumn && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium dark:bg-purple-50 bg-blue-50 dark:text-purple-800 text-blue-900 border dark:border-purple-200 border-blue-700">
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-accent-foreground border-2 border-primary text-primary">
                   <svg
                     className="w-4 h-4"
                     viewBox="0 0 24 24"
@@ -1024,7 +987,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     />
                   </svg>
                   <span>Sorted by {sortColumn}</span>
-                  <span className="px-1.5 py-0.5 text-xs dark:bg-purple-100 bg-blue-800 rounded dark:text-purple-800 text-blue-200">
+                  <span className="px-1.5 py-0.5 text-xs bg-primary/10 text-primary">
                     {sortDirection === 'asc' ? 'A→Z' : 'Z→A'}
                   </span>
                 </div>
@@ -1040,7 +1003,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                     !(typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) &&
                     v !== ''
                 )) && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium dark:bg-purple-50 bg-blue-50 dark:text-purple-800 text-blue-900 border dark:border-purple-200 border-blue-700">
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-accent-foreground border-2 border-primary text-primary">
                   <svg
                     className="w-4 h-4"
                     viewBox="0 0 24 24"

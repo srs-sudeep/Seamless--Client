@@ -1,6 +1,6 @@
 import { apiClient, BODHIKA_URL } from '@/core';
 import { attendance, Session } from '@/types';
-const BASE = `${BODHIKA_URL}sessions/`;
+const BASE = `${BODHIKA_URL}/sessions/`;
 export async function createSession(payload: {
   course_id: string;
   room_ids: string[];

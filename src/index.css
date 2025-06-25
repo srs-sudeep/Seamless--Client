@@ -106,51 +106,56 @@
   /* Dark Theme - Custom Purple Color Scheme (#e0cefd) */
   .dark {
     /* Base colors */
-    --background: 261 25% 8%; /* Very dark purple */
-    --foreground: 261 45% 91%; /* Light purple based on #e0cefd */
+    --background: 255 24% 13%; /* Very dark purple (#1e162a equivalent) */
+    --foreground: 261 45% 91%; /* Light purple text */
 
     /* Card colors */
-    --card: 261 30% 12%; /* Dark purple */
-    --card-foreground: 261 45% 91%; /* Light purple based on #e0cefd */
+    --card: 255 20% 8%; /* Near black card with purple tint */
+    --card-foreground: 261 45% 91%; /* Light purple text */
 
-    /* Primary colors - Using #e0cefd as base */
-    --primary: 261 73% 85%; /* #e0cefd equivalent */
-    --primary-foreground: 261 30% 8%; /* Very dark purple */
+    /* Primary colors - Bright purple */
+    --primary: 270 85% 60%; /* Vibrant purple for buttons */
+    --primary-foreground: 0 0% 100%; /* White text */
 
     /* Secondary colors */
-    --secondary: 261 20% 18%; /* Dark purple-gray */
-    --secondary-foreground: 261 45% 91%; /* Light purple based on #e0cefd */
+    --secondary: 255 15% 18%; /* Dark purple-gray */
+    --secondary-foreground: 261 45% 91%; /* Light purple text */
 
-    /* Accent colors */
-    --accent: 261 30% 15%; /* Dark purple accent */
-    --accent-foreground: 261 73% 90%; /* #e0cefd equivalent */
+    /* Accent colors - Pink accent */
+    --accent: 270 85% 60%; /* Bright pink accent */
+    --accent-foreground: 0 0% 100%; /* White text */
 
     /* Destructive colors */
-    --destructive: 0 75% 65%; /* Light red */
-    --destructive-foreground: 261 30% 8%; /* Very dark purple */
+    --destructive: 0 75% 60%; /* Red */
+    --destructive-foreground: 0 0% 100%; /* White text */
 
     /* Success colors */
-    --success: 142 65% 55%; /* Light green */
-    --success-foreground: 261 30% 8%; /* Very dark purple */
+    --success: 142 65% 50%; /* Green */
+    --success-foreground: 0 0% 100%; /* White text */
 
     /* Muted colors */
-    --muted: 261 20% 18%; /* Dark purple-gray */
+    --muted: 255 15% 18%; /* Dark purple-gray */
     --muted-foreground: 261 25% 65%; /* Medium purple-gray */
 
     /* Input and border colors */
-    --border: 261 20% 22%; /* Purple-gray border */
-    --input: 261 20% 22%; /* Purple-gray input */
-    --ring: 261 73% 90%; /* #e0cefd equivalent ring */
+    --border: 255 15% 22%; /* Purple border */
+    --input: 255 15% 15%; /* Dark purple input */
+    --ring: 270 85% 60%; /* Vibrant purple ring */
 
     /* Sidebar colors */
-    --sidebar: 261 40% 10%; /* Very dark purple */
-    --sidebar-foreground: 261 45% 91%; /* Light purple based on #e0cefd */
-    --sidebar-accent: 261 73% 85%; /* Dark purple accent */
-    --sidebar-accent-foreground: 261 30% 8%; /* #e0cefd equivalent */
-    --sidebar-primary: 285 73% 90%; /* #e0cefd equivalent */
-    --sidebar-primary-foreground: 261 30% 8%; /* Very dark purple */
-    --sidebar-border: 261 20% 25%; /* Purple-gray border */
-    --sidebar-ring: 261 73% 90%; /* #e0cefd equivalent ring */
+    --sidebar: 255 20% 10%; /* Very dark purple sidebar */
+    --sidebar-foreground: 261 45% 91%; /* Light purple text */
+    --sidebar-accent: 270 85% 60%; /* Vibrant purple accent */
+    --sidebar-accent-foreground: 0 0% 100%; /* White text */
+    --sidebar-primary: 320 80% 55%; /* Pink primary */
+    --sidebar-primary-foreground: 261 30% 8%; /* White text */
+    --sidebar-border: 255 15% 25%; /* Purple border */
+    --sidebar-ring: 270 85% 60%; /* Vibrant purple ring */
+
+    /* Chart/Graph colors matching the dashboard */
+    --chart-purple: 270 85% 60%; /* Main purple for charts */
+    --chart-pink: 320 80% 55%; /* Pink for secondary data */
+    --chart-blue: 240 70% 60%; /* Blue accent */
   }
 }
 

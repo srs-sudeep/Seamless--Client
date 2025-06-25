@@ -160,11 +160,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
-                <ScrollArea className="h-48">
+                <ScrollArea className="max-h-48 overflow-auto">
                   {filter.options?.map(opt => (
                     <div
                       key={opt}
-                      className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-muted cursor-pointer"
                       onClick={() => {
                         const exists = selectedValues.includes(opt);
                         onChange(
@@ -225,7 +225,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-2">
-                <ScrollArea className="min-h-16">
+                <ScrollArea className="max-h-48 overflow-auto">
                   {filter.options?.map(opt => (
                     <div
                       key={opt}

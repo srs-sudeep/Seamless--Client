@@ -215,7 +215,7 @@ const PermissionManagement = () => {
       heading="Permission Management"
       subHeading="Manage permissions for modules and user actions in the system."
     >
-      <div className="rounded-xl mb-4 shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
+      <div className="rounded-xl mb-4 shadow-sm border border-muted bg-card p-4 transition-all duration-300">
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <Popover>
             <PopoverTrigger asChild>
@@ -233,7 +233,7 @@ const PermissionManagement = () => {
                 {allResources.map(resource => (
                   <div
                     key={resource}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() => {
                       setResourceFilter(prev =>
                         prev.includes(resource)
@@ -275,14 +275,14 @@ const PermissionManagement = () => {
           {/* Global Search */}
           <div className="relative flex-1 w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+              <Search className="h-4 w-4 text-muted-foreground" />
             </div>
             <Input
               type="text"
               placeholder="Search permissions by name, description, resource or action..."
               value={globalSearch}
               onChange={e => setGlobalSearch(e.target.value)}
-              className="pl-10 pr-10 py-2 h-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md"
+              className="pl-10 pr-10 py-2 h-10 bg-background text-foreground rounded-md"
             />
             {globalSearch && (
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -290,7 +290,7 @@ const PermissionManagement = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setGlobalSearch('')}
-                  className="h-6 w-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="h-6 w-6 text-muted-foreground"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -311,12 +311,12 @@ const PermissionManagement = () => {
 
         {/* Search results summary - inside the card */}
         {(globalSearch || resourceFilter.length > 0) && (
-          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-row gap-4">
+          <div className="mt-3 pt-3 border-t border-muted flex flex-row gap-4">
             <div className="flex items-center">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3">
-                <Search className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex-shrink-0 w-8 h-8 bg-background rounded-full flex items-center justify-center mr-3">
+                <Search className="h-4 w-4 text-primary dark:text-foreground" />
               </div>
-              <p className="text-sm text-blue-700 dark:text-blue-300">
+              <p className="text-sm text-primary dark:text-foreground">
                 {totalPermissions === 0
                   ? 'No permissions found for your search/filter.'
                   : `Found ${totalPermissions} permission${totalPermissions !== 1 ? 's' : ''} in ${resourceCount} resource${resourceCount !== 1 ? 's' : ''}.`}
@@ -327,11 +327,11 @@ const PermissionManagement = () => {
                 <Badge
                   key={resource}
                   variant="secondary"
-                  className="flex items-center gap-1 bg-black dark:bg-white text-white dark:text-black hover:text-black dark:hover:text-white px-2 py-1 dark:hover:bg-black"
+                  className="flex items-center gap-1 bg-muted border border-foreground"
                 >
                   <span className="capitalize">{resource}</span>
                   <button
-                    className="ml-1 text-xs text-gray-400 hover:text-red-500 "
+                    className="ml-1 text-xs text-destructive cursor-pointer"
                     onClick={e => {
                       e.stopPropagation();
                       setResourceFilter(prev => prev.filter(r => r !== resource));
@@ -347,14 +347,12 @@ const PermissionManagement = () => {
       </div>
       {Object.keys(grouped).length === 0 ? (
         // Empty state when no results are found
-        <div className="flex flex-col items-center justify-center py-16 border border-dashed rounded-lg border-gray-300 dark:border-gray-700">
-          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-            <Search className="h-8 w-8 text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-16 border border-dashed rounded-lg border-muted">
+          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-4">
+            <Search className="h-8 w-8 text-accent-foreground" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
-            No permissions found
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+          <h3 className="text-lg font-medium text-foreground mb-1">No permissions found</h3>
+          <p className="text-muted-foreground text-center max-w-md">
             {globalSearch
               ? `No permissions match your search for "${globalSearch}". Try using different keywords.`
               : "No permissions are available. Create your first permission by clicking 'Add Permission'."}

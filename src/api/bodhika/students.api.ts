@@ -1,22 +1,19 @@
-import { apiClient } from '@/core';
+import { apiClient, BODHIKA_URL } from '@/core';
 import type { Student, StudentAttendanceResponse } from '@/types';
-
+const BASE = `${BODHIKA_URL}/api/v1/courses/`;
 export async function getStudents(): Promise<Student[]> {
-  const { data } = await apiClient.get<Student[]>('/bodhika/api/v1/courses/all-students');
+  const { data } = await apiClient.get<Student[]>(`${BASE}all-students`);
   return data;
 }
 
 export async function createStudent(payload: Student): Promise<Student> {
-  const { data } = await apiClient.post<Student>(
-    '/bodhika/api/v1/courses/create-student-course',
-    payload
-  );
+  const { data } = await apiClient.post<Student>(`${BASE}create-student-course`, payload);
   return data;
 }
 
 export async function getStudentAttendance(): Promise<StudentAttendanceResponse> {
   const { data } = await apiClient.get<StudentAttendanceResponse>(
-    '/bodhika/api/v1/sessions/attendance/student/indi'
+    `${BASE}sessions/attendance/student/indi`
   );
   return data;
 }

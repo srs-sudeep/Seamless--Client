@@ -1,12 +1,14 @@
-import { apiClient } from '@/core';
+import { apiClient, DEVICE_URL } from '@/core';
 import type { Attendance, Bulk } from '@/types';
 
+const BASE = `${DEVICE_URL}attendance/`;
+
 export async function getAttendances(): Promise<Attendance[]> {
-  const { data } = await apiClient.get<Attendance[]>('/device/api/v1/attendance/');
+  const { data } = await apiClient.get<Attendance[]>(`${BASE}`);
   return data;
 }
 
 export async function createBulkAttendance(data: Bulk) {
-  const { data: responseData } = await apiClient.post('/device/api/v1/attendance/bulk', data);
+  const { data: responseData } = await apiClient.post(`${BASE}/bulk`, data);
   return responseData;
 }

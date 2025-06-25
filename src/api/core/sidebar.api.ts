@@ -1,5 +1,7 @@
-import { apiClient } from '@/core';
+import { apiClient, CORE_URL } from '@/core';
 import { SidebarModuleItem } from '@/types';
+
+const BASE = `${CORE_URL}/sidebar/sidebar`;
 
 /**
  * Fetches the sidebar modules for a given user role.
@@ -17,7 +19,7 @@ export const fetchSidebarModules = async (
     searchParams.append('is_active', String(params.is_active));
 
   const { data } = await apiClient.get<SidebarModuleItem[]>(
-    `/core/api/v1/sidebar/sidebar${searchParams.toString() ? `?${searchParams}` : ''}`,
+    `${BASE}${searchParams.toString() ? `?${searchParams}` : ''}`,
     {
       silentError: true,
       headers: {

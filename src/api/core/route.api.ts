@@ -1,8 +1,10 @@
-import { apiClient } from '@/core';
+import { apiClient, CORE_URL } from '@/core';
 import type { Route } from '@/types';
 
+const BASE = `${CORE_URL}/routes/`;
+
 export async function getRoutes(): Promise<Route[]> {
-  const { data } = await apiClient.get<Route[]>(`/core/api/v1/routes/`);
+  const { data } = await apiClient.get<Route[]>(`${BASE}`);
   return data;
 }
 
@@ -10,15 +12,15 @@ export async function updateRoute(
   route_id: number,
   payload: Omit<Route, 'route_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<Route>(`/core/api/v1/routes/${route_id}`, payload);
+  const { data } = await apiClient.put<Route>(`${BASE}${route_id}`, payload);
   return data;
 }
 
 export async function deleteRoute(route_id: number) {
-  await apiClient.delete(`/core/api/v1/routes/${route_id}`);
+  await apiClient.delete(`${BASE}${route_id}`);
 }
 
 export async function createRoute(payload: Omit<Route, 'route_id' | 'created_at' | 'updated_at'>) {
-  const { data } = await apiClient.post<Route>('/core/api/v1/routes/', payload);
+  const { data } = await apiClient.post<Route>(`${BASE}`, payload);
   return data;
 }

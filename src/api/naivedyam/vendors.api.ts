@@ -1,7 +1,8 @@
 import { apiClient } from '@/core';
 import type { Vendor } from '@/types/naivedyam/vendors.types';
+import { NAIVEDYAM_URL } from '@/core';
 
-const BASE = '/naivedyam/api/v1/vendor/';
+const BASE = `${NAIVEDYAM_URL}/vendor/`;
 
 export async function getVendors(): Promise<Vendor[]> {
   const { data } = await apiClient.get<Vendor[]>(BASE);

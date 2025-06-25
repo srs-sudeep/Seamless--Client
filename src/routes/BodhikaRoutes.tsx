@@ -27,7 +27,7 @@ const BodhikaRoutes: RouteObject = {
       element: <SlotsManagement />,
     },
     {
-      path: 'rooms-list',
+      path: 'room-list',
       element: <RoomsManagement />,
     },
     {

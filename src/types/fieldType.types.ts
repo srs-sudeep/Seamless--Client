@@ -15,4 +15,6 @@ export type FieldType = {
   disabled?: boolean;
   multiSelect?: boolean;
   className?: string;
+  section?: string;
+  defaultValue?: string | number | boolean | null;
 };

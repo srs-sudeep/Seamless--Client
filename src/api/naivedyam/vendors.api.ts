@@ -1,5 +1,5 @@
 import { apiClient } from '@/core';
-import type { Vendor } from '@/types/naivedyam/vendors.types';
+import type { Vendor } from '@/types';
 import { NAIVEDYAM_URL } from '@/core';
 
 const BASE = `${NAIVEDYAM_URL}/vendor/`;

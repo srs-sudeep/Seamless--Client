@@ -23,3 +23,6 @@ export * from './bodhika/useRooms.hook';
 export * from './bodhika/useSession.hook';
 export * from './bodhika/useSlots.hook';
 export * from './bodhika/useStudents.hook';
+
+/* Exporting all naivedyam APIs */
+export * from './naivedyam/useVendors.hook';

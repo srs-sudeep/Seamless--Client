@@ -1,8 +1,15 @@
 export interface Vendor {
-  id: string;
-  ldap: string;
+  ldapid: string;
   email: string;
   address: string;
   description: string;
   is_active: boolean;
+  guest_user: {
+    ldapid: string;
+    idNumber: string;
+    name: string;
+    is_active: boolean;
+    roles: string[];
+    password: string;
+  };
 }

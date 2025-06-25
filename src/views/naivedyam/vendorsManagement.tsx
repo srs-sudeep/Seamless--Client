@@ -44,7 +44,7 @@ const VendorsManagement = () => {
     await updateMutation.mutateAsync({
       id: editVendor.id,
       payload: {
-        ldap: formData.ldap,
+        ldapid: formData.ldapid,
         email: formData.email,
         address: formData.address,
         description: formData.description,
@@ -57,7 +57,7 @@ const VendorsManagement = () => {
 
   const handleCreate = async (formData: Record<string, any>) => {
     await createMutation.mutateAsync({
-      ldap: formData.ldap,
+      ldapid: formData.ldapid,
       email: formData.email,
       address: formData.address,
       description: formData.description,
@@ -106,7 +106,7 @@ const VendorsManagement = () => {
 
   const getTableData = (vendors: any[]) =>
     vendors.map(vendor => ({
-      LDAP: vendor.ldap,
+      LDAP: vendor.ldapid,
       Email: vendor.email,
       Address: vendor.address,
       Description: vendor.description,

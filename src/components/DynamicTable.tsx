@@ -21,7 +21,7 @@ import {
 } from '@/components';
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FilterConfig } from '@/types';
 
 type DynamicTableProps = {
@@ -110,24 +110,15 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
       onSearchChange(searchTerm.trim() === '' ? '' : searchTerm);
     }
   };
-  // Define defaultFrom and defaultTo for initial tempRange
   const now = new Date();
-  const defaultFrom = new Date(now.getFullYear(), 0, 1); // Jan 1st
-  const defaultTo = new Date(now.getFullYear(), 11, 31); // Dec 31st
+  const defaultFrom = new Date(now.getFullYear(), 0, 1);
+  const defaultTo = new Date(now.getFullYear(), 11, 31);
   const [tempRange, setTempRange] = useState<{ from: Date; to: Date }>(() => ({
     from: defaultFrom,
     to: defaultTo,
   }));
-  // Sync local state with filter value when filter is cleared
-  useEffect(() => {
-    // currentValue may not be defined here, so guard its usage
-    // This effect should probably be inside renderFilter, but keeping as is for now
-  }, []);
   const renderFilter = (filter: FilterConfig) => {
-    // Use filter.value if provided, else fallback to columnFilters for local mode
     const currentValue = filter.value !== undefined ? filter.value : columnFilters[filter.column];
-
-    // Use the provided onChange or fallback to local state update
     const onChange =
       filter.onChange ??
       ((val: any) => {
@@ -285,11 +276,6 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
         );
 
       case 'date-range': {
-        // Use local state for the picker so it doesn't immediately update the filter
-        const now = new Date();
-        const defaultFrom = new Date(now.getFullYear(), 0, 1); // Jan 1st
-        const defaultTo = new Date(now.getFullYear(), 11, 31); // Dec 31st
-
         return (
           <div
             key={filter.column}

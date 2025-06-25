@@ -1,5 +1,6 @@
 import lazyLoad from '@/lib/lazyLoad';
 import MainLayout from '@/layouts/MainLayout';
+import MessAdminDashboard from '@/views/dashboard/NaivedyamDashboard';
 
 // Dashboard Pages
 const AdminDashboard = lazyLoad(() => import('@/views/dashboard/AdminDashboard'));
@@ -41,6 +42,10 @@ const DashboardRoutes = {
     {
       path: 'faculty',
       element: <FacultyDashboard />,
+    },
+    {
+      path: 'messadmin',
+      element: <MessAdminDashboard />,
     },
   ],
 };

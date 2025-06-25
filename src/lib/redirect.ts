@@ -9,6 +9,7 @@ export function getDashboardLink(role: UserRole | null | undefined) {
     student: '/dashboard/student',
     librarian: '/dashboard/librarian',
     medical: '/dashboard/medical',
+    messadmin: '/dashboard/messadmin',
   };
 
   return role && rolePaths[role] ? rolePaths[role] : '/';

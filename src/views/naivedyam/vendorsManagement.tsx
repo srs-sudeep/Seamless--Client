@@ -102,6 +102,13 @@ const VendorsManagement = () => {
         )}
       </Button>
     ),
+    Active: (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full border ${value ? 'bg-success/10 border-success text-success' : 'bg-destructive/10 border-destructive text-destructive'} text-xs font-medium`}
+      >
+        {value ? 'Yes' : 'No'}
+      </span>
+    ),
   };
 
   const getTableData = (vendors: any[]) =>
@@ -110,7 +117,7 @@ const VendorsManagement = () => {
       Email: vendor.email,
       Address: vendor.address,
       Description: vendor.description,
-      Active: vendor.is_active ? 'Yes' : 'No',
+      Active: vendor.is_active,
       Edit: '',
       Delete: '',
       _row: { ...vendor },

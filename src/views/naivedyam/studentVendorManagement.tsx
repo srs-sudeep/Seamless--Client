@@ -24,8 +24,10 @@ const StudentVendorManagement = () => {
       ' end date': studentVendor.end_date,
       Active: (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-            studentVendor.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          className={`px-2 py-1 rounded-full text-xs font-semibold border ${
+            studentVendor.is_active
+              ? 'bg-success/10 border-success text-success'
+              : 'bg-destructive/10 border-destructive text-destructive'
           }`}
         >
           {studentVendor.is_active ? 'Active' : 'Inactive'}

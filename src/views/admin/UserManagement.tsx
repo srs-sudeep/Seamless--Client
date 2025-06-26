@@ -98,7 +98,7 @@ const UserManagement = () => {
 
   const customRender = {
     Active: (value: boolean) => (
-      <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+      <span className={value ? 'text-success font-semibold' : 'text-destructive font-semibold'}>
         {value ? 'Active' : 'Inactive'}
       </span>
     ),
@@ -110,13 +110,13 @@ const UserManagement = () => {
             .map((role: UserRoleAPI) => (
               <span
                 key={role.role_id}
-                className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-medium border border-blue-200"
+                className="px-2 py-0.5 rounded-full text-xs font-medium border bg-chip-blue/10 border-chip-blue text-chip-blue"
               >
                 {role.name}
               </span>
             ))
         ) : (
-          <span className="text-gray-400 text-xs">No Roles</span>
+          <span className="text-muted-foreground text-xs">No Roles</span>
         )}
       </div>
     ),
@@ -195,8 +195,8 @@ const UserManagement = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             editUser.is_active
-                              ? 'bg-green-100 text-green-700 border border-green-200'
-                              : 'bg-red-100 text-red-700 border border-red-200'
+                              ? 'bg-success/10 border-success text-success'
+                              : ' bg-destructive/10 border-destructive text-destructive'
                           }`}
                         >
                           {editUser.is_active ? 'Active' : 'Inactive'}
@@ -256,7 +256,7 @@ const UserManagement = () => {
                                   transition-all duration-200 ease-in-out
                                   ${
                                     checked
-                                      ? 'bg-green-500 shadow-inner'
+                                      ? 'bg-success shadow-inner'
                                       : 'bg-muted-foreground/20 shadow-inner'
                                   } 
                                   ${

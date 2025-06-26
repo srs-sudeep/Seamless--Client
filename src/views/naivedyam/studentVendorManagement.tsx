@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
 import {
+  DynamicForm,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -9,68 +10,124 @@ import {
   DynamicTable,
   Button,
   HelmetWrapper,
+  toast,
 } from '@/components';
-import { useStudentVendors } from '@/hooks';
+import {
+  useStudentVendors,
+  useCreateStudentVendor,
+  useDeleteStudentVendor,
+} from '@/hooks/naivedyam/useStudentVendors.hook';
+import type { StudentVendor } from '@/types/naivedyam/studentVendor.types';
+
+const schema = [
+  { name: 'student_id', label: 'Student ID', type: 'text', required: true, columns: 2 },
+  { name: 'vendor_id', label: 'Vendor ID', type: 'text', required: true, columns: 2 },
+  { name: 'start_date', label: 'Start Date', type: 'date', required: true, columns: 2 },
+  { name: 'end_date', label: 'End Date', type: 'date', required: false, columns: 2 },
+];
 
 const StudentVendorManagement = () => {
-  const { data: studentVendors = [], isLoading } = useStudentVendors();
+  const { data: studentVendors = [], isFetching } = useStudentVendors();
+  const createMutation = useCreateStudentVendor();
+  const deleteMutation = useDeleteStudentVendor();
+
+  const [editStudentVendor, setEditStudentVendor] = useState<StudentVendor | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const getTableData = (studentVendors: any[]) =>
-    studentVendors.map(studentVendor => ({
-      'student id': studentVendor.student_id,
-      'vendor id': studentVendor.vendor_id,
-      'start date': studentVendor.start_date,
-      ' end date': studentVendor.end_date,
-      Active: (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold border ${
-            studentVendor.is_active
-              ? 'bg-success/10 border-success text-success'
-              : 'bg-destructive/10 border-destructive text-destructive'
-          }`}
-        >
-          {studentVendor.is_active ? 'Active' : 'Inactive'}
-        </span>
-      ),
-      _row: { ...studentVendor },
+  const handleEdit = (studentVendor: StudentVendor) => setEditStudentVendor(studentVendor);
+
+  const handleDelete = async (studentVendor: StudentVendor) => {
+    await deleteMutation.mutateAsync({
+      student_id: studentVendor.student_id,
+      vendor_id: studentVendor.vendor_id,
+    });
+    toast({ title: 'Student Vendor deleted' });
+  };
+
+  const handleCreate = async (formData: Record<string, any>) => {
+    await createMutation.mutateAsync({
+      student_id: formData.student_id,
+      vendor_id: formData.vendor_id,
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+    });
+    toast({ title: 'Student Vendor created' });
+    setCreateDialogOpen(false);
+  };
+
+  const customRender = {
+    Delete: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="destructive"
+        onClick={e => {
+          e.stopPropagation();
+          handleDelete(row._row);
+        }}
+        disabled={deleteMutation.isPending}
+      >
+        {deleteMutation.isPending ? (
+          <Loader2 className="animate-spin w-4 h-4" />
+        ) : (
+          <Trash2 className="w-4 h-4" />
+        )}
+      </Button>
+    ),
+    Active: (value: boolean) => (
+      <span
+        className={`px-2 py-0.5 rounded-full border ${value ? 'bg-success/10 border-success text-success' : 'bg-destructive/10 border-destructive text-destructive'} text-xs font-medium`}
+      >
+        {value ? 'Active' : 'Inactive'}
+      </span>
+    ),
+  };
+
+  const getTableData = (studentVendors: StudentVendor[]) =>
+    studentVendors.map(sv => ({
+      'Student ID': sv.student_id,
+      'Vendor ID': sv.vendor_id,
+      'Start Date': sv.start_date,
+      'End Date': sv.end_date,
+      Active: sv.is_active,
+      Delete: '',
+      _row: { ...sv },
     }));
 
   return (
     <HelmetWrapper
-      title="StudentVendors | Naivedyam"
+      title="Student Vendors | Naivedyam"
       heading="Student Vendors List"
       subHeading="List of student vendors for Naivedyam."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Student Vendors"
-            data={getTableData(studentVendors)}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Vendor
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Vendor</DialogTitle>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            }
+      <DynamicTable
+        tableHeading="Student Vendors"
+        data={getTableData(studentVendors)}
+        customRender={customRender}
+        isLoading={isFetching}
+        headerActions={
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create Student Vendor
+          </Button>
+        }
+      />
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogTrigger asChild>
+          <div />
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Student Vendor</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={schema}
+            onSubmit={handleCreate}
+            onCancel={() => setCreateDialogOpen(false)}
+            submitButtonText={createMutation.isPending ? 'Creating...' : 'Create'}
+            disabled={createMutation.isPending}
           />
-        )}
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

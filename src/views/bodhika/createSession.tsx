@@ -274,7 +274,6 @@ const CreateSession = () => {
     const registeredPresent = attendanceData.registered_present?.length || 0;
     const unregisteredPresent = attendanceData.unregistered_present?.length || 0;
     const registeredAbsent = attendanceData.registered_absent?.length || 0;
-    const total = registeredPresent + unregisteredPresent + registeredAbsent;
 
     return [
       {

@@ -76,28 +76,24 @@ const CreateVendors = () => {
   };
 
   const handleSubmit = async (formData: Record<string, any>) => {
-    try {
-      const payload = {
+    const payload = {
+      ldapid: formData.ldapid,
+      email: formData.email,
+      address: formData.address,
+      description: formData.description,
+      is_active: true,
+      guest_user: {
         ldapid: formData.ldapid,
-        email: formData.email,
-        address: formData.address,
-        description: formData.description,
+        idNumber: formData.idNumber,
+        name: formData.name,
         is_active: true,
-        guest_user: {
-          ldapid: formData.ldapid,
-          idNumber: formData.idNumber,
-          name: formData.name,
-          is_active: true,
-          password: formData.password,
-          roles: ['messVendor'],
-        },
-      };
-      await createMutation.mutateAsync(payload);
-      toast({ title: 'Vendor created Successfully' });
-      setFormValues({});
-    } catch (error) {
-      toast({ title: 'Error creating vendor', variant: 'destructive' });
-    }
+        password: formData.password,
+        roles: ['messVendor'],
+      },
+    };
+    await createMutation.mutateAsync(payload);
+    toast({ title: 'Vendor created Successfully' });
+    setFormValues({});
   };
 
   return (

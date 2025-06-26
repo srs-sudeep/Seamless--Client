@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
+import { Loader2, Trash2, Plus } from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -31,10 +31,7 @@ const StudentVendorManagement = () => {
   const createMutation = useCreateStudentVendor();
   const deleteMutation = useDeleteStudentVendor();
 
-  const [editStudentVendor, setEditStudentVendor] = useState<StudentVendor | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-
-  const handleEdit = (studentVendor: StudentVendor) => setEditStudentVendor(studentVendor);
 
   const handleDelete = async (studentVendor: StudentVendor) => {
     await deleteMutation.mutateAsync({

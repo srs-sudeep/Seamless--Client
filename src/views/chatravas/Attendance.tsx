@@ -21,8 +21,6 @@ import {
   addMonths,
   subMonths,
   isAfter,
-  getDay,
-  isWithinInterval,
   parseISO,
 } from 'date-fns';
 import { FilterConfig } from '@/types';

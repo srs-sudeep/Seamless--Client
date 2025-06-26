@@ -1,15 +1,7 @@
 import { useAuthStore } from '@/store';
-import { useTheme } from '@/theme/ThemeProvider';
 import { Building, Hash, Mail, User, UserCheck } from 'lucide-react';
-import { useEffect, useState } from 'react';
 export default function ProfilePage() {
-  const { theme } = useTheme();
-  const [isDark, setIsDark] = useState(theme === 'dark'); // initialize from theme
   const { user } = useAuthStore();
-
-  useEffect(() => {
-    setIsDark(theme === 'dark');
-  }, [theme]);
 
   return (
     <div className="container">

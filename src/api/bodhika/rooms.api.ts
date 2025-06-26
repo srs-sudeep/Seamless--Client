@@ -1,13 +1,15 @@
-import { apiClient } from '@/core';
+import { apiClient, BODHIKA_URL } from '@/core';
 import type { Room, RoomDeviceMapping } from '@/types';
 
+const BASE = `${BODHIKA_URL}/rooms/`;
+
 export async function getRooms(): Promise<Room[]> {
-  const { data } = await apiClient.get<Room[]>('/bodhika/api/v1/rooms/');
+  const { data } = await apiClient.get<Room[]>(`${BASE}`);
   return data;
 }
 
 export async function createRoom(payload: Omit<Room, 'is_deleted'>): Promise<Room> {
-  const { data } = await apiClient.post<Room>('/bodhika/api/v1/rooms/', payload);
+  const { data } = await apiClient.post<Room>(`${BASE}`, payload);
   return data;
 }
 
@@ -15,12 +17,12 @@ export async function updateRoom(
   room_id: string,
   payload: Omit<Room, 'room_id' | 'is_deleted'>
 ): Promise<Room> {
-  const { data } = await apiClient.put<Room>(`/bodhika/api/v1/rooms/${room_id}`, payload);
+  const { data } = await apiClient.put<Room>(`${BASE}/${room_id}`, payload);
   return data;
 }
 
 export async function deleteRoom(room_id: string): Promise<void> {
-  await apiClient.delete(`/bodhika/api/v1/rooms/${room_id}`);
+  await apiClient.delete(`${BASE}/${room_id}`);
 }
 
 export async function getRoomDeviceMappings(): Promise<RoomDeviceMapping[]> {

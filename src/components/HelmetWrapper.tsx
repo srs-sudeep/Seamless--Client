@@ -34,7 +34,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
 
       {(heading || subHeading || isBackbuttonVisible) && (
         <div className="mx-6 mt-6 mb-4">
-          <div className="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-background p-6 transition-all duration-300">
+          <div className="rounded-2xl shadow-lg border border-muted bg-card p-6 transition-all duration-300">
             {/* Back button above heading */}
             {isBackbuttonVisible && (
               <div className="mb-4 flex items-center">
@@ -43,9 +43,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
                   onClick={() => navigate(-1)}
                   className={`
         group w-auto px-4 py-2 flex items-center gap-2 font-semibold
-        bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900 dark:to-indigo-900
-        text-blue-700 dark:text-blue-200 border-none shadow
-        hover:from-blue-200 hover:to-indigo-200 dark:hover:from-blue-800 dark:hover:to-indigo-800
+        bg-gradient-to-r from-primary to-secondary border-none shadow
         transition-all duration-300
         animate-fade-in
       `}
@@ -71,7 +69,7 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
                 {heading && (
                   <h1 className="xl:text-3xl text-lg md:text-2xl font-bold text-foreground truncate relative pb-2">
                     {heading}
-                    <span className="block h-1 w-16 bg-gradient-to-r from-blue-500 to-indigo-400 rounded-full mt-2" />
+                    <span className="block h-1 w-16 bg-gradient-to-r from-primary to- rounded-full mt-2" />
                   </h1>
                 )}
                 {subHeading && (

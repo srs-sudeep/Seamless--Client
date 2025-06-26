@@ -1,5 +1,7 @@
-import { apiClient } from '@/core';
+import { apiClient, CORE_URL } from '@/core';
 import type { UserListResponse, UserFiltersResponse, GetUsersParams } from '@/types';
+
+const BASE = `${CORE_URL}/users/`;
 
 export async function getUsers(params: GetUsersParams = {}): Promise<UserListResponse> {
   const { search, status, roles, limit = 10, offset = 0 } = params;
@@ -25,21 +27,21 @@ export async function getUsers(params: GetUsersParams = {}): Promise<UserListRes
     return usp.toString();
   };
 
-  const { data } = await apiClient.get<UserListResponse>('/core/api/v1/users/', {
+  const { data } = await apiClient.get<UserListResponse>(`${BASE}`, {
     params: query,
     paramsSerializer,
   });
   return data;
 }
 export async function assignRoleToUser(user_id: string, role_id: number) {
-  await apiClient.post(`/core/api/v1/users/${user_id}/roles/${role_id}`);
+  await apiClient.post(`${BASE}${user_id}/roles/${role_id}`);
 }
 
 export async function removeRoleFromUser(user_id: string, role_id: number) {
-  await apiClient.delete(`/core/api/v1/users/${user_id}/roles/${role_id}`);
+  await apiClient.delete(`${BASE}${user_id}/roles/${role_id}`);
 }
 
 export async function getUserFilters(): Promise<UserFiltersResponse> {
-  const { data } = await apiClient.get<UserFiltersResponse>('/core/api/v1/users/filters');
+  const { data } = await apiClient.get<UserFiltersResponse>(`${BASE}filters`);
   return data;
 }

@@ -205,7 +205,7 @@ export const ModuleSidebar = () => {
             <div
               className={cn(
                 'flex items-center px-3 py-2 rounded-md text-base transition-colors',
-                'hover:bg-sidebar-accent/10 hover:text-sidebar-accent cursor-pointer',
+                'hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground cursor-pointer',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
                   : 'text-sidebar-foreground/80',
@@ -263,7 +263,7 @@ export const ModuleSidebar = () => {
               'flex items-center justify-center w-12 h-12 mb-2 rounded-md cursor-pointer transition-all',
               isActive
                 ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                : 'hover:bg-sidebar-accent/10 text-sidebar-foreground/70',
+                : 'hover:bg-sidebar-accent/20 hover:text-sidebar-accent-foreground',
               isModuleActive && !isActive && 'text-sidebar-foreground'
             )}
             onClick={() => setActiveModule(module.id)}
@@ -280,7 +280,7 @@ export const ModuleSidebar = () => {
 
   const sideBarcontent = (
     <div className="h-full flex">
-      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-[#0b14374d]/5 dark:bg-background z-40">
+      <div className="w-16 h-full flex flex-col items-center py-4 border-r border-sidebar-border bg-sidebar z-40">
         <div className="mb-6">
           <AppLogo short className=" text-sidebar-foreground" imgClassname="w-13 h-15" />
         </div>
@@ -315,8 +315,8 @@ export const ModuleSidebar = () => {
           exit={{ width: 0, opacity: 0, x: -20, transition: { type: 'tween', duration: 0.2 } }}
           style={{ overflow: 'hidden' }}
           className={cn(
-            'h-full flex flex-col',
-            'bg-background backdrop-blur-sm overflow-hidden',
+            'h-full flex flex-col border-r',
+            'bg-sidebar-primary-foreground backdrop-blur-sm overflow-hidden',
             'shadow-[8px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 rounded-r-xl'
           )}
         >

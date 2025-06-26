@@ -95,7 +95,7 @@ export const Navbar = () => {
 
   if (isMobile) {
     return (
-      <div className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 border-b rounded-b-xl shadow-2xl py-3 bg-[#0b14374d]/5 dark:bg-white/8 backdrop-blur-theme">
+      <div className="sticky top-0 z-40 h-14 flex items-center justify-between px-4 border-b rounded-b-xl shadow-2xl py-3 bg-card">
         <div className="md:hidden mr-2">
           <Tooltip>
             <TooltipTrigger asChild>
@@ -221,12 +221,12 @@ export const Navbar = () => {
       {/* Full Page Loader */}
       {showLoader && <LoadingFallback />}
 
-      <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl dark:bg-gray-50/10 shadow-lg py-3 h-24 px-6 backdrop-blur-sm">
+      <div className="isolate sticky top-2 mx-6 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-card/50 shadow-lg py-3 h-24 px-6 backdrop-blur-sm border dark:border-border">
         <div className="flex items-center justify-between w-full">
           {/* Left side with breadcrumbs and page title */}
           <div className="flex flex-col justify-center">
             <Breadcrumb
-              className="flex flex-nowrap items-center space-x-1 text-base font-medium text-muted-foreground overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted-foreground/20"
+              className="flex flex-nowrap items-center space-x-1 text-base font-medium text-muted overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted-foreground/20"
               style={{ maxWidth: '100vw' }}
             >
               <BreadcrumbList className="flex flex-row items-center flex-nowrap">
@@ -278,7 +278,7 @@ export const Navbar = () => {
                   <PopoverTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">
                       <Bell className="h-5 w-5" />
-                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-blue-500 text-xs flex items-center justify-center text-white">
+                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-xs flex items-center justify-center text-background">
                         {notifications.filter(n => !n.read).length}
                       </span>
                     </Button>
@@ -289,7 +289,7 @@ export const Navbar = () => {
               <PopoverContent className="w-80 p-0 rounded-xl shadow-lg" align="end">
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="font-medium">Notifications</h3>
-                  <Button variant="ghost" size="sm" className="text-xs text-blue-500">
+                  <Button variant="ghost" size="sm" className="text-xs text-primary">
                     Mark all as read
                   </Button>
                 </div>
@@ -310,14 +310,14 @@ export const Navbar = () => {
                           </span>
                         </div>
                         {!notification.read && (
-                          <div className="h-2 w-2 rounded-full bg-blue-500 mt-1"></div>
+                          <div className="h-2 w-2 rounded-full bg-primary mt-1"></div>
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="p-2 border-t text-center">
-                  <Button variant="ghost" size="sm" className="text-sm text-blue-500 w-full">
+                  <Button variant="ghost" size="sm" className="text-sm text-primary w-full">
                     View all notifications
                   </Button>
                 </div>
@@ -328,7 +328,7 @@ export const Navbar = () => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative p-0 flex items-center gap-2 h-9 rounded-full pr-2 hover:bg-background/5"
+                  className="relative p-0 flex items-center gap-2 h-9 rounded-full pr-2 hover:bg-background"
                 >
                   <UserAvatar
                     name={user?.name || 'User'}

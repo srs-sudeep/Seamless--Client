@@ -29,3 +29,7 @@ export * from './bodhika/rooms.types';
 export * from './bodhika/session.types';
 export * from './bodhika/slots.types';
 export * from './bodhika/students.types';
+
+/* Type definitions for naivedyam permissions */
+export * from './naivedyam/vendors.types';
+export * from './naivedyam/studentVendor.types';

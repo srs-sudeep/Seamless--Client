@@ -1,5 +1,5 @@
 import { apiClient } from '@/core';
-import type { Vendor } from '@/types/naivedyam/vendors.types';
+import type { Vendor } from '@/types';
 
 const BASE = '/naivedyam/api/v1/vendor/';
 

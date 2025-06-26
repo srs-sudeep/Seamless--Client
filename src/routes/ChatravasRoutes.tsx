@@ -4,6 +4,7 @@ import { type RouteObject } from 'react-router-dom';
 
 // Lazy load admin views
 const HostelManagement = lazy(() => import('@/views/chatravas/HostelList'));
+const StudentHostel = lazy(() => import('@/views/chatravas/StudentHostel'));
 
 const ChatravasRoutes: RouteObject = {
   path: '/chatravas',
@@ -12,6 +13,10 @@ const ChatravasRoutes: RouteObject = {
     {
       path: 'hostel-list',
       element: <HostelManagement />,
+    },
+    {
+      path: 'student-hostel',
+      element: <StudentHostel />,
     },
   ],
 };

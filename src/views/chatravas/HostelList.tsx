@@ -8,18 +8,30 @@ import {
   DynamicForm,
   DynamicTable,
   HelmetWrapper,
+  Input,
   toast,
 } from '@/components';
-import { useCreateHostel, useDeleteHostel, useHostels } from '@/hooks/chatravas/useHostel.hook';
+import {
+  useCreateHostel,
+  useDeleteHostel,
+  useHostels,
+  useUpdateHostel,
+} from '@/hooks/chatravas/useHostel.hook';
 import type { Hostel } from '@/types/chatravas/hostel.types';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Loader2, Plus, Trash2, Search, X, Pencil } from 'lucide-react';
+import { useState, useMemo } from 'react';
 
 const createHostelSchema = [
-  { name: 'hostel_id', label: 'Hostel ID', type: 'text', required: true },
-  { name: 'hostel_name', label: 'Hostel Name', type: 'text', required: true },
-  { name: 'hostel_ldap', label: 'Hostel LDAP', type: 'text', required: true },
-  { name: 'incharge', label: 'Incharge', type: 'text', required: true },
+  { name: 'hostel_id', label: 'Hostel ID', type: 'text', required: true, columns: 2 },
+  { name: 'hostel_name', label: 'Hostel Name', type: 'text', required: true, columns: 2 },
+  { name: 'hostel_ldap', label: 'Hostel LDAP', type: 'text', required: true, columns: 2 },
+  { name: 'incharge', label: 'Incharge', type: 'text', required: true, columns: 2 },
+];
+
+const editHostelSchema = [
+  { name: 'hostel_name', label: 'Hostel Name', type: 'text', required: true, columns: 2 },
+  { name: 'hostel_ldap', label: 'Hostel LDAP', type: 'text', required: true, columns: 2 },
+  { name: 'incharge', label: 'Incharge', type: 'text', required: true, columns: 2 },
 ];
 
 const HostelList = () => {
@@ -27,6 +39,7 @@ const HostelList = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editHostel, setEditHostel] = useState<Hostel | null>(null);
 
   const { data, isFetching: isLoading } = useHostels({
     search,
@@ -34,9 +47,10 @@ const HostelList = () => {
     offset: (page - 1) * limit,
   });
   const hostels: any = data ?? [];
-  const totalCount = data?.total_count ?? 0;
+  const totalCount = typeof data?.total_count === 'number' ? data.total_count : hostels.length;
 
   const createHostel = useCreateHostel();
+  const updateHostel = useUpdateHostel();
   const deleteHostel = useDeleteHostel();
 
   const handleCreate = async (formData: Record<string, any>) => {
@@ -59,37 +73,87 @@ const HostelList = () => {
     });
   };
 
+  const handleEdit = (hostel: Hostel) => {
+    setEditHostel(hostel);
+  };
+
+  const handleUpdate = async (formData: Record<string, any>) => {
+    if (!editHostel) return;
+    await updateHostel.mutateAsync({
+      hostel_id: editHostel.hostel_id,
+      payload: {
+        hostel_name: formData.hostel_name,
+        hostel_ldap: formData.hostel_ldap,
+        incharge: formData.incharge,
+      },
+    });
+    toast({ title: 'Hostel updated' });
+    setEditHostel(null);
+  };
+
+  const handleDelete = (hostel_id: string) => {
+    if (window.confirm('Delete this hostel?')) {
+      deleteHostel.mutate(hostel_id, {
+        onSuccess: () =>
+          toast({
+            title: 'Hostel deleted',
+            description: 'The hostel was deleted successfully.',
+          }),
+        onError: () =>
+          toast({
+            title: 'Failed to delete hostel',
+            description: 'An error occurred while deleting the hostel.',
+          }),
+      });
+    }
+  };
+
   const getTableData = (hostels: Hostel[]) =>
     hostels.map(hostel => ({
       ID: hostel.hostel_id,
       Name: hostel.hostel_name,
       LDAP: hostel.hostel_ldap,
       Incharge: hostel.incharge,
+      Edit: '',
       Delete: '',
       _row: hostel,
     }));
 
   const customRender = {
+    Edit: (_: any, row: any) => (
+      <Dialog
+        open={editHostel?.hostel_id === row._row.hostel_id}
+        onOpenChange={open => {
+          if (!open) setEditHostel(null);
+        }}
+      >
+        <DialogTrigger asChild>
+          <Button size="icon" variant="ghost" onClick={() => handleEdit(row._row)}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Hostel</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={editHostelSchema}
+            defaultValues={editHostel ?? undefined}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditHostel(null)}
+            submitButtonText={updateHostel.isPending ? 'Saving...' : 'Save'}
+            disabled={updateHostel.isPending}
+          />
+        </DialogContent>
+      </Dialog>
+    ),
     Delete: (_: any, row: any) => (
       <Button
         size="icon"
         variant="destructive"
         onClick={e => {
           e.stopPropagation();
-          if (window.confirm('Delete this hostel?')) {
-            deleteHostel.mutate(row._row.hostel_id, {
-              onSuccess: () =>
-                toast({
-                  title: 'Hostel deleted',
-                  description: 'The hostel was deleted successfully.',
-                }),
-              onError: () =>
-                toast({
-                  title: 'Failed to delete hostel',
-                  description: 'An error occurred while deleting the hostel.',
-                }),
-            });
-          }
+          handleDelete(row._row.hostel_id);
         }}
         disabled={deleteHostel.isPending}
       >
@@ -102,6 +166,18 @@ const HostelList = () => {
     ),
   };
 
+  // Filtered hostels for search summary
+  const filteredHostels = useMemo(() => {
+    if (!search.trim()) return hostels;
+    return hostels.filter(
+      (h: any) =>
+        h.hostel_id.toLowerCase().includes(search.toLowerCase()) ||
+        h.hostel_name.toLowerCase().includes(search.toLowerCase()) ||
+        h.hostel_ldap.toLowerCase().includes(search.toLowerCase()) ||
+        h.incharge.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [hostels, search]);
+
   return (
     <HelmetWrapper
       title="Hostels | Seamless"
@@ -109,22 +185,26 @@ const HostelList = () => {
       subHeading="Manage hostels in the Chatravas module."
     >
       <DynamicTable
-        data={getTableData(hostels).map(row => ({
+        data={getTableData(filteredHostels).map(row => ({
           ...row,
+          Edit: customRender.Edit('', row),
           Delete: customRender.Delete('', row),
         }))}
         isLoading={isLoading}
         customRender={{}}
         onRowClick={() => {}}
-        onSearchChange={setSearch}
         page={page}
         onPageChange={setPage}
         limit={limit}
         onLimitChange={setLimit}
         total={totalCount}
         headerActions={
-          <Button className="flex items-center gap-2" onClick={() => setCreateDialogOpen(true)}>
-            <Plus size={18} /> Add Hostel
+          <Button
+            onClick={() => setCreateDialogOpen(true)}
+            className="whitespace-nowrap w-full md:w-auto"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Hostel
           </Button>
         }
       />

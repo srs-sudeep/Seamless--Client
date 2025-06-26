@@ -1,6 +1,6 @@
 import { apiClient, BODHIKA_URL } from '@/core';
 import type { Student, StudentAttendanceResponse } from '@/types';
-const BASE = `${BODHIKA_URL}/api/v1/courses/`;
+const BASE = `${BODHIKA_URL}/courses/`;
 export async function getStudents(): Promise<Student[]> {
   const { data } = await apiClient.get<Student[]>(`${BASE}all-students`);
   return data;

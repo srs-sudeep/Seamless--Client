@@ -106,7 +106,7 @@ const CreateVendors = () => {
       heading="Create Vendor"
       subHeading="Add a new vendor with instructors."
     >
-      <Card className="border border-border dark:bg-gray-800/50">
+      <Card className="border border-border ">
         <CardContent className="p-0">
           <DynamicForm
             schema={schema}

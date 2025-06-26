@@ -45,6 +45,7 @@
 
   --color-chip-blue: hsl(var(--chip-blue));
   --color-chip-purple: hsl(var(--chip-purple));
+  --color-chip-yellow: hsl(var(--chip-yellow));
 
   /* Border radius */
   --radius-xl: calc(var(--radius) + 4px);
@@ -107,6 +108,7 @@
 
     --chip-blue: 210 71% 45%; /* Darker Blue */
     --chip-purple: 270 65% 55%; /* Softer, dark-usable Purple */
+    --chip-yellow: 48 85% 60%; /* Yellow */
   }
 
   /* Dark Theme - Custom Purple Color Scheme (#e0cefd) */
@@ -165,6 +167,7 @@
 
     --chip-blue: 210 65% 50%; /* Blue */
     --chip-purple: 270 55% 65%; /* Purple */
+    --chip-yellow: 48 90% 75%; /* Yellow */
   }
 }
 

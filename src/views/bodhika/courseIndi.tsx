@@ -77,16 +77,16 @@ const CourseIndi = () => {
   const getStatusChip = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'active':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-success/10 text-success border-success';
       default:
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-chip-blue/10 text-chip-blue border-chip-blue';
     }
   };
 
   const getStatusChipClass = (count: number) =>
     count >= 2
-      ? 'bg-green-100 text-green-800 border-green-300'
-      : 'bg-red-100 text-red-800 border-red-300';
+      ? 'bg-success/10 text-success border-success'
+      : 'bg-destructive/10 text-destructive border-destructive';
 
   // Helper functions for subcategories
   function getValidated(
@@ -184,7 +184,7 @@ const CourseIndi = () => {
               <span>{room.room_id}</span>
               {room.room_name && (
                 <div>
-                  <span className="inline-block mt-1 px-2 py-0.5 rounded-xl bg-gray-200 text-gray-700 text-xs">
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-xl bg-muted-foreground/10 text-foreground text-xs">
                     {room.room_name}
                   </span>
                 </div>

@@ -123,7 +123,7 @@ const ServiceManagement = () => {
       </Tooltip>
     ),
     active: (value: boolean) => (
-      <span className={value ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+      <span className={value ? 'text-success font-semibold' : 'text-destructive font-semibold'}>
         {value ? 'Active' : 'Inactive'}
       </span>
     ),

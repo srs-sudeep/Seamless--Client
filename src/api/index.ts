@@ -22,3 +22,7 @@ export * from './bodhika/rooms.api';
 export * from './bodhika/session.api';
 export * from './bodhika/slots.api';
 export * from './bodhika/students.api';
+
+/* Exporting all naivedyam APIs */
+export * from './naivedyam/vendors.api';
+export * from './naivedyam/studentVendor.api';

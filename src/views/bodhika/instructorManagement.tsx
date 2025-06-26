@@ -214,7 +214,7 @@ const InstructorManagement = () => {
     'Instruction Type': (value: string) => {
       const colorClass =
         value === 'Lecture'
-          ? 'text-teal-800 bg-teal-100 border-teal-200'
+          ? 'text-success bg-success/10 border-success'
           : value === 'Tutorial'
             ? 'text-yellow-800 bg-yellow-100 border-yellow-200'
             : value === 'Lab'

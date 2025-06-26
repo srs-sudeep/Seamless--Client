@@ -43,10 +43,11 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
                   onClick={() => navigate(-1)}
                   className={`
         group w-auto px-4 py-2 flex items-center gap-2 font-semibold
-        bg-gradient-to-r from-primary to-secondary border-none shadow
+        bg-primary border-none shadow
         transition-all duration-300
         animate-fade-in
       `}
+                  // gradient-to-r from-primary to-secondary
                   style={{ boxShadow: '0 2px 8px 0 rgba(60,60,180,0.08)' }}
                 >
                   <span className="relative flex items-center">

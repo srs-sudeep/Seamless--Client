@@ -32,3 +32,4 @@ export * from './bodhika/students.types';
 
 /* Type definitions for naivedyam permissions */
 export * from './naivedyam/vendors.types';
+export * from './naivedyam/studentVendor.types';

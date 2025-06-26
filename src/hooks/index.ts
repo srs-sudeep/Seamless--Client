@@ -26,3 +26,4 @@ export * from './bodhika/useStudents.hook';
 
 /* Exporting all naivedyam APIs */
 export * from './naivedyam/useVendors.hook';
+export * from './naivedyam/useStudentVendors.hook';

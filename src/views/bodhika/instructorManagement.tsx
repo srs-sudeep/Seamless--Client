@@ -214,11 +214,11 @@ const InstructorManagement = () => {
     'Instruction Type': (value: string) => {
       const colorClass =
         value === 'Lecture'
-          ? 'text-teal-800 bg-teal-100 border-teal-200'
+          ? 'text-success bg-success/10 border-success'
           : value === 'Tutorial'
-            ? 'text-yellow-800 bg-yellow-100 border-yellow-200'
+            ? 'text-chip-purple bg-chip-purple/10 border-chip-purple'
             : value === 'Lab'
-              ? 'text-rose-800 bg-rose-100 border-rose-200'
+              ? 'text-chip-blue bg-chip-blue/10 border-chip-blue'
               : 'text-gray-600';
       return (
         <span className={`px-2 py-0.5 rounded-full ${colorClass}  text-xs font-medium border `}>

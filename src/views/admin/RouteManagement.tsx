@@ -178,7 +178,7 @@ const RouteManagement = () => {
     ),
     'Is Sidebar': (value: boolean) => (
       <span
-        className={`px-2 py-0.5 rounded-full ${value ? 'bg-chip-secondary border-chip-border-secondary text-chip-text-secondary' : 'bg-destructive/10 border-destructive text-destructive'}  text-xs font-medium border `}
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-chip-purple/10 border-chip-purple text-chip-purple' : 'bg-destructive/10 border-destructive text-destructive'}  text-xs font-medium border `}
       >
         {String(value)}
       </span>
@@ -194,7 +194,7 @@ const RouteManagement = () => {
           roles.map(role => (
             <span
               key={role.value}
-              className="px-2 py-0.5 rounded-full text-xs font-medium border bg-chip-primary border-chip-primary-border text-chip-primary-text"
+              className="px-2 py-0.5 rounded-full text-xs font-medium border bg-chip-blue/10 border-chip-blue text-chip-blue"
             >
               {role.label}
             </span>

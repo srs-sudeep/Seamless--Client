@@ -58,13 +58,13 @@ const formatTimeOnly = (dateString: string) => {
 const getStatusChipClass = (status: string) => {
   switch (status?.toLowerCase()) {
     case 'active':
-      return 'bg-green-100 text-green-800 border-green-300';
+      return 'bg-success/10 text-success border-success';
     case 'paused':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      return 'bg-chip-yellow/10 text-chip-yellow border-chip-yellow';
     case 'ended':
-      return 'bg-gray-100 text-gray-800 border-gray-300';
+      return 'bg-muted-foreground/10 text-muted-foreground border-muted-foreground';
     default:
-      return 'bg-blue-100 text-blue-800 border-blue-300';
+      return 'bg-chip-blue/10 text-chip-blue border-chip-blue';
   }
 };
 
@@ -162,7 +162,7 @@ const Sessions = () => {
     ),
     'End Time': (value: string, _: any) =>
       !value ? (
-        <span className="inline-block px-3 py-1 rounded-full border text-xs font-semibold bg-green-100 text-green-800 border-green-300">
+        <span className="inline-block px-3 py-1 rounded-full border text-xs font-semibold bg-success/10 text-success border-success">
           Ongoing
         </span>
       ) : (
@@ -209,8 +209,8 @@ const Sessions = () => {
   // Attendance table helpers (same as courseIndi)
   const getStatusChipClassAttendance = (count: number) =>
     count >= 2
-      ? 'bg-green-100 text-green-800 border-green-300'
-      : 'bg-red-100 text-red-800 border-red-300';
+      ? 'bg-success/10 text-success border-success'
+      : 'bg-destructive/10 text-destructive border-destructive';
 
   function getValidated(
     arr: any[],

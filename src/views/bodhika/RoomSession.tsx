@@ -17,11 +17,11 @@ import { useState } from 'react';
 const getStatusChipClass = (status: string) => {
   switch (status?.toLowerCase()) {
     case 'active':
-      return 'bg-green-100 text-green-800 border-green-300';
+      return 'bg-success/10 text-success border-success';
     case 'inactive':
-      return 'bg-gray-100 text-gray-800 border-gray-300';
+      return 'bg-destructive/10 text-destructive border-destructive';
     default:
-      return 'bg-blue-100 text-blue-800 border-blue-300';
+      return 'bg-chip-purple/10 text-chip-purple border-chip-purple';
   }
 };
 

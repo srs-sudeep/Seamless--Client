@@ -4,6 +4,7 @@ import { type RouteObject } from 'react-router-dom';
 
 // Lazy load admin views
 const VendorsManagement = lazyLoad(() => import('@/views/naivedyam/vendorsManagement'));
+const StudentVendorManagement = lazyLoad(() => import('@/views/naivedyam/studentVendorManagement'));
 const CreateVendor = lazyLoad(() => import('@/views/naivedyam/createVendors'));
 const NaivedyamRoutes: RouteObject = {
   path: '/naivedyam',
@@ -16,6 +17,10 @@ const NaivedyamRoutes: RouteObject = {
     {
       path: 'vendors-management',
       element: <VendorsManagement />,
+    },
+    {
+      path: 'student-vendor-management',
+      element: <StudentVendorManagement />,
     },
   ],
 };

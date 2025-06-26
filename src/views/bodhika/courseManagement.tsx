@@ -221,7 +221,7 @@ const CourseManagement = () => {
               return (
                 <span
                   key={idx}
-                  className="inline-block px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs italic"
+                  className="inline-block px-2 py-1 rounded bg-muted-foreground/10 text-muted-foreground text-xs italic"
                 >
                   Invalid data
                 </span>
@@ -238,9 +238,9 @@ const CourseManagement = () => {
             return (
               <span
                 key={idx}
-                className="inline-block px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-mono"
+                className="inline-block px-2 py-1 rounded bg-chip-blue/10 text-chip-blue text-xs font-mono"
               >
-                {slotId}
+                {slotId}..
                 {roomIds && `: ${roomIds}`}
               </span>
             );

@@ -43,12 +43,9 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --color-chip-secondary: hsl(var(--chip-secondary));
-  --color-chip-border-secondary: hsl(var(--chip-border-secondary));
-  --color-chip-text-secondary: hsl(var(--chip-text-secondary));
-  --color-chip-primary: hsl(var(--chip-primary));
-  --color-chip-primary-border: hsl(var(--chip-primary-border));
-  --color-chip-primary-text: hsl(var(--chip-primary-text));
+  --color-chip-blue: hsl(var(--chip-blue));
+  --color-chip-purple: hsl(var(--chip-purple));
+  --color-chip-yellow: hsl(var(--chip-yellow));
 
   /* Border radius */
   --radius-xl: calc(var(--radius) + 4px);
@@ -109,12 +106,9 @@
     --sidebar-border: 214 32% 85%; /* Blue-gray border */
     --sidebar-ring: 217 91% 60%; /* Bright blue ring */
 
-    --chip-secondary:
-      243, 100%, 96% /* Chip colors */ --chip-border-secondary: 243, 91%, 91%; /* Light blue-gray border */
-    --chip-text-secondary: 243, 75%, 59%; /* Dark blue-gray text */
-    --chip-primary: 219, 94%, 88%;
-    --chip-primary-border: 254, 57%, 85%;
-    --chip-primary-text: 225, 78%, 41%;
+    --chip-blue: 210 71% 45%; /* Darker Blue */
+    --chip-purple: 270 65% 55%; /* Softer, dark-usable Purple */
+    --chip-yellow: 48 85% 60%; /* Yellow */
   }
 
   /* Dark Theme - Custom Purple Color Scheme (#e0cefd) */
@@ -171,12 +165,9 @@
     --chart-pink: 330 80% 70%; /* Light pink for secondary data */
     --chart-blue: 240 70% 60%; /* Blue accent */
 
-    --chip-secondary:
-      243, 100%, 96% /* Chip colors */ --chip-border-secondary: 243, 91%, 91%; /* Light blue-gray border */
-    --chip-text-secondary: 243, 75%, 59%; /* Dark blue-gray text */
-    --chip-primary: 219, 94%, 88%;
-    --chip-primary-border: 254, 57%, 85%;
-    --chip-primary-text: 225, 78%, 41%;
+    --chip-blue: 210 65% 50%; /* Blue */
+    --chip-purple: 270 55% 65%; /* Purple */
+    --chip-yellow: 48 90% 75%; /* Yellow */
   }
 }
 

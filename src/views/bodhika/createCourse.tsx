@@ -266,15 +266,15 @@ const CreateCourse = () => {
       subHeading="Add a new course with instructors."
     >
       {/* CSV Upload Section with shadcn/ui components */}
-      <Card className="mb-8 border border-border dark:bg-gray-800/50">
+      <Card className="mb-8 border border-border bg-card">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Button
               variant="outline"
               onClick={handleDownloadCsvFormat}
-              className="w-full sm:w-auto flex items-center gap-2 bg-background dark:bg-gray-700/50 border-muted-foreground/20 hover:bg-muted hover:text-accent-foreground transition-colors"
+              className="w-full sm:w-auto flex items-center gap-2 bg-background text-foreground border-muted-foreground/20 transition-colors"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 text-foreground" />
               <span>Download CSV Template</span>
             </Button>
 
@@ -300,11 +300,11 @@ const CreateCourse = () => {
             </div>
           </div>
 
-          <div className="mt-4 text-sm text-muted-foreground bg-muted/30 dark:bg-gray-700/30 p-3 rounded-md">
+          <div className="mt-4 text-sm bg-background text-foreground border border-border p-3 rounded-md">
             <p className="flex items-start">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2 text-blue-500 flex-shrink-0"
+                className="h-5 w-5 mr-2 text-primary flex-shrink-0"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -325,7 +325,7 @@ const CreateCourse = () => {
         </CardContent>
       </Card>
 
-      <Card className="border border-border dark:bg-gray-800/50">
+      <Card className="border border-border bg-card">
         <CardContent className="p-0">
           <DynamicForm
             schema={schema}

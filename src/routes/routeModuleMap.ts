@@ -3,6 +3,7 @@ import DashboardRoutes from './DashboardRoutes';
 import DeviceRoutes from './DeviceRoutes';
 import BodhikaRoutes from './BodhikaRoutes';
 import NaivedyamRoutes from './NaivedyamRoutes';
+import ChatravasRoutes from './ChatravasRoutes';
 // import other module routes as needed
 
 export const allRouteObjects = [
@@ -11,5 +12,6 @@ export const allRouteObjects = [
   DeviceRoutes,
   BodhikaRoutes,
   NaivedyamRoutes,
+  ChatravasRoutes,
   // ...otherModuleRoutes,
 ];

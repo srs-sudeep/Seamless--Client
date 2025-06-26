@@ -1,9 +1,10 @@
 import lazyLoad from '@/lib/lazyLoad';
 import MainLayout from '@/layouts/MainLayout';
-import MessAdminDashboard from '@/views/dashboard/NaivedyamDashboard';
 
 // Dashboard Pages
 const AdminDashboard = lazyLoad(() => import('@/views/dashboard/AdminDashboard'));
+import MessAdminDashboard from '@/views/dashboard/NaivedyamDashboard';
+import MessVendorDashboard from '@/views/dashboard/MessVendorDashboard';
 const LibrarianDashboard = lazyLoad(() => import('@/views/dashboard/LibrarianDashboard'));
 const MedicalDashboard = lazyLoad(() => import('@/views/dashboard/MedicalDashboard'));
 const StudentDashboard = lazyLoad(() => import('@/views/dashboard/StudentDashboard'));
@@ -46,6 +47,10 @@ const DashboardRoutes = {
     {
       path: 'messadmin',
       element: <MessAdminDashboard />,
+    },
+    {
+      path: 'messvendor',
+      element: <MessVendorDashboard />,
     },
   ],
 };

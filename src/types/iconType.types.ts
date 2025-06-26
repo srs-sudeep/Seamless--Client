@@ -66,6 +66,7 @@ import {
   ChefHat,
   Play,
   Activity,
+  BellElectric,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -135,4 +136,5 @@ export const iconMap = {
   vendor: ChefHat,
   session: Play,
   active: Activity,
+  hostel: BellElectric,
 };

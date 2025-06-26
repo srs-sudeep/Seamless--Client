@@ -7,7 +7,6 @@ import type {
   GetStudentHostelsParams,
   StudentHostelListResponse,
   CreateStudentHostelDto,
-  StudentHostel,
   DeleteStudentHostelDto,
 } from '@/types/chatravas/studentHostel.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

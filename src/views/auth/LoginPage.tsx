@@ -66,11 +66,11 @@ const LoginPage: React.FC = () => {
       </div>
       <div className="h-1/3 flex">
         {/* Left form side */}
-        <div className="flex-1 flex items-center justify-center p-8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 border-0">
+        <div className="flex-1 flex items-center justify-center p-8 bg-card border-0">
           <div className="w-full max-w-md">
             {/* Logo/Brand section */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-6 shadow-lg">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent-foreground/10 mb-6 shadow-lg">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="none"
@@ -85,22 +85,15 @@ const LoginPage: React.FC = () => {
                   />
                 </svg>
               </div>
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                Welcome back
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">
-                Sign in to your account to continue
-              </p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back</h1>
+              <p className="text-muted-foreground text-sm">Sign in to your account to continue</p>
             </div>
 
             {/* Login card */}
-            <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-8">
+            <div className="bg-sidebar/30 backdrop-blur-xl rounded-2xl shadow-xl p-8">
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="ldapid"
-                    className="text-sm font-medium text-slate-700 dark:text-slate-300"
-                  >
+                  <Label htmlFor="ldapid" className="text-sm font-medium text-foreground">
                     LDAP ID
                   </Label>
                   <Input
@@ -142,12 +135,12 @@ const LoginPage: React.FC = () => {
 
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-12 bg-gradient-to-r from-primary/75 to-accent/35 hover:from-primary hover:to-primary-foreground/15 text-foreground font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={mutation.isPending}
                 >
                   {mutation.isPending ? (
                     <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-foreground rounded-full animate-spin" />
                       Signing in...
                     </div>
                   ) : (
@@ -163,7 +156,7 @@ const LoginPage: React.FC = () => {
         <div className="hidden lg:flex flex-1 relative justify-center items-center overflow-hidden">
           {/* Background with modern clip-path */}
           <div
-            className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-400 to-indigo-800"
+            className="absolute inset-0 bg-gradient-to-br from-primary/60 to-accent-foreground/10"
             style={{
               clipPath: 'polygon(0 0, 100% 0, 100% 100%, 15% 100%)',
             }}

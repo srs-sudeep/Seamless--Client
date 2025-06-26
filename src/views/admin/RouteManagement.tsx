@@ -171,14 +171,14 @@ const RouteManagement = () => {
     ),
     Status: (value: boolean) => (
       <span
-        className={`px-2 py-0.5 rounded-full ${value ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border`}
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-success/10 border-success text-success' : 'bg-destructive/10 border-destructive text-destructive'}  text-xs font-medium border`}
       >
         {value ? 'Active' : 'Inactive'}
       </span>
     ),
     'Is Sidebar': (value: boolean) => (
       <span
-        className={`px-2 py-0.5 rounded-full ${value ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-red-100 text-red-800 border-red-200'}  text-xs font-medium border `}
+        className={`px-2 py-0.5 rounded-full ${value ? 'bg-chip-secondary border-chip-border-secondary text-chip-text-secondary' : 'bg-destructive/10 border-destructive text-destructive'}  text-xs font-medium border `}
       >
         {String(value)}
       </span>
@@ -194,13 +194,13 @@ const RouteManagement = () => {
           roles.map(role => (
             <span
               key={role.value}
-              className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-medium border border-blue-200"
+              className="px-2 py-0.5 rounded-full text-xs font-medium border bg-chip-primary border-chip-primary-border text-chip-primary-text"
             >
               {role.label}
             </span>
           ))
         ) : (
-          <span className="text-gray-400 text-xs">No Roles</span>
+          <span className="text-muted-foreground text-xs">No Roles</span>
         )}
       </div>
     ),
@@ -297,14 +297,14 @@ const RouteManagement = () => {
         {/* Search Bar */}
         <div className="relative flex-1 w-full min-w-[250px]">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-gray-400" />
+            <Search className="h-4 w-4 text-muted-foreground" />
           </div>
           <Input
             type="text"
             placeholder="Search routes by label, path, icon, or role..."
             value={globalSearch}
             onChange={e => setGlobalSearch(e.target.value)}
-            className="pl-10 pr-10 py-2 h-10 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md"
+            className="pl-10 pr-10 py-2 h-10 bg-background text-foreground rounded-md"
           />
           {globalSearch && (
             <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -312,7 +312,7 @@ const RouteManagement = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setGlobalSearch('')}
-                className="h-6 w-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="h-6 w-6 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -333,7 +333,7 @@ const RouteManagement = () => {
                 {statusOptions.map(opt => (
                   <div
                     key={opt}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() => {
                       setGlobalFilters(f => ({
                         ...f,
@@ -384,7 +384,7 @@ const RouteManagement = () => {
                 {isSidebarOptions.map(opt => (
                   <div
                     key={opt}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() => {
                       setGlobalFilters(f => ({
                         ...f,
@@ -442,7 +442,7 @@ const RouteManagement = () => {
                 {allRoles.map(role => (
                   <div
                     key={role.label}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() => {
                       setGlobalFilters(prev => {
                         const prevRoles = prev.Roles || [];
@@ -501,7 +501,7 @@ const RouteManagement = () => {
               <Search className="w-3 h-3 mr-1" />
               <span>{globalSearch}</span>
               <button
-                className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                className="ml-1 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
                 onClick={e => {
                   e.stopPropagation();
                   setGlobalSearch('');
@@ -514,11 +514,11 @@ const RouteManagement = () => {
           {globalFilters.Status && (
             <Badge
               variant="secondary"
-              className="flex items-center gap-1 bg-black dark:bg-white text-white dark:text-black hover:text-black dark:hover:text-white px-2 py-1 dark:hover:bg-black"
+              className="flex items-center gap-1 py-1 bg-muted border border-foreground"
             >
               <span>Status: {globalFilters.Status}</span>
               <button
-                className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                className="ml-1 text-xs text-muted-foreground hover:text-destructive"
                 onClick={e => {
                   e.stopPropagation();
                   setGlobalFilters(f => ({ ...f, Status: undefined }));
@@ -531,11 +531,11 @@ const RouteManagement = () => {
           {globalFilters['Is Sidebar'] && (
             <Badge
               variant="secondary"
-              className="flex items-center gap-1 bg-black dark:bg-white text-white dark:text-black hover:text-black dark:hover:text-white px-2 py-1 dark:hover:bg-black"
+              className="flex items-center gap-1 py-1 bg-muted border border-foreground"
             >
               <span>Is Sidebar: {globalFilters['Is Sidebar']}</span>
               <button
-                className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                className="ml-1 text-xs text-muted-foreground hover:text-destructive"
                 onClick={e => {
                   e.stopPropagation();
                   setGlobalFilters(f => ({ ...f, 'Is Sidebar': undefined }));
@@ -550,11 +550,11 @@ const RouteManagement = () => {
               <Badge
                 key={role}
                 variant="secondary"
-                className="flex items-center gap-1 bg-black dark:bg-white text-white dark:text-black hover:text-black dark:hover:text-white px-2 py-1 dark:hover:bg-black"
+                className="flex items-center gap-1 py-1 bg-muted border border-foreground"
               >
                 <span>{role}</span>
                 <button
-                  className="ml-1 text-xs text-gray-500 hover:text-red-500"
+                  className="ml-1 text-xs text-muted-foreground hover:text-destructive"
                   onClick={e => {
                     e.stopPropagation();
                     setGlobalFilters(prev => ({
@@ -574,12 +574,12 @@ const RouteManagement = () => {
         globalFilters.Status ||
         globalFilters['Is Sidebar'] ||
         (globalFilters.Roles && globalFilters.Roles.length > 0)) && (
-        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 flex flex-row gap-4 items-center">
+        <div className="mt-2 pt-2 border-t border-muted-foreground flex flex-row gap-4 items-center">
           <div className="flex items-center">
-            <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-3">
-              <Search className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+              <Search className="h-4 w-4 text-primary-foreground" />
             </div>
-            <p className="text-sm text-blue-700 dark:text-blue-300">
+            <p className="text-sm text-foreground">
               {/* You can customize this summary as needed */}
               Showing filtered results for your search/filter.
             </p>
@@ -611,7 +611,7 @@ const RouteManagement = () => {
       heading="Path Management"
       subHeading="Manage application paths and their access control."
     >
-      <div className="mb-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300">
+      <div className="mb-4 rounded-xl shadow-sm border border-border bg-card p-4 transition-all duration-300">
         {renderGlobalFilters()}
       </div>
 

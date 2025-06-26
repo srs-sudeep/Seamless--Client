@@ -43,6 +43,13 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
+  --color-chip-secondary: hsl(var(--chip-secondary));
+  --color-chip-border-secondary: hsl(var(--chip-border-secondary));
+  --color-chip-text-secondary: hsl(var(--chip-text-secondary));
+  --color-chip-primary: hsl(var(--chip-primary));
+  --color-chip-primary-border: hsl(var(--chip-primary-border));
+  --color-chip-primary-text: hsl(var(--chip-primary-text));
+
   /* Border radius */
   --radius-xl: calc(var(--radius) + 4px);
   --radius-lg: var(--radius);
@@ -101,28 +108,35 @@
     --sidebar-primary-foreground: 0 0% 100%; /* White */
     --sidebar-border: 214 32% 85%; /* Blue-gray border */
     --sidebar-ring: 217 91% 60%; /* Bright blue ring */
+
+    --chip-secondary:
+      243, 100%, 96% /* Chip colors */ --chip-border-secondary: 243, 91%, 91%; /* Light blue-gray border */
+    --chip-text-secondary: 243, 75%, 59%; /* Dark blue-gray text */
+    --chip-primary: 219, 94%, 88%;
+    --chip-primary-border: 254, 57%, 85%;
+    --chip-primary-text: 225, 78%, 41%;
   }
 
   /* Dark Theme - Custom Purple Color Scheme (#e0cefd) */
   .dark {
     /* Base colors */
-    --background: 255 24% 13%; /* Very dark purple (#1e162a equivalent) */
+    --background: 327 84% 3%; /* Very dark purple */
     --foreground: 261 45% 91%; /* Light purple text */
 
     /* Card colors */
-    --card: 255 20% 8%; /* Near black card with purple tint */
+    --card: 327 50% 2%; /* Near black card with purple tint */
     --card-foreground: 261 45% 91%; /* Light purple text */
 
-    /* Primary colors - Bright purple */
-    --primary: 270 85% 60%; /* Vibrant purple for buttons */
+    /* Primary colors - Bright pink */
+    --primary: 330 85% 35%; /* Bright pink for buttons */
     --primary-foreground: 0 0% 100%; /* White text */
 
     /* Secondary colors */
     --secondary: 255 15% 18%; /* Dark purple-gray */
     --secondary-foreground: 261 45% 91%; /* Light purple text */
 
-    /* Accent colors - Pink accent */
-    --accent: 270 85% 60%; /* Bright pink accent */
+    /* Accent colors - Bright pink accent */
+    --accent: 327 90% 59%; /* Bright pink accent */
     --accent-foreground: 0 0% 100%; /* White text */
 
     /* Destructive colors */
@@ -140,22 +154,29 @@
     /* Input and border colors */
     --border: 255 15% 22%; /* Purple border */
     --input: 255 15% 15%; /* Dark purple input */
-    --ring: 270 85% 60%; /* Vibrant purple ring */
+    --ring: 327 90% 59%; /* Bright pink ring */
 
     /* Sidebar colors */
-    --sidebar: 255 20% 10%; /* Very dark purple sidebar */
-    --sidebar-foreground: 261 45% 91%; /* Light purple text */
-    --sidebar-accent: 270 85% 60%; /* Vibrant purple accent */
+    --sidebar: 325 20% 8%; /* Very dark rose sidebar */
+    --sidebar-foreground: 345 45% 91%; /* Light rose text */
+    --sidebar-accent: 330 85% 45%; /* Bright rose accent */
     --sidebar-accent-foreground: 0 0% 100%; /* White text */
-    --sidebar-primary: 320 80% 55%; /* Pink primary */
-    --sidebar-primary-foreground: 261 30% 8%; /* White text */
-    --sidebar-border: 255 15% 25%; /* Purple border */
-    --sidebar-ring: 270 85% 60%; /* Vibrant purple ring */
+    --sidebar-primary: 327 80% 70%; /* Light pink primary */
+    --sidebar-primary-foreground: 330 30% 6%; /* Dark rose text */
+    --sidebar-border: 345 15% 25%; /* Rose border */
+    --sidebar-ring: 345 85% 60%; /* Vibrant rose ring */
 
     /* Chart/Graph colors matching the dashboard */
-    --chart-purple: 270 85% 60%; /* Main purple for charts */
-    --chart-pink: 320 80% 55%; /* Pink for secondary data */
+    --chart-purple: 345 85% 60%; /* Main rose for charts */
+    --chart-pink: 330 80% 70%; /* Light pink for secondary data */
     --chart-blue: 240 70% 60%; /* Blue accent */
+
+    --chip-secondary:
+      243, 100%, 96% /* Chip colors */ --chip-border-secondary: 243, 91%, 91%; /* Light blue-gray border */
+    --chip-text-secondary: 243, 75%, 59%; /* Dark blue-gray text */
+    --chip-primary: 219, 94%, 88%;
+    --chip-primary-border: 254, 57%, 85%;
+    --chip-primary-text: 225, 78%, 41%;
   }
 }
 

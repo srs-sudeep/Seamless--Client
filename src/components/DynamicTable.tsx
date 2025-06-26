@@ -663,7 +663,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
               <Table>
                 <TableHeader>
                   <TableRow
-                    className="bg-primary/60
+                    className="bg-primary/80
                                      hover:bg-accent"
                   >
                     {expandableRows && (
@@ -764,7 +764,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                           <TableRow
                             className={cn(
                               'group transition-all duration-200 border-b border-border md:overflow-scroll',
-                              i % 2 === 0 ? 'bg-sidebar' : 'bg-sidebar-accent/10',
+                              i % 2 === 0 ? 'bg-sidebar' : 'bg-sidebar-primary-foreground',
                               'hover:bg-sidebar-accent/30',
                               isExpanded && 'bg-sidebar-accent/20 shadow-sm',
                               onRowClick && 'cursor-pointer active:scale-[0.995]'

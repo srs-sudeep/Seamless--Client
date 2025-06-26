@@ -5,9 +5,9 @@ const AuthLayout = () => {
   return (
     <div className="flex items-center justify-center min-h-screen from-violet-50 via-purple-50 to-indigo-50 dark:from-violet-950 relative overflow-hidden">
       {/* Background blur elements - only visible in dark mode */}
-      <div className="absolute -top-1/4 -left-20 w-96 h-96 bg-pink-500/0 dark:bg-pink-500/30 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-indigo-500/0 dark:bg-indigo-500/30 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-1/4 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/0 dark:bg-purple-500/20 rounded-full blur-3xl"></div>
+      {/* <div className="fixed -top-1/4 left-10 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed -top-1/3 -right-40 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="fixed -bottom-1/4 right-0 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div> */}
 
       {/* Theme switcher positioned in top corner */}
       <div className="absolute top-4 right-4 z-10">

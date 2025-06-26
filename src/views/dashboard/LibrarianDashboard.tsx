@@ -10,26 +10,26 @@ const LibrarianDashboard = () => {
         <StatCard
           title="Total Books"
           value="12,846"
-          icon={<Book className="h-5 w-5 text-blue-500" />}
-          iconColor="bg-blue-100"
+          icon={<Book className="h-5 w-5 text-chip-blue" />}
+          iconColor="bg-chip-blue/10"
         />
         <StatCard
           title="Active Borrowers"
           value="348"
-          icon={<Users className="h-5 w-5 text-yellow-500" />}
-          iconColor="bg-yellow-100"
+          icon={<Users className="h-5 w-5 text-chip-yellow" />}
+          iconColor="bg-chip-yellow/10"
         />
         <StatCard
           title="Overdue Returns"
           value="28"
-          icon={<Clock className="h-5 w-5 text-red-500" />}
-          iconColor="bg-red-100"
+          icon={<Clock className="h-5 w-5 text-destructive" />}
+          iconColor="bg-destructive/10"
         />
         <StatCard
           title="Returns Today"
           value="42"
-          icon={<ArrowLeft className="h-5 w-5 text-green-500" />}
-          iconColor="bg-green-100"
+          icon={<ArrowLeft className="h-5 w-5 text-success" />}
+          iconColor="bg-success/10"
         />
       </div>
 
@@ -39,8 +39,8 @@ const LibrarianDashboard = () => {
           <div className="space-y-4">
             {[1, 2, 3].map((_, i) => (
               <div key={i} className="flex items-center p-3 bg-background rounded-md border">
-                <div className="bg-blue-100 p-2 rounded mr-3">
-                  <Book className="h-4 w-4 text-blue-500" />
+                <div className="bg-chip-blue/10 p-2 rounded mr-3">
+                  <Book className="h-4 w-4 text-chip-blue" />
                 </div>
                 <div>
                   <h3 className="font-medium">Advanced Biology Textbook</h3>
@@ -49,7 +49,7 @@ const LibrarianDashboard = () => {
                   </p>
                 </div>
                 <div className="ml-auto text-xs">
-                  <span className="bg-blue-100 text-blue-700 py-1 px-2 rounded-full">
+                  <span className="bg-chip-blue/10 text-chip-blue py-1 px-2 rounded-full">
                     Due in {(i + 1) * 7} days
                   </span>
                 </div>
@@ -63,8 +63,8 @@ const LibrarianDashboard = () => {
           <div className="space-y-4">
             {[1, 2, 3].map((_, i) => (
               <div key={i} className="flex items-center p-3 bg-background rounded-md border">
-                <div className="bg-red-100 p-2 rounded mr-3">
-                  <Clock className="h-4 w-4 text-red-500" />
+                <div className="bg-destructive/10 p-2 rounded mr-3">
+                  <Clock className="h-4 w-4 text-destructive" />
                 </div>
                 <div>
                   <h3 className="font-medium">Physics Vol. {i + 1}</h3>
@@ -73,7 +73,7 @@ const LibrarianDashboard = () => {
                   </p>
                 </div>
                 <div className="ml-auto text-xs">
-                  <span className="bg-red-100 text-red-700 py-1 px-2 rounded-full">
+                  <span className="bg-destructive/10 text-destructive py-1 px-2 rounded-full">
                     Action needed
                   </span>
                 </div>

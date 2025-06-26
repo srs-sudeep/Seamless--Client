@@ -20,7 +20,7 @@ const MonthlyEarnings = () => {
         <div>
           <CardTitle className="text-lg font-medium">Monthly Earnings</CardTitle>
         </div>
-        <button className="bg-blue-100 text-blue-500 rounded-full p-2">
+        <button className="bg-primary/10 text-primary rounded-full p-2">
           <svg
             width="18"
             height="18"

@@ -42,7 +42,7 @@ const RoomDevicesManagement = () => {
           <button
             type="button"
             className={`w-10 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
-              assigned ? 'bg-green-500' : 'bg-gray-300'
+              assigned ? 'bg-primary' : 'bg-muted-foreground'
             }`}
             aria-pressed={assigned}
             tabIndex={0}

@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
+import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DynamicTable,
   Button,
   HelmetWrapper,
   toast,
 } from '@/components';
-import {
-  useVendors,
-  useCreateVendor,
-  useUpdateVendor,
-  useDeleteVendor,
-} from '@/hooks/naivedyam/useVendors.hook';
+import { useVendors, useUpdateVendor, useDeleteVendor } from '@/hooks/naivedyam/useVendors.hook';
 import { FieldType } from '@/types';
 
 const schema: FieldType[] = [
@@ -29,13 +23,11 @@ const schema: FieldType[] = [
 ];
 
 const VendorsManagement = () => {
-  const { data: vendors = [], isLoading } = useVendors();
-  const createMutation = useCreateVendor();
+  const { data: vendors = [], isFetching } = useVendors();
   const updateMutation = useUpdateVendor();
   const deleteMutation = useDeleteVendor();
 
   const [editVendor, setEditVendor] = useState<any | null>(null);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const handleEdit = (vendor: any) => setEditVendor(vendor);
 
@@ -53,18 +45,6 @@ const VendorsManagement = () => {
     });
     toast({ title: 'Vendor updated' });
     setEditVendor(null);
-  };
-
-  const handleCreate = async (formData: Record<string, any>) => {
-    await createMutation.mutateAsync({
-      ldapid: formData.ldapid,
-      email: formData.email,
-      address: formData.address,
-      description: formData.description,
-      is_active: !!formData.is_active,
-    });
-    toast({ title: 'Vendor created' });
-    setCreateDialogOpen(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -129,61 +109,31 @@ const VendorsManagement = () => {
       heading="Vendors List"
       subHeading="List of vendors for Naivedyam."
     >
-      <div className="mx-auto p-6">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-          </div>
-        ) : (
-          <DynamicTable
-            tableHeading="Vendors"
-            data={getTableData(vendors)}
-            customRender={customRender}
-            headerActions={
-              <div className="flex gap-2">
-                <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Vendor
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Vendor</DialogTitle>
-                    </DialogHeader>
-                    <DynamicForm
-                      schema={schema}
-                      onSubmit={handleCreate}
-                      onCancel={() => setCreateDialogOpen(false)}
-                      submitButtonText="Create"
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            }
+      <DynamicTable
+        tableHeading="Vendors"
+        data={getTableData(vendors)}
+        customRender={customRender}
+        isLoading={isFetching}
+      />
+      <Dialog
+        open={!!editVendor}
+        onOpenChange={open => {
+          if (!open) setEditVendor(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Vendor</DialogTitle>
+          </DialogHeader>
+          <DynamicForm
+            schema={schema}
+            onSubmit={handleUpdate}
+            defaultValues={editVendor ?? undefined}
+            onCancel={() => setEditVendor(null)}
+            submitButtonText="Save"
           />
-        )}
-        <Dialog
-          open={!!editVendor}
-          onOpenChange={open => {
-            if (!open) setEditVendor(null);
-          }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Vendor</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={schema}
-              onSubmit={handleUpdate}
-              defaultValues={editVendor ?? undefined}
-              onCancel={() => setEditVendor(null)}
-              submitButtonText="Save"
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+        </DialogContent>
+      </Dialog>
     </HelmetWrapper>
   );
 };

@@ -88,7 +88,7 @@ const CreateSession = () => {
       columns: 2,
       options: courseChips,
       section: 'Session Details',
-      className: 'text-red-500 text-sm',
+      className: 'text-destructive text-sm',
     },
     ...(formValues.course_id
       ? [
@@ -203,14 +203,14 @@ const CreateSession = () => {
 
   const getStatusColor = (status: string | undefined) => {
     switch (status?.toLowerCase()) {
-      case 'active':
-        return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20';
+      case 'actives':
+        return 'text-success bg-success/20 border';
       case 'paused':
-        return 'text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/20';
+        return 'text-chip-yellow bg-chip-yellow/20 border';
       case 'ended':
-        return 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/20';
+        return 'text-foreground bg-muted border';
       default:
-        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20';
+        return 'text-primary bg-primary-foreground border';
     }
   };
 
@@ -274,23 +274,22 @@ const CreateSession = () => {
     const registeredPresent = attendanceData.registered_present?.length || 0;
     const unregisteredPresent = attendanceData.unregistered_present?.length || 0;
     const registeredAbsent = attendanceData.registered_absent?.length || 0;
-    const total = registeredPresent + unregisteredPresent + registeredAbsent;
 
     return [
       {
         name: 'Registered Present',
         value: registeredPresent,
-        color: '#22c55e', // green
+        color: '#22c55e', // green  #22c55e
       },
       {
         name: 'Unregistered Present',
         value: unregisteredPresent,
-        color: '#3b82f6', // blue
+        color: '#3b82f6', // blue  #3b82f6
       },
       {
         name: 'Registered Absent',
         value: registeredAbsent,
-        color: '#ef4444', // red
+        color: '#ef4444', // red #ef4444
       },
     ];
   };
@@ -325,18 +324,14 @@ const CreateSession = () => {
         ) : (
           <div className="mx-auto">
             {/* Active Session Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-6 mb-6">
+            <div className="bg-gradient-to-r from-primary/10 to-chip-blue/10 rounded-xl border border-accent-foreground/20 p-6 mb-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                  <Activity className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 bg-primary/20 rounded-lg">
+                  <Activity className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Active Session
-                  </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Your current teaching session
-                  </p>
+                  <h2 className="text-xl font-semibold text-foreground">Active Session</h2>
+                  <p className="text-sm text-muted-foreground">Your current teaching session</p>
                 </div>
                 <div className="ml-auto">
                   <Button
@@ -352,49 +347,45 @@ const CreateSession = () => {
 
               {/* Session Details Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                  <Hash className="h-4 w-4 text-gray-500" />
+                <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                  <Hash className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
                       Session ID
                     </p>
-                    <p className="font-mono text-sm font-medium text-gray-900 dark:text-white">
+                    <p className="font-mono text-sm font-medium text-foreground">
                       {session?.session_id}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                  <BookOpen className="h-4 w-4 text-blue-500" />
+                <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                  <BookOpen className="h-4 w-4 text-chip-blue" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      Course
-                    </p>
-                    <p className="font-semibold text-sm text-gray-900 dark:text-white">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Course</p>
+                    <p className="font-semibold text-sm text-foreground">
                       {getCourseDetails(session?.course_id)?.course_code || session?.course_id}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                  <User className="h-4 w-4 text-green-500" />
+                <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                  <User className="h-4 w-4 text-success" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
                       Instructor
                     </p>
-                    <p className="font-medium text-sm text-gray-900 dark:text-white">
+                    <p className="font-medium text-sm text-foreground">
                       {session?.instructor_ldap}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                  <Clock className="h-4 w-4 text-purple-500" />
+                <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                  <Clock className="h-4 w-4 text-chip-purple" />
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      Started
-                    </p>
-                    <p className="font-medium text-sm text-gray-900 dark:text-white">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Started</p>
+                    <p className="font-medium text-sm text-foreground">
                       {formatDateTime(session?.start_time ?? '')}
                     </p>
                   </div>
@@ -412,10 +403,10 @@ const CreateSession = () => {
               </div>
 
               {/* Rooms Section */}
-              <div className="bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700 p-4">
+              <div className="bg-background rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="h-4 w-4 text-orange-500" />
-                  <h3 className="font-medium text-gray-900 dark:text-white">
+                  <MapPin className="h-4 w-4 text-destructive" />
+                  <h3 className="font-medium text-foreground">
                     Connected Rooms ({Array.isArray(session?.rooms) ? session.rooms.length : 0})
                   </h3>
                 </div>
@@ -427,19 +418,19 @@ const CreateSession = () => {
                       return (
                         <div
                           key={room.room_id || index}
-                          className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600"
+                          className="bg-background rounded-lg p-3 border border-border"
                         >
                           <div className="flex items-start gap-3">
-                            <div className="p-1.5 bg-orange-100 dark:bg-orange-900/40 rounded-md">
-                              <MapPin className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                            <div className="p-1.5 bg-destructive/10 rounded-md">
+                              <MapPin className="h-3.5 w-3.5 text-destructive" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                <p className="text-sm font-medium text-foreground truncate">
                                   {roomDetail?.room_name || room.room_id}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <Monitor className="h-3 w-3" />
                                 <span className="truncate">{room.device_id || 'No device'}</span>
                               </div>
@@ -451,8 +442,8 @@ const CreateSession = () => {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <MapPin className="h-8 w-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <MapPin className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">
                       No rooms connected to this session
                     </p>
                   </div>
@@ -462,10 +453,10 @@ const CreateSession = () => {
 
             {/* Bulk Attendance Section */}
             {session && (
-              <div className="mt-6 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700 p-4">
+              <div className="mt-6 bg-background rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <User className="h-4 w-4 text-indigo-500" />
-                  <h3 className="font-medium text-gray-900 dark:text-white">Bulk Attendance</h3>
+                  <User className="h-4 w-4 text-accent-foreground" />
+                  <h3 className="font-medium text-foreground">Bulk Attendance</h3>
                 </div>
 
                 <div className="space-y-4">
@@ -488,7 +479,7 @@ const CreateSession = () => {
                         {bulkAttendance.isPending ? 'Processing...' : 'Mark Attendance'}
                       </Button>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Enter student IDs separated by commas to mark their attendance
                     </p>
                   </div>
@@ -497,21 +488,19 @@ const CreateSession = () => {
                     <div
                       className={`p-3 rounded-md ${
                         bulkAttendanceSuccess
-                          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                          : 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'
+                          ? 'bg-success/10 border border-success/20'
+                          : 'bg-chip-yellow/10 border border-chip-yellow/20'
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         {bulkAttendanceSuccess ? (
-                          <CheckCircle className="h-4 w-4 text-green-500 dark:text-green-400 flex-shrink-0" />
+                          <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
                         ) : (
-                          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400 flex-shrink-0" />
+                          <AlertTriangle className="h-4 w-4 text-chip-yellow flex-shrink-0" />
                         )}
                         <p
                           className={`text-sm ${
-                            bulkAttendanceSuccess
-                              ? 'text-green-800 dark:text-green-300'
-                              : 'text-amber-800 dark:text-amber-300'
+                            bulkAttendanceSuccess ? 'text-success' : 'text-chip-yellow'
                           }`}
                         >
                           {bulkAttendanceMessage}
@@ -525,10 +514,10 @@ const CreateSession = () => {
 
             {/* Attendance Statistics with Pie Chart */}
             {session && (
-              <div className="mt-6 bg-white dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700 p-4">
+              <div className="mt-6 bg-background rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <Activity className="h-4 w-4 text-purple-500" />
-                  <h3 className="font-medium text-gray-900 dark:text-white">Attendance Overview</h3>
+                  <Activity className="h-4 w-4 text-chip-purple" />
+                  <h3 className="font-medium text-foreground">Attendance Overview</h3>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -545,49 +534,41 @@ const CreateSession = () => {
 
                   {/* Attendance Stats */}
                   <div className="space-y-3 flex flex-col justify-center">
-                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-100 dark:border-green-800">
+                    <div className="flex items-center justify-between p-3 bg-success/10 rounded-lg border border-success/20">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                        <span className="text-sm text-green-700 dark:text-green-300">
-                          Registered Present
-                        </span>
+                        <div className="w-3 h-3 rounded-full bg-success"></div>
+                        <span className="text-sm text-success">Registered Present</span>
                       </div>
-                      <span className="font-semibold text-green-700 dark:text-green-300">
+                      <span className="font-semibold text-success">
                         {attendanceData.registered_present?.length || 0}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                    <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-primary/20">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-blue-700 dark:text-blue-300">
-                          Unregistered Present
-                        </span>
+                        <div className="w-3 h-3 rounded-full bg-primary"></div>
+                        <span className="text-sm text-primary">Unregistered Present</span>
                       </div>
-                      <span className="font-semibold text-blue-700 dark:text-blue-300">
+                      <span className="font-semibold text-primary">
                         {attendanceData.unregistered_present?.length || 0}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-800">
+                    <div className="flex items-center justify-between p-3 bg-destructive/10 rounded-lg border border-destructive/20">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span className="text-sm text-red-700 dark:text-red-300">
-                          Registered Absent
-                        </span>
+                        <div className="w-3 h-3 rounded-full bg-destructive"></div>
+                        <span className="text-sm text-destructive">Registered Absent</span>
                       </div>
-                      <span className="font-semibold text-red-700 dark:text-red-300">
+                      <span className="font-semibold text-destructive">
                         {attendanceData.registered_absent?.length || 0}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-between p-3 bg-muted rounded-lg border border-secondary">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Total Students
-                        </span>
+                        <span className="text-sm font-medium text-foreground">Total Students</span>
                       </div>
-                      <span className="font-bold text-gray-700 dark:text-gray-300">
+                      <span className="font-bold text-foreground">
                         {(attendanceData.registered_present?.length || 0) +
                           (attendanceData.unregistered_present?.length || 0) +
                           (attendanceData.registered_absent?.length || 0)}
@@ -600,7 +581,7 @@ const CreateSession = () => {
 
             {/* Attendance Section - Single Table */}
             <div className="mt-8">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Attendance</h3>
+              <h3 className="font-medium text-foreground mb-2">Attendance</h3>
               <DynamicTable
                 tableHeading="All Attendance"
                 data={getAttendanceTableData(allAttendance)}

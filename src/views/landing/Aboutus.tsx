@@ -33,9 +33,7 @@ const TerminalInterface = () => {
       case 'help':
         output = (
           <div className="space-y-2">
-            <div className="text-cyan-600 dark:text-cyan-400 font-bold mb-3">
-              Available Commands:
-            </div>
+            <div className="text-primary font-bold mb-3">Available Commands:</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {[
                 { cmd: 'help', desc: 'Show this help message' },
@@ -47,14 +45,11 @@ const TerminalInterface = () => {
                 { cmd: 'uptime', desc: 'Show system uptime' },
                 { cmd: 'cat [file]', desc: 'Display file contents' },
               ].map(({ cmd, desc }) => (
-                <div
-                  key={cmd}
-                  className="flex items-center space-x-3 p-2 bg-gray-100 dark:bg-gray-800 rounded"
-                >
-                  <span className="text-yellow-600 dark:text-yellow-400 font-mono font-bold min-w-0 flex-shrink-0">
+                <div key={cmd} className="flex items-center space-x-3 p-2 bg-secondary rounded">
+                  <span className="text-chip-yellow font-mono font-bold min-w-0 flex-shrink-0">
                     {cmd}
                   </span>
-                  <span className="text-gray-600 dark:text-gray-400 text-sm">{desc}</span>
+                  <span className="text-muted-foreground text-sm">{desc}</span>
                 </div>
               ))}
             </div>
@@ -69,14 +64,12 @@ const TerminalInterface = () => {
         output = (
           <div className="space-y-2">
             <div className="flex items-center space-x-4">
-              <div className="text-blue-600 dark:text-blue-400 font-bold">Current Date & Time:</div>
+              <div className="text-primary font-bold">Current Date & Time:</div>
             </div>
-            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+            <div className="bg-secondary p-3 rounded-lg">
               <div className="text-lg font-mono">{now.toDateString()}</div>
-              <div className="text-2xl font-mono text-black dark:text-white">
-                {now.toLocaleTimeString()}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              <div className="text-2xl font-mono text-foreground">{now.toLocaleTimeString()}</div>
+              <div className="text-sm text-muted-foreground mt-2">
                 Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
               </div>
             </div>
@@ -86,18 +79,19 @@ const TerminalInterface = () => {
       }
       case 'whoami':
         output = (
-          <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+          <div className="flex items-center space-x-3 p-3 bg-primary/10 rounded-lg border">
+            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-background font-bold">
               U
             </div>
             <div>
-              <div className="font-bold text-blue-600 dark:text-blue-400">user</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">System Administrator</div>
+              <div className="font-bold text-primary">user</div>
+              <div className="text-sm text-muted-foreground">System Administrator</div>
             </div>
           </div>
         );
         break;
-      case 'ls': {
+      case 'lss': {
+        // 'ls'
         const files = [
           { name: 'Documents/', type: 'directory', size: '4.0K', color: 'text-blue-500' },
           { name: 'Downloads/', type: 'directory', size: '4.0K', color: 'text-blue-500' },
@@ -113,22 +107,18 @@ const TerminalInterface = () => {
         ];
         output = (
           <div className="space-y-2">
-            <div className="text-cyan-600 dark:text-cyan-400 font-bold mb-2">
-              Directory Contents:
-            </div>
+            <div className="text-primary font-bold mb-2">Directory Contents:</div>
             <div className="grid gap-1">
               {files.map(file => (
                 <div
                   key={file.name}
-                  className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                  className="flex items-center justify-between p-2 hover:secondary rounded"
                 >
                   <div className="flex items-center space-x-3">
                     <span className={`font-mono ${file.color}`}>{file.name}</span>
-                    <span className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">
-                      {file.type}
-                    </span>
+                    <span className="text-xs px-2 py-1 bg-secondary rounded">{file.type}</span>
                   </div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{file.size}</span>
+                  <span className="text-sm text-muted-foreground">{file.size}</span>
                 </div>
               ))}
             </div>
@@ -140,23 +130,21 @@ const TerminalInterface = () => {
         output = (
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-600 dark:text-green-400 font-bold">
-                System Status: Online
-              </span>
+              <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+              <span className="text-success font-bold">System Status: Online</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">2d 7h</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Uptime</div>
+              <div className="bg-background p-3 rounded-lg text-center">
+                <div className="text-2xl font-bold text-primary">2d 7h</div>
+                <div className="text-sm text-foreground">Uptime</div>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-center">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">1</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Active Users</div>
+              <div className="bg-background p-3 rounded-lg text-center">
+                <div className="text-2xl font-bold text-success">1</div>
+                <div className="text-sm text-foreground">Active Users</div>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-center">
-                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">0.15</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Load Average</div>
+              <div className="bg-background p-3 rounded-lg text-center">
+                <div className="text-2xl font-bold text-chip-yellow">0.15</div>
+                <div className="text-sm text-foreground">Load Average</div>
               </div>
             </div>
           </div>
@@ -164,18 +152,14 @@ const TerminalInterface = () => {
         break;
       case 'cat sudeep.lead':
         output = (
-          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-chip-purple/10 to-chip-blue/10 rounded-lg border border-chip-purple">
+            <div className="w-12 h-12 bg-gradient-to-r from-chip-purple to-chip-blue rounded-full flex items-center justify-center text-background font-bold text-lg">
               S
             </div>
             <div>
-              <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                Sudeep - Team Lead
-              </div>
-              <div className="text-gray-700 dark:text-gray-300">4th year CSE IIT Bhilai</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Leading the development team
-              </div>
+              <div className="text-lg font-bold text-chip-purple">Sudeep - Team Lead</div>
+              <div className="text-foreground">4th year CSE IIT Bhilai</div>
+              <div className="text-sm text-muted-foreground mt-1">Leading the development team</div>
             </div>
           </div>
         );
@@ -183,16 +167,14 @@ const TerminalInterface = () => {
         break;
       case 'cat naman.frontend':
         output = (
-          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg border border-green-200 dark:border-green-700">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-success/10 to-success/20 rounded-lg border border-success">
+            <div className="w-12 h-12 bg-gradient-to-r from-success to-success/30 rounded-full flex items-center justify-center text-background font-bold text-lg">
               N
             </div>
             <div>
-              <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                Naman - Frontend Developer
-              </div>
-              <div className="text-gray-700 dark:text-gray-300">2nd year CSE IIT Bhilai</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-lg font-bold text-success">Naman - Frontend Developer</div>
+              <div className="text-foreground ">2nd year CSE IIT Bhilai</div>
+              <div className="text-sm text-muted-foreground  mt-1">
                 Building beautiful user interfaces
               </div>
             </div>
@@ -202,16 +184,14 @@ const TerminalInterface = () => {
         break;
       case 'cat slok.fullstack':
         output = (
-          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
-            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-chip-purple/10 to-chip-purple/20 rounded-lg border border-chip-purple">
+            <div className="w-12 h-12 bg-gradient-to-r from-chip-purple to-chip-purple/30 rounded-full flex items-center justify-center text-background font-bold text-lg">
               S
             </div>
             <div>
-              <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                Slok - Full Stack Developer
-              </div>
-              <div className="text-gray-700 dark:text-gray-300">2nd year CSE IIT Bhilai</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-lg font-bold text-chip-purple">Slok - Full Stack Developer</div>
+              <div className="text-foreground ">2nd year CSE IIT Bhilai</div>
+              <div className="text-sm text-muted-foreground  mt-1">
                 Full stack development expertise
               </div>
             </div>
@@ -219,18 +199,16 @@ const TerminalInterface = () => {
         );
         outputClass = 'success';
         break;
-      case 'cat rohit.frontend':
+      case 'ls': //'cat rohit.frontend'
         output = (
-          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-lg border border-cyan-200 dark:border-cyan-700">
-            <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-primary/10 to-primary/20 rounded-lg border border-primary">
+            <div className="w-12 h-12 bg-gradient-to-r from-primary to-primary/30 rounded-full flex items-center justify-center text-background font-bold text-lg">
               R
             </div>
             <div>
-              <div className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
-                Rohit - Frontend Developer
-              </div>
-              <div className="text-gray-700 dark:text-gray-300">2nd year Electrical IIT Bhilai</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-lg font-bold text-primary">Rohit - Frontend Developer</div>
+              <div className="text-foreground">2nd year Electrical IIT Bhilai</div>
+              <div className="text-sm text-muted-foreground mt-1">
                 Creating responsive web experiences
               </div>
             </div>
@@ -241,7 +219,7 @@ const TerminalInterface = () => {
       case 'neofetch':
         output = (
           <div style={{ display: 'flex' }}>
-            <pre className="whitespace-pre text-sm font-mono leading-tight text-black dark:text-white">
+            <pre className="whitespace-pre text-sm font-mono leading-tight text-foreground">
               {`
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMNOdlccclx0NMMMMMMMMMMMMMMMMMMMMMMMM
@@ -263,64 +241,50 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
             </pre>
             <div className="max-w-2xl mx-auto  p-6 rounded-xl font-mono text-sm transition-colors duration-300">
               <p>
-                <span className="text-green-600 dark:text-green-400">seamless</span>@
-                <span className="text-blue-600 dark:text-blue-400">iitbhilai</span>
+                <span className="text-success">seamless</span>@
+                <span className="text-primary">iitbhilai</span>
               </p>
-              <hr className="my-2 border-gray-300 dark:border-gray-600" />
+              <hr className="my-2 border-border" />
 
-              <div className="space-y-1 text-gray-800 dark:text-gray-200">
+              <div className="space-y-1 text-muted-foreground">
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">Origin:</span>{' '}
-                  IIT Bhilai
+                  <span className="font-semibold text-success">Origin:</span> IIT Bhilai
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">
-                    Incubation:
-                  </span>{' '}
-                  IBITF
+                  <span className="font-semibold text-success">Incubation:</span> IBITF
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">Kernel:</span>{' '}
-                  6.15.2-arch1-1
+                  <span className="font-semibold text-success">Kernel:</span> 6.15.2-arch1-1
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">Uptime:</span>{' '}
-                  3 hours, 33 mins
+                  <span className="font-semibold text-success">Uptime:</span> 3 hours, 33 mins
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">
-                    Packages:
-                  </span>{' '}
-                  1094 (pacman), 39 (flatpak)
+                  <span className="font-semibold text-success">Packages:</span> 1094 (pacman), 39
+                  (flatpak)
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">Shell:</span>{' '}
-                  nu 0.105.1
+                  <span className="font-semibold text-success">Shell:</span> nu 0.105.1
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">
-                    Resolution:
-                  </span>{' '}
-                  2560x1440
+                  <span className="font-semibold text-success">Resolution:</span> 2560x1440
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">DE:</span>{' '}
-                  Hyprland
+                  <span className="font-semibold text-success">DE:</span> Hyprland
                 </p>
                 <p>
-                  <span className="font-semibold text-green-700 dark:text-green-400">Theme:</span>{' '}
-                  {theme.theme}
+                  <span className="font-semibold text-success">Theme:</span> {theme.theme}
                 </p>
               </div>
 
               <div className="mt-4 flex gap-1">
-                <div className="w-5 h-3 rounded-sm bg-red-400 dark:bg-red-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-green-400 dark:bg-green-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-yellow-400 dark:bg-yellow-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-blue-400 dark:bg-blue-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-pink-400 dark:bg-pink-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-cyan-400 dark:bg-cyan-500"></div>
-                <div className="w-5 h-3 rounded-sm bg-gray-400 dark:bg-gray-500"></div>
+                <div className="w-5 h-3 rounded-sm bg-destructive"></div>
+                <div className="w-5 h-3 rounded-sm bg-success"></div>
+                <div className="w-5 h-3 rounded-sm bg-chip-yellow"></div>
+                <div className="w-5 h-3 rounded-sm bg-primary"></div>
+                <div className="w-5 h-3 rounded-sm bg-chip-purple"></div>
+                <div className="w-5 h-3 rounded-sm bg-chip-blue"></div>
+                <div className="w-5 h-3 rounded-sm bg-muted-foreground"></div>
               </div>
             </div>
           </div>
@@ -340,17 +304,15 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
               ].map((member, i) => (
                 <div
                   key={i}
-                  className="w-64 sm:w-60 bg-white dark:bg-zinc-900 rounded-2xl shadow-md p-4 text-center transition hover:scale-[1.02]"
+                  className="w-64 sm:w-60 bg-background rounded-2xl shadow-md p-4 text-center transition hover:scale-[1.02]"
                 >
                   <img
                     src={member.img}
                     alt={member.name}
                     className="w-20 h-20 mx-auto rounded-full object-cover mb-3"
                   />
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                    {member.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+                  <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                  <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
               ))}
             </div>
@@ -370,17 +332,15 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
               ].map((member, i) => (
                 <div
                   key={i}
-                  className="w-64 sm:w-60 bg-white dark:bg-zinc-900 rounded-2xl shadow-md p-4 text-center transition hover:scale-[1.02]"
+                  className="w-64 sm:w-60 bg-background rounded-2xl shadow-md p-4 text-center transition hover:scale-[1.02]"
                 >
                   <img
                     src={member.img}
                     alt={member.name}
                     className="w-20 h-20 mx-auto rounded-full object-cover mb-3"
                   />
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                    {member.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+                  <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                  <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
               ))}
             </div>
@@ -393,23 +353,20 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         if (trimmedCmd.startsWith('echo ')) {
           const text = trimmedCmd.substring(5);
           output = (
-            <div className="flex items-center space-x-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-              <div className="text-yellow-600 dark:text-yellow-400">💬</div>
-              <div className="text-gray-800 dark:text-gray-200 font-medium">{text}</div>
+            <div className="flex items-center space-x-3 p-3 bg-chip-yellow/10 rounded-lg border border-chip-yellow">
+              <div className="text-chip-yellow">💬</div>
+              <div className="text-foreground font-medium">{text}</div>
             </div>
           );
         } else {
           output = (
-            <div className="flex items-center space-x-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
-              <div className="text-red-500">❌</div>
+            <div className="flex items-center space-x-3 p-3 bg-destructive/10 rounded-lg border border-destructive/30">
+              <div className="text-destructive">❌</div>
               <div>
-                <div className="text-red-600 dark:text-red-400 font-bold">
-                  Command not found: {trimmedCmd}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Type{' '}
-                  <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">help</span>{' '}
-                  to see available commands
+                <div className="text-destructive font-bold">Command not found: {trimmedCmd}</div>
+                <div className="text-sm text-foreground mt-1">
+                  Type <span className="font-mono bg-secondary px-1 rounded">help</span> to see
+                  available commands
                 </div>
               </div>
             </div>
@@ -457,16 +414,16 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
   return (
     <div>
-      <div className="text-green-600 dark:text-green-400  transition-colors duration-300 bg-gray-50 dark:bg-gray-900 mt-24">
+      <div className="text-success transition-colors duration-300 bg-muted/10 mt-24">
         <div className=" flex justify-center pt-8 pb-8">
           <div className="relative group justify-center">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
-              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+              <span className="inline-block px-12 py-4 text-foreground relative overflow-hidden transition-all duration-500 ease-out hover:text-foreground">
                 About us
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-muted-foreground via-foreground to-muted-foreground group-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mx-auto leading-relaxed text-center">
+            <p className="text-sm text-muted-foreground mx-auto leading-relaxed text-center">
               More than code – this is our story.
             </p>
           </div>
@@ -476,20 +433,20 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         <div className="h-screen items-center justify-center  relative z-10 w-full hidden lg:flex ">
           <div className="w-full max-w-6xl h-5/6 flex flex-col">
             {/* Terminal Header */}
-            <div className="bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-t-lg p-3 flex items-center gap-2 shadow-lg flex-shrink-0">
+            <div className="bg-muted border rounded-t-lg p-3 flex items-center gap-2 shadow-lg flex-shrink-0">
               <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="w-3 h-3 rounded-full bg-destructive"></div>
+                <div className="w-3 h-3 rounded-full bg-chip-yellow"></div>
+                <div className="w-3 h-3 rounded-full bg-success"></div>
               </div>
-              <div className="ml-auto text-gray-600 dark:text-gray-400 text-xs font-medium">
+              <div className="ml-auto text-foreground text-xs font-medium">
                 seamless@iitbhilai: ~
               </div>
             </div>
 
             {/* Terminal Window - Scrollable content area */}
             <div
-              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-600 border-t-0 rounded-b-lg flex-1 flex flex-col overflow-hidden cursor-text shadow-xl"
+              className="bg-background border border-t-0 rounded-b-lg flex-1 flex flex-col overflow-hidden cursor-text shadow-xl"
               onClick={handleClick}
               ref={terminalRef}
               style={{
@@ -504,34 +461,32 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
               >
                 {/* Welcome Message */}
                 <div className="mb-6 space-y-2">
-                  <div className="text-cyan-600 dark:text-cyan-400 font-bold text-lg">
+                  <div className="text-primary font-bold text-lg">
                     Welcome to Terminal Interface
                   </div>
-                  <div className="text-gray-700 dark:text-gray-300">
+                  <div className="text-foreground">
                     Type{' '}
-                    <span className="text-yellow-600 dark:text-yellow-400 font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                    <span className="text-chip-yellow font-semibold bg-background px-2 py-1 rounded">
                       help
                     </span>{' '}
                     to see all available commands
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent my-4"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-muted-foreground/30 dark:via-secondary to-transparent my-4"></div>
                 </div>
 
                 {/* Command History */}
                 {history.map((entry, index) => (
                   <div key={index} className="mb-4">
-                    <div className="flex items-center mb-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
-                      <span className="text-green-600 dark:text-green-400 font-bold mr-3">
-                        <span className="text-cyan-600 dark:text-cyan-400">seamless</span>
-                        <span className="text-gray-500">@</span>
-                        <span className="text-yellow-600 dark:text-yellow-400">iitbhilai</span>
-                        <span className="text-gray-500">:</span>
-                        <span className="text-purple-600 dark:text-purple-400">~</span>
-                        <span className="text-gray-500">$</span>
+                    <div className="flex items-center mb-2 bg-secondary rounded-lg p-2">
+                      <span className="text-success font-bold mr-3">
+                        <span className="text-chip-blue">seamless</span>
+                        <span className="text-muted-foreground">@</span>
+                        <span className="text-chip-yellow">iitbhilai</span>
+                        <span className="text-muted-foreground">:</span>
+                        <span className="text-chip-purple">~</span>
+                        <span className="text-muted-foreground">$</span>
                       </span>
-                      <span className="text-gray-800 dark:text-white font-medium">
-                        {entry.command}
-                      </span>
+                      <span className="text-foreground font-medium">{entry.command}</span>
                     </div>
                     {entry.output && (
                       <div
@@ -557,13 +512,13 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                 {/* Input Line */}
                 <div className="flex items-center font-mono text-base rounded-md px-4 py-2 transition-colors shadow-sm">
                   {/* Prompt */}
-                  <span className="text-green-600 dark:text-green-400 font-bold mr-3 whitespace-nowrap">
-                    <span className="text-cyan-600 dark:text-cyan-400">seamless</span>
-                    <span className="text-gray-500">@</span>
-                    <span className="text-yellow-600 dark:text-yellow-400">iitbhilai</span>
-                    <span className="text-gray-500">:</span>
-                    <span className="text-purple-600 dark:text-purple-400">~</span>
-                    <span className="text-gray-500">$</span>
+                  <span className="text-success font-bold mr-3 whitespace-nowrap">
+                    <span className="text-chip-blue">seamless</span>
+                    <span className="text-muted-foreground">@</span>
+                    <span className="text-chip-yellow">iitbhilai</span>
+                    <span className="text-muted-foreground">:</span>
+                    <span className="text-chip-purple">~</span>
+                    <span className="text-muted-foreground">$</span>
                   </span>
 
                   {/* Input with ghost suggestion */}
@@ -571,7 +526,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                     {/* Ghost suggestion layer */}
                     <div className="absolute inset-0 px-0 py-0 pointer-events-none select-none whitespace-pre">
                       <span className="text-transparent">{command}</span>
-                      <span className="text-gray-400 dark:text-zinc-600">{ghost}</span>
+                      <span className="text-muted-foreground">{ghost}</span>
                     </div>
 
                     {/* Actual input */}
@@ -581,7 +536,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                       value={command}
                       onChange={e => setCommand(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      className="w-full bg-transparent border-none outline-none text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600"
+                      className="w-full bg-transparent border-none outline-none text-foreground placeholder-muted-foreground"
                       placeholder="Type a command..."
                       autoComplete="off"
                       spellCheck="false"
@@ -599,7 +554,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                           setCommand(cmd);
                           inputRef.current?.focus();
                         }}
-                        className="px-3 py-1 text-xs bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-full hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors border border-zinc-300 dark:border-zinc-600"
+                        className="px-3 py-1 text-xs bg-secondary text-foreground rounded-full hover:bg-muted-foreground transition-colors border border-border"
                       >
                         {cmd}
                       </button>
@@ -610,7 +565,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
             </div>
           </div>
         </div>
-        <div className="text-black dark:text-white block lg:hidden w-[80%] ml-[10%] mr-[10%]">
+        <div className="text-foreground block lg:hidden w-[80%] ml-[10%] mr-[10%]">
           <p className="text-[17px] font-light leading-relaxed mb-6">
             We are a group of passionate minds from IIT Bhilai, driven by curiosity, collaboration,
             and a shared vision for creating impactful digital experiences. What started as a simple
@@ -675,33 +630,33 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         }
       `}</style>
       </div>
-      <div className="text-black dark:text-white bg-gray-50 dark:bg-gray-900 pt-24">
+      <div className="text-foreground bg-muted/10 pt-24">
         <section className="max-w-4xl mx-auto px-6 py-16 pt-8 pb-8">
           <div className=" flex justify-center">
             <div className="relative group">
               <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
-                <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+                <span className="inline-block px-12 py-4 text-foreground relative overflow-hidden transition-all duration-500 ease-out hover:text-foreground">
                   About Seamless
-                  <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-muted-foreground via-foreground to-muted-foreground group-hover:w-full transition-all duration-700 ease-out"></span>
                 </span>
               </h2>
             </div>
           </div>
 
           {/* Stylized opening blockquote */}
-          <blockquote className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 italic text-lg mb-8 text-gray-700 dark:text-gray-300">
+          <blockquote className="border-l-4 border-primary pl-4 italic text-lg mb-8 text-foreground">
             “Software should feel invisible — it should just work, beautifully.”
           </blockquote>
 
           <p className="text-[17px] font-light leading-relaxed mb-6">
-            <strong className="font-semibold text-blue-600 dark:text-blue-400">Seamless</strong> is
-            a modern, intuitive platform designed to simplify digital workflows, enhance
-            collaboration, and provide users with a frictionless experience across devices and
-            services. Built with elegance and efficiency in mind, Seamless bridges the gap between
-            functionality and design — empowering individuals and teams to do more with less effort.
+            <strong className="font-semibold text-primary">Seamless</strong> is a modern, intuitive
+            platform designed to simplify digital workflows, enhance collaboration, and provide
+            users with a frictionless experience across devices and services. Built with elegance
+            and efficiency in mind, Seamless bridges the gap between functionality and design —
+            empowering individuals and teams to do more with less effort.
           </p>
 
-          <hr className="my-6 border-slate-300 dark:border-slate-600" />
+          <hr className="my-6 border-muted-foreground/30" />
 
           <p className="text-[17px] font-light leading-relaxed mb-6">
             At its core, Seamless is about minimizing digital clutter. Whether you're managing
@@ -725,17 +680,17 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
           </p>
         </section>
       </div>
-      <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6 ">
+      <section className="bg-muted/10 py-16 px-6 ">
         {/* Section Heading */}
         <div className="flex justify-center pt-8 pb-8">
           <div className="relative group ">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
-              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+              <span className="inline-block px-12 py-4 text-foreground relative overflow-hidden transition-all duration-500 ease-out hover:text-foreground">
                 Our Guiding Pillars
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-muted-foreground via-foreground to-muted-foreground roup-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center">
+            <p className="text-sm text-muted-foreground mx-auto leading-relaxed  text-center">
               We’re grateful for the unwavering support and mentorship from our esteemed faculty.
             </p>
           </div>
@@ -750,36 +705,34 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
           ].map((member, i) => (
             <div
               key={i}
-              className="w-90 h-64 bg-white dark:bg-zinc-900 rounded-3xl shadow-md p-6 text-center transition-transform hover:scale-[1.02] hover:shadow-lg duration-300"
+              className="w-90 h-64 bg-background rounded-3xl shadow-md p-6 text-center transition-transform hover:scale-[1.02] hover:shadow-lg duration-300"
             >
               <img
                 src={member.img}
                 alt={member.name}
-                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-slate-200 dark:border-zinc-700"
+                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-muted-foreground/30"
               />
-              <h3 className="text-xl font-medium text-gray-900 dark:text-white">{member.name}</h3>
-              {member.role && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
-              )}
+              <h3 className="text-xl font-medium text-foreground">{member.name}</h3>
+              {member.role && <p className="text-sm text-muted-foreground">{member.role}</p>}
             </div>
           ))}
         </div>
       </section>
-      <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
+      <section className="bg-muted/10 py-16 px-6">
         {/* Headline */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-serif text-gray-900 dark:text-white"></h2>
-          <p className="mt-2 text-lg text-gray-600 dark:text-gray-300"></p>
+          <h2 className="text-4xl font-bold font-serif text-foreground"></h2>
+          <p className="mt-2 text-lg text-muted-foreground"></p>
         </div>
         <div className="flex justify-center">
           <div className="relative group pt-8 pb-8">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
-              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+              <span className="inline-block px-12 py-4 text-foreground relative overflow-hidden transition-all duration-500 ease-out hover:text-foreground">
                 By the Team
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-muted-foreground via-foreground to-muted-foreground roup-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mx-auto leading-relaxed  text-center">
+            <p className="text-sm text-muted-foreground mx-auto leading-relaxed  text-center">
               A passionate team turning bold ideas into intuitive experiences.
             </p>
           </div>
@@ -795,15 +748,15 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
           ].map((member, i) => (
             <div
               key={i}
-              className="w-90 h-64 bg-white dark:bg-zinc-900 rounded-3xl shadow-lg p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl duration-300"
+              className="w-90 h-64 bg-background rounded-3xl shadow-lg p-6 text-center transition-transform hover:scale-[1.03] hover:shadow-xl duration-300"
             >
               <img
                 src={member.img}
                 alt={member.name}
-                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-slate-200 dark:border-zinc-700"
+                className="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-muted-foreground/30"
               />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{member.name}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+              <h3 className="text-xl font-semibold text-foreground">{member.name}</h3>
+              <p className="text-sm text-muted-foreground">{member.role}</p>
             </div>
           ))}
         </div>

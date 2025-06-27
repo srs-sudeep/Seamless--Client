@@ -50,6 +50,10 @@ export const Navbar = () => {
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const handleRoleChange = async (role: UserRole) => {
     if (currentRole === role) return;
@@ -203,7 +207,7 @@ export const Navbar = () => {
                     variant="destructive"
                     size="sm"
                     className="w-full justify-start"
-                    onClick={logout}
+                    onClick={handleLogout}
                   >
                     <LogOut className="mr-2 h-4 w-4" /> Log out
                   </Button>
@@ -399,7 +403,7 @@ export const Navbar = () => {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

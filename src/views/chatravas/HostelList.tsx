@@ -8,7 +8,6 @@ import {
   DynamicForm,
   DynamicTable,
   HelmetWrapper,
-  Input,
   toast,
 } from '@/components';
 import {
@@ -18,7 +17,7 @@ import {
   useUpdateHostel,
 } from '@/hooks/chatravas/useHostel.hook';
 import type { Hostel } from '@/types/chatravas/hostel.types';
-import { Loader2, Plus, Trash2, Search, X, Pencil } from 'lucide-react';
+import { Loader2, Plus, Trash2, Pencil } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 const createHostelSchema = [
@@ -35,7 +34,7 @@ const editHostelSchema = [
 ];
 
 const HostelList = () => {
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

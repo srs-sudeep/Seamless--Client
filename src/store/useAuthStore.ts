@@ -49,7 +49,6 @@ export const useAuthStore = create<AuthState>()(
           access_token: undefined,
           refresh_token: undefined,
         });
-        window.location.href = '/login';
       },
 
       checkAuth: async () => {

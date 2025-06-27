@@ -92,7 +92,7 @@ const Sessions = () => {
   };
 
   // Separate ongoing and non-ongoing sessions
-  const [ongoing, others] = useMemo(() => {
+  useMemo(() => {
     const ongoingSessions = [];
     const otherSessions = [];
     for (const session of sessions) {
@@ -313,9 +313,6 @@ const Sessions = () => {
     'Room Id': (value: string) => <span className="font-mono">{truncateId(value)}</span>,
     Time: (value: string) => <span>{value}</span>,
   };
-
-  // Ongoing sessions first, then others
-  const sortedTableData = [...getTableData(ongoing), ...getTableData(others)];
 
   const handleViewAttendance = (session_id: string) => {
     setEditSessionId(session_id);

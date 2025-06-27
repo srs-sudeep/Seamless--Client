@@ -216,37 +216,31 @@ const StudentCourses = () => {
     if (duration >= 3) {
       // Long sessions (3+ hours) - Labs, Projects
       return {
-        bg: 'bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-50 dark:from-pink-900/20 dark:via-pink-800/30 dark:to-rose-900/20',
-        border: 'border-blue-300 dark:border-pink-500/50',
-        text: 'text-blue-900 dark:text-pink-100',
-        hover:
-          'hover:from-blue-100 hover:via-blue-150 hover:to-indigo-100 dark:hover:from-pink-800/40 dark:hover:via-pink-700/50 dark:hover:to-rose-800/40',
-        badge: 'bg-blue-200 text-blue-900 dark:bg-pink-700/50 dark:text-pink-100',
-        accent: 'bg-blue-500 dark:bg-pink-500',
+        bg: 'bg-primary/10',
+        border: 'border-primary',
+        text: 'text-primary',
+        badge: 'bg-chip-blue/20 text-chip-blue',
+        accent: 'bg-accent-foreground',
         label: 'Lab',
       };
     } else if (duration >= 1.5) {
       // Medium sessions (1.5-3 hours) - Workshops, Tutorials
       return {
-        bg: 'bg-gradient-to-br from-sky-50 via-blue-100 to-cyan-50 dark:from-rose-900/20 dark:via-pink-800/30 dark:to-fuchsia-900/20',
-        border: 'border-sky-300 dark:border-rose-500/50',
-        text: 'text-sky-900 dark:text-rose-100',
-        hover:
-          'hover:from-sky-100 hover:via-blue-150 hover:to-cyan-100 dark:hover:from-rose-800/40 dark:hover:via-pink-700/50 dark:hover:to-fuchsia-800/40',
-        badge: 'bg-sky-200 text-sky-900 dark:bg-rose-700/50 dark:text-rose-100',
-        accent: 'bg-sky-500 dark:bg-rose-500',
+        bg: 'bg-primary/10',
+        border: 'border-primary',
+        text: 'text-accent-foreground',
+        badge: 'bg-accent-foreground/20 text-foreground',
+        accent: 'bg-accent-foreground',
         label: 'Tutorial',
       };
     } else {
       // Standard sessions (1 hour) - Regular lectures
       return {
-        bg: 'bg-gradient-to-br from-indigo-50 via-blue-100 to-blue-50 dark:from-fuchsia-900/20 dark:via-pink-800/30 dark:to-pink-900/20',
-        border: 'border-indigo-300 dark:border-fuchsia-500/50',
-        text: 'text-indigo-900 dark:text-fuchsia-100',
-        hover:
-          'hover:from-indigo-100 hover:via-blue-150 hover:to-blue-100 dark:hover:from-fuchsia-800/40 dark:hover:via-pink-700/50 dark:hover:to-pink-800/40',
-        badge: 'bg-indigo-200 text-indigo-900 dark:bg-fuchsia-700/50 dark:text-fuchsia-100',
-        accent: 'bg-indigo-500 dark:bg-fuchsia-500',
+        bg: 'bg-gradient-to-br from-primary/10 via-primary/20 to-primary/30',
+        border: 'border-primary',
+        text: 'text-primary',
+        badge: 'bg-accent-foreground/20 text-foreground',
+        accent: 'bg-accent-foreground',
         label: 'Lecture',
       };
     }
@@ -270,10 +264,8 @@ const StudentCourses = () => {
           <div className="flex items-center space-x-2">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-1">
-                <User className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-                <span className="text-xs text-gray-700 dark:text-gray-300 font-medium">
-                  {colors.label}
-                </span>
+                <User className="w-3 h-3 text-muted-foreground" />
+                <span className="text-xs text-foreground font-medium">{colors.label}</span>
               </div>
             </div>
           </div>
@@ -286,7 +278,7 @@ const StudentCourses = () => {
         {/* Details row */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center space-x-1">
-            <MapPin className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+            <MapPin className="w-3 h-3 text-muted-foreground" />
             <span className={`px-2 py-1 rounded-full font-mono ${colors.badge}`}>
               {rooms.join(', ')}
             </span>
@@ -306,10 +298,10 @@ const StudentCourses = () => {
       return (
         <td
           key={`${day}-${time}`}
-          className="px-3 py-3 border border-gray-300 dark:border-gray-600 align-top bg-gray-50 dark:bg-gray-800/50"
+          className="px-3 py-3 border border-secondary align-top bg-muted"
           colSpan={cell.colspan}
         >
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
+          <div className="text-center text-muted-foreground text-sm py-8">
             <Clock className="w-5 h-5 mx-auto mb-2 opacity-50" />
             <div className="font-medium">Free Period</div>
             <div className="text-xs mt-1 opacity-75">Available</div>
@@ -321,14 +313,14 @@ const StudentCourses = () => {
     return (
       <td
         key={`${day}-${time}`}
-        className="px-3 py-3 border border-gray-300 dark:border-gray-600 align-top bg-white dark:bg-gray-900"
+        className="px-3 py-3 border border-muted align-top bg-background"
         colSpan={cell.colspan}
       >
         <div className="space-y-0">
           {hasMultipleCourses && (
-            <div className="bg-amber-100 dark:bg-amber-900/30 border-2 border-amber-300 dark:border-amber-600/50 rounded-lg px-3 py-2 mb-3">
-              <div className="text-xs font-bold text-amber-900 dark:text-amber-100 flex items-center">
-                <span className="w-2 h-2 bg-amber-600 dark:bg-amber-400 rounded-full mr-2 animate-pulse"></span>
+            <div className="bg-chip-yellow/20 border-2 border-chip-yellow rounded-lg px-3 py-2 mb-3">
+              <div className="text-xs font-bold text-chip-yellow flex items-center">
+                <span className="w-2 h-2 bg-chip-yellow rounded-full mr-2 animate-pulse"></span>
                 {cell.courses.length} Concurrent Courses
               </div>
             </div>
@@ -349,7 +341,7 @@ const StudentCourses = () => {
         subHeading="Comprehensive view of your semester schedule with smart multi-period slot handling"
       >
         <div className="flex justify-center items-center h-40">
-          <Loader2 className="animate-spin h-8 w-8 text-gray-500 dark:text-gray-400" />
+          <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
         </div>
       </HelmetWrapper>
     );
@@ -375,7 +367,7 @@ const StudentCourses = () => {
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
-                            className="w-full sm:min-w-[160px] lg:min-w-[180px] flex justify-between items-center h-10 sm:h-11 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            className="w-full sm:min-w-[160px] lg:min-w-[180px] flex justify-between items-center h-10 sm:h-11 text-sm bg-background border-muted text-foreground hover:bg-muted"
                           >
                             <span className="truncate">
                               {selectedSemester
@@ -385,12 +377,12 @@ const StudentCourses = () => {
                             <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-56 p-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
+                        <PopoverContent className="w-56 p-2 bg-background border-muted">
                           <ScrollArea className="min-h-16">
                             {semesterList.map(sem => (
                               <div
                                 key={sem}
-                                className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                                className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                                 onClick={() =>
                                   setSelectedSemester(sem === selectedSemester ? '' : sem)
                                 }
@@ -412,7 +404,7 @@ const StudentCourses = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="mt-2 w-full text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                              className="mt-2 w-full text-sm text-muted-foreground hover:bg-muted"
                               onClick={() => setSelectedSemester('')}
                             >
                               Clear
@@ -427,25 +419,25 @@ const StudentCourses = () => {
                 <div className="relative flex">
                   {/* Vertical Semester Title Flag */}
                   <div className="relative mr-4">
-                    <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-b from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900 rounded-l-xl shadow-lg">
+                    <div className="absolute left-0 top-0 h-full w-16 bg-primary rounded-l-xl shadow-lg">
                       <div className="h-full flex items-center justify-center">
                         <div className="transform -rotate-90 whitespace-nowrap">
-                          <h2 className="text-2xl font-bold text-white tracking-wider">
+                          <h2 className="text-2xl font-bold text-background tracking-wider">
                             SEMESTER {selectedSemester}
                           </h2>
                         </div>
                       </div>
                     </div>
                     {/* Flag triangle */}
-                    <div className="absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 border-l-[20px] border-l-blue-900 dark:border-l-rose-900 border-t-[15px] border-t-transparent border-b-[15px] border-b-transparent"></div>
+                    <div className="absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 border-l-[20px] border-chip-blue dark:border-l-destructive border-t-[15px] border-t-transparent border-b-[15px] border-b-transparent"></div>
                   </div>
 
                   {/* Timetable */}
-                  <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-xl bg-white dark:bg-gray-900 ml-12">
+                  <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-xl bg-background ml-12">
                     <table className="min-w-full relative">
                       <thead>
-                        <tr className="bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900 text-white">
-                          <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border border-blue-600 dark:border-pink-600 bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900">
+                        <tr className="bg-primary text-background">
+                          <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border border-border bg-primary">
                             <div className="flex items-center space-x-3">
                               <Clock className="w-5 h-5" />
                               <span className="text-lg">Day / Time</span>
@@ -454,7 +446,7 @@ const StudentCourses = () => {
                           {TIME_SLOTS.map(time => (
                             <th
                               key={time}
-                              className="px-4 py-5 text-center font-bold border border-blue-600 dark:border-pink-600 min-w-[220px]"
+                              className="px-4 py-5 text-center font-bold border border-border min-w-[220px]"
                             >
                               <div className="text-sm leading-tight">{time}</div>
                             </th>
@@ -463,15 +455,8 @@ const StudentCourses = () => {
                       </thead>
                       <tbody>
                         {DAYS.map((day, dayIndex) => (
-                          <tr
-                            key={day}
-                            className={
-                              dayIndex % 2 === 0
-                                ? 'bg-gray-50 dark:bg-gray-800/50'
-                                : 'bg-white dark:bg-gray-900'
-                            }
-                          >
-                            <td className="sticky left-0 z-10 px-6 py-6 font-bold text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 bg-gradient-to-r from-gray-100 via-gray-50 to-white dark:from-gray-700 dark:via-gray-800 dark:to-gray-900">
+                          <tr key={day}>
+                            <td className="sticky left-0 z-10 px-6 py-6 font-bold text-foreground border border-border bg-background">
                               <div className="text-center">
                                 <div className="text-lg font-bold">{day}</div>
                               </div>
@@ -491,12 +476,10 @@ const StudentCourses = () => {
           })()}
 
         {semesterList.length === 0 && (
-          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-            <Clock className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-6" />
-            <div className="text-gray-500 dark:text-gray-400 text-xl font-semibold">
-              No courses found
-            </div>
-            <div className="text-gray-400 dark:text-gray-500 text-base mt-3">
+          <div className="text-center py-16 bg-background rounded-xl shadow-lg">
+            <Clock className="w-20 h-20 text-muted-foreground mx-auto mb-6" />
+            <div className="text-muted-foreground text-xl font-semibold">No courses found</div>
+            <div className="text-muted-foreground text-base mt-3">
               You haven't enrolled in any courses yet.
             </div>
           </div>

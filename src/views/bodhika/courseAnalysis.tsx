@@ -43,15 +43,13 @@ const CourseAnalysis = () => {
       'Consecutive Absences': course.consecutive_absence_count,
       Status: course.has_consecutive_absences ? (
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-amber-500 dark:bg-red-700"></div>
-          <span className="text-amber-700 dark:text-red-700 text-xs font-medium">
-            Consecutive Absences
-          </span>
+          <div className="w-2 h-2 rounded-full bg-destructive"></div>
+          <span className="text-destructive text-xs font-medium">Consecutive Absences</span>
         </div>
       ) : (
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-          <span className="text-green-700 text-xs font-medium">Regular Attendance</span>
+          <div className="w-2 h-2 rounded-full bg-success"></div>
+          <span className="text-success text-xs font-medium">Regular Attendance</span>
         </div>
       ),
       Actions: (
@@ -73,11 +71,11 @@ const CourseAnalysis = () => {
   // Custom renderers for the course table
   const customCourseRenderer = {
     'Attendance %': (value: number) => {
-      let colorClass = 'bg-red-100 text-red-800 border-red-200';
+      let colorClass = 'bg-destructive/10 text-destructive border-destructive';
       if (value >= 75) {
-        colorClass = 'bg-green-100 text-green-800 border-green-200';
+        colorClass = 'bg-success/10 text-success border-success';
       } else if (value >= 50) {
-        colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
+        colorClass = 'bg-chip-yellow/10 text-chip-yellow border-chip-yellow';
       }
       return (
         <span className={`px-2 py-1 rounded-full ${colorClass} text-xs font-medium border`}>
@@ -96,11 +94,11 @@ const CourseAnalysis = () => {
       'End Time': new Date(a.end_time).toLocaleTimeString(),
       Status:
         a.status === 'Present' ? (
-          <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium border border-green-200">
+          <span className="px-2 py-1 rounded-full text-xs font-medium border bg-success/10 text-success border-success">
             Present
           </span>
         ) : (
-          <span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium border border-red-200">
+          <span className="px-2 py-1 rounded-full text-xs font-medium border bg-destructive/10 text-destructive border-destructive">
             Absent
           </span>
         ),
@@ -130,7 +128,7 @@ const CourseAnalysis = () => {
       'Start Time': new Date(a.start_time).toLocaleTimeString(),
       'End Time': new Date(a.end_time).toLocaleTimeString(),
       Status: (
-        <span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium border border-red-200">
+        <span className="px-2 py-1 rounded-full text-xs font-medium border bg-destructive/10 text-destructive border-destructive">
           Absent
         </span>
       ),
@@ -222,10 +220,10 @@ const CourseAnalysis = () => {
                     <div className="flex justify-between items-center py-2 border-b border-border/50">
                       <span className="text-sm font-medium text-muted-foreground">Status</span>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                           selectedCourse.is_registered
-                            ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                            : 'bg-orange-100 text-orange-700 border border-orange-200'
+                            ? 'bg-success/10 text-success border-success'
+                            : 'bg-destructive/10 text-destructive border-destructive'
                         }`}
                       >
                         {selectedCourse.is_registered ? 'Registered' : 'Unregistered'}
@@ -246,7 +244,7 @@ const CourseAnalysis = () => {
                     </div>
                     <div className="bg-background rounded-lg p-4 border border-border shadow-sm">
                       <div className="text-sm text-muted-foreground mb-1">Present Count</div>
-                      <div className="text-2xl font-bold text-green-600">
+                      <div className="text-2xl font-bold text-success">
                         {selectedCourse.present_count}
                       </div>
                     </div>
@@ -255,10 +253,10 @@ const CourseAnalysis = () => {
                       <div
                         className={`text-2xl font-bold ${
                           selectedCourse.attendance_percentage >= 75
-                            ? 'text-green-600'
+                            ? 'text-success'
                             : selectedCourse.attendance_percentage >= 50
-                              ? 'text-amber-600'
-                              : 'text-red-600'
+                              ? 'text-chip-yellow'
+                              : 'text-destructive'
                         }`}
                       >
                         {selectedCourse.attendance_percentage}%
@@ -272,11 +270,11 @@ const CourseAnalysis = () => {
                   <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                     Consecutive Absences
                     {selectedCourse.has_consecutive_absences ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive border border-destructive">
                         {selectedCourse.consecutive_absence_count} Session(s)
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success border border-success">
                         None
                       </span>
                     )}

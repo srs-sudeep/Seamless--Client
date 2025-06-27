@@ -16,6 +16,7 @@ import {
   PopoverContent,
   ScrollArea,
   Checkbox,
+  Input,
 } from '@/components';
 import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
 import { ChevronDownIcon, Eye, Loader2 } from 'lucide-react';
@@ -377,7 +378,7 @@ const CourseIndi = () => {
             <div className="w-full sm:w-72 md:w-80 lg:w-88 border-r border-border bg-background p-4 space-y-4 my-5">
               {/* Search Bar */}
               <div className="relative w-full group">
-                <input
+                <Input
                   type="text"
                   placeholder="Search attendance..."
                   value={attendanceFilters.search || ''}
@@ -386,15 +387,7 @@ const CourseIndi = () => {
                     if (e.key === 'Enter')
                       setAttendanceFilters(f => ({ ...f, search: e.currentTarget.value }));
                   }}
-                  className="w-full h-11 pl-4 pr-16 bg-white dark:bg-gray-900/50 
-        border border-gray-200/60 dark:border-gray-700/60 
-        rounded-xl shadow-sm backdrop-blur-sm
-        focus:border-blue-500 dark:focus:border-blue-400 
-        focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-blue-900/30
-        text-gray-900 dark:text-gray-100 
-        placeholder-gray-400 dark:placeholder-gray-500
-        transition-all duration-300 ease-out
-        hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600
+                  className="w-full h-11 pl-4 pr-16 bg-background text-foreground
         group-hover:shadow-lg text-sm sm:text-base"
                 />
                 {/* Right side icons */}
@@ -402,9 +395,9 @@ const CourseIndi = () => {
                   {attendanceFilters.search && (
                     <button
                       onClick={() => setAttendanceFilters(f => ({ ...f, search: '' }))}
-                      className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300
-            transition-colors duration-200 p-1 rounded-full
-            hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="text-muted-foreground hover:text-foreground
+                    transition-colors duration-200 p-1 rounded-full
+                    hover:bg-primary"
                       type="button"
                       title="Clear search"
                     >
@@ -427,10 +420,9 @@ const CourseIndi = () => {
                         search: attendanceFilters.search?.trim() || '',
                       }))
                     }
-                    className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300
-          transition-colors duration-200 p-1.5 rounded-lg
-          hover:bg-blue-50 dark:hover:bg-blue-900/20
-          focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800"
+                    className="text-primary hover:text-foreground
+                  transition-colors duration-200 p-1.5 rounded-lg
+                  hover:bg-primary/10  hover:border border-primary focus-visible:bg-primary focus-visible:border focus-visible:border-primary"
                     type="button"
                     title="Search"
                   >
@@ -446,10 +438,6 @@ const CourseIndi = () => {
                     </svg>
                   </button>
                 </div>
-                <div
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 via-purple-500/10 to-blue-500/20 
-        opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none -z-10 blur-sm"
-                />
               </div>
 
               {/* Device Dropdown */}
@@ -474,7 +462,7 @@ const CourseIndi = () => {
                       {allDevices.map(device => (
                         <div
                           key={device}
-                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                           onClick={() =>
                             setAttendanceFilters(f => ({
                               ...f,
@@ -539,7 +527,7 @@ const CourseIndi = () => {
                       {allRoomIds.map(room => (
                         <div
                           key={room}
-                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                           onClick={() =>
                             setAttendanceFilters(f => ({
                               ...f,
@@ -619,7 +607,7 @@ const CourseIndi = () => {
                   {/* Attendance Stats */}
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
                     {/* Total Students */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">Total Students</span>
                       <span className="text-xl font-bold">
                         {filterAttendance(attendances.registered_present || []).length +
@@ -627,7 +615,7 @@ const CourseIndi = () => {
                       </span>
                     </div>
                     {/* Valid Attendance */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">Valid Attendance</span>
                       <span className="text-xl font-bold">
                         {
@@ -639,7 +627,7 @@ const CourseIndi = () => {
                       </span>
                     </div>
                     {/* Invalid Attendance */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">Invalid Attendance</span>
                       <span className="text-xl font-bold">
                         {
@@ -651,14 +639,14 @@ const CourseIndi = () => {
                       </span>
                     </div>
                     {/* Registered Present */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">Registered Present</span>
                       <span className="text-xl font-bold">
                         {filterAttendance(attendances.registered_present || []).length}
                       </span>
                     </div>
                     {/* Unregistered Present */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">
                         Unregistered Present
                       </span>
@@ -667,7 +655,7 @@ const CourseIndi = () => {
                       </span>
                     </div>
                     {/* Absent */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow border p-4 flex flex-col items-center">
+                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
                       <span className="text-xs text-muted-foreground mb-1">Absent</span>
                       <span className="text-xl font-bold">
                         {filterAttendance(attendances.registered_absent || []).length}
@@ -885,7 +873,7 @@ const CourseIndi = () => {
       <div className="block md:hidden p-4 border-b border-border bg-background space-y-3">
         {/* Search Bar */}
         <div className="relative w-full group">
-          <input
+          <Input
             type="text"
             placeholder="Search attendance..."
             value={attendanceFilters.search || ''}
@@ -894,13 +882,16 @@ const CourseIndi = () => {
               if (e.key === 'Enter')
                 setAttendanceFilters(f => ({ ...f, search: e.currentTarget.value }));
             }}
-            className="w-full h-11 pl-4 pr-16 bg-white dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-700/60 rounded-xl shadow-sm text-sm sm:text-base"
+            className="w-full h-11 pl-4 pr-16 bg-background text-foreground
+        group-hover:shadow-lg text-sm sm:text-base"
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
             {attendanceFilters.search && (
               <button
                 onClick={() => setAttendanceFilters(f => ({ ...f, search: '' }))}
-                className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1 rounded-full"
+                className="text-muted-foreground hover:text-foreground
+                    transition-colors duration-200 p-1 rounded-full
+                    hover:bg-primary"
                 type="button"
                 title="Clear search"
               >
@@ -923,7 +914,9 @@ const CourseIndi = () => {
                   search: attendanceFilters.search?.trim() || '',
                 }))
               }
-              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 p-1.5 rounded-lg"
+              className="text-primary hover:text-foreground
+                  transition-colors duration-200 p-1.5 rounded-lg
+                  hover:bg-primary/10  hover:border border-primary focus-visible:bg-primary focus-visible:border focus-visible:border-primary"
               type="button"
               title="Search"
             >
@@ -962,7 +955,7 @@ const CourseIndi = () => {
                 {allDevices.map(device => (
                   <div
                     key={device}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() =>
                       setAttendanceFilters(f => ({
                         ...f,
@@ -1026,7 +1019,7 @@ const CourseIndi = () => {
                 {allRoomIds.map(room => (
                   <div
                     key={room}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
                     onClick={() =>
                       setAttendanceFilters(f => ({
                         ...f,

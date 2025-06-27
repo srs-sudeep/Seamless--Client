@@ -117,9 +117,7 @@ const CreateCourse = () => {
       header: true,
       skipEmptyLines: true,
       complete: (results: any) => {
-        console.log('CSV Results:', results);
-
-        const row = results.data[0]; // Only first row for single course
+        const row = results.data[0];
         if (!row) {
           toast({ title: 'CSV is empty', variant: 'destructive' });
           return;
@@ -136,9 +134,6 @@ const CreateCourse = () => {
               room_id: room_ids,
             };
           });
-        console.log('Parsed slot_room_id:', slot_room_id);
-
-        // Parse instructors: "amitdhar,Lecture;dhimansaha,Lab"
         const instructors = (row.instructors || '')
           .split(';')
           .filter(Boolean)
@@ -151,7 +146,6 @@ const CreateCourse = () => {
               instruction_type,
             };
           });
-        console.log('Instructors:', instructors);
 
         const formData = {
           course_id: row.course_id || `${row.course_code}-${row.sem}`,

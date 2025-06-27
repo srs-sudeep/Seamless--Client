@@ -67,6 +67,7 @@ import {
   Play,
   Activity,
   BellElectric,
+  Soup,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -137,4 +138,5 @@ export const iconMap = {
   session: Play,
   active: Activity,
   hostel: BellElectric,
+  soup: Soup,
 };

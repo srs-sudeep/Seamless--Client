@@ -1,5 +1,6 @@
-// const { contextBridge, ipcRenderer } = require('electron')
+// preload.js
+const { contextBridge, ipcRenderer } = require('electron');
 
-// contextBridge.exposeInMainWorld('electronAPI', {
-//     // custom APIs (optional)
-// })
+contextBridge.exposeInMainWorld('electronAPI', {
+  onCardData: callback => ipcRenderer.on('card-data', (event, data) => callback(data)),
+});

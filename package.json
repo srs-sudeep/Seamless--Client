@@ -120,9 +120,16 @@
     "files": [
       "dist/**/*",
       "electron/main.js",
+      "electron/preload.js",
       "node_modules/**/*",
       "package.json",
       "!node_modules/horizonxclient/*"
+    ],
+    "extraResources": [
+      {
+        "from": "electron/card_reader",
+        "to": "electron/card_reader"
+      }
     ],
     "nsis": {
       "uninstallDisplayName": "Uninstall this app",

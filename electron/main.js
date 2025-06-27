@@ -1,6 +1,9 @@
 import { app, BrowserWindow, Menu } from 'electron';
 import { initialize } from '@electron/remote/main/index.js';
 import path from 'path';
+import { spawn } from 'child_process';
+import fs from 'fs';
+import { shell } from 'electron';
 
 initialize();
 const rootDir = app.getAppPath();
@@ -12,11 +15,52 @@ function createWindow() {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      preload: path.join(app.getAppPath(), 'preload.js'),
+      preload: path.join(app.getAppPath(), 'electron/preload.js'),
       enableRemoteModule: true,
     },
   });
+  // win.loadURL('http://localhost:3000');
+  win.webContents.openDevTools();
   win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
+  // 🟢 Spawn Python executable
+  let pythonPath;
+  if (process.platform === 'win32') {
+    pythonPath = path.join(rootDir, 'electron/card_reader.exe');
+  } else if (process.platform === 'darwin') {
+    if (app.isPackaged) {
+      pythonPath = path.join(process.resourcesPath, 'electron/card_reader');
+    } else {
+      pythonPath = path.join(rootDir, 'electron/card_reader');
+    }
+  } else {
+    pythonPath = path.join(rootDir, 'electron/card_reader_linux'); // or your Linux binary
+  }
+  console.log(pythonPath);
+  if (fs.existsSync(pythonPath)) {
+    const python = spawn(pythonPath);
+    python.stdout.on('data', data => {
+      const raw = data.toString().trim();
+      console.log(`📥 Python stdout raw:`, raw);
+
+      try {
+        const result = JSON.parse(raw);
+        console.log('✅ Parsed JSON from Python:', result);
+        win.webContents.send('card-data', result);
+      } catch (err) {
+        console.error('❌ JSON parsing failed:', err.message);
+        console.error('🔎 Offending data:', raw);
+      }
+    });
+
+    python.stderr.on('data', data => {
+      console.error(`Python Error: ${data}`);
+    });
+    python.on('close', code => {
+      console.log(`Python process exited with code ${code}`);
+    });
+  } else {
+    console.error('Card reader executable not found:', pythonPath);
+  }
   const menu = Menu.buildFromTemplate([
     {
       label: 'File',
@@ -34,12 +78,25 @@ function createWindow() {
       ],
     },
     {
+      label: 'Developer',
+      submenu: [
+        {
+          label: 'Toggle DevTools',
+          accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          click: (item, focusedWindow) => {
+            if (focusedWindow) {
+              focusedWindow.webContents.toggleDevTools();
+            }
+          },
+        },
+      ],
+    },
+    {
       label: 'Help',
       submenu: [
         {
           label: 'Learn More',
           click: async () => {
-            const { shell } = require('electron');
             await shell.openExternal('https://electronjs.org');
           },
         },
@@ -55,7 +112,10 @@ function getPlatformIcon() {
   return path.join(publicDir, 'logo.png');
 }
 
-app.on('ready', createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  // startSmartcardWorker();
+});
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();

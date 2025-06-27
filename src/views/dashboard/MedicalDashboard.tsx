@@ -10,26 +10,26 @@ const MedicalDashboard = () => {
         <StatCard
           title="Patients Today"
           value="24"
-          icon={<Users className="h-5 w-5 text-blue-500" />}
-          iconColor="bg-blue-100"
+          icon={<Users className="h-5 w-5 text-chip-blue" />}
+          iconColor="bg-chip-blue/10"
         />
         <StatCard
           title="Appointments"
           value="18"
-          icon={<Calendar className="h-5 w-5 text-yellow-500" />}
-          iconColor="bg-yellow-100"
+          icon={<Calendar className="h-5 w-5 text-chip-yellow" />}
+          iconColor="bg-chip-yellow/10"
         />
         <StatCard
           title="Medical Records"
           value="1,254"
-          icon={<FileText className="h-5 w-5 text-green-500" />}
-          iconColor="bg-green-100"
+          icon={<FileText className="h-5 w-5 text-success" />}
+          iconColor="bg-success/10"
         />
         <StatCard
           title="Critical Cases"
           value="3"
-          icon={<Heart className="h-5 w-5 text-red-500" />}
-          iconColor="bg-red-100"
+          icon={<Heart className="h-5 w-5 text-destructive" />}
+          iconColor="bg-destructive/10"
         />
       </div>
 
@@ -39,8 +39,8 @@ const MedicalDashboard = () => {
           <div className="space-y-4">
             {[1, 2, 3].map((_, i) => (
               <div key={i} className="flex items-center p-3 bg-background rounded-md border">
-                <div className="bg-blue-100 p-2 rounded mr-3">
-                  <Calendar className="h-4 w-4 text-blue-500" />
+                <div className="bg-chip-blue/10 p-2 rounded mr-3">
+                  <Calendar className="h-4 w-4 text-chip-blue" />
                 </div>
                 <div>
                   <h3 className="font-medium">Patient #{(i + 1) * 100}</h3>
@@ -49,7 +49,7 @@ const MedicalDashboard = () => {
                 <div className="ml-auto text-xs">
                   <span
                     className={`py-1 px-2 rounded-full ${
-                      i === 0 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                      i === 0 ? 'bg-success/10 text-success' : 'bg-chip-blue/10 text-chip-blue'
                     }`}
                   >
                     {i === 0 ? 'Current' : 'Upcoming'}
@@ -65,15 +65,15 @@ const MedicalDashboard = () => {
           <div className="space-y-4">
             {[1, 2, 3].map((_, i) => (
               <div key={i} className="flex items-center p-3 bg-background rounded-md border">
-                <div className="bg-blue-100 p-2 rounded mr-3">
-                  <FileText className="h-4 w-4 text-blue-500" />
+                <div className="bg-chip-blue/10 p-2 rounded mr-3">
+                  <FileText className="h-4 w-4 text-chip-blue" />
                 </div>
                 <div>
                   <h3 className="font-medium">Medical Report #{(i + 1) * 50}</h3>
                   <p className="text-sm text-muted-foreground">Updated {i + 1} hour(s) ago</p>
                 </div>
                 <div className="ml-auto text-xs">
-                  <span className="bg-blue-100 text-blue-700 py-1 px-2 rounded-full">
+                  <span className="bg-chip-blue/10 text-chip-blue py-1 px-2 rounded-full">
                     View Details
                   </span>
                 </div>

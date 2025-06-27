@@ -12,12 +12,12 @@ export async function updatePermission(
   permission_id: number,
   payload: Omit<Permission, 'permission_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<Permission>(`${BASE}${permission_id}`, payload);
+  const { data } = await apiClient.put<Permission>(`${BASE}/${permission_id}`, payload);
   return data;
 }
 
 export async function deletePermission(permission_id: number) {
-  await apiClient.delete(`${BASE}${permission_id}`);
+  await apiClient.delete(`${BASE}/${permission_id}`);
 }
 
 export async function createPermission(

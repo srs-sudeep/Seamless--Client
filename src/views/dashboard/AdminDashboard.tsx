@@ -16,38 +16,38 @@ const AdminDashboard = () => {
           <StatCard
             title="Students"
             value="3,685"
-            icon={<Users className="h-5 w-5 text-blue-500" />}
-            iconColor="bg-blue-100"
+            icon={<Users className="h-5 w-5 text-chip-blue" />}
+            iconColor="bg-chip-blue/10"
           />
           <StatCard
             title="Teachers"
             value="256"
-            icon={<Users className="h-5 w-5 text-yellow-500" />}
-            iconColor="bg-yellow-100"
+            icon={<Users className="h-5 w-5 text-chip-yellow" />}
+            iconColor="bg-chip-yellow/10"
           />
           <StatCard
             title="Courses"
             value="64"
-            icon={<FileText className="h-5 w-5 text-blue-500" />}
-            iconColor="bg-blue-100"
+            icon={<FileText className="h-5 w-5 text-chip-blue" />}
+            iconColor="bg-chip-blue/10"
           />
           <StatCard
             title="Departments"
             value="12"
-            icon={<Building className="h-5 w-5 text-red-500" />}
-            iconColor="bg-red-100"
+            icon={<Building className="h-5 w-5 text-destructive" />}
+            iconColor="bg-destructive/10"
           />
           <StatCard
             title="Events"
             value="28"
-            icon={<Calendar className="h-5 w-5 text-green-500" />}
-            iconColor="bg-green-100"
+            icon={<Calendar className="h-5 w-5 text-success" />}
+            iconColor="bg-success/10"
           />
           <StatCard
             title="Analytics"
             value="89%"
-            icon={<BarChart className="h-5 w-5 text-blue-500" />}
-            iconColor="bg-blue-100"
+            icon={<BarChart className="h-5 w-5 text-chip-blue" />}
+            iconColor="bg-chip-blue/10"
           />
         </div>
 

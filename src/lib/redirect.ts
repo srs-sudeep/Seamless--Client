@@ -10,6 +10,7 @@ export function getDashboardLink(role: UserRole | null | undefined) {
     librarian: '/dashboard/librarian',
     medical: '/dashboard/medical',
     messAdmin: '/dashboard/messadmin',
+    messVendor: '/dashboard/messvendor',
   };
 
   return role && rolePaths[role] ? rolePaths[role] : '/';

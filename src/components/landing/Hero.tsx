@@ -29,13 +29,11 @@ export const Hero = () => {
         {/* Main Content */}
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 animate-slide-up">
-            <span className="bg-gradient-to-r from-[#6c63ff] to-[#ad9dfc] dark:from-[#9ea6ff] dark:to-[#c7c9ff] bg-clip-text text-transparent">
-              Seamless
-            </span>
+            <span className="bg-primary bg-clip-text text-transparent">Seamless</span>
           </h1>
-          <p className="text-xl md:text-2xl lg:text-3xl max-w-4xl mb-12 leading-relaxed animate-slide-up delay-200 text-gray-800 dark:text-gray-200">
+          <p className="text-xl md:text-2xl lg:text-3xl max-w-4xl mb-12 leading-relaxed animate-slide-up delay-200 text-muted-foreground">
             One Platform. Every Service.{' '}
-            <span className="font-semibold text-[#6c63ff] dark:text-[#aab4ff]">Zero Hassle.</span>
+            <span className="font-semibold text-primary">Zero Hassle.</span>
           </p>
         </div>
       </div>

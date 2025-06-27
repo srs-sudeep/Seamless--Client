@@ -104,14 +104,14 @@ const Privacy: React.FC = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 mt-24">
+      <div className="min-h-screen bg-card transition-colors duration-300 mt-24">
         {/* Main Privacy Policy Heading */}
         <div className="flex justify-center pt-8 pb-8">
           <div className="relative group">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extralight text-center tracking-widest">
-              <span className="inline-block px-12 py-4 text-gray-900 dark:text-gray-100 relative overflow-hidden transition-all duration-500 ease-out hover:text-gray-700 dark:hover:text-gray-300">
+              <span className="inline-block px-12 py-4 text-muted-foreground relative overflow-hidden transition-all duration-500 ease-out hover:text-foreground">
                 Privacy policies
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400 group-hover:w-full transition-all duration-700 ease-out"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-gradient-to-r from-muted-foreground via-foreground to-muted-foreground group-hover:w-full transition-all duration-700 ease-out"></span>
               </span>
             </h2>
           </div>
@@ -121,22 +121,20 @@ const Privacy: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 pb-20">
           {/* Introduction */}
           <section className="mb-16">
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-700/50">
+            <div className="bg-background rounded-2xl p-8 border border-border">
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-lg flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex-shrink-0 w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-3">
-                    Your Privacy Matters
-                  </h3>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                  <h3 className="text-xl font-medium text-foreground mb-3">Your Privacy Matters</h3>
+                  <p className="text-muted-foreground leading-relaxed mb-4">
                     At TechVision, we are committed to protecting your privacy and ensuring the
                     security of your personal information. This Privacy Policy explains how we
                     collect, use, disclose, and safeguard your information when you use our
                     services.
                   </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-foreground text-sm">
                     <strong>Last Updated:</strong> June 19, 2025 | <strong>Effective Date:</strong>{' '}
                     June 19, 2025
                   </p>
@@ -147,7 +145,7 @@ const Privacy: React.FC = () => {
 
           {/* Quick Navigation */}
           <section className="mb-16">
-            <h3 className="text-2xl font-light text-gray-900 dark:text-gray-100 mb-8 text-center">
+            <h3 className="text-2xl font-light text-foreground mb-8 text-center">
               Quick Navigation
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -157,15 +155,13 @@ const Privacy: React.FC = () => {
                   onClick={() => scrollToSection(section.id)}
                   className={`p-4 rounded-lg border text-left transition-all duration-200 hover:shadow-md ${
                     activeSection === section.id
-                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
-                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      ? 'bg-primary/40 border-border'
+                      : 'bg-primary/10 border-border hover:bg-primary/20'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="text-blue-600 dark:text-blue-400">{section.icon}</div>
-                    <span className="font-medium text-gray-900 dark:text-gray-100 text-sm">
-                      {section.title}
-                    </span>
+                    <div className="text-primary">{section.icon}</div>
+                    <span className="font-medium text-foreground text-sm">{section.title}</span>
                   </div>
                 </button>
               ))}
@@ -176,27 +172,20 @@ const Privacy: React.FC = () => {
           <div className="space-y-12">
             {privacySections.map((section, index) => (
               <section key={section.id} id={section.id} className="scroll-mt-24">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="bg-background rounded-2xl p-8 shadow-lg border border-border">
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                      <div className="text-blue-600 dark:text-blue-400">{section.icon}</div>
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <div className="text-primary">{section.icon}</div>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-medium text-gray-900 dark:text-gray-100">
-                        {section.title}
-                      </h3>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Section {index + 1}
-                      </div>
+                      <h3 className="text-2xl font-medium text-foreground">{section.title}</h3>
+                      <div className="text-sm text-muted-foreground">Section {index + 1}</div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     {section.content.map((paragraph, paragraphIndex) => (
-                      <p
-                        key={paragraphIndex}
-                        className="text-gray-700 dark:text-gray-300 leading-relaxed"
-                      >
+                      <p key={paragraphIndex} className="text-foreground leading-relaxed">
                         {paragraph}
                       </p>
                     ))}
@@ -208,42 +197,38 @@ const Privacy: React.FC = () => {
 
           {/* Contact Information */}
           <section className="mt-20">
-            <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-2xl font-light text-gray-900 dark:text-gray-100 text-center mb-8">
+            <div className="bg-background rounded-2xl p-8 border border-border">
+              <h3 className="text-2xl font-light text-foreground text-center mb-8">
                 Privacy Questions?
               </h3>
-              <p className="text-center text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+              <p className="text-center text-muted-foreground mb-8 max-w-3xl mx-auto">
                 If you have any questions about this Privacy Policy, our data practices, or your
                 privacy rights, please don't hesitate to contact us using any of the methods below.
               </p>
 
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Mail className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                  <div className="w-16 h-16 bg-chip-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-8 h-8 text-chip-blue" />
                   </div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Email Us</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">privacy@techvision.com</p>
+                  <h4 className="font-medium text-foreground mb-2">Email Us</h4>
+                  <p className="text-muted-foreground text-sm">privacy@techvision.com</p>
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Phone className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Phone className="w-8 h-8 text-success" />
                   </div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Call Us</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">+91 788 123 4567</p>
+                  <h4 className="font-medium text-foreground mb-2">Call Us</h4>
+                  <p className="text-muted-foreground text-sm">+91 788 123 4567</p>
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Globe className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                  <div className="w-16 h-16 bg-chip-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Globe className="w-8 h-8 text-chip-purple" />
                   </div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    Visit Online
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    www.techvision.com/privacy
-                  </p>
+                  <h4 className="font-medium text-foreground mb-2">Visit Online</h4>
+                  <p className="text-muted-foreground text-sm">www.techvision.com/privacy</p>
                 </div>
               </div>
             </div>
@@ -251,8 +236,8 @@ const Privacy: React.FC = () => {
 
           {/* Footer Notice */}
           <section className="mt-16 text-center">
-            <div className="inline-block bg-white dark:bg-gray-800 rounded-lg px-6 py-3 border border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="inline-block bg-secondary rounded-lg px-6 py-3 border border-border">
+              <p className="text-sm text-muted-foreground">
                 This policy may be updated periodically. We will notify you of significant changes
                 via email or through our services.
               </p>

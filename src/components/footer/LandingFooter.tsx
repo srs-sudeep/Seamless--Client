@@ -3,7 +3,7 @@ import { Github, Twitter, Slack } from 'lucide-react';
 
 export const LandingFooter = () => {
   return (
-    <footer className="bg-white dark:bg-black text-muted-foreground py-16 border-t border-border">
+    <footer className="bg-background text-muted-foreground py-16 border-t border-border">
       <div className="container mx-auto px-4">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-y-12 md:gap-10 mb-12 text-center md:text-left">

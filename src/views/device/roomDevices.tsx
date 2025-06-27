@@ -56,7 +56,7 @@ const RoomDevicesManagement = () => {
             }}
           >
             <span
-              className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
+              className={`bg-background w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
                 assigned ? 'translate-x-4' : ''
               }`}
             />

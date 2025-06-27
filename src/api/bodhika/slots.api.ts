@@ -1,6 +1,6 @@
 import { apiClient, BODHIKA_URL } from '@/core';
 import type { Slot } from '@/types';
-const BASE = `${BODHIKA_URL}/api/v1/slots/`;
+const BASE = `${BODHIKA_URL}/slots/`;
 export async function getSlots(): Promise<Slot[]> {
   const { data } = await apiClient.get<Slot[]>(`${BASE}`);
   return data;

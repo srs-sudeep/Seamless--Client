@@ -169,8 +169,8 @@ const RoomSession = () => {
       <span
         className={`inline-block px-3 py-1 rounded-full border text-xs font-semibold ${
           row.Count >= 2
-            ? 'bg-green-100 text-green-800 border-green-300'
-            : 'bg-red-100 text-red-800 border-red-300'
+            ? 'bg-success/10 text-success border-success/20'
+            : 'bg-destructive/10 text-destructive border-destructive/20'
         }`}
       >
         {value}
@@ -265,13 +265,15 @@ const RoomSession = () => {
                               <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
                             </div>
                           ) : (
-                            <DynamicTable
-                              tableHeading="Validated"
-                              data={getRegisteredPresentTableData(
-                                attendances.registered_present || []
-                              )}
-                              customRender={validatedCustomRender}
-                            />
+                            <>
+                              <DynamicTable
+                                tableHeading="Validated"
+                                data={getRegisteredPresentTableData(
+                                  attendances.registered_present || []
+                                )}
+                                customRender={validatedCustomRender}
+                              />
+                            </>
                           )}
                         </TabsContent>
                         <TabsContent value="latest">

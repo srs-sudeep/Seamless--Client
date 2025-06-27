@@ -127,7 +127,7 @@ const RolesManagement = () => {
             className={`
               relative w-12 h-6 flex items-center rounded-full p-1 
               transition-all duration-200 ease-in-out
-              ${val.selected ? 'bg-green-500 shadow-inner' : 'bg-muted-foreground/20 shadow-inner'} 
+              ${val.selected ? 'bg-success shadow-inner' : 'bg-muted-foreground/20 shadow-inner'} 
               ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
               focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
             `}

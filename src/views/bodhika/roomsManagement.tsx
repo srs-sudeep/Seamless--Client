@@ -147,13 +147,13 @@ const RoomsManagement = () => {
       <button
         type="button"
         className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
-          value ? 'bg-red-500' : 'bg-gray-300'
+          value ? 'bg-destructive' : 'bg-muted-foreground'
         }`}
         disabled
         aria-pressed={!!value}
       >
         <span
-          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
+          className={`bg-background w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
             value ? 'translate-x-6' : ''
           }`}
         />

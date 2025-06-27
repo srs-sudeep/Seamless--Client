@@ -206,7 +206,7 @@ const CourseManagement = () => {
       if (!slotRoomData || !Array.isArray(slotRoomData) || slotRoomData.length === 0) {
         return (
           <div className="flex flex-wrap gap-2">
-            <span className="inline-block px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs italic">
+            <span className="inline-block px-2 py-1 rounded bg-muted text-muted-foreground text-xs italic">
               No slot data
             </span>
           </div>

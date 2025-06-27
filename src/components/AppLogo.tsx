@@ -17,13 +17,13 @@ const getLogoSrc = (
   short?: boolean
 ): string => {
   if (horizontal) {
-    return theme === 'dark' ? '/WhiteLogoHorizontal.svg' : '/LogoHorizontal.svg';
+    return theme === 'dark' ? './WhiteLogoHorizontal.svg' : './LogoHorizontal.svg';
   } else if (name) {
-    return theme === 'dark' ? '/WhiteLongName.svg' : '/LongName.svg';
+    return theme === 'dark' ? './WhiteLongName.svg' : './LongName.svg';
   } else if (short) {
-    return theme === 'dark' ? '/WhiteX.svg' : '/X.svg';
+    return theme === 'dark' ? './WhiteX.svg' : './X.svg';
   }
-  return theme === 'dark' ? '/WhiteX.svg' : '/X.svg';
+  return theme === 'dark' ? './WhiteX.svg' : './X.svg';
 };
 
 const AppLogo = ({

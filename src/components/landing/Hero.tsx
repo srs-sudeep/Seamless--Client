@@ -1,15 +1,16 @@
+import { logos } from '@/assets';
 export const Hero = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-slate-100 to-white text-gray-900 dark:from-black dark:via-gray-900 dark:to-black dark:text-white">
       <div className="relative w-full h-screen overflow-hidden">
         {/* SVG Background Images */}
         <img
-          src="./images/Logos/LogoLandingBlack.svg"
+          src={logos.landing.light}
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 dark:hidden"
         />
         <img
-          src="./images/Logos/LogoLandingWhite.svg"
+          src={logos.landing.dark}
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-25 hidden dark:block"
         />

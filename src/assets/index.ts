@@ -5,6 +5,8 @@ import LongName from './logos/LongName.svg';
 import WhiteLongName from './logos/WhiteLongName.svg';
 import X from './logos/X.svg';
 import WhiteX from './logos/WhiteX.svg';
+import LogoLandingBlack from './logos/LogoLandingBlack.svg';
+import LogoLandingWhite from './logos/LogoLandingWhite.svg';
 
 // Login page imports
 import IITBhilaiLogo from './login/IIT_Bhilai_Logo.svg';
@@ -24,6 +26,10 @@ export const logos = {
     light: X,
     dark: WhiteX,
   },
+  landing: {
+    light: LogoLandingBlack,
+    dark: LogoLandingWhite,
+  },
 };
 
 export const loginAssets = {
@@ -41,4 +47,6 @@ export {
   WhiteX,
   IITBhilaiLogo,
   LoginImage,
+  LogoLandingBlack,
+  LogoLandingWhite,
 };

@@ -1,6 +1,8 @@
 {
-  "short_name": "Horizon",
-  "name": "Horizon Dashboard",
+  "short_name": "Seamless",
+  "name": "Seamless",
+  "description": "A seamless experience for managing school operations, from meal sessions to student transactions.",
+  "lang": "en-US",
   "icons": [
     {
       "src": "favicon.ico",

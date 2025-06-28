@@ -26,7 +26,6 @@ function App() {
 
   // Check if running in Electron
   const isElectron = import.meta.env.VITE_IS_ELECTRON === 'true';
-  console.log(isElectron);
   const RouterComponent = isElectron ? HashRouter : BrowserRouter;
 
   return (

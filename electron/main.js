@@ -19,13 +19,17 @@ function createWindow() {
       enableRemoteModule: true,
     },
   });
-  win.loadURL('http://localhost:3000');
+  //   win.loadURL('http://localhost:3000');
   win.webContents.openDevTools();
-  //   win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
+  win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
   // 🟢 Spawn Python executable
   let pythonPath;
   if (process.platform === 'win32') {
-    pythonPath = path.join(rootDir, 'electron/card_reader.exe');
+    if (app.isPackaged) {
+      pythonPath = path.join(process.resourcesPath, 'electron/card_reader.exe');
+    } else {
+      pythonPath = path.join(rootDir, 'electron/card_reader.exe');
+    }
   } else if (process.platform === 'darwin') {
     if (app.isPackaged) {
       pythonPath = path.join(process.resourcesPath, 'electron/card_reader');
@@ -33,7 +37,11 @@ function createWindow() {
       pythonPath = path.join(rootDir, 'electron/card_reader');
     }
   } else {
-    pythonPath = path.join(rootDir, 'electron/card_reader_linux');
+    if (app.isPackaged) {
+      pythonPath = path.join(process.resourcesPath, 'electron/card_reader_linux');
+    } else {
+      pythonPath = path.join(rootDir, 'electron/card_reader_linux');
+    }
   }
   console.log(pythonPath);
   if (fs.existsSync(pythonPath)) {
@@ -114,7 +122,6 @@ function getPlatformIcon() {
 
 app.whenReady().then(() => {
   createWindow();
-  // startSmartcardWorker();
 });
 
 app.on('window-all-closed', function () {

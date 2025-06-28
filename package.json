@@ -129,11 +129,19 @@
       {
         "from": "electron/card_reader",
         "to": "electron/card_reader"
+      },
+      {
+        "from": "electron/card_reader_linux",
+        "to": "electron/card_reader_linux"
+      },
+      {
+        "from": "electron/card_reader.exe",
+        "to": "electron/card_reader.exe"
       }
     ],
     "nsis": {
       "uninstallDisplayName": "Uninstall this app",
-      "license": "license.txt",
+      "license": "LICENSE",
       "oneClick": "false",
       "allowToChangeInstallationDirectory": "true"
     },

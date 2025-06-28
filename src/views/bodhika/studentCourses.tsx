@@ -254,7 +254,7 @@ const StudentCourses = () => {
     isMultiple: boolean
   ) => {
     const colors = getSlotTypeColor(duration);
-    const cardClass = `rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${colors.bg} border-2 ${colors.border} ${colors.hover} ${isMultiple ? 'mb-3 last:mb-0' : ''}`;
+    const cardClass = `rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${colors.bg} border-2 ${colors.border} ${isMultiple ? 'mb-3 last:mb-0' : ''}`;
 
     return (
       <div key={course.course_id + slot_id} className={cardClass}>

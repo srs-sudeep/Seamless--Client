@@ -60,7 +60,6 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({
   height = 400,
   showLegend = true,
   showTooltip = true,
-  showLabels = true,
   innerRadius = 0,
   outerRadius = 80,
   animationDuration = 800,
@@ -75,10 +74,6 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({
     color: item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
     total: totalValue,
   }));
-
-  const renderLabel = ({ name, percent }: any) => {
-    return `${name} ${(percent * 100).toFixed(0)}%`;
-  };
 
   return (
     <div className={`w-full ${className}`} style={{ width, height }}>

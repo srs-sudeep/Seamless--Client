@@ -8,6 +8,7 @@ const StudentVendorManagement = lazyLoad(() => import('@/views/naivedyam/student
 const CreateVendor = lazyLoad(() => import('@/views/naivedyam/createVendors'));
 const Menu = lazyLoad(() => import('@/views/naivedyam/Menu'));
 const CreateMealSession = lazyLoad(() => import('@/views/naivedyam/createMealSession'));
+const MyMenuPage = lazyLoad(() => import('@/views/naivedyam/MyMenu'));
 const NaivedyamRoutes: RouteObject = {
   path: '/naivedyam',
   element: <MainLayout />,
@@ -31,6 +32,10 @@ const NaivedyamRoutes: RouteObject = {
     {
       path: 'create-meal-session',
       element: <CreateMealSession />,
+    },
+    {
+      path: 'my-menu',
+      element: <MyMenuPage />,
     },
   ],
 };

@@ -1,356 +1,19 @@
 import { Button, Input, toast } from '@/components';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { HelmetWrapper } from '@/components/HelmetWrapper';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMenu.hook';
 import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
-import { ChefHat, Clock, Pencil, Plus, User } from 'lucide-react';
+import { ChefHat, Plus, User, Edit2, Trash2, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-// Color schemes similar to student courses
-const getSlotTypeColor = (mealType: string) => {
-  switch (mealType.toLowerCase()) {
-    case 'breakfast':
-      return {
-        bg: 'bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-50 dark:from-pink-900/20 dark:via-pink-800/30 dark:to-rose-900/20',
-        border: 'border-blue-300 dark:border-pink-500/50',
-        text: 'text-blue-900 dark:text-pink-100',
-        hover:
-          'hover:from-blue-100 hover:via-blue-150 hover:to-indigo-100 dark:hover:from-pink-800/40 dark:hover:via-pink-700/50 dark:hover:to-rose-800/40',
-        badge: 'bg-blue-200 text-blue-900 dark:bg-pink-700/50 dark:text-pink-100',
-        accent: 'bg-blue-500 dark:bg-pink-500',
-        label: 'Breakfast',
-      };
-    case 'lunch':
-      return {
-        bg: 'bg-gradient-to-br from-sky-50 via-blue-100 to-cyan-50 dark:from-rose-900/20 dark:via-pink-800/30 dark:to-fuchsia-900/20',
-        border: 'border-sky-300 dark:border-rose-500/50',
-        text: 'text-sky-900 dark:text-rose-100',
-        hover:
-          'hover:from-sky-100 hover:via-blue-150 hover:to-cyan-100 dark:hover:from-rose-800/40 dark:hover:via-pink-700/50 dark:hover:to-fuchsia-800/40',
-        badge: 'bg-sky-200 text-sky-900 dark:bg-rose-700/50 dark:text-rose-100',
-        accent: 'bg-sky-500 dark:bg-rose-500',
-        label: 'Lunch',
-      };
-    case 'dinner':
-      return {
-        bg: 'bg-gradient-to-br from-indigo-50 via-blue-100 to-blue-50 dark:from-fuchsia-900/20 dark:via-pink-800/30 dark:to-pink-900/20',
-        border: 'border-indigo-300 dark:border-fuchsia-500/50',
-        text: 'text-indigo-900 dark:text-fuchsia-100',
-        hover:
-          'hover:from-indigo-100 hover:via-blue-150 hover:to-blue-100 dark:hover:from-fuchsia-800/40 dark:hover:via-pink-700/50 dark:hover:to-pink-800/40',
-        badge: 'bg-indigo-200 text-indigo-900 dark:bg-fuchsia-700/50 dark:text-fuchsia-100',
-        accent: 'bg-indigo-500 dark:bg-fuchsia-500',
-        label: 'Dinner',
-      };
-    default:
-      return {
-        bg: 'bg-gradient-to-br from-emerald-50 via-green-100 to-teal-50 dark:from-emerald-900/20 dark:via-green-800/30 dark:to-teal-900/20',
-        border: 'border-emerald-300 dark:border-emerald-500/50',
-        text: 'text-emerald-900 dark:text-emerald-100',
-        hover:
-          'hover:from-emerald-100 hover:via-green-150 hover:to-teal-100 dark:hover:from-emerald-800/40 dark:hover:via-green-700/50 dark:hover:to-teal-800/40',
-        badge: 'bg-emerald-200 text-emerald-900 dark:bg-emerald-700/50 dark:text-emerald-100',
-        accent: 'bg-emerald-500 dark:bg-emerald-500',
-        label: 'Snack',
-      };
-  }
-};
-
-function MenuModal({
-  open,
-  onOpenChange,
-  mode,
-  initial,
-  onSubmit,
-  isLoading,
-  tagsList = [],
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  mode: 'create' | 'edit';
-  initial: {
-    vendor_id: string;
-    meal_type: string;
-    tag_id?: number;
-    tag_name: string;
-    day_of_week: string;
-    food_items: { name: string; tag_id: number }[];
-    menu_id?: number;
-  };
-  onSubmit: (data: {
-    meal_type: string;
-    day_of_week: string | string[];
-    tag_id: number;
-    food_items: { name: string; tag_id: number }[];
-  }) => void;
-  isLoading: boolean;
-  tagsList?: { id: number; name: string }[];
-}) {
-  const [mealType, setMealType] = useState(initial.meal_type || '');
-  const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
-  const [tagId, setTagId] = useState<number | undefined>(initial.tag_id);
-  const [foodItems, setFoodItems] = useState<string>(
-    initial.food_items?.map(f => f.name).join(', ') || ''
-  );
-
-  useEffect(() => {
-    setMealType(initial.meal_type || '');
-    setDayOfWeek(
-      Array.isArray(initial.day_of_week)
-        ? initial.day_of_week
-        : initial.day_of_week
-          ? [initial.day_of_week]
-          : []
-    );
-    setTagId(initial.tag_id);
-    setFoodItems(initial.food_items?.map(f => f.name).join(', ') || '');
-  }, [initial]);
-
-  const isAddNew = mode === 'create' && !initial.menu_id;
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-        <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-gray-100">
-            {mode === 'create' ? 'Add Menu Item' : 'Edit Menu Item'}
-          </DialogTitle>
-          <DialogClose asChild>
-            <button
-              type="button"
-              className="absolute right-4 top-4 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-              aria-label="Close"
-              onClick={() => onOpenChange(false)}
-            >
-              ×
-            </button>
-          </DialogClose>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Vendor</div>
-            <div className="font-semibold text-gray-900 dark:text-gray-100">
-              {initial.vendor_id}
-            </div>
-          </div>
-          {isAddNew ? (
-            <>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Meal Type</div>
-                <Input
-                  value={mealType}
-                  onChange={e => setMealType(e.target.value)}
-                  placeholder="e.g. breakfast"
-                  disabled={isLoading}
-                  className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-                />
-              </div>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Days</div>
-                <div className="flex flex-wrap gap-2">
-                  {WEEKDAYS.map(day => (
-                    <label key={day} className="flex items-center gap-1">
-                      <input
-                        type="checkbox"
-                        checked={Array.isArray(dayOfWeek) ? dayOfWeek.includes(day) : false}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            setDayOfWeek([...(Array.isArray(dayOfWeek) ? dayOfWeek : []), day]);
-                          } else {
-                            setDayOfWeek(
-                              (Array.isArray(dayOfWeek) ? dayOfWeek : []).filter(d => d !== day)
-                            );
-                          }
-                        }}
-                        className="text-blue-600 dark:text-pink-500"
-                      />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {day.charAt(0).toUpperCase() + day.slice(1)}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Category</div>
-                <Select
-                  value={tagId ? String(tagId) : ''}
-                  onValueChange={val => setTagId(Number(val))}
-                >
-                  <SelectTrigger className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                    {tagId ? tagsList.find(t => t.id === tagId)?.name : 'Select Category'}
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-                    {tagsList.map(tag => (
-                      <SelectItem
-                        key={tag.id}
-                        value={String(tag.id)}
-                        className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        {tag.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Meal Type</div>
-                <div className="font-semibold capitalize text-gray-900 dark:text-gray-100">
-                  {initial.meal_type}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Category</div>
-                <div className="font-semibold capitalize text-gray-900 dark:text-gray-100">
-                  {initial.tag_name}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Day</div>
-                <div className="font-semibold capitalize text-gray-900 dark:text-gray-100">
-                  {initial.day_of_week}
-                </div>
-              </div>
-            </>
-          )}
-          <div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-              Food Item Names (comma separated)
-            </div>
-            <Input
-              value={foodItems}
-              onChange={e => setFoodItems(e.target.value)}
-              placeholder="e.g. Rice, Dal"
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-            />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isLoading}
-              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                const resolvedTagId = isAddNew ? tagId : initial.tag_id;
-                const foodArr = foodItems
-                  .split(',')
-                  .map(f => f.trim())
-                  .filter(Boolean)
-                  .map(name => ({
-                    name,
-                    tag_id: resolvedTagId as number,
-                  }));
-                if (isAddNew) {
-                  onSubmit({
-                    meal_type: mealType,
-                    day_of_week: dayOfWeek,
-                    tag_id: resolvedTagId as number,
-                    food_items: foodArr,
-                  });
-                } else {
-                  onSubmit({
-                    meal_type: initial.meal_type,
-                    day_of_week: initial.day_of_week,
-                    tag_id: initial.tag_id as number,
-                    food_items: foodArr,
-                  });
-                }
-              }}
-              disabled={
-                isLoading ||
-                (isAddNew && (!mealType || !dayOfWeek.length || !tagId || !foodItems.trim()))
-              }
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-pink-600 dark:hover:bg-pink-700 text-white"
-            >
-              {mode === 'create' ? 'Create' : 'Update'}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function TagModal({
-  open,
-  onOpenChange,
-  mode,
-  initial,
-  onSubmit,
-  isLoading,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  mode: 'create' | 'edit';
-  initial: { name: string; id?: number };
-  onSubmit: (data: { name: string }) => void;
-  isLoading: boolean;
-}) {
-  const [name, setName] = useState(initial.name || '');
-
-  useEffect(() => {
-    setName(initial.name || '');
-  }, [initial, open]);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-        <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-gray-100">
-            {mode === 'create' ? 'Create Category' : 'Edit Category'}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <Input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Category name"
-            disabled={isLoading}
-            className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-          <div className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isLoading}
-              className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => onSubmit({ name })}
-              disabled={isLoading || !name.trim()}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-pink-600 dark:hover:bg-pink-700 text-white"
-            >
-              {mode === 'create' ? 'Create' : 'Update'}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 const MenuPage = () => {
-  const { data: menus = [], refetch } = useMenus();
-  const { data: vendors = [] } = useVendors();
-  const { data: tags = [], refetch: refetchTags } = useTags();
+  const { data: menus = [], refetch, isFetching: menusLoading } = useMenus();
+  const { data: vendors = [], isFetching: vendorsLoading } = useVendors();
+  const { data: tags = [], refetch: refetchTags, isFetching: tagsLoading } = useTags();
   const [selectedVendor, setSelectedVendor] = useState<string>('all');
 
   // Modal state
@@ -369,59 +32,53 @@ const MenuPage = () => {
   const createTag = useCreateTag();
   const updateTag = useUpdateTag();
 
-  // Get all meal types and tags present in the menu for the selected vendor
-  const mealTypes = useMemo(() => {
-    const set = new Set<string>();
-    menus
-      .filter(m => selectedVendor === 'all' || m.vendor_id === selectedVendor)
-      .forEach(m => set.add(m.meal_type));
-    return Array.from(set);
-  }, [menus, selectedVendor]);
-
-  // Only get tags that have items for at least one day
-  const tagsWithItems = useMemo(() => {
-    const tagSet = new Set<string>();
-    const filteredMenus = menus.filter(
-      m => selectedVendor === 'all' || m.vendor_id === selectedVendor
-    );
-
-    filteredMenus.forEach(menu => {
-      menu.food_items.forEach(item => {
-        if (item.tag?.name) {
-          tagSet.add(item.tag.name);
-        }
-      });
-    });
-
-    return Array.from(tagSet).filter(tag => {
-      return WEEKDAYS.some(day => {
-        return filteredMenus.some(
-          menu => menu.day_of_week === day && menu.food_items.some(item => item.tag?.name === tag)
-        );
-      });
-    });
-  }, [menus, selectedVendor]);
-
   // Filter menus for selected vendor
   const filteredMenus = useMemo(
     () => menus.filter(m => selectedVendor === 'all' || m.vendor_id === selectedVendor),
     [menus, selectedVendor]
   );
 
-  // Create table data structure with merged meal types
+  // Get all unique meal types from filtered menus
+  const availableMealTypes = useMemo(() => {
+    const mealTypeSet = new Set<string>();
+    filteredMenus.forEach(menu => {
+      if (menu.meal_type) {
+        mealTypeSet.add(menu.meal_type);
+      }
+    });
+    return Array.from(mealTypeSet);
+  }, [filteredMenus]);
+
+  // Create unified table data structure: Meal Type -> Categories -> Days
   const tableData = useMemo(() => {
-    return mealTypes.map(mealType => ({
-      mealType,
-      tags: tagsWithItems.map(tag => ({
-        tag,
-        days: WEEKDAYS.map(day => {
-          const menu = filteredMenus.find(m => m.meal_type === mealType && m.day_of_week === day);
-          const items = menu ? menu.food_items.filter(item => item.tag?.name === tag) : [];
-          return { day, items, menu };
-        }),
-      })),
-    }));
-  }, [mealTypes, tagsWithItems, filteredMenus]);
+    return availableMealTypes.map(mealType => {
+      // Get all unique categories for this meal type
+      const categoriesForMealType = new Set<string>();
+      filteredMenus
+        .filter(menu => menu.meal_type === mealType)
+        .forEach(menu => {
+          menu.food_items.forEach(item => {
+            if (item.tag?.name) {
+              categoriesForMealType.add(item.tag.name);
+            }
+          });
+        });
+
+      const categories = Array.from(categoriesForMealType);
+
+      return {
+        mealType,
+        categories: categories.map(category => ({
+          category,
+          cells: WEEKDAYS.map(day => {
+            const menu = filteredMenus.find(m => m.meal_type === mealType && m.day_of_week === day);
+            const items = menu ? menu.food_items.filter(item => item.tag?.name === category) : [];
+            return { day, items, menu };
+          }),
+        })),
+      };
+    });
+  }, [availableMealTypes, filteredMenus]);
 
   const selectedVendorName =
     vendors.find(v => v.ldapid === selectedVendor)?.ldapid || selectedVendor;
@@ -432,13 +89,13 @@ const MenuPage = () => {
   // Handle cell click
   const handleCellClick = ({
     mealType,
-    tag,
+    category,
     day,
     items,
     menu,
   }: {
     mealType: string;
-    tag: string;
+    category: string;
     day: string;
     items: any[];
     menu: any;
@@ -447,62 +104,66 @@ const MenuPage = () => {
       toast({ title: 'Please select a vendor to edit or create menu.' });
       return;
     }
-    const tagObj = getTagByName(tag);
+    const tagObj = getTagByName(category);
     setModalInitial({
       vendor_id: selectedVendor,
       meal_type: mealType,
       tag_id: tagObj?.id,
-      tag_name: tagObj?.name || tag,
+      tag_name: tagObj?.name || category,
       day_of_week: day,
       food_items: items.map(i => ({ name: i.name, tag_id: tagObj?.id })),
       menu_id: menu?.id,
     });
     setModalMode(items.length === 0 ? 'create' : 'edit');
-    setOpenCellKey(`${mealType}-${tag}-${day}`);
+    setOpenCellKey(`${mealType}-${category}-${day}`);
   };
 
-  // Handle create or update
+  // Handle modal submit
   const handleModalSubmit = async (data: any) => {
-    if (modalMode === 'create' && openCellKey === 'add-new') {
-      // Add New button modal with multiple days
-      for (const day of data.day_of_week) {
+    try {
+      if (modalMode === 'create' && openCellKey === 'add-new') {
+        for (const day of data.day_of_week) {
+          await createMenu.mutateAsync({
+            vendor_id: modalInitial.vendor_id,
+            meal_type: data.meal_type,
+            day_of_week: day,
+            tag_id: data.tag_id,
+            food_items: data.food_items.map((item: { name: string }) => item.name),
+          });
+        }
+        toast({ title: 'Menu created for selected days' });
+      } else if (modalMode === 'create') {
         await createMenu.mutateAsync({
-          vendor_id: modalInitial.vendor_id,
-          meal_type: data.meal_type,
-          day_of_week: day,
-          tag_id: data.tag_id,
-          food_items: data.food_items.map((item: { name: string }) => item.name),
-        });
-      }
-      toast({ title: 'Menu created for selected days' });
-    } else if (modalMode === 'create') {
-      // Cell create modal (single day)
-      await createMenu.mutateAsync({
-        vendor_id: modalInitial.vendor_id,
-        day_of_week: modalInitial.day_of_week,
-        meal_type: modalInitial.meal_type,
-        food_items: data.food_items.map((item: { name: string }) => item.name),
-        tag_id: modalInitial.tag_id,
-      });
-      toast({ title: 'Menu created' });
-    } else if (modalMode === 'edit') {
-      await updateMenu.mutateAsync({
-        schedule_id: modalInitial.menu_id,
-        payload: {
           vendor_id: modalInitial.vendor_id,
           day_of_week: modalInitial.day_of_week,
           meal_type: modalInitial.meal_type,
           food_items: data.food_items.map((item: { name: string }) => item.name),
           tag_id: modalInitial.tag_id,
-        },
-      });
-      toast({ title: 'Menu updated' });
+        });
+        toast({ title: 'Menu created' });
+      } else if (modalMode === 'edit') {
+        await updateMenu.mutateAsync({
+          schedule_id: modalInitial.menu_id,
+          payload: {
+            vendor_id: modalInitial.vendor_id,
+            day_of_week: modalInitial.day_of_week,
+            meal_type: modalInitial.meal_type,
+            food_items: data.food_items.map((item: { name: string }) => item.name),
+            tag_id: modalInitial.tag_id,
+          },
+        });
+        toast({ title: 'Menu updated' });
+      }
+
+      setOpenCellKey(null);
+      setModalInitial(null);
+      refetch();
+    } catch (error) {
+      console.error('Error submitting modal:', error);
     }
-    setOpenCellKey(null);
-    refetch();
   };
 
-  // Handle create or update for tags
+  // Tag handlers
   const handleCreateTag = async ({ name }: { name: string }) => {
     await createTag.mutateAsync({ name });
     toast({ title: 'Category created' });
@@ -518,151 +179,91 @@ const MenuPage = () => {
     refetchTags();
   };
 
-  const renderMenuCard = (item: any, mealType: string, isMultiple: boolean) => {
-    const colors = getSlotTypeColor(mealType);
-    const cardClass = `rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${colors.bg} border-2 ${colors.border} ${colors.hover} ${isMultiple ? 'mb-3 last:mb-0' : ''}`;
-
-    return (
-      <div key={item.id} className={cardClass}>
-        <div className="flex items-center justify-between mb-3">
-          <div className={`font-bold text-lg ${colors.text}`}>{item.name}</div>
-          <div className="flex items-center space-x-1">
-            <ChefHat className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-            <span className="text-xs text-gray-700 dark:text-gray-300 font-medium">
-              {colors.label}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderTimeSlotCell = (
-    mealType: string,
-    tag: string,
-    day: string,
-    items: any[],
-    menu: any
-  ) => {
-    const hasCourses = items.length > 0;
-    const hasMultipleCourses = items.length > 1;
-    const cellKey = `${mealType}-${tag}-${day}`;
-
-    if (!hasCourses) {
-      return (
-        <td
-          key={day}
-          className="px-3 py-3 border border-gray-300 dark:border-gray-600 align-top bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-300"
-          onClick={() =>
-            handleCellClick({
-              mealType,
-              tag,
-              day,
-              items,
-              menu,
-            })
-          }
-        >
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
-            <Clock className="w-5 h-5 mx-auto mb-2 opacity-50" />
-            <div className="font-medium">Add Item</div>
-            <div className="text-xs mt-1 opacity-75">Click to add</div>
-          </div>
-          {openCellKey === cellKey && modalInitial && (
-            <MenuModal
-              open={true}
-              onOpenChange={open => {
-                if (!open) setOpenCellKey(null);
-              }}
-              mode={modalMode}
-              initial={modalInitial}
-              onSubmit={handleModalSubmit}
-              isLoading={createMenu.isPending || updateMenu.isPending}
-              tagsList={tags}
-            />
-          )}
-        </td>
-      );
-    }
+  // Render cell content
+  const renderCell = (items: any[], mealType: string, category: string, day: string, menu: any) => {
+    const isEmpty = items.length === 0;
 
     return (
       <td
-        key={day}
-        className="px-3 py-3 border border-gray-300 dark:border-gray-600 align-top bg-white dark:bg-gray-900 cursor-pointer transition-all duration-300"
-        onClick={() =>
-          handleCellClick({
-            mealType,
-            tag,
-            day,
-            items,
-            menu,
-          })
-        }
+        key={`${mealType}-${category}-${day}`}
+        className={`
+          relative border border-border p-2 min-w-[120px] min-h-[60px]
+          cursor-pointer transition-all duration-200
+          ${isEmpty ? 'bg-muted hover:bg-accent/50' : 'bg-background hover:bg-muted'}
+        `}
+        onClick={() => handleCellClick({ mealType, category, day, items, menu })}
       >
-        <div className="space-y-0">
-          {hasMultipleCourses && (
-            <div className="bg-amber-100 dark:bg-amber-900/30 border-2 border-amber-300 dark:border-amber-600/50 rounded-lg px-3 py-2 mb-3">
-              <div className="text-xs font-bold text-amber-900 dark:text-amber-100 flex items-center">
-                <span className="w-2 h-2 bg-amber-600 dark:bg-amber-400 rounded-full mr-2 animate-pulse"></span>
-                {items.length} Items
+        {isEmpty ? (
+          <div className="flex items-center justify-center h-full min-h-[60px] text-muted-foreground">
+            <Plus className="w-4 h-4" />
+          </div>
+        ) : (
+          <div className="text-xs space-y-1 overflow-hidden py-1">
+            {items.map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-primary/10 text-primary px-2 py-1 rounded text-xs font-medium break-words"
+              >
+                {item.name}
               </div>
-            </div>
-          )}
-          {items.map(item => renderMenuCard(item, mealType, hasMultipleCourses))}
-        </div>
-        {openCellKey === cellKey && modalInitial && (
-          <MenuModal
-            open={true}
-            onOpenChange={open => {
-              if (!open) setOpenCellKey(null);
-            }}
-            mode={modalMode}
-            initial={modalInitial}
-            onSubmit={handleModalSubmit}
-            isLoading={createMenu.isPending || updateMenu.isPending}
-            tagsList={tags}
-          />
+            ))}
+          </div>
         )}
       </td>
     );
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
-            Weekly Menu Planner
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Comprehensive view of your menu schedule
-          </p>
-        </div>
+  // Get meal type color
+  const getMealTypeColor = (mealType: string) => {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 'bg-orange-500 border-orange-500';
+      case 'lunch':
+        return 'bg-green-500 border-green-500';
+      case 'dinner':
+        return 'bg-blue-500 border-blue-500';
+      case 'snacks':
+        return 'bg-purple-500 border-purple-500';
+      default:
+        return 'bg-primary border-primary';
+    }
+  };
 
-        {/* Vendor Selection */}
+  if (menusLoading || vendorsLoading || tagsLoading) {
+    return (
+      <HelmetWrapper
+        title="Menu Management"
+        heading="Menu Management"
+        subHeading="Excel-style menu planning interface with comprehensive meal organization"
+      >
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
+        </div>
+      </HelmetWrapper>
+    );
+  }
+
+  return (
+    <HelmetWrapper
+      title="Menu Management"
+      heading="Menu Management"
+      subHeading="Excel-style menu planning interface with comprehensive meal organization"
+    >
+      <div className="space-y-12">
+        {/* Header Controls */}
         <div className="flex justify-start mb-8">
           <div className="flex items-center gap-3">
             <Select value={selectedVendor} onValueChange={setSelectedVendor}>
-              <SelectTrigger className="w-full sm:min-w-[200px] lg:min-w-[250px] flex justify-between items-center h-10 sm:h-11 text-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <SelectTrigger className="w-full sm:min-w-[200px] lg:min-w-[220px] flex justify-between items-center h-10 sm:h-11 text-sm bg-background border-muted text-foreground hover:bg-muted">
                 <span className="flex items-center gap-2">
                   <User className="w-4 h-4" />
                   <span className="truncate">{selectedVendorName || 'Select Vendor'}</span>
                 </span>
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-                <SelectItem
-                  value="all"
-                  className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  All Vendors
-                </SelectItem>
+              <SelectContent>
+                <SelectItem value="all">All Vendors</SelectItem>
                 {vendors.map(v => (
-                  <SelectItem
-                    key={v.ldapid}
-                    value={v.ldapid}
-                    className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
+                  <SelectItem key={v.ldapid} value={v.ldapid}>
                     {v.ldapid}
                   </SelectItem>
                 ))}
@@ -687,151 +288,313 @@ const MenuPage = () => {
                 setModalMode('create');
                 setOpenCellKey('add-new');
               }}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-pink-600 dark:hover:bg-pink-700 text-white"
+              className="bg-primary hover:bg-primary/90 text-background h-10 sm:h-11"
             >
               <Plus className="mr-2 h-4 w-4" />
               Add Menu
             </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                setTagModalMode('create');
+                setTagModalInitial({ name: '' });
+                setTagModalOpen(true);
+              }}
+              className="h-10 sm:h-11 border-muted text-foreground hover:bg-muted"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Category
+            </Button>
           </div>
         </div>
 
-        {/* Menu Table */}
+        {/* Menu Tables by Meal Type */}
         {tableData.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-            <Clock className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-6" />
-            <div className="text-gray-500 dark:text-gray-400 text-xl font-semibold">
-              No menu data found
+          <div className="text-center py-16 bg-background rounded-xl shadow-lg">
+            <ChefHat className="w-20 h-20 text-muted-foreground mx-auto mb-6" />
+            <div className="text-muted-foreground text-xl font-semibold">
+              No menu data available
             </div>
-            <div className="text-gray-400 dark:text-gray-500 text-base mt-3">
-              Select a vendor to view menus or add new items.
+            <div className="text-muted-foreground text-base mt-3">
+              Select a vendor and start creating menus
             </div>
           </div>
         ) : (
-          <div className="space-y-12">
-            {mealTypes.map(mealType => (
-              <div key={mealType} className="mb-10">
-                <div className="relative flex">
-                  {/* Vertical Meal Type Flag */}
-                  <div className="relative mr-4">
-                    <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-b from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900 rounded-l-xl shadow-lg">
-                      <div className="h-full flex items-center justify-center">
-                        <div className="transform -rotate-90 whitespace-nowrap">
-                          <h2 className="text-2xl font-bold text-white tracking-wider uppercase">
-                            {mealType}
-                          </h2>
-                        </div>
+          tableData.map(mealGroup => (
+            <div key={mealGroup.mealType} className="mb-10">
+              <div className="relative flex">
+                {/* Vertical Meal Type Flag */}
+                <div className="relative mr-4">
+                  <div
+                    className={`absolute left-0 top-0 h-full w-16 ${getMealTypeColor(mealGroup.mealType)} rounded-l-xl shadow-lg`}
+                  >
+                    <div className="h-full flex items-center justify-center">
+                      <div className="transform -rotate-90 whitespace-nowrap">
+                        <h2 className="text-2xl font-bold text-background tracking-wider uppercase">
+                          {mealGroup.mealType}
+                        </h2>
                       </div>
                     </div>
-                    <div className="absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 border-l-[20px] border-l-blue-900 dark:border-l-rose-900 border-t-[15px] border-t-transparent border-b-[15px] border-b-transparent"></div>
                   </div>
+                  {/* Flag triangle */}
+                  <div
+                    className={`absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 border-l-[20px] ${getMealTypeColor(mealGroup.mealType).split(' ')[0].replace('bg-', 'border-l-')} border-t-[15px] border-t-transparent border-b-[15px] border-b-transparent`}
+                  ></div>
+                </div>
 
-                  {/* Menu Table */}
-                  <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-xl bg-white dark:bg-gray-900 ml-12">
-                    <table className="min-w-full relative">
-                      <thead>
-                        <tr className="bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900 text-white">
-                          <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border border-blue-600 dark:border-pink-600 bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 dark:from-pink-700 dark:via-pink-800 dark:to-rose-900">
-                            <div className="flex items-center space-x-3">
-                              <span className="flex items-center gap-2">
-                                <span className="text-xl">🏷️</span>
-                                Category
-                              </span>
-                              <button
-                                type="button"
-                                className="ml-3 p-2 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 hover:scale-110 transform"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  setTagModalMode('create');
-                                  setTagModalInitial({ name: '' });
-                                  setTagModalOpen(true);
-                                }}
-                                title="Add Category"
-                              >
-                                <Plus size={16} className="text-white" />
-                              </button>
-                            </div>
+                {/* Menu Table */}
+                <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-xl bg-background ml-12">
+                  <table className="min-w-full relative">
+                    <thead>
+                      <tr className="bg-primary text-background">
+                        <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border border-border bg-primary">
+                          <div className="flex items-center space-x-3">
+                            <ChefHat className="w-5 h-5" />
+                            <span className="text-lg">Category</span>
+                          </div>
+                        </th>
+                        {WEEKDAYS.map(day => (
+                          <th
+                            key={day}
+                            className="px-4 py-5 text-center font-bold border border-border min-w-[180px] capitalize"
+                          >
+                            <div className="text-sm leading-tight">{day}</div>
                           </th>
-                          {WEEKDAYS.map(day => (
-                            <th
-                              key={day}
-                              className="px-4 py-5 text-center font-bold border border-blue-600 dark:border-pink-600 min-w-[220px]"
-                            >
-                              <div className="text-sm leading-tight capitalize">{day}</div>
-                            </th>
-                          ))}
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mealGroup.categories.map((categoryRow, categoryIndex) => (
+                        <tr
+                          key={categoryRow.category}
+                          className={`
+                            border-b border-border
+                            ${categoryIndex % 2 === 0 ? 'bg-background' : 'bg-muted/30'}
+                          `}
+                        >
+                          {/* Category Cell */}
+                          <td
+                            className="sticky left-0 z-10 bg-muted border-r-2 border-border px-6 py-6 font-bold text-foreground cursor-pointer hover:bg-accent transition-colors"
+                            onClick={() => {
+                              const tagObj = tags.find(t => t.name === categoryRow.category);
+                              setTagModalMode('edit');
+                              setTagModalInitial({ name: categoryRow.category, id: tagObj?.id });
+                              setTagModalOpen(true);
+                            }}
+                          >
+                            <div className="text-center">
+                              <div className="flex items-center justify-between">
+                                <span className="text-lg font-bold">{categoryRow.category}</span>
+                                <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Day Cells */}
+                          {categoryRow.cells.map(({ day, items, menu }) =>
+                            renderCell(items, mealGroup.mealType, categoryRow.category, day, menu)
+                          )}
                         </tr>
-                      </thead>
-                      <tbody>
-                        {tableData
-                          .find(data => data.mealType === mealType)
-                          ?.tags.filter(tagData =>
-                            tagData.days.some(dayObj => dayObj.items && dayObj.items.length > 0)
-                          )
-                          .map((tagData, tagIndex) => (
-                            <tr
-                              key={`${mealType}-${tagData.tag}`}
-                              className={
-                                tagIndex % 2 === 0
-                                  ? 'bg-gray-50 dark:bg-gray-800/50'
-                                  : 'bg-white dark:bg-gray-900'
-                              }
-                            >
-                              <td
-                                className="sticky left-0 z-10 px-6 py-6 font-bold text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 bg-gradient-to-r from-gray-100 via-gray-50 to-white dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300"
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  const tagObj = tags.find(t => t.name === tagData.tag);
-                                  setTagModalMode('edit');
-                                  setTagModalInitial({ name: tagData.tag, id: tagObj?.id });
-                                  setTagModalOpen(true);
-                                }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span className="text-lg font-bold">{tagData.tag}</span>
-                                  <Pencil
-                                    size={14}
-                                    className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                  />
-                                </div>
-                              </td>
-                              {tagData.days.map(({ day, items, menu }) =>
-                                renderTimeSlotCell(mealType, tagData.tag, day, items, menu)
-                              )}
-                            </tr>
-                          )) || []}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
       </div>
 
       {/* Modals */}
-      <TagModal
-        open={tagModalOpen}
-        onOpenChange={setTagModalOpen}
-        mode={tagModalMode}
-        initial={tagModalInitial}
-        onSubmit={tagModalMode === 'create' ? handleCreateTag : handleEditTag}
-        isLoading={createTag.isPending || updateTag.isPending}
-      />
-      {openCellKey === 'add-new' && modalInitial && (
-        <MenuModal
-          open={true}
-          onOpenChange={open => {
-            if (!open) setOpenCellKey(null);
-          }}
-          mode="create"
-          initial={modalInitial}
-          onSubmit={handleModalSubmit}
-          isLoading={createMenu.isPending}
-          tagsList={tags}
-        />
-      )}
-    </div>
+      <Dialog open={tagModalOpen} onOpenChange={setTagModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {tagModalMode === 'create' ? 'Create Category' : 'Edit Category'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={tagModalInitial.name}
+              onChange={e => setTagModalInitial(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="Category name"
+            />
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setTagModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (tagModalMode === 'create') {
+                    handleCreateTag({ name: tagModalInitial.name });
+                  } else {
+                    handleEditTag({ name: tagModalInitial.name });
+                  }
+                }}
+              >
+                {tagModalMode === 'create' ? 'Create' : 'Update'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Menu Modal */}
+      <Dialog open={openCellKey !== null} onOpenChange={open => !open && setOpenCellKey(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {modalMode === 'create' ? 'Add Menu Items' : 'Edit Menu Items'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {modalInitial && (
+              <>
+                {/* Meal Type Field */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Meal Type</label>
+                  {openCellKey === 'add-new' ? (
+                    <Select
+                      value={modalInitial.meal_type}
+                      onValueChange={value =>
+                        setModalInitial((prev: any) => ({ ...prev, meal_type: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <span>{modalInitial.meal_type || 'Select Meal Type'}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="breakfast">Breakfast</SelectItem>
+                        <SelectItem value="lunch">Lunch</SelectItem>
+                        <SelectItem value="dinner">Dinner</SelectItem>
+                        <SelectItem value="snacks">Snacks</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="text-lg capitalize bg-muted p-2 rounded">
+                      {modalInitial.meal_type}
+                    </div>
+                  )}
+                </div>
+
+                {/* Day Field */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Day(s)</label>
+                  {openCellKey === 'add-new' ? (
+                    <div className="space-y-2">
+                      <div className="text-xs text-muted-foreground mb-2">
+                        Select multiple days (for bulk creation)
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {WEEKDAYS.map(day => (
+                          <label key={day} className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={modalInitial.day_of_week?.includes(day) || false}
+                              onChange={e => {
+                                const currentDays = modalInitial.day_of_week || [];
+                                if (e.target.checked) {
+                                  setModalInitial((prev: any) => ({
+                                    ...prev,
+                                    day_of_week: [...currentDays, day],
+                                  }));
+                                } else {
+                                  setModalInitial((prev: any) => ({
+                                    ...prev,
+                                    day_of_week: currentDays.filter((d: string) => d !== day),
+                                  }));
+                                }
+                              }}
+                              className="rounded border-gray-300"
+                            />
+                            <span className="text-sm capitalize">{day}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-lg capitalize bg-muted p-2 rounded">
+                      {modalInitial.day_of_week}
+                    </div>
+                  )}
+                </div>
+
+                {/* Category Field */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Category</label>
+                  {openCellKey === 'add-new' ? (
+                    <Select
+                      value={modalInitial.tag_id?.toString() || ''}
+                      onValueChange={value => {
+                        const selectedTag = tags.find(t => t.id === parseInt(value));
+                        setModalInitial((prev: any) => ({
+                          ...prev,
+                          tag_id: parseInt(value),
+                          tag_name: selectedTag?.name || '',
+                        }));
+                      }}
+                    >
+                      <SelectTrigger>
+                        <span>{modalInitial.tag_name || 'Select Category'}</span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {tags.map(tag => (
+                          <SelectItem key={tag.id} value={tag.id.toString()}>
+                            {tag.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="text-lg bg-muted p-2 rounded">{modalInitial.tag_name}</div>
+                  )}
+                </div>
+
+                {/* Food Items Field */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Food Items</label>
+                  <Input
+                    placeholder="e.g. Rice, Dal, Sabzi (comma separated)"
+                    value={modalInitial.food_items?.map((f: any) => f.name).join(', ') || ''}
+                    onChange={e => {
+                      setModalInitial((prev: any) => ({
+                        ...prev,
+                        food_items: e.target.value.split(',').map((name: string) => ({
+                          name: name.trim(),
+                          tag_id: prev.tag_id,
+                        })),
+                      }));
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end pt-4">
+                  <Button variant="outline" onClick={() => setOpenCellKey(null)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => handleModalSubmit(modalInitial)}
+                    disabled={
+                      !modalInitial.meal_type ||
+                      !modalInitial.tag_id ||
+                      !modalInitial.day_of_week ||
+                      (Array.isArray(modalInitial.day_of_week)
+                        ? modalInitial.day_of_week.length === 0
+                        : false) ||
+                      !modalInitial.food_items ||
+                      modalInitial.food_items.length === 0
+                    }
+                  >
+                    {modalMode === 'create' ? 'Create' : 'Update'}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </HelmetWrapper>
   );
 };
 

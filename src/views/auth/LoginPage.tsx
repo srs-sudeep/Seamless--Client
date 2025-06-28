@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
+import { loginAssets, logos } from '@/assets';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -48,18 +49,14 @@ const LoginPage: React.FC = () => {
   return (
     <HelmetWrapper title="Login | Seamless">
       <div className="lg:hidden flex flex-col items-center mt-6 space-y-2">
+        <img src={loginAssets.iitBhilaiLogo} alt="IIT Bhilai Logo" className="w-12 h-auto" />
         <img
-          src="./images/Login/IIT_Bhilai_Logo.svg"
-          alt="IIT Bhilai Logo"
-          className="w-12 h-auto"
-        />
-        <img
-          src="./LogoHorizontal.svg"
+          src={logos.horizontal.light}
           alt="Logo Light"
           className="w-48 h-auto object-contain block dark:hidden"
         />
         <img
-          src="./WhiteLogoHorizontal.svg"
+          src={logos.horizontal.dark}
           alt="Logo Dark"
           className="w-48 h-auto object-contain hidden dark:block"
         />
@@ -197,14 +194,14 @@ const LoginPage: React.FC = () => {
 
                     {/* Horizontal Logo for Light Mode */}
                     <img
-                      src="./LogoHorizontal.svg"
+                      src={logos.horizontal.light}
                       alt="Logo"
                       className="w-72 h-auto object-contain block dark:hidden"
                     />
 
                     {/* Horizontal Logo for Dark Mode */}
                     <img
-                      src="./WhiteLogoHorizontal.svg"
+                      src={logos.horizontal.dark}
                       alt="Logo"
                       className="w-72 h-auto object-contain hidden dark:block"
                     />

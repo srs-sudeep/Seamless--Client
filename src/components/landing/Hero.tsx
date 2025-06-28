@@ -4,12 +4,12 @@ export const Hero = () => {
       <div className="relative w-full h-screen overflow-hidden">
         {/* SVG Background Images */}
         <img
-          src="/LogoLandingBlack.svg"
+          src="./images/Logos/LogoLandingBlack.svg"
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 dark:hidden"
         />
         <img
-          src="/LogoLandingWhite.svg"
+          src="./images/Logos/LogoLandingWhite.svg"
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-25 hidden dark:block"
         />

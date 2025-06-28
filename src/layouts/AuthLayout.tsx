@@ -1,3 +1,4 @@
+import { AppLogo } from '@/components';
 import { ThemeSwitcher } from '@/theme';
 import { Outlet } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ const AuthLayout = () => {
           <div className="fixed -bottom-1/4 right-0 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div> */}
 
       {/* Theme switcher positioned in top corner */}
+      <AppLogo />
       <div className="absolute top-4 right-4 z-10">
         <ThemeSwitcher />
       </div>

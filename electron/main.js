@@ -19,10 +19,16 @@ function createWindow() {
       enableRemoteModule: true,
     },
   });
-  //   win.loadURL('http://localhost:3000');
-  win.webContents.openDevTools();
-  win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
-  // 🟢 Spawn Python executable
+  // Use NODE_ENV to determine loading strategy
+  if (process.env.NODE_ENV === 'development') {
+    // Development mode - load from Vite dev server
+    win.loadURL('http://localhost:3000');
+    win.webContents.openDevTools();
+  } else {
+    // Production mode - load from built files
+    win.loadFile(path.join(app.getAppPath(), 'dist/index.html'));
+  }
+
   let pythonPath;
   if (process.platform === 'win32') {
     if (app.isPackaged) {

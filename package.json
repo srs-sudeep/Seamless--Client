@@ -21,8 +21,8 @@
     "format:write": "prettier --write .",
     "prepare": "husky",
     "commit": "git-cz c",
-    "electron:serve": "concurrently -k \"cross-env NODE_ENV=development BROWSER=none bun run dev\" \"bun run electron:start\"",
-    "electron:build": "bun run build && electron-builder",
+    "electron:serve": "concurrently -k \"cross-env NODE_ENV=development cross-env VITE_IS_ELECTRON=true BROWSER=none bun run dev\" \"bun run electron:start\"",
+    "electron:build": "cross-env VITE_IS_ELECTRON=true bun run build && electron-builder",
     "electron:start": "wait-on tcp:3000 && electron ."
   },
   "config": {

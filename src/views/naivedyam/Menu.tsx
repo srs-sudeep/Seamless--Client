@@ -5,8 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMenu.hook';
 import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
-import { ChefHat, Plus, User, Edit2, Trash2, Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ChefHat, Plus, User, Edit2, Loader2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 

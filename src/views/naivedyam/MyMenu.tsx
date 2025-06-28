@@ -1,7 +1,6 @@
 import { HelmetWrapper } from '@/components/HelmetWrapper';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { useMenus } from '@/hooks/naivedyam/useMenu.hook';
-import { useTags } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
 import { ChefHat, User, Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -11,7 +10,6 @@ const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'satur
 const MyMenuPage = () => {
   const { data: menus = [], isFetching: menusLoading } = useMenus();
   const { data: vendors = [], isFetching: vendorsLoading } = useVendors();
-  const { data: tags = [], isFetching: tagsLoading } = useTags();
   const [selectedVendor, setSelectedVendor] = useState<string>('all');
 
   // Filter menus for selected vendor
@@ -66,7 +64,7 @@ const MyMenuPage = () => {
     vendors.find(v => v.ldapid === selectedVendor)?.ldapid || selectedVendor;
 
   // Render cell content (read-only)
-  const renderCell = (items: any[], mealType: string, category: string, day: string, menu: any) => {
+  const renderCell = (items: any[], mealType: string, category: string, day: string) => {
     const isEmpty = items.length === 0;
 
     return (
@@ -114,7 +112,7 @@ const MyMenuPage = () => {
     }
   };
 
-  if (menusLoading || vendorsLoading || tagsLoading) {
+  if (menusLoading || vendorsLoading) {
     return (
       <HelmetWrapper
         title="My Menu"
@@ -229,8 +227,8 @@ const MyMenuPage = () => {
                           </td>
 
                           {/* Day Cells (Read Only) */}
-                          {categoryRow.cells.map(({ day, items, menu }) =>
-                            renderCell(items, mealGroup.mealType, categoryRow.category, day, menu)
+                          {categoryRow.cells.map(({ day, items }) =>
+                            renderCell(items, mealGroup.mealType, categoryRow.category, day)
                           )}
                         </tr>
                       ))}

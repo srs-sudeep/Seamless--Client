@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/theme';
 import { useNavigate } from 'react-router-dom';
-import { logos } from '@/assets';
 
 interface AppLogoProps {
   className?: string;
@@ -10,6 +9,7 @@ interface AppLogoProps {
   short?: boolean;
   imgClassname?: string;
 }
+const basePath = './images/logos/';
 
 const getLogoSrc = (
   theme: string,
@@ -17,16 +17,16 @@ const getLogoSrc = (
   name?: boolean,
   short?: boolean
 ): string => {
-  const themeKey = theme === 'dark' ? 'dark' : 'light';
-
   if (horizontal) {
-    return logos.horizontal[themeKey];
+    return theme === 'dark'
+      ? `${basePath}WhiteLogoHorizontal.svg`
+      : `${basePath}LogoHorizontal.svg`;
   } else if (name) {
-    return logos.name[themeKey];
+    return theme === 'dark' ? `${basePath}WhiteLongName.svg` : `${basePath}LongName.svg`;
   } else if (short) {
-    return logos.short[themeKey];
+    return theme === 'dark' ? `${basePath}WhiteX.svg` : `${basePath}X.svg`;
   }
-  return logos.short[themeKey];
+  return theme === 'dark' ? `${basePath}WhiteX.svg` : `${basePath}X.svg`;
 };
 
 const AppLogo = ({

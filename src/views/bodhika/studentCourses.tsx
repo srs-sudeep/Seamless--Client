@@ -454,7 +454,7 @@ const StudentCourses = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {DAYS.map((day, dayIndex) => (
+                        {DAYS.map(day => (
                           <tr key={day}>
                             <td className="sticky left-0 z-10 px-6 py-6 font-bold text-foreground border border-border bg-background">
                               <div className="text-center">

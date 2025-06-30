@@ -54,9 +54,9 @@ const LoginPage: React.FC = () => {
         {/* Top Bar */}
 
         {/* Login Card */}
-        <div className="bg-foreground/60 p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-border">
+        <div className="bg-card/60 p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-border">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent-foreground/10 mb-6 shadow-lg">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent/10 mb-6 shadow-lg">
               <svg
                 className="w-8 h-8 text-background"
                 fill="none"
@@ -71,13 +71,13 @@ const LoginPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-white drop-shadow-lg mb-2">Welcome back</h1>
-            <p className="text-white/80 text-sm">Sign in to your account to continue</p>
+            <h1 className="text-3xl font-bold text-foreground drop-shadow-lg mb-2">Welcome back</h1>
+            <p className="text-foreground/80 text-sm">Sign in to your account to continue</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6 w-full">
             <div className="space-y-2 w-full">
-              <Label htmlFor="ldapid" className="text-white">
+              <Label htmlFor="ldapid" className="text-foreground">
                 LDAP ID
               </Label>
               <Input
@@ -86,12 +86,12 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your LDAP ID"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                className="w-full bg-input/20 border-border text-foreground placeholder:text-foreground/60"
               />
             </div>
 
             <div className="space-y-2 w-full">
-              <Label htmlFor="password" className="text-white">
+              <Label htmlFor="password" className="text-foreground">
                 Password
               </Label>
               <div className="relative w-full">
@@ -101,11 +101,11 @@ const LoginPage: React.FC = () => {
                   value={password}
                   placeholder="Enter your password"
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full pr-12 bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                  className="w-full pr-12 bg-input/20 border-border text-foreground placeholder:text-foreground/60"
                 />
                 <button
                   type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/80"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground/80"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={mutation.isPending}
             >
               {mutation.isPending ? 'Signing in...' : 'Sign In'}

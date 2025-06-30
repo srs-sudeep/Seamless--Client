@@ -95,7 +95,7 @@ export const ModuleSidebar = () => {
   useEffect(() => {
     if (!isLoading && modules.length > 0) {
       const found = findModuleIdByPath(modules, location.pathname);
-      if (found && found !== modules[0]?.id) {
+      if (found) {
         setActiveModule(found);
         setLastValidModule(found);
       } else if (lastValidModule) {

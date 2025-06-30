@@ -26,3 +26,16 @@ export * from './bodhika/students.api';
 /* Exporting all naivedyam APIs */
 export * from './naivedyam/vendors.api';
 export * from './naivedyam/studentVendor.api';
+export * from './naivedyam/mealSession.api';
+export * from './naivedyam/menu.api';
+export * from './naivedyam/tags.api';
+export * from './naivedyam/transaction.api';
+
+/* Exporting all chatravas APIs */
+export * from './chatravas/attendance.api';
+export * from './chatravas/hostel.api';
+export * from './chatravas/studentHostel.api';
+
+/* Exporting all auth and routes APIs */
+export * from './auth.api';
+export * from './routes.api';

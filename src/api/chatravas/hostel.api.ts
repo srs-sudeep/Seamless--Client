@@ -5,7 +5,7 @@ import type {
   Hostel,
   HostelListResponse,
   UpdateHostelDto,
-} from '@/types/chatravas/hostel.types';
+} from '@/types';
 
 const BASE = '/chatravas/api/v1/hostel/';
 

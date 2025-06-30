@@ -1,5 +1,5 @@
-import { createTag, deleteTag, getTags, updateTag } from '@/api/naivedyam/tags.api';
-import type { CreateTagDto, Tag } from '@/types/naivedyam/tags.type';
+import { createTag, deleteTag, getTags, updateTag } from '@/api';
+import type { CreateTagDto, Tag } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useTags() {

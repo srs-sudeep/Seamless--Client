@@ -1,5 +1,5 @@
-import { getDashboardLink } from '@/lib/redirect';
-import { useAuthStore } from '@/store/useAuthStore';
+import { getDashboardLink } from '@/lib';
+import { useAuthStore } from '@/store';
 import { Navigate } from 'react-router-dom';
 
 const GuestGuard = ({ children }: { children: React.ReactNode }) => {

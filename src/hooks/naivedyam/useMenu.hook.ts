@@ -1,5 +1,5 @@
-import { createMenu, deleteMenu, getMenus, updateMenu } from '@/api/naivedyam/menu.api';
-import type { CreateMenuDto, Menu } from '@/types/naivedyam/menu.types';
+import { createMenu, deleteMenu, getMenus, updateMenu } from '@/api';
+import type { CreateMenuDto, Menu } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useMenus() {

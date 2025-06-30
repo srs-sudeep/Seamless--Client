@@ -1,5 +1,5 @@
 import { apiClient, NAIVEDYAM_URL } from '@/core';
-import type { CreateTagDto, Tag } from '@/types/naivedyam/tags.type';
+import type { CreateTagDto, Tag } from '@/types';
 
 const BASE = `${NAIVEDYAM_URL}/tags/`;
 

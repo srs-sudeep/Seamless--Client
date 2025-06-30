@@ -1,9 +1,5 @@
 import { apiClient } from '@/core';
-import type {
-  MealSession,
-  MealSessionTransaction,
-  StudentMealSessionTransaction,
-} from '@/types/naivedyam/mealSession.types';
+import type { MealSession, MealSessionTransaction, StudentMealSessionTransaction } from '@/types';
 
 export async function getAllMealSessions(): Promise<MealSession[]> {
   const { data } = await apiClient.get<MealSession[]>(
@@ -12,7 +8,7 @@ export async function getAllMealSessions(): Promise<MealSession[]> {
   return data;
 }
 
-export async function getVendorMealSessions(): Promise<MealSession[]> {
+export async function getVendorMealSession(): Promise<MealSession[]> {
   const { data } = await apiClient.get<MealSession[]>(
     '/naivedyam/api/v1/transaction/meal-session/vendor'
   );

@@ -3,12 +3,8 @@ import {
   getMealSessionTransactions,
   getStudentMealSessionTransactions,
   getVendorMealSessions,
-} from '@/api/naivedyam/mealSession.api';
-import type {
-  MealSession,
-  MealSessionTransaction,
-  StudentMealSessionTransaction,
-} from '@/types/naivedyam/mealSession.types';
+} from '@/api';
+import type { MealSession, MealSessionTransaction, StudentMealSessionTransaction } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 
 export function useMealSessions() {
@@ -18,7 +14,7 @@ export function useMealSessions() {
   });
 }
 
-export function useVendorMealSessions() {
+export function useVendorMealSession() {
   return useQuery<MealSession[]>({
     queryKey: ['vendorMealSessions'],
     queryFn: getVendorMealSessions,

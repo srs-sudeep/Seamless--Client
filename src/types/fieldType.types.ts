@@ -17,4 +17,8 @@ export type FieldType = {
   className?: string;
   section?: string;
   defaultValue?: string | number | boolean | null;
+
+  minItems?: number;
+  maxItems?: number;
+  fields?: FieldType[];
 };

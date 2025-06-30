@@ -1,12 +1,12 @@
 import { Button, DynamicTable, HelmetWrapper, Sheet, SheetContent, SheetTitle } from '@/components';
 import {
   useMealSessionTransactions,
-  useVendorMealSessions,
+  useVendorMealSession,
 } from '@/hooks/naivedyam/useMealSession.hook';
 import { useState } from 'react';
 
 const VendorSessionPage = () => {
-  const { data: sessions = [], isLoading } = useVendorMealSessions();
+  const { data: sessions = [], isLoading } = useVendorMealSession();
   const [sidePanel, setSidePanel] = useState<{ open: boolean; sessionId?: string }>({
     open: false,
   });

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getModules, createModule, updateModule, deleteModule } from '@/api/core/module.api';
-import type { Module } from '@/types/core/module.types';
+import { getModules, createModule, updateModule, deleteModule } from '@/api';
+import type { Module } from '@/types';
 
 export function useModules() {
   return useQuery<Module[]>({

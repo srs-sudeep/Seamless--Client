@@ -5,12 +5,11 @@ import LongName from './logos/LongName.svg';
 import WhiteLongName from './logos/WhiteLongName.svg';
 import X from './logos/X.svg';
 import WhiteX from './logos/WhiteX.svg';
-import LogoLandingBlack from './logos/LogoLandingBlack.svg';
-import LogoLandingWhite from './logos/LogoLandingWhite.svg';
 
 // Login page imports
 import IITBhilaiLogo from './login/IIT_Bhilai_Logo.svg';
-import LoginImage from './login/LoginImage.webp';
+import LoginImage from './login/LoginImage.jpg';
+import LoginImageDark from './login/LoginImageDark.png';
 
 // Export all images
 export const logos = {
@@ -26,15 +25,12 @@ export const logos = {
     light: X,
     dark: WhiteX,
   },
-  landing: {
-    light: LogoLandingBlack,
-    dark: LogoLandingWhite,
-  },
 };
 
 export const loginAssets = {
   iitBhilaiLogo: IITBhilaiLogo,
   loginImage: LoginImage,
+  loginImageDark: LoginImageDark,
 };
 
 // You can also export them individually if needed
@@ -47,6 +43,5 @@ export {
   WhiteX,
   IITBhilaiLogo,
   LoginImage,
-  LogoLandingBlack,
-  LogoLandingWhite,
+  LoginImageDark,
 };

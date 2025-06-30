@@ -1,28 +1,40 @@
 import { AppLogo } from '@/components';
 import { ThemeSwitcher } from '@/theme';
 import { Outlet } from 'react-router-dom';
+import { useTheme } from '@/theme';
+import { loginAssets, logos } from '@/assets';
 
 const AuthLayout = () => {
-  return (
-    <div className="flex items-center justify-center min-h-screen from-violet-50 via-purple-50 to-indigo-50 dark:from-violet-950 relative overflow-hidden">
-      {/* Background blur elements - only visible in dark mode */}
-      {/* <div className="fixed -top-1/4 left-10 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed -top-1/3 -right-40 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="fixed -bottom-1/4 right-0 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none"></div> */}
+  const { theme } = useTheme();
+  const backgroundImage = theme === 'dark' ? loginAssets.loginImageDark : loginAssets.loginImage;
 
-      {/* Theme switcher positioned in top corner */}
-      <AppLogo />
+  return (
+    <div className="relative flex items-center justify-center w-screen h-screen min-h-screen overflow-hidden">
+      {/* Background image */}
+      <div
+        className="fixed inset-0 w-screen h-screen bg-cover bg-center bg-no-repeat -z-10"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+        }}
+      />
+      {/* Background overlay */}
+      <div className="fixed inset-0 w-screen h-screen bg-black/40 -z-5 pointer-events-none" />
+      {/* Top left horizontal logo */}
+      <div className="absolute top-4 left-4 z-10">
+        <img
+          src={theme === 'dark' ? logos.horizontal.dark : logos.horizontal.light}
+          alt="Logo"
+          className="h-12 md:h-16"
+        />
+      </div>
+      {/* Top right theme switcher */}
       <div className="absolute top-4 right-4 z-10">
         <ThemeSwitcher />
       </div>
-
-      {/* Main container for all auth pages */}
-      <div className="w-full max-w-5xl mx-4 bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl">
-        <Outlet />
-      </div>
-
+      {/* Main container for all auth pages - removed outer box */}
+      <Outlet />
       {/* Footer */}
-      <div className="absolute bottom-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="absolute bottom-4 text-center text-sm text-gray-500 dark:text-gray-400 w-full">
         &copy; {new Date().getFullYear()} Recogx Init. All rights reserved.
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Users, Calendar, FileText, Heart } from 'lucide-react';
-import StatCard from '@/components/dashboard/StatCard';
+import { StatCard } from '@/components';
 
 const MedicalDashboard = () => {
   return (

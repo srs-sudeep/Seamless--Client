@@ -38,7 +38,7 @@ import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
 import { ThemeSwitcher } from '@/theme';
 import { notifications, UserRole } from '@/types';
-import { Bell, ChevronDown, HelpCircle, LogOut, Menu, User } from 'lucide-react';
+import { Bell, ChevronDown, HelpCircle, LogOut, Menu, User, Info } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 export const Navbar = () => {
@@ -156,7 +156,7 @@ export const Navbar = () => {
                 {/* Role Switch */}
                 {user?.roles && user.roles.length > 1 && (
                   <div className="space-y-2">
-                    <p className="text-muted-foreground text-sm font-medium ">Switch Role</p>
+                    <p className="text-muted-foreground text-sm font-medium">Switch Role</p>
                     <div className="max-h-48 overflow-y-auto border rounded-md space-y-2">
                       {user.roles.map(role => (
                         <Button
@@ -201,7 +201,7 @@ export const Navbar = () => {
                     className="w-full justify-start"
                     onClick={() => navigate('/about')}
                   >
-                    <span className="mr-2 h-4 w-4">ℹ️</span> About Us
+                    <Info className="mr-2 h-4 w-4 text-foreground" /> About Us
                   </Button>
                   <Button
                     variant="destructive"
@@ -360,7 +360,7 @@ export const Navbar = () => {
                   <>
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
-                        <User className="mr-2 h-4 w-4" />
+                        <User className="mr-2 h-4 w-4 texy-primary" />
                         <span>Switch Role</span>
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -398,7 +398,7 @@ export const Navbar = () => {
                     <span>Help & Support</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/about')}>
-                    <span className="mr-2 h-4 w-4">ℹ️</span>
+                    <Info className="mr-2 h-4 w-4 text-foreground" />
                     <span>About Us</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>

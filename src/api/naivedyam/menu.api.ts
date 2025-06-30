@@ -1,5 +1,5 @@
 import { apiClient, NAIVEDYAM_URL } from '@/core';
-import type { CreateMenuDto, Menu } from '@/types/naivedyam/menu.types';
+import type { CreateMenuDto, Menu } from '@/types';
 
 const BASE = `${NAIVEDYAM_URL}/menu/`;
 

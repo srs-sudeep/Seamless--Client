@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getVendors, createVendor, updateVendor, deleteVendor } from '@/api/naivedyam/vendors.api';
+import { getVendors, createVendor, updateVendor, deleteVendor } from '@/api';
 import type { Vendor } from '@/types';
 
 export function useVendors() {

@@ -1,17 +1,11 @@
-import {
-  createHostel,
-  deleteHostel,
-  getHostelById,
-  getHostels,
-  updateHostel,
-} from '@/api/chatravas/hostel.api';
+import { createHostel, deleteHostel, getHostelById, getHostels, updateHostel } from '@/api';
 import type {
   CreateHostelDto,
   GetHostelsParams,
   Hostel,
   HostelListResponse,
   UpdateHostelDto,
-} from '@/types/chatravas/hostel.types';
+} from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useHostels(params: GetHostelsParams = {}) {

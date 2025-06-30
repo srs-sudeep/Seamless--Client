@@ -6,7 +6,7 @@ export interface Transaction {
   transaction_id: string;
 }
 
-export interface MealSession {
+export interface MealSessions {
   transaction_type: string; // e.g. "breakfast"
   id: string;
   vendor_id: string;

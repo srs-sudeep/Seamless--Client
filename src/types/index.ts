@@ -6,6 +6,7 @@ export * from './routes.types';
 export * from './auth.types';
 export * from './filterType.types';
 export * from './fieldType.types';
+export * from './customAxios.types';
 
 /* Type definitions for core permissions */
 export * from './core/Sidebar.types';
@@ -30,6 +31,15 @@ export * from './bodhika/session.types';
 export * from './bodhika/slots.types';
 export * from './bodhika/students.types';
 
+/* Type definitions for chatravas permissions */
+export * from './chatravas/attendance.types';
+export * from './chatravas/hostel.types';
+export * from './chatravas/studentHostel.types';
+
 /* Type definitions for naivedyam permissions */
 export * from './naivedyam/vendors.types';
 export * from './naivedyam/studentVendor.types';
+export * from './naivedyam/mealSession.types';
+export * from './naivedyam/menu.types';
+export * from './naivedyam/tags.type';
+export * from './naivedyam/transaction.types';

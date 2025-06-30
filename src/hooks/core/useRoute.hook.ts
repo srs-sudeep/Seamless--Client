@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRoutes, createRoute, updateRoute, deleteRoute } from '@/api/core/route.api';
-import type { Route } from '@/types/core/route.types';
+import { getRoutes, createRoute, updateRoute, deleteRoute } from '@/api';
+import type { Route } from '@/types';
 
 export function useRoutes() {
   return useQuery<Route[]>({

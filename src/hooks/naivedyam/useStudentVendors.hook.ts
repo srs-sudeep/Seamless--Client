@@ -1,10 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getStudentVendors,
-  createStudentVendor,
-  deleteStudentVendor,
-} from '@/api/naivedyam/studentVendor.api';
-import type { StudentVendor } from '@/types/naivedyam/studentVendor.types';
+import { getStudentVendors, createStudentVendor, deleteStudentVendor } from '@/api';
+import type { StudentVendor } from '@/types';
 
 export function useStudentVendors() {
   return useQuery<StudentVendor[]>({

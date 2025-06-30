@@ -5,7 +5,7 @@ import type {
   StudentHostelListResponse,
   CreateStudentHostelDto,
   DeleteStudentHostelDto,
-} from '@/types/chatravas/studentHostel.types';
+} from '@/types';
 
 const BASE = '/chatravas/api/v1/student_hostel/';
 

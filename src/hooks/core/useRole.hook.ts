@@ -7,8 +7,8 @@ import {
   getRolePermissions,
   addPermissionToRole,
   removePermissionFromRole,
-} from '@/api/core/roles.api';
-import type { Role } from '@/types/core/rolesApi.types';
+} from '@/api';
+import type { Role } from '@/types';
 
 export function useRoles() {
   return useQuery<Role[]>({

@@ -1,14 +1,10 @@
-import {
-  getStudentHostels,
-  createStudentHostel,
-  deleteStudentHostel,
-} from '@/api/chatravas/studentHostel.api';
+import { getStudentHostels, createStudentHostel, deleteStudentHostel } from '@/api';
 import type {
   GetStudentHostelsParams,
   StudentHostelListResponse,
   CreateStudentHostelDto,
   DeleteStudentHostelDto,
-} from '@/types/chatravas/studentHostel.types';
+} from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export function useStudentHostels(params: GetStudentHostelsParams = {}) {

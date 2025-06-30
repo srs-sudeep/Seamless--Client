@@ -32,7 +32,9 @@ export async function getInstructorFilters(): Promise<InstructorFiltersResponse>
 export async function createInstructor(
   payload: Omit<Instructor, 'is_deleted'>
 ): Promise<Instructor> {
-  const { data } = await apiClient.post<Instructor>(`${BASE}/create-instruction-course`, payload);
+  const { data } = await apiClient.post<Instructor>(`${BASE}/create-instruction-course`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -42,7 +44,10 @@ export async function updateInstructor(
 ): Promise<Instructor> {
   const { data } = await apiClient.put<Instructor>(
     `${BASE}/update-instructor/${instructor_ldap}`,
-    payload
+    payload,
+    {
+      silentError: false,
+    }
   );
   return data;
 }

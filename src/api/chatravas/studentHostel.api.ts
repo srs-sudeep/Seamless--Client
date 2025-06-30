@@ -21,7 +21,9 @@ export async function getStudentHostels(
 }
 
 export async function createStudentHostel(payload: CreateStudentHostelDto): Promise<StudentHostel> {
-  const { data } = await apiClient.post<StudentHostel>(BASE, payload);
+  const { data } = await apiClient.post<StudentHostel>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -30,6 +32,8 @@ export async function deleteStudentHostel(
   id: number,
   payload: DeleteStudentHostelDto
 ): Promise<StudentHostel> {
-  const { data } = await apiClient.patch<StudentHostel>(`${BASE}${id}/`, payload);
+  const { data } = await apiClient.patch<StudentHostel>(`${BASE}${id}/`, payload, {
+    silentError: false,
+  });
   return data;
 }

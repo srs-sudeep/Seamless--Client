@@ -9,7 +9,9 @@ export async function getDeviceAdmins(): Promise<DeviceAdmin[]> {
 }
 
 export async function createDeviceAdmin(payload: Omit<DeviceAdmin, 'created_at' | 'updated_at'>) {
-  const { data } = await apiClient.post<DeviceAdmin>(`${BASE}`, payload);
+  const { data } = await apiClient.post<DeviceAdmin>(`${BASE}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -17,7 +19,9 @@ export async function updateDeviceAdmin(
   ldapid: string,
   payload: Omit<DeviceAdmin, 'ldapid' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<DeviceAdmin>(`${BASE}${ldapid}`, payload);
+  const { data } = await apiClient.put<DeviceAdmin>(`${BASE}${ldapid}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

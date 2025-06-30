@@ -5,7 +5,9 @@ import type { Transaction, MealSessions } from '@/types';
 const BASE = '/naivedyam/api/v1/transaction/';
 
 export async function createTransaction(payload: Transaction): Promise<Transaction> {
-  const { data } = await apiClient.post<Transaction>(BASE, payload);
+  const { data } = await apiClient.post<Transaction>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -19,13 +21,21 @@ export async function getTransactionsByMealSession(
 }
 
 // Meal session endpoints
-export async function createMealSession(payload: MealSessions): Promise<MealSessions> {
-  const { data } = await apiClient.post<MealSessions>(`${BASE}meal-session`, payload);
+export async function createMealSession(payload: MealSession): Promise<MealSession> {
+  const { data } = await apiClient.post<MealSession>(`${BASE}meal-session`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function stopMealSession(session_id: string): Promise<void> {
-  await apiClient.put(`${BASE}meal-session/stop/${session_id}`);
+  await apiClient.put(
+    `${BASE}meal-session/stop/${session_id}`,
+    {},
+    {
+      silentError: false,
+    }
+  );
 }
 
 export async function getVendorMealSessions(): Promise<MealSessions[]> {

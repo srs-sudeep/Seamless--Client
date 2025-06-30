@@ -93,7 +93,7 @@ apiClient.interceptors.response.use(
       }
     }
     const context = originalRequest.headers?.['x-error-context'] ?? 'Request';
-    if (!error.config.silentError) {
+    if (error.config.silentError) {
       const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
       toast({
         title: `${context} failed`,

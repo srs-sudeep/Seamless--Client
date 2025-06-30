@@ -1,11 +1,14 @@
 import { apiClient, BODHIKA_URL } from '@/core';
 import { attendance, Session } from '@/types';
 const BASE = `${BODHIKA_URL}/sessions/`;
+
 export async function createSession(payload: {
   course_id: string;
   room_ids: string[];
 }): Promise<any> {
-  const { data } = await apiClient.post(`${BASE}start-session`, payload);
+  const { data } = await apiClient.post(`${BASE}start-session`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -29,7 +32,13 @@ export async function getSessionAttendance(session_id: string): Promise<attendan
 }
 
 export async function updateSession(session_id: string) {
-  const { data } = await apiClient.put(`${BASE}stop-session/${session_id}`);
+  const { data } = await apiClient.put(
+    `${BASE}stop-session/${session_id}`,
+    {},
+    {
+      silentError: false,
+    }
+  );
   return data;
 }
 

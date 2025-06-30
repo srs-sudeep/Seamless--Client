@@ -10,11 +10,6 @@ export const login = async (credentials: {
 };
 
 export const getMe = async (): Promise<User> => {
-  const response = await apiClient.get('/core/api/v1/users/me', {
-    silentError: true,
-    headers: {
-      'x-error-context': 'Fetching User Information',
-    },
-  });
+  const response = await apiClient.get('/core/api/v1/users/me');
   return response.data;
 };

@@ -11,7 +11,9 @@ export async function getStudentVendors(): Promise<StudentVendor[]> {
 export async function createStudentVendor(
   payload: Omit<StudentVendor, 'is_active'>
 ): Promise<StudentVendor> {
-  const { data } = await apiClient.post<StudentVendor>(BASE, payload);
+  const { data } = await apiClient.post<StudentVendor>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 

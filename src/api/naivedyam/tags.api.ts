@@ -9,12 +9,16 @@ export async function getTags(): Promise<Tag[]> {
 }
 
 export async function createTag(payload: CreateTagDto): Promise<Tag> {
-  const { data } = await apiClient.post<Tag>(BASE, payload);
+  const { data } = await apiClient.post<Tag>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function updateTag(id: number, payload: Partial<CreateTagDto>): Promise<Tag> {
-  const { data } = await apiClient.put<Tag>(`${BASE}${id}`, payload);
+  const { data } = await apiClient.put<Tag>(`${BASE}${id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

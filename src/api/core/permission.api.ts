@@ -12,7 +12,9 @@ export async function updatePermission(
   permission_id: number,
   payload: Omit<Permission, 'permission_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<Permission>(`${BASE}/${permission_id}`, payload);
+  const { data } = await apiClient.put<Permission>(`${BASE}/${permission_id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -23,6 +25,8 @@ export async function deletePermission(permission_id: number) {
 export async function createPermission(
   payload: Omit<Permission, 'permission_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.post<Permission>(`${BASE}`, payload);
+  const { data } = await apiClient.post<Permission>(`${BASE}`, payload, {
+    silentError: false,
+  });
   return data;
 }

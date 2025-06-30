@@ -16,7 +16,9 @@ export async function getOneService(service_id: string): Promise<Service> {
 export async function createService(
   payload: Omit<Service, 'service_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.post<Service>(`${BASE}`, payload);
+  const { data } = await apiClient.post<Service>(`${BASE}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -24,7 +26,9 @@ export async function updateService(
   service_id: number,
   payload: Omit<Service, 'service_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<Service>(`${BASE}${service_id}`, payload);
+  const { data } = await apiClient.put<Service>(`${BASE}${service_id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

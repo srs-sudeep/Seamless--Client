@@ -23,12 +23,16 @@ export async function getCourses(params: GetCoursesParams = {}): Promise<CourseL
 }
 
 export async function createCourse(payload: Course[]): Promise<Course> {
-  const { data } = await apiClient.post<Course>(`${BASE}create-course-with-instructors`, payload);
+  const { data } = await apiClient.post<Course>(`${BASE}create-course-with-instructors`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function updateCourse(course_id: string, payload: Partial<Course>): Promise<Course> {
-  const { data } = await apiClient.put<Course>(`${BASE}update-course/${course_id}`, payload);
+  const { data } = await apiClient.put<Course>(`${BASE}update-course/${course_id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

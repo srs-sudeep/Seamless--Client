@@ -9,12 +9,16 @@ export async function getMenus(): Promise<Menu[]> {
 }
 
 export async function createMenu(payload: CreateMenuDto) {
-  const { data } = await apiClient.post<Menu>(BASE, payload);
+  const { data } = await apiClient.post<Menu>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function updateMenu(schedule_id: number, payload: Partial<CreateMenuDto>) {
-  const { data } = await apiClient.put<Menu>(`${BASE}${schedule_id}`, payload);
+  const { data } = await apiClient.put<Menu>(`${BASE}${schedule_id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

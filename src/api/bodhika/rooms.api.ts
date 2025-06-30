@@ -9,7 +9,9 @@ export async function getRooms(): Promise<Room[]> {
 }
 
 export async function createRoom(payload: Omit<Room, 'is_deleted'>): Promise<Room> {
-  const { data } = await apiClient.post<Room>(`${BASE}`, payload);
+  const { data } = await apiClient.post<Room>(`${BASE}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -17,7 +19,9 @@ export async function updateRoom(
   room_id: string,
   payload: Omit<Room, 'room_id' | 'is_deleted'>
 ): Promise<Room> {
-  const { data } = await apiClient.put<Room>(`${BASE}/${room_id}`, payload);
+  const { data } = await apiClient.put<Room>(`${BASE}/${room_id}`, payload, {
+    silentError: false,
+  });
   return data;
 }
 
@@ -36,7 +40,9 @@ export async function createRoomDeviceMapping(payload: {
   room_id: string;
   device_id: string;
 }): Promise<any> {
-  const { data } = await apiClient.post('/bodhika/api/v1/rooms/create/room-devices', payload);
+  const { data } = await apiClient.post('/bodhika/api/v1/rooms/create/room-devices', payload, {
+    silentError: false,
+  });
   return data;
 }
 

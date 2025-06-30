@@ -5,12 +5,12 @@ export const Hero = () => {
       <div className="relative w-full h-screen overflow-hidden">
         {/* SVG Background Images */}
         <img
-          src={logos.landing.light}
+          src={logos.short.light}
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 dark:hidden"
         />
         <img
-          src={logos.landing.dark}
+          src={logos.short.dark}
           alt="Seamless Background"
           className="absolute inset-0 w-full h-full object-cover z-0 opacity-25 hidden dark:block"
         />

@@ -28,8 +28,8 @@ export const logos = {
     dark: WhiteX,
   },
   landing: {
-    light: LogoLandingLight,
-    dark: LogoLandingDark,
+    light: LogoLandingDark,
+    dark: LogoLandingLight,
   },
 };
 

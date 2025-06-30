@@ -54,11 +54,11 @@ const LoginPage: React.FC = () => {
         {/* Top Bar */}
 
         {/* Login Card */}
-        <div className="bg-black/60 dark:bg-[hsl(327,90%,59%,0.15)] p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-transparent dark:border-[hsl(327,90%,59%,0.25)]">
+        <div className="bg-foreground/60 p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-border">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent-foreground/10 mb-6 shadow-lg">
               <svg
-                className="w-8 h-8 text-white"
+                className="w-8 h-8 text-background"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

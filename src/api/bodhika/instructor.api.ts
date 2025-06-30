@@ -6,7 +6,7 @@ import type {
   InstructorListResponse,
 } from '@/types';
 
-const BASE = `${BODHIKA_URL}/courses/`;
+const BASE = `${BODHIKA_URL}/courses`;
 
 export async function getInstructors(
   params: GetInstructorsParams = {}

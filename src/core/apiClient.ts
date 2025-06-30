@@ -13,6 +13,11 @@ export interface CustomAxiosInstance extends AxiosInstance {
     data?: any,
     config?: CustomAxiosRequestConfig
   ): Promise<R>;
+  put<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: any,
+    config?: CustomAxiosRequestConfig
+  ): Promise<R>;
   // Add other HTTP verbs you use similarly
 }
 function onRefreshed(token: string) {

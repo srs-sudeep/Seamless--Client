@@ -2,7 +2,7 @@ import { AppLogo } from '@/components';
 import { ThemeSwitcher } from '@/theme';
 import { Outlet } from 'react-router-dom';
 import { useTheme } from '@/theme';
-import { loginAssets, logos } from '@/assets';
+import { loginAssets } from '@/assets';
 
 const AuthLayout = () => {
   const { theme } = useTheme();
@@ -18,14 +18,10 @@ const AuthLayout = () => {
         }}
       />
       {/* Background overlay */}
-      <div className="fixed inset-0 w-screen h-screen bg-black/40 -z-5 pointer-events-none" />
+      <div className="fixed inset-0 w-screen h-screen bg-black/40 dark:bg-white/10 -z-5 pointer-events-none" />
       {/* Top left horizontal logo */}
       <div className="absolute top-4 left-4 z-10">
-        <img
-          src={theme === 'dark' ? logos.horizontal.dark : logos.horizontal.light}
-          alt="Logo"
-          className="h-12 md:h-16"
-        />
+        <AppLogo horizontal />
       </div>
       {/* Top right theme switcher */}
       <div className="absolute top-4 right-4 z-10">

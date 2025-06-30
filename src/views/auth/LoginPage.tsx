@@ -1,19 +1,16 @@
 import { login } from '@/api';
 import { Button, HelmetWrapper, Input, Label, toast } from '@/components';
 import { useAuthStore } from '@/store';
-import { useTheme } from '@/theme';
 import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { logos } from '@/assets';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuthStore();
-  const { theme } = useTheme();
 
   const mutation = useMutation({
     mutationFn: login,
@@ -54,7 +51,7 @@ const LoginPage: React.FC = () => {
         {/* Top Bar */}
 
         {/* Login Card */}
-        <div className="bg-card/60 p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-border">
+        <div className="bg-card/60 dark:bg-card/80 p-10 rounded-lg shadow-2xl w-[400px] max-w-full mx-auto z-10 border border-border">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent/10 mb-6 shadow-lg">
               <svg

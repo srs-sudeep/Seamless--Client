@@ -1,6 +1,4 @@
-import { DynamicForm, HelmetWrapper, toast } from '@/components';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { DynamicForm, HelmetWrapper, toast, Button, Card, CardContent } from '@/components';
 import { useCreateCourse } from '@/hooks';
 import { type FieldType as BaseFieldType } from '@/types';
 import { Download, FileSpreadsheet, Upload } from 'lucide-react';

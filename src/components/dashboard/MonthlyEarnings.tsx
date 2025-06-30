@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Sample data for the chart
@@ -13,7 +13,7 @@ const data = [
   { name: 'Aug', value: 700 },
 ];
 
-const MonthlyEarnings = () => {
+export const MonthlyEarnings = () => {
   return (
     <Card className="col-span-12 md:col-span-4">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -84,5 +84,3 @@ const MonthlyEarnings = () => {
     </Card>
   );
 };
-
-export default MonthlyEarnings;

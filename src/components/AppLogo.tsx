@@ -29,7 +29,7 @@ const getLogoSrc = (
   return logos.short[themeKey];
 };
 
-const AppLogo = ({
+export const AppLogo = ({
   className,
   horizontal = false,
   name = false,
@@ -53,5 +53,3 @@ const AppLogo = ({
     </div>
   );
 };
-
-export { AppLogo };

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Loader2, Clock, MapPin, User } from 'lucide-react';
 import { useSlots, useMyStudentCourses } from '@/hooks';
-import { HelmetWrapper } from '@/components/HelmetWrapper';
 import {
   Popover,
   PopoverTrigger,
@@ -9,6 +8,7 @@ import {
   Button,
   ScrollArea,
   Checkbox,
+  HelmetWrapper,
 } from '@/components';
 import { ChevronDownIcon } from 'lucide-react';
 

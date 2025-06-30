@@ -1,4 +1,13 @@
-import { AppLogo, ScrollArea, Sheet, SheetContent, SheetTitle } from '@/components';
+import {
+  AppLogo,
+  ScrollArea,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components';
 import { useSidebar } from '@/core';
 import { useIsMobile, useSidebarItems } from '@/hooks';
 import { cn } from '@/lib/utils';
@@ -7,7 +16,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { JSX, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const getIconComponent = (iconName: keyof typeof iconMap, size: number) => {
   const IconComponent = iconMap[iconName];

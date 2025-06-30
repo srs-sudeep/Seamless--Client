@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { LandingFooter } from '@/components/footer/LandingFooter';
-import { LandingNavbar } from '@/components/navbar/LandingNavbar';
+import { LandingFooter, LandingNavbar } from '@/components';
 
 const LandingLayout = () => {
   return (

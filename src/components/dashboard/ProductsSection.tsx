@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components';
 
-const ProductsSection = () => {
+export const ProductsSection = () => {
   return (
     <Card className="col-span-12 md:col-span-4 bg-primary text-foreground ">
       <CardHeader>
@@ -27,5 +27,3 @@ const ProductsSection = () => {
     </Card>
   );
 };
-
-export default ProductsSection;

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components';
 import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Sample data for the chart
@@ -12,7 +12,7 @@ const data = [
   { name: 'Jul', value: 75 },
 ];
 
-const ProjectsSection = () => {
+export const ProjectsSection = () => {
   return (
     <Card className="col-span-12 md:col-span-4">
       <CardHeader className="pb-2">
@@ -39,5 +39,3 @@ const ProjectsSection = () => {
     </Card>
   );
 };
-
-export default ProjectsSection;

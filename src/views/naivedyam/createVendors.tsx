@@ -1,5 +1,4 @@
-import { DynamicForm, HelmetWrapper, toast } from '@/components';
-import { Card, CardContent } from '@/components/ui/card';
+import { DynamicForm, HelmetWrapper, toast, Card, CardContent } from '@/components';
 import { useCreateVendor } from '@/hooks';
 import { type FieldType } from '@/types';
 import { useState } from 'react';

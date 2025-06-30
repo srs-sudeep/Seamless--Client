@@ -1,5 +1,4 @@
-import { Button } from '@/components';
-import { Transitions } from '@/components/Transitions';
+import { Transitions, Button } from '@/components';
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,7 @@ type HelmetWrapperProps = {
   children?: React.ReactNode;
 };
 
-const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
+export const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
   title = 'Seamless',
   description = 'Seamless Management System',
   keywords = 'default, keywords',
@@ -87,5 +86,3 @@ const HelmetWrapper: React.FC<HelmetWrapperProps> = ({
     </Transitions>
   );
 };
-
-export { HelmetWrapper };

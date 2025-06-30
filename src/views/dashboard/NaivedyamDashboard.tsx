@@ -1,7 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, Button, Progress } from '@/components';
 import { BookOpen, Calendar, Clock, FileText } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
 
 const MessAdminDashboard = () => {
   // Mock data for courses

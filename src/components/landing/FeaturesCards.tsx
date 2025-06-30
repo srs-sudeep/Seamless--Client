@@ -1,5 +1,5 @@
 import { Zap, Shield, Users, Sparkles, Globe } from 'lucide-react';
-import ScrollWrapper from './ScrollWrapper';
+import { ScrollWrapper } from '@/components';
 
 export const FeaturesCards = () => {
   const features = [
@@ -91,5 +91,3 @@ export const FeaturesCards = () => {
     </div>
   );
 };
-
-export default FeaturesCards;

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components';
 import { ThemeSwitcher } from '@/theme';
 import React from 'react';
 import { Link } from 'react-router-dom';

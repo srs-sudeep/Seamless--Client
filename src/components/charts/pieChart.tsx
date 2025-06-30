@@ -54,7 +54,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const PieChartComponent: React.FC<PieChartComponentProps> = ({
+export const PieChartComponent: React.FC<PieChartComponentProps> = ({
   data,
   width = '100%',
   height = 400,
@@ -103,5 +103,3 @@ const PieChartComponent: React.FC<PieChartComponentProps> = ({
     </div>
   );
 };
-
-export default PieChartComponent;

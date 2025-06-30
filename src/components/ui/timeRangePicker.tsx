@@ -3,10 +3,14 @@
 import * as React from 'react';
 import { ClockIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Button,
+  ScrollArea,
+  Separator,
+} from '@/components';
 
 type TimeRange = {
   start?: Date;

@@ -1,9 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HashRouter, BrowserRouter } from 'react-router-dom';
 import Router from '@/routes';
-import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { TooltipProvider, Toaster } from '@/components';
 import { ThemeProvider } from '@/theme';
 import { HelmetProvider } from 'react-helmet-async';
 

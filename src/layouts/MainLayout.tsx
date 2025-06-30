@@ -1,5 +1,5 @@
 import { ModuleSidebar, Navbar } from '@/components';
-import MainFooter from '@/components/footer/MainFooter';
+import { MainFooter } from '@/components';
 import { SidebarProvider } from '@/core';
 import { Outlet } from 'react-router-dom';
 

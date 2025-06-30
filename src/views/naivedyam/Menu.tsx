@@ -1,7 +1,17 @@
-import { Button, Input, toast } from '@/components';
-import { HelmetWrapper } from '@/components/HelmetWrapper';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import {
+  Button,
+  Input,
+  toast,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  HelmetWrapper,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@/components';
 import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMenu.hook';
 import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';

@@ -1,7 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle, Progress } from '@/components';
 
-const YearlyBreakup = () => {
+export const YearlyBreakup = () => {
   return (
     <Card className="col-span-12 md:col-span-4">
       <CardHeader>
@@ -75,5 +74,3 @@ const YearlyBreakup = () => {
     </Card>
   );
 };
-
-export default YearlyBreakup;

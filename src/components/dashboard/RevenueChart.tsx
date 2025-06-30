@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components';
 import {
   AreaChart,
   Area,
@@ -19,7 +19,7 @@ const data = [
   { name: '22/08', value: 2.5 },
 ];
 
-const RevenueChart = () => {
+export const RevenueChart = () => {
   return (
     <Card className="col-span-12 lg:col-span-8">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -85,5 +85,3 @@ const RevenueChart = () => {
     </Card>
   );
 };
-
-export default RevenueChart;

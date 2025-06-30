@@ -1,5 +1,17 @@
 /* This file exports all the UI components from the src/components. */
 
+//Exporting charts components
+export * from '@/components/charts/pieChart';
+
+//Exporting dashboard components
+export * from '@/components/dashboard/CustomersSection';
+export * from '@/components/dashboard/MonthlyEarnings';
+export * from '@/components/dashboard/ProductsSection';
+export * from '@/components/dashboard/ProjectsSection';
+export * from '@/components/dashboard/RevenueChart';
+export * from '@/components/dashboard/StatCard';
+export * from '@/components/dashboard/YearlyBreakup';
+
 //Exporting common components
 export * from '@/components/AppLogo';
 export * from '@/components/HelmetWrapper';
@@ -19,6 +31,7 @@ export * from '@/components/landing/IITBhilaiInfo';
 export * from '@/components/landing/ContactSection';
 export * from '@/components/landing/FeaturesCards';
 export * from '@/components/landing/FaqSlider';
+export * from '@/components/landing/ScrollWrapper';
 
 // Exporting Custom Components
 export * from '@/components/DynamicForm';
@@ -74,6 +87,7 @@ export * from '@/components/ui/table';
 export * from '@/components/ui/tabs';
 export * from '@/components/ui/textarea';
 export * from '@/components/ui/toast';
+export * from '@/components/ui/toaster';
 export * from '@/components/ui/use-toast';
 export * from '@/components/ui/toggle-group';
 export * from '@/components/ui/toggle';

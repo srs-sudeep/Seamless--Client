@@ -12,18 +12,17 @@ import {
   TableRow,
   TableShimmer,
   Transitions,
-} from '@/components';
-import { DateTimePicker } from '@/components/ui/date-timePicker';
-import { DatePicker } from '@/components/ui/datePicker';
-import { DateRangePicker } from '@/components/ui/dateRangePicker';
-import {
   Popover,
   PopoverTrigger,
   PopoverContent,
   ScrollArea,
   Checkbox,
   Button,
+  DateRangePicker,
+  DatePicker,
+  DateTimePicker,
 } from '@/components';
+
 import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon, XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import React, { useMemo, useState } from 'react';
@@ -60,7 +59,7 @@ function toSentenceCase(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-const DynamicTable: React.FC<DynamicTableProps> = ({
+export const DynamicTable: React.FC<DynamicTableProps> = ({
   data,
   customRender = {},
   isLoading = false,
@@ -1028,5 +1027,3 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     </div>
   );
 };
-
-export { DynamicTable };

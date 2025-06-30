@@ -6,8 +6,8 @@ import {
   Input,
   Label,
   toast,
+  PieChartComponent,
 } from '@/components';
-import PieChartComponent from '@/components/charts/pieChart';
 import {
   useBulkAttendance,
   useCreateSession,

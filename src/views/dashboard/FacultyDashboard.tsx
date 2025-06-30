@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, Progress } from '@/components';
 import { Users, BookOpen, Calendar, Clock } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 
 const FacultyDashboard = () => {
   // Mock data for upcoming classes

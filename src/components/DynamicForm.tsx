@@ -1,4 +1,4 @@
-import { TimeRangePicker } from '@/components/ui/timeRangePicker';
+import { TimeRangePicker } from '@/components';
 import { type FieldType as BaseFieldType } from '@/types';
 import { parse } from 'date-fns';
 import { Plus, Trash2 } from 'lucide-react';
@@ -35,7 +35,7 @@ function parseTimeRangeString(str: string): { start?: Date; end?: Date } {
   };
 }
 
-const DynamicForm: React.FC<DynamicFormProps> = ({
+export const DynamicForm: React.FC<DynamicFormProps> = ({
   schema,
   onSubmit,
   onCancel,
@@ -859,5 +859,3 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     </form>
   );
 };
-
-export { DynamicForm };

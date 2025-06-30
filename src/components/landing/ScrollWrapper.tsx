@@ -9,7 +9,7 @@ interface ScrollWrapperProps {
   threshold?: number;
 }
 
-const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
+export const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
   children,
   className = '',
   animationType = 'fadeIn',
@@ -54,5 +54,3 @@ const ScrollWrapper: React.FC<ScrollWrapperProps> = ({
     </div>
   );
 };
-
-export default ScrollWrapper;

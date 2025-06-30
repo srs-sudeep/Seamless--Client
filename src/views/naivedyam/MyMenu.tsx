@@ -1,5 +1,4 @@
-import { HelmetWrapper } from '@/components/HelmetWrapper';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, HelmetWrapper } from '@/components';
 import { useMenus } from '@/hooks/naivedyam/useMenu.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
 import { ChefHat, User, Loader2 } from 'lucide-react';

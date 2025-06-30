@@ -1,12 +1,14 @@
 import { Users, FileText, Calendar, Building, BarChart } from 'lucide-react';
-import StatCard from '@/components/dashboard/StatCard';
-import RevenueChart from '@/components/dashboard/RevenueChart';
-import YearlyBreakup from '@/components/dashboard/YearlyBreakup';
-import MonthlyEarnings from '@/components/dashboard/MonthlyEarnings';
-import ProductsSection from '@/components/dashboard/ProductsSection';
-import ProjectsSection from '@/components/dashboard/ProjectsSection';
-import CustomersSection from '@/components/dashboard/CustomersSection';
-import { HelmetWrapper } from '@/components';
+import {
+  CustomersSection,
+  MonthlyEarnings,
+  ProductsSection,
+  ProjectsSection,
+  RevenueChart,
+  StatCard,
+  YearlyBreakup,
+  HelmetWrapper,
+} from '@/components';
 
 const AdminDashboard = () => {
   return (

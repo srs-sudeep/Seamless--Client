@@ -17,10 +17,10 @@ import {
   ScrollArea,
   Checkbox,
   Input,
+  DateRangePicker,
 } from '@/components';
 import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
 import { ChevronDownIcon, Eye, Loader2 } from 'lucide-react';
-import { DateRangePicker } from '@/components/ui/dateRangePicker'; // Make sure this is imported
 
 const truncateId = (id: string, len = 10) =>
   id && id.length > len ? id.slice(0, len) + '...' : id;

@@ -5,6 +5,8 @@ import LongName from './logos/LongName.svg';
 import WhiteLongName from './logos/WhiteLongName.svg';
 import X from './logos/X.svg';
 import WhiteX from './logos/WhiteX.svg';
+import LogoLandingLight from './logos/LogoLandingLight.svg';
+import LogoLandingDark from './logos/LogoLandingDark.svg';
 
 // Login page imports
 import IITBhilaiLogo from './login/IIT_Bhilai_Logo.svg';
@@ -24,6 +26,10 @@ export const logos = {
   short: {
     light: X,
     dark: WhiteX,
+  },
+  landing: {
+    light: LogoLandingLight,
+    dark: LogoLandingDark,
   },
 };
 

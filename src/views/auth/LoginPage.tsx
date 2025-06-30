@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent-foreground/10 mb-6 shadow-lg">
                 <svg
-                  className="w-8 h-8 text-white"
+                  className="w-8 h-8 text-background"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -99,15 +99,12 @@ const LoginPage: React.FC = () => {
                     placeholder="Enter your LDAP ID"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl transition-all duration-200"
+                    className="h-12 bg-background/50 border-secondary text-foreground placeholder:muted-foreground focus:border-primary rounded-xl transition-all duration-200"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="password"
-                    className="text-sm font-medium text-slate-700 dark:text-slate-300"
-                  >
+                  <Label htmlFor="password" className="text-sm font-medium text-foreground">
                     Password
                   </Label>
                   <div className="relative">
@@ -117,11 +114,11 @@ const LoginPage: React.FC = () => {
                       value={password}
                       placeholder="Enter your password"
                       onChange={e => setPassword(e.target.value)}
-                      className="h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl pr-12 transition-all duration-200"
+                      className="h-12 bg-background/50 border-secondary text-foreground placeholder:muted-foreground focus:border-primary rounded-xl transition-all duration-200"
                     />
                     <button
                       type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground hover:text-muted-foreground transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
                       tabIndex={-1}
                     >
@@ -178,7 +175,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           {/* Content overlay */}
-          <div className="relative z-10 flex items-center justify-center p-12 text-white">
+          <div className="relative z-10 flex items-center justify-center p-12 text-background">
             <div className="text-center">
               <div className="mb-8">
                 {/* Logo container with fixed dimensions */}

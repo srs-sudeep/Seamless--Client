@@ -197,7 +197,7 @@ const SupportPage: React.FC = () => {
                       onClick={() => setSelectedCategory(category.id)}
                       className={`flex items-center px-4 py-2 rounded-t-lg transition-colors ${
                         selectedCategory === category.id
-                          ? 'bg-primary text-white border-b-2 border-primary'
+                          ? 'bg-primary text-background border-b-2 border-primary'
                           : 'text-muted-foreground hover:text-foreground hover:bg-primary/20'
                       }`}
                     >

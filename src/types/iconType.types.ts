@@ -69,6 +69,8 @@ import {
   BellElectric,
   Soup,
   Waves,
+  LibraryBig,
+  ClipboardPaste,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -141,4 +143,6 @@ export const iconMap = {
   hostel: BellElectric,
   soup: Soup,
   wave: Waves,
+  books: LibraryBig,
+  checkout: ClipboardPaste,
 };

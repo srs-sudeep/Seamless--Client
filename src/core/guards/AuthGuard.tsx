@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/store';
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 

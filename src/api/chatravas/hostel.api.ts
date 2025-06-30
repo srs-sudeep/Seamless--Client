@@ -5,7 +5,7 @@ import type {
   Hostel,
   HostelListResponse,
   UpdateHostelDto,
-} from '@/types/chatravas/hostel.types';
+} from '@/types';
 
 const BASE = '/chatravas/api/v1/hostel/';
 
@@ -24,12 +24,16 @@ export async function getHostelById(hostel_id: string): Promise<Hostel> {
 }
 
 export async function createHostel(payload: CreateHostelDto): Promise<Hostel> {
-  const { data } = await apiClient.post<Hostel>(BASE, payload);
+  const { data } = await apiClient.post<Hostel>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function updateHostel(hostel_id: string, payload: UpdateHostelDto): Promise<Hostel> {
-  const { data } = await apiClient.patch<Hostel>(`${BASE}${hostel_id}/`, payload);
+  const { data } = await apiClient.patch<Hostel>(`${BASE}${hostel_id}/`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

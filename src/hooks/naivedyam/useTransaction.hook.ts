@@ -6,8 +6,8 @@ import {
   stopMealSession,
   getVendorMealSessions,
   getActiveMealSessions,
-} from '@/api/naivedyam/transaction.api';
-import type { Transaction, MealSession } from '@/types/naivedyam/transaction.types';
+} from '@/api';
+import type { Transaction, MealSessions } from '@/types';
 
 // Transactions for a meal session
 export function useTransactionsByMealSession(meal_session_id: string, enabled = true) {
@@ -50,14 +50,14 @@ export function useStopMealSession() {
 }
 
 export function useVendorMealSessions() {
-  return useQuery<MealSession[]>({
+  return useQuery<MealSessions[]>({
     queryKey: ['meal-sessions', 'vendor'],
     queryFn: getVendorMealSessions,
   });
 }
 
 export function useActiveMealSessions() {
-  return useQuery<MealSession[]>({
+  return useQuery<MealSessions[]>({
     queryKey: ['meal-sessions', 'active'],
     queryFn: getActiveMealSessions,
   });

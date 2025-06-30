@@ -33,8 +33,15 @@ export async function getUsers(params: GetUsersParams = {}): Promise<UserListRes
   });
   return data;
 }
+
 export async function assignRoleToUser(user_id: string, role_id: number) {
-  await apiClient.post(`${BASE}${user_id}/roles/${role_id}`);
+  await apiClient.post(
+    `${BASE}${user_id}/roles/${role_id}`,
+    {},
+    {
+      silentError: false,
+    }
+  );
 }
 
 export async function removeRoleFromUser(user_id: string, role_id: number) {

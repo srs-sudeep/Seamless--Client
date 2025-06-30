@@ -1,6 +1,7 @@
 export * from './use-mobile';
 export * from './use-toast';
 export * from './useAvailableRoutes.hook';
+// export * from './useScrollAnimation.hook';
 
 /* Exporting all core hooks */
 export * from './core/useSidebar.hook';
@@ -24,6 +25,15 @@ export * from './bodhika/useSession.hook';
 export * from './bodhika/useSlots.hook';
 export * from './bodhika/useStudents.hook';
 
+/* Exporting all chatravas APIs */
+export * from './chatravas/useAttendance.hook';
+export * from './chatravas/useHostel.hook';
+export * from './chatravas/useStudentHostel.hook';
+
 /* Exporting all naivedyam APIs */
 export * from './naivedyam/useVendors.hook';
 export * from './naivedyam/useStudentVendors.hook';
+export * from './naivedyam/useMealSession.hook';
+export * from './naivedyam/useMenu.hook';
+export * from './naivedyam/useTags.hook';
+export * from './naivedyam/useTransaction.hook';

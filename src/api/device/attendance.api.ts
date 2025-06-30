@@ -9,6 +9,8 @@ export async function getAttendances(): Promise<Attendance[]> {
 }
 
 export async function createBulkAttendance(data: Bulk) {
-  const { data: responseData } = await apiClient.post(`${BASE}/bulk`, data);
+  const { data: responseData } = await apiClient.post(`${BASE}/bulk`, data, {
+    silentError: false,
+  });
   return responseData;
 }

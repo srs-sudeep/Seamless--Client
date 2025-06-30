@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { useAuthStore } from '@/store/useAuthStore';
-import { toast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/store';
+import { toast } from '@/hooks';
 import { CustomAxiosRequestConfig } from '@/types';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 let isRefreshing = false;
@@ -93,7 +93,7 @@ apiClient.interceptors.response.use(
       }
     }
     const context = originalRequest.headers?.['x-error-context'] ?? 'Request';
-    if (!error.config.silentError) {
+    if (error.config.silentError) {
       const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
       toast({
         title: `${context} failed`,

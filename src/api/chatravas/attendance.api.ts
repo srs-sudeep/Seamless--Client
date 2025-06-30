@@ -1,8 +1,5 @@
 import { apiClient } from '@/core';
-import type {
-  GetAttendanceParams,
-  AttendanceAPIResponse,
-} from '@/types/chatravas/attendance.types';
+import type { GetAttendanceParams, AttendanceAPIResponse } from '@/types';
 
 const BASE = '/chatravas/api/v1/attendance/hostel/attendance';
 

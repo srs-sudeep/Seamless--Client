@@ -1,5 +1,5 @@
 import { apiClient } from '@/core';
-import type { StudentVendor } from '@/types/naivedyam/studentVendor.types';
+import type { StudentVendor } from '@/types';
 
 const BASE = '/naivedyam/api/v1/student_vendor/';
 
@@ -11,7 +11,9 @@ export async function getStudentVendors(): Promise<StudentVendor[]> {
 export async function createStudentVendor(
   payload: Omit<StudentVendor, 'is_active'>
 ): Promise<StudentVendor> {
-  const { data } = await apiClient.post<StudentVendor>(BASE, payload);
+  const { data } = await apiClient.post<StudentVendor>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 

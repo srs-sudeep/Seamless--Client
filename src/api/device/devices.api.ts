@@ -12,7 +12,9 @@ export async function updateDevice(
   device_id: string,
   payload: Omit<Device, 'device_id' | 'created_at' | 'updated_at'>
 ) {
-  const { data } = await apiClient.put<Device>(`${BASE}/device/${device_id}/services`, payload);
+  const { data } = await apiClient.put<Device>(`${BASE}/device/${device_id}/services`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

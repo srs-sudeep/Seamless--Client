@@ -1,5 +1,5 @@
 import { fetchUserRoutes } from '@/api';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore } from '@/store';
 import { useQuery } from '@tanstack/react-query';
 
 export function useAvailableRoutes() {

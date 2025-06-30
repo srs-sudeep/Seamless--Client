@@ -10,12 +10,16 @@ export async function getVendors(): Promise<Vendor[]> {
 }
 
 export async function createVendor(payload: Omit<Vendor, 'id'>) {
-  const { data } = await apiClient.post<Vendor>(BASE, payload);
+  const { data } = await apiClient.post<Vendor>(BASE, payload, {
+    silentError: false,
+  });
   return data;
 }
 
 export async function updateVendor(id: string, payload: Partial<Vendor>) {
-  const { data } = await apiClient.put<Vendor>(`${BASE}${id}/`, payload);
+  const { data } = await apiClient.put<Vendor>(`${BASE}${id}/`, payload, {
+    silentError: false,
+  });
   return data;
 }
 

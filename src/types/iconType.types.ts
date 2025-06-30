@@ -68,6 +68,7 @@ import {
   Activity,
   BellElectric,
   Soup,
+  Waves,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -139,4 +140,5 @@ export const iconMap = {
   active: Activity,
   hostel: BellElectric,
   soup: Soup,
+  wave: Waves,
 };

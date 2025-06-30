@@ -31,7 +31,7 @@ export async function createHostel(payload: CreateHostelDto): Promise<Hostel> {
 }
 
 export async function updateHostel(hostel_id: string, payload: UpdateHostelDto): Promise<Hostel> {
-  const { data } = await apiClient.patch<Hostel>(`${BASE}${hostel_id}/`, payload, {
+  const { data } = await apiClient.put<Hostel>(`${BASE}${hostel_id}/`, payload, {
     silentError: false,
   });
   return data;

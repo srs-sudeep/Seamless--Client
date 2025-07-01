@@ -1,6 +1,6 @@
 import { HelmetWrapper, DynamicTable, Button } from '@/components';
 import { useDownloadCSV, useMyInstructorCourses } from '@/hooks';
-import { downloadAttendanceExcel } from '@/lib/downloadAttendanceExcel';
+import { downloadAttendanceExcel } from '@/lib';
 import { FilterConfig } from '@/types';
 import { Download, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';

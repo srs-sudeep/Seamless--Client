@@ -12,12 +12,8 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import {
-  useStudentVendors,
-  useCreateStudentVendor,
-  useDeleteStudentVendor,
-} from '@/hooks/naivedyam/useStudentVendors.hook';
-import type { StudentVendor } from '@/types/naivedyam/studentVendor.types';
+import { useStudentVendors, useCreateStudentVendor, useDeleteStudentVendor } from '@/hooks';
+import type { StudentVendor } from '@/types';
 
 const schema = [
   { name: 'student_id', label: 'Student ID', type: 'text', required: true, columns: 2 },

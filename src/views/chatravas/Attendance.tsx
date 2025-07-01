@@ -8,7 +8,7 @@ import {
   SheetTitle,
   Input,
 } from '@/components';
-import { useAttendance } from '@/hooks/chatravas/useAttendance.hook';
+import { useAttendance } from '@/hooks';
 import {
   format,
   eachDayOfInterval,

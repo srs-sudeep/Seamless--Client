@@ -1,5 +1,5 @@
 import { DynamicTable, HelmetWrapper } from '@/components';
-import { useStudentMealSessionTransactions } from '@/hooks/naivedyam/useMealSession.hook';
+import { useStudentMealSessionTransactions } from '@/hooks';
 
 const StudentTransactionPage = () => {
   const { data = [], isLoading } = useStudentMealSessionTransactions();

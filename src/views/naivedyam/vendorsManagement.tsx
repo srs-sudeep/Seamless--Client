@@ -11,7 +11,7 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import { useVendors, useUpdateVendor, useDeleteVendor } from '@/hooks/naivedyam/useVendors.hook';
+import { useVendors, useUpdateVendor, useDeleteVendor } from '@/hooks';
 import { FieldType } from '@/types';
 
 const schema: FieldType[] = [

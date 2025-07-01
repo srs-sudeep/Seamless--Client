@@ -5,7 +5,7 @@ import {
   useCreateTransaction,
   useStopMealSession,
   useTransactionsByMealSession,
-} from '@/hooks/naivedyam/useTransaction.hook';
+} from '@/hooks';
 import { useEffect, useState } from 'react';
 
 // Extend the Window interface to include 'smartcard'

@@ -1,8 +1,5 @@
 import { Button, DynamicTable, HelmetWrapper, Sheet, SheetContent, SheetTitle } from '@/components';
-import {
-  useMealSessionTransactions,
-  useVendorMealSession,
-} from '@/hooks/naivedyam/useMealSession.hook';
+import { useMealSessionTransactions, useVendorMealSession } from '@/hooks';
 import { useState } from 'react';
 
 const VendorSessionPage = () => {

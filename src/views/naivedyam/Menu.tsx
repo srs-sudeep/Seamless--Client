@@ -12,9 +12,15 @@ import {
   SelectTrigger,
   DynamicForm,
 } from '@/components';
-import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMenu.hook';
-import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
-import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
+import {
+  useCreateMenu,
+  useMenus,
+  useUpdateMenu,
+  useCreateTag,
+  useTags,
+  useUpdateTag,
+  useVendors,
+} from '@/hooks';
 import { ChefHat, Plus, User, Edit2, Loader2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FieldType } from '@/types';

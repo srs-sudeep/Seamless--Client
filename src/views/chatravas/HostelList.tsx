@@ -10,13 +10,8 @@ import {
   HelmetWrapper,
   toast,
 } from '@/components';
-import {
-  useCreateHostel,
-  useDeleteHostel,
-  useHostels,
-  useUpdateHostel,
-} from '@/hooks/chatravas/useHostel.hook';
-import type { Hostel } from '@/types/chatravas/hostel.types';
+import { useCreateHostel, useDeleteHostel, useHostels, useUpdateHostel } from '@/hooks';
+import type { Hostel } from '@/types';
 import { Loader2, Plus, Trash2, Pencil } from 'lucide-react';
 import { useState, useMemo } from 'react';
 

@@ -11,12 +11,8 @@ import {
   toast,
   Switch,
 } from '@/components';
-import {
-  useStudentHostels,
-  useCreateStudentHostel,
-  useDeleteStudentHostel,
-} from '@/hooks/chatravas/useStudentHostel.hook';
-import type { StudentHostel } from '@/types/chatravas/studentHostel.types';
+import { useStudentHostels, useCreateStudentHostel, useDeleteStudentHostel } from '@/hooks';
+import type { StudentHostel } from '@/types';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 

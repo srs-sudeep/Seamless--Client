@@ -163,67 +163,82 @@ const StudentVendorManagement = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
                 <Activity className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Total Associations
-                </p>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                  {statistics.totalAssociations}
-                </p>
+                <p className="text-sm text-card-blue font-medium mb-1">Total Associations</p>
+                <p className="text-2xl font-bold text-card-blue">{statistics.totalAssociations}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
                 <UserCheck className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Active
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                <p className="text-sm text-card-green font-medium mb-1">Active</p>
+                <p className="text-2xl font-bold text-card-green">
                   {statistics.activeAssociations}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
-                  Unique Students
-                </p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                  {statistics.uniqueStudents}
-                </p>
+                <p className="text-sm text-card-purple font-medium mb-1">Unique Students</p>
+                <p className="text-2xl font-bold text-card-purple">{statistics.uniqueStudents}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
                 <Store className="w-6 h-6 text-white" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
-                  Active Vendors
-                </p>
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                  {statistics.uniqueVendors}
-                </p>
+                <p className="text-sm text-card-orange font-medium mb-1">Active Vendors</p>
+                <p className="text-2xl font-bold text-card-orange">{statistics.uniqueVendors}</p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Updated Active status badges */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
+            <span className="text-sm font-medium text-muted-foreground">Active Associations</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-status-active"></div>
+              <span className="text-lg font-bold text-foreground">
+                {statistics.activeAssociations}
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
+            <span className="text-sm font-medium text-muted-foreground">Inactive Associations</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-status-inactive"></div>
+              <span className="text-lg font-bold text-foreground">
+                {statistics.inactiveAssociations}
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
+            <span className="text-sm font-medium text-muted-foreground">Expiring Soon</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-warning"></div>
+              <span className="text-lg font-bold text-foreground">{statistics.expiringSoon}</span>
             </div>
           </div>
         </div>

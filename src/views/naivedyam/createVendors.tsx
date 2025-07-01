@@ -102,7 +102,7 @@ const CreateVendors = () => {
       subHeading="Add a new vendor with instructors."
     >
       <Card className="border border-border ">
-        <CardContent className="p-0">
+        <CardContent className="p-6">
           <DynamicForm
             schema={schema}
             onSubmit={handleSubmit}

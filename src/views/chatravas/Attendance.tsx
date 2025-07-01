@@ -263,7 +263,7 @@ const Attendance = () => {
               )
             }
             placeholder={allIds.join(',')}
-            className="w-64"
+            className="w-full md:w-64"
           />
         </div>
       </div>

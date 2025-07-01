@@ -293,7 +293,7 @@ const RouteManagement = () => {
   // Render global filters (remove badges from inside the role filter)
   const renderGlobalFilters = () => (
     <div className="flex flex-col gap-2 w-full">
-      <div className="flex flex-wrap md:flex-nowrap gap-4 items-center">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center flex-wrap">
         {/* Search Bar */}
         <div className="relative flex-1 w-full min-w-[250px]">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -425,10 +425,7 @@ const RouteManagement = () => {
         <div className="min-w-[180px]">
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="min-w-[180px] flex justify-between items-center h-10"
-              >
+              <Button variant="outline" className="w-full flex justify-between items-center h-10">
                 <span>
                   {globalFilters.Roles && globalFilters.Roles.length > 0
                     ? `Roles (${globalFilters.Roles.length})`
@@ -628,7 +625,7 @@ const RouteManagement = () => {
             headerActions={
               <Button
                 size="sm"
-                className="ml-4"
+                className=""
                 onClick={() => {
                   setCreateDialogParent({ module_id: mod.id, parent_id: null });
                 }}

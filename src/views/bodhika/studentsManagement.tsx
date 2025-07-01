@@ -156,7 +156,7 @@ const StudentsManagement = () => {
         data={getTableData(students)}
         isLoading={isFetching || createMutation.isPending}
         headerActions={
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row flex-wrap gap-2">
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button>

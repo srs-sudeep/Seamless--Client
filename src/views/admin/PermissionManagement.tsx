@@ -218,7 +218,10 @@ const PermissionManagement = () => {
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="min-w-[180px] flex justify-between items-center">
+              <Button
+                variant="outline"
+                className="w-full md:max-w-[180px] flex justify-between items-center"
+              >
                 <span>
                   {resourceFilter.length === 0
                     ? 'Filter by Resource'

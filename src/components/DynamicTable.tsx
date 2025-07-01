@@ -551,15 +551,32 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
   return (
     <div className={cn('w-full', className)}>
       <div className="rounded-2xl shadow-lg border border-border bg-card p-6 space-y-4 transition-all duration-300">
-        {tableHeading && (
-          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">
-            {toSentenceCase(tableHeading)}
-          </h2>
+        {(tableHeading || headerActions) && (
+          <div className="mb-4 space-y-4">
+            {/* Table Heading and Header Actions - Responsive Layout */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              {/* Table Heading */}
+              {tableHeading && (
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                    {toSentenceCase(tableHeading)}
+                  </h2>
+                </div>
+              )}
+
+              {/* Header Actions */}
+              {headerActions && (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 w-full sm:w-auto">
+                  {headerActions}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
-        {(!disableSearch || filterConfig.length > 0 || headerActions) && (
+        {(!disableSearch || filterConfig.length > 0) && (
           <div className="mb-2 space-y-2">
-            {/* First row: Search bar and header actions */}
+            {/* Search and additional controls */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3 lg:gap-4">
               {/* Search Bar */}
               {!disableSearch && (
@@ -634,12 +651,9 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
                   </div>
                 </div>
               )}
-              {/* Header Actions */}
-              {headerActions && (
-                <div className="flex items-center justify-end gap-3">{headerActions}</div>
-              )}
             </div>
-            {/* Second row: Filters */}
+
+            {/* Filters */}
             {filterConfig.length > 0 && (
               <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-nowrap gap-2 sm:gap-3">
                 {filterConfig.map(renderFilter)}

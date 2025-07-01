@@ -318,7 +318,7 @@ const CreateCourse = () => {
       </Card>
 
       <Card className="border border-border bg-card">
-        <CardContent className="p-0">
+        <CardContent className="p-6">
           <DynamicForm
             schema={schema}
             onSubmit={handleSubmit}

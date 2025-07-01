@@ -32,7 +32,7 @@ export async function deleteStudentHostel(
   id: number,
   payload: DeleteStudentHostelDto
 ): Promise<StudentHostel> {
-  const { data } = await apiClient.patch<StudentHostel>(`${BASE}${id}/`, payload, {
+  const { data } = await apiClient.put<StudentHostel>(`${BASE}${id}/`, payload, {
     silentError: false,
   });
   return data;

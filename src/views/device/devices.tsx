@@ -176,7 +176,7 @@ const DevicesManagement = () => {
       options: Array.from(new Set(devices.map(d => d.device.status))).sort(),
     },
     {
-      column: 'Service IDs',
+      column: 'Service Ids',
       type: 'dropdown',
       options: serviceOptions.map(opt => opt.label),
     },

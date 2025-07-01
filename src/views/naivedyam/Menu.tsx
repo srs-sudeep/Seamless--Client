@@ -16,7 +16,7 @@ import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMen
 import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
 import { ChefHat, Plus, User, Edit2, Loader2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -36,6 +36,9 @@ const MenuPage = () => {
   const [tagModalInitial, setTagModalInitial] = useState<{ name: string; id?: number }>({
     name: '',
   });
+
+  // State for food items input in the modal
+  const [foodItemsInput, setFoodItemsInput] = useState<string>('');
 
   const createMenu = useCreateMenu();
   const updateMenu = useUpdateMenu();
@@ -124,6 +127,7 @@ const MenuPage = () => {
       food_items: items.map(i => ({ name: i.name, tag_id: tagObj?.id })),
       menu_id: menu?.id,
     });
+    setFoodItemsInput(items.map(i => i.name).join(', ')); // Set input value
     setModalMode(items.length === 0 ? 'create' : 'edit');
     setOpenCellKey(`${mealType}-${category}-${day}`);
   };
@@ -295,6 +299,7 @@ const MenuPage = () => {
                   food_items: [],
                   menu_id: undefined,
                 });
+                setFoodItemsInput(''); // Reset input
                 setModalMode('create');
                 setOpenCellKey('add-new');
               }}
@@ -561,22 +566,43 @@ const MenuPage = () => {
                   )}
                 </div>
 
-                {/* Food Items Field */}
+                {/* Food Items Field - UPDATED */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Food Items</label>
                   <Input
                     placeholder="e.g. Rice, Dal, Sabzi (comma separated)"
-                    value={modalInitial.food_items?.map((f: any) => f.name).join(', ') || ''}
+                    value={foodItemsInput}
                     onChange={e => {
-                      setModalInitial((prev: any) => ({
-                        ...prev,
-                        food_items: e.target.value.split(',').map((name: string) => ({
-                          name: name.trim(),
-                          tag_id: prev.tag_id,
-                        })),
-                      }));
+                      const inputValue = e.target.value;
+                      setFoodItemsInput(inputValue); // Update input state directly
+
+                      // Parse and update modalInitial
+                      if (inputValue.trim() === '') {
+                        setModalInitial((prev: any) => ({
+                          ...prev,
+                          food_items: [],
+                        }));
+                      } else {
+                        // Split by comma, trim, and filter out empty items
+                        const items = inputValue
+                          .split(',')
+                          .map((name: string) => name.trim())
+                          .filter(name => name !== '')
+                          .map((name: string) => ({
+                            name,
+                            tag_id: modalInitial.tag_id,
+                          }));
+
+                        setModalInitial((prev: any) => ({
+                          ...prev,
+                          food_items: items,
+                        }));
+                      }
                     }}
                   />
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Separate multiple items with commas. Spaces within item names are allowed.
+                  </div>
                 </div>
 
                 <div className="flex gap-2 justify-end pt-4">

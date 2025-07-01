@@ -43,3 +43,10 @@ export * from './naivedyam/mealSession.types';
 export * from './naivedyam/menu.types';
 export * from './naivedyam/tags.type';
 export * from './naivedyam/transaction.types';
+
+export * from './sushrut/studentReimbursement.types';
+export * from './sushrut/facultyIPD.types';
+export * from './sushrut/facultyOPD.types';
+export * from './sushrut/empanelledHospital.types';
+export * from './sushrut/insuranceHospital.types';
+export * from './sushrut/insurance.types';

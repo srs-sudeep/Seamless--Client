@@ -306,7 +306,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                       {field.required && <span className="ml-1 text-destructive">*</span>}
                     </label>
                     {field.type === 'array' && field.fields ? (
-                      <div className="mb-6 mt-2">
+                      <div className="mb-6">
                         {arrayFieldData[field.name]?.map((item, idx) => (
                           <div key={idx} className="flex gap-2 mb-2 items-center">
                             {field.fields?.map(subField =>
@@ -389,7 +389,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         placeholder="Select time range"
                       />
                     ) : field.type === 'toggle' ? (
-                      <label className="flex items-center gap-2">
+                      <label className="flex items-center gap-2 my-3">
                         <button
                           type="button"
                           role="switch"
@@ -422,7 +422,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="bg-background text-foreground"
+                        className="bg-background text-foreground mb-6"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       />
@@ -433,7 +433,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                             <Button
                               variant="outline"
                               role="combobox"
-                              className="w-full justify-between h-auto min-h-[40px] p-2"
+                              className="w-full justify-between h-auto min-h-[40px] p-2 my-3"
                               disabled={disabled || field.disabled}
                             >
                               <span
@@ -563,7 +563,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
                         {/* Selected Options Chips */}
                         {Array.isArray(formData[field.name]) && formData[field.name].length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-2">
+                          <div className="flex flex-wrap gap-2 mb-6">
                             {formData[field.name].map((val: string) => {
                               const option = field.options?.find(
                                 (opt: any) =>
@@ -632,7 +632,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         }}
                         disabled={disabled || field.disabled}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full mb-6">
                           <SelectValue placeholder="Select..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -661,7 +661,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           if (onChange) onChange(updatedFormData);
                         }}
                         disabled={disabled || field.disabled}
-                        className="flex flex-wrap gap-4 mb-2"
+                        className="flex flex-wrap gap-4 mb-6"
                       >
                         {field.options?.map(opt => {
                           const optionValue = typeof opt === 'string' ? opt : opt.value;
@@ -697,7 +697,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                             formData[field.name].includes(optionValue);
 
                           return (
-                            <div key={optionValue} className="flex items-center space-x-2">
+                            <div key={optionValue} className="flex items-center space-x-2 mb-6">
                               <Checkbox
                                 id={`${field.name}-${optionValue}`}
                                 checked={isChecked}
@@ -734,7 +734,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         })}
                       </div>
                     ) : field.type === 'chip' ? (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mb-6">
                         {field.options?.map(opt => {
                           const optionValue = typeof opt === 'string' ? opt : opt.value;
                           const optionLabel = typeof opt === 'string' ? opt : opt.label;
@@ -870,7 +870,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="w-full bg-background text-foreground"
+                        className="w-full bg-background text-foreground mb-6"
                         value={formData[field.name] ?? ''}
                         disabled={disabled || field.disabled}
                       />
@@ -887,7 +887,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
           <Button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-md border border-primary text-primary bg-background"
+            className="px-4 py-2 rounded-md border border-primary text-primary bg-background hover:bg-background"
             disabled={disabled}
           >
             Cancel

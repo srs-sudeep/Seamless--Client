@@ -1,6 +1,5 @@
 import {
   Button,
-  Input,
   toast,
   Dialog,
   DialogContent,
@@ -11,14 +10,74 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  DynamicForm,
 } from '@/components';
 import { useCreateMenu, useMenus, useUpdateMenu } from '@/hooks/naivedyam/useMenu.hook';
 import { useCreateTag, useTags, useUpdateTag } from '@/hooks/naivedyam/useTags.hook';
 import { useVendors } from '@/hooks/naivedyam/useVendors.hook';
 import { ChefHat, Plus, User, Edit2, Loader2 } from 'lucide-react';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import { FieldType } from '@/types';
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+// Schema for menu form
+const getMenuSchema = (tags: any[], isNewMenu: boolean): FieldType[] => [
+  {
+    name: 'meal_type',
+    label: 'Meal Type',
+    type: 'select',
+    required: true,
+    options: [
+      { value: 'breakfast', label: 'Breakfast' },
+      { value: 'lunch', label: 'Lunch' },
+      { value: 'dinner', label: 'Dinner' },
+      { value: 'snacks', label: 'Snacks' },
+    ],
+    disabled: !isNewMenu,
+    columns: 2,
+  },
+  {
+    name: 'day_of_week',
+    label: 'Day(s)',
+    type: 'select',
+    multiSelect: isNewMenu, // Use multiSelect property instead of 'multi' type
+    required: true,
+    options: isNewMenu
+      ? WEEKDAYS.map(day => ({ value: day, label: day.charAt(0).toUpperCase() + day.slice(1) }))
+      : undefined,
+    disabled: !isNewMenu,
+    columns: 2,
+  },
+  {
+    name: 'tag_id',
+    label: 'Category',
+    type: 'select',
+    required: true,
+    options: tags.map(tag => ({ value: String(tag.id), label: tag.name })),
+    disabled: !isNewMenu,
+    columns: 2,
+  },
+  {
+    name: 'food_items_text',
+    label: 'Food Items',
+    type: 'textarea',
+    required: true,
+    placeholder: 'e.g. Rice, Dal, Sabzi (comma separated)',
+    columns: 2,
+  },
+];
+
+// Schema for tag form
+const tagSchema: FieldType[] = [
+  {
+    name: 'name',
+    label: 'Category Name',
+    type: 'text',
+    required: true,
+    columns: 2,
+  },
+];
 
 const MenuPage = () => {
   const { data: menus = [], refetch, isFetching: menusLoading } = useMenus();
@@ -36,9 +95,6 @@ const MenuPage = () => {
   const [tagModalInitial, setTagModalInitial] = useState<{ name: string; id?: number }>({
     name: '',
   });
-
-  // State for food items input in the modal
-  const [foodItemsInput, setFoodItemsInput] = useState<string>('');
 
   const createMenu = useCreateMenu();
   const updateMenu = useUpdateMenu();
@@ -118,31 +174,45 @@ const MenuPage = () => {
       return;
     }
     const tagObj = getTagByName(category);
+
+    // Ensure tag_id is properly set and converted to string for form compatibility
     setModalInitial({
       vendor_id: selectedVendor,
       meal_type: mealType,
-      tag_id: tagObj?.id,
-      tag_name: tagObj?.name || category,
+      tag_id: tagObj?.id ? String(tagObj.id) : undefined, // Convert to string
       day_of_week: day,
-      food_items: items.map(i => ({ name: i.name, tag_id: tagObj?.id })),
+      food_items_text: items.map(i => i.name).join(', '),
       menu_id: menu?.id,
     });
-    setFoodItemsInput(items.map(i => i.name).join(', ')); // Set input value
     setModalMode(items.length === 0 ? 'create' : 'edit');
     setOpenCellKey(`${mealType}-${category}-${day}`);
   };
 
-  // Handle modal submit
-  const handleModalSubmit = async (data: any) => {
+  // Handle modal submit for menu
+  const handleMenuSubmit = async (formData: Record<string, any>) => {
     try {
+      // Parse food items from text
+      const foodItems = formData.food_items_text
+        .split(',')
+        .map((name: string) => name.trim())
+        .filter((name: string) => name !== '');
+
+      // Convert tag_id back to number for API calls
+      const tagId = formData.tag_id ? Number(formData.tag_id) : modalInitial.tag_id;
+
       if (modalMode === 'create' && openCellKey === 'add-new') {
-        for (const day of data.day_of_week) {
+        // Handle bulk creation for multiple days
+        const selectedDays = Array.isArray(formData.day_of_week)
+          ? formData.day_of_week
+          : [formData.day_of_week];
+
+        for (const day of selectedDays) {
           await createMenu.mutateAsync({
             vendor_id: modalInitial.vendor_id,
-            meal_type: data.meal_type,
+            meal_type: formData.meal_type,
             day_of_week: day,
-            tag_id: data.tag_id,
-            food_items: data.food_items.map((item: { name: string }) => item.name),
+            tag_id: tagId,
+            food_items: foodItems,
           });
         }
         toast({ title: 'Menu created for selected days' });
@@ -151,8 +221,8 @@ const MenuPage = () => {
           vendor_id: modalInitial.vendor_id,
           day_of_week: modalInitial.day_of_week,
           meal_type: modalInitial.meal_type,
-          food_items: data.food_items.map((item: { name: string }) => item.name),
-          tag_id: modalInitial.tag_id,
+          food_items: foodItems,
+          tag_id: tagId,
         });
         toast({ title: 'Menu created' });
       } else if (modalMode === 'edit') {
@@ -162,8 +232,8 @@ const MenuPage = () => {
             vendor_id: modalInitial.vendor_id,
             day_of_week: modalInitial.day_of_week,
             meal_type: modalInitial.meal_type,
-            food_items: data.food_items.map((item: { name: string }) => item.name),
-            tag_id: modalInitial.tag_id,
+            food_items: foodItems,
+            tag_id: tagId,
           },
         });
         toast({ title: 'Menu updated' });
@@ -178,16 +248,16 @@ const MenuPage = () => {
   };
 
   // Tag handlers
-  const handleCreateTag = async ({ name }: { name: string }) => {
-    await createTag.mutateAsync({ name });
+  const handleCreateTag = async (formData: Record<string, any>) => {
+    await createTag.mutateAsync({ name: formData.name });
     toast({ title: 'Category created' });
     setTagModalOpen(false);
     refetchTags();
   };
 
-  const handleEditTag = async ({ name }: { name: string }) => {
+  const handleEditTag = async (formData: Record<string, any>) => {
     if (!tagModalInitial.id) return;
-    await updateTag.mutateAsync({ id: tagModalInitial.id, payload: { name } });
+    await updateTag.mutateAsync({ id: tagModalInitial.id, payload: { name: formData.name } });
     toast({ title: 'Category updated' });
     setTagModalOpen(false);
     refetchTags();
@@ -293,13 +363,11 @@ const MenuPage = () => {
                 setModalInitial({
                   vendor_id: selectedVendor,
                   meal_type: '',
-                  tag_id: undefined,
-                  tag_name: '',
-                  day_of_week: '',
-                  food_items: [],
+                  tag_id: '', // Set empty string instead of undefined
+                  day_of_week: [],
+                  food_items_text: '',
                   menu_id: undefined,
                 });
-                setFoodItemsInput(''); // Reset input
                 setModalMode('create');
                 setOpenCellKey('add-new');
               }}
@@ -421,7 +489,7 @@ const MenuPage = () => {
         )}
       </div>
 
-      {/* Modals */}
+      {/* Tag Modal */}
       <Dialog open={tagModalOpen} onOpenChange={setTagModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -429,205 +497,33 @@ const MenuPage = () => {
               {tagModalMode === 'create' ? 'Create Category' : 'Edit Category'}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              value={tagModalInitial.name}
-              onChange={e => setTagModalInitial(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="Category name"
-            />
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setTagModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  if (tagModalMode === 'create') {
-                    handleCreateTag({ name: tagModalInitial.name });
-                  } else {
-                    handleEditTag({ name: tagModalInitial.name });
-                  }
-                }}
-              >
-                {tagModalMode === 'create' ? 'Create' : 'Update'}
-              </Button>
-            </div>
-          </div>
+          <DynamicForm
+            schema={tagSchema}
+            onSubmit={tagModalMode === 'create' ? handleCreateTag : handleEditTag}
+            defaultValues={tagModalInitial}
+            onCancel={() => setTagModalOpen(false)}
+            submitButtonText={tagModalMode === 'create' ? 'Create' : 'Update'}
+          />
         </DialogContent>
       </Dialog>
 
       {/* Menu Modal */}
       <Dialog open={openCellKey !== null} onOpenChange={open => !open && setOpenCellKey(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {modalMode === 'create' ? 'Add Menu Items' : 'Edit Menu Items'}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            {modalInitial && (
-              <>
-                {/* Meal Type Field */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Meal Type</label>
-                  {openCellKey === 'add-new' ? (
-                    <Select
-                      value={modalInitial.meal_type}
-                      onValueChange={value =>
-                        setModalInitial((prev: any) => ({ ...prev, meal_type: value }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <span>{modalInitial.meal_type || 'Select Meal Type'}</span>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="breakfast">Breakfast</SelectItem>
-                        <SelectItem value="lunch">Lunch</SelectItem>
-                        <SelectItem value="dinner">Dinner</SelectItem>
-                        <SelectItem value="snacks">Snacks</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="text-lg capitalize bg-muted p-2 rounded">
-                      {modalInitial.meal_type}
-                    </div>
-                  )}
-                </div>
-
-                {/* Day Field */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Day(s)</label>
-                  {openCellKey === 'add-new' ? (
-                    <div className="space-y-2">
-                      <div className="text-xs text-muted-foreground mb-2">
-                        Select multiple days (for bulk creation)
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {WEEKDAYS.map(day => (
-                          <label key={day} className="flex items-center space-x-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={modalInitial.day_of_week?.includes(day) || false}
-                              onChange={e => {
-                                const currentDays = modalInitial.day_of_week || [];
-                                if (e.target.checked) {
-                                  setModalInitial((prev: any) => ({
-                                    ...prev,
-                                    day_of_week: [...currentDays, day],
-                                  }));
-                                } else {
-                                  setModalInitial((prev: any) => ({
-                                    ...prev,
-                                    day_of_week: currentDays.filter((d: string) => d !== day),
-                                  }));
-                                }
-                              }}
-                              className="rounded border-gray-300"
-                            />
-                            <span className="text-sm capitalize">{day}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-lg capitalize bg-muted p-2 rounded">
-                      {modalInitial.day_of_week}
-                    </div>
-                  )}
-                </div>
-
-                {/* Category Field */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Category</label>
-                  {openCellKey === 'add-new' ? (
-                    <Select
-                      value={modalInitial.tag_id?.toString() || ''}
-                      onValueChange={value => {
-                        const selectedTag = tags.find(t => t.id === parseInt(value));
-                        setModalInitial((prev: any) => ({
-                          ...prev,
-                          tag_id: parseInt(value),
-                          tag_name: selectedTag?.name || '',
-                        }));
-                      }}
-                    >
-                      <SelectTrigger>
-                        <span>{modalInitial.tag_name || 'Select Category'}</span>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {tags.map(tag => (
-                          <SelectItem key={tag.id} value={tag.id.toString()}>
-                            {tag.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="text-lg bg-muted p-2 rounded">{modalInitial.tag_name}</div>
-                  )}
-                </div>
-
-                {/* Food Items Field - UPDATED */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Food Items</label>
-                  <Input
-                    placeholder="e.g. Rice, Dal, Sabzi (comma separated)"
-                    value={foodItemsInput}
-                    onChange={e => {
-                      const inputValue = e.target.value;
-                      setFoodItemsInput(inputValue); // Update input state directly
-
-                      // Parse and update modalInitial
-                      if (inputValue.trim() === '') {
-                        setModalInitial((prev: any) => ({
-                          ...prev,
-                          food_items: [],
-                        }));
-                      } else {
-                        // Split by comma, trim, and filter out empty items
-                        const items = inputValue
-                          .split(',')
-                          .map((name: string) => name.trim())
-                          .filter(name => name !== '')
-                          .map((name: string) => ({
-                            name,
-                            tag_id: modalInitial.tag_id,
-                          }));
-
-                        setModalInitial((prev: any) => ({
-                          ...prev,
-                          food_items: items,
-                        }));
-                      }
-                    }}
-                  />
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Separate multiple items with commas. Spaces within item names are allowed.
-                  </div>
-                </div>
-
-                <div className="flex gap-2 justify-end pt-4">
-                  <Button variant="outline" onClick={() => setOpenCellKey(null)}>
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => handleModalSubmit(modalInitial)}
-                    disabled={
-                      !modalInitial.meal_type ||
-                      !modalInitial.tag_id ||
-                      !modalInitial.day_of_week ||
-                      (Array.isArray(modalInitial.day_of_week)
-                        ? modalInitial.day_of_week.length === 0
-                        : false) ||
-                      !modalInitial.food_items ||
-                      modalInitial.food_items.length === 0
-                    }
-                  >
-                    {modalMode === 'create' ? 'Create' : 'Update'}
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
+          {modalInitial && (
+            <DynamicForm
+              schema={getMenuSchema(tags, openCellKey === 'add-new')}
+              onSubmit={handleMenuSubmit}
+              defaultValues={modalInitial}
+              onCancel={() => setOpenCellKey(null)}
+              submitButtonText={modalMode === 'create' ? 'Create' : 'Update'}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </HelmetWrapper>

@@ -39,10 +39,10 @@ declare global {
 }
 
 const TRANSACTION_TYPES = [
-  { label: 'Breakfast', value: 'breakfast', icon: '🌅', color: 'from-orange-400 to-orange-600' },
-  { label: 'Lunch', value: 'lunch', icon: '☀️', color: 'from-green-400 to-green-600' },
-  { label: 'Dinner', value: 'dinner', icon: '🌙', color: 'from-blue-400 to-blue-600' },
-  { label: 'Snacks', value: 'snacks', icon: '🍪', color: 'from-purple-400 to-purple-600' },
+  { label: 'Breakfast', value: 'breakfast', icon: '🌅', color: 'bg-card-orange-gradient' },
+  { label: 'Lunch', value: 'lunch', icon: '☀️', color: 'bg-card-green-gradient' },
+  { label: 'Dinner', value: 'dinner', icon: '🌙', color: 'bg-card-blue-gradient' },
+  { label: 'Snacks', value: 'snacks', icon: '🍪', color: 'bg-card-purple-gradient' },
 ];
 
 const CreateMealSession = () => {
@@ -244,9 +244,7 @@ const CreateMealSession = () => {
 
               {activeSession ? (
                 <div className="space-y-4">
-                  <div
-                    className={`bg-gradient-to-r ${getCurrentMealType()?.color} rounded-xl p-4 text-background`}
-                  >
+                  <div className={`${getCurrentMealType()?.color} rounded-xl p-4 text-background`}>
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{getCurrentMealType()?.icon}</span>
                       <div>

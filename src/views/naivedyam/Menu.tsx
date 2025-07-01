@@ -307,13 +307,13 @@ const MenuPage = () => {
   const getMealTypeColor = (mealType: string) => {
     switch (mealType.toLowerCase()) {
       case 'breakfast':
-        return 'bg-orange-500 border-orange-500';
+        return 'bg-card-orange border-card-orange';
       case 'lunch':
-        return 'bg-green-500 border-green-500';
+        return 'bg-card-green border-card-green';
       case 'dinner':
-        return 'bg-blue-500 border-blue-500';
+        return 'bg-card-blue border-card-blue';
       case 'snacks':
-        return 'bg-purple-500 border-purple-500';
+        return 'bg-card-purple border-card-purple';
       default:
         return 'bg-primary border-primary';
     }

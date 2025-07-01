@@ -20,7 +20,24 @@ import {
   DateRangePicker,
 } from '@/components';
 import { useSessionsByCourseId, useSessionAttendance } from '@/hooks';
-import { ChevronDownIcon, Eye, Loader2 } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  Eye,
+  Loader2,
+  BookOpen,
+  Calendar,
+  Users,
+  CheckCircle2,
+  XCircle,
+  Filter,
+  Search,
+  BarChart3,
+  Clock,
+  MapPin,
+  Monitor,
+  Target,
+  TrendingUp,
+} from 'lucide-react';
 
 const truncateId = (id: string, len = 10) =>
   id && id.length > len ? id.slice(0, len) + '...' : id;
@@ -268,7 +285,7 @@ const CourseIndi = () => {
     room_id?: string;
     dateRange?: { from?: Date; to?: Date };
   }>({
-    dateRange: { from: defaultFrom, to: defaultTo }, // <-- default value
+    dateRange: { from: defaultFrom, to: defaultTo },
   });
 
   // Local state for temp date range (for Apply button)
@@ -342,748 +359,652 @@ const CourseIndi = () => {
     });
   }
 
+  // Calculate session statistics
+  const totalSessions = sessions.length;
+  const activeSessions = sessions.filter(s => s.status?.toLowerCase() === 'active').length;
+
   return (
     <HelmetWrapper
       title="Course Sessions | Seamless"
-      heading={`Sessions for Course: ${course_id}`}
-      subHeading="All sessions for this course."
+      heading={`Course Sessions`}
+      subHeading={`Detailed session analysis and attendance tracking for course: ${course_id}`}
       isBackbuttonVisible={true}
     >
-      <DynamicTable
-        tableHeading="Sessions"
-        data={getTableData(sessions)}
-        isLoading={isFetching}
-        customRender={customRender}
-      />
+      <div className="space-y-8">
+        {/* Course Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  Course ID
+                </p>
+                <p className="text-lg font-bold text-blue-700 dark:text-blue-300 font-mono">
+                  {course_id}
+                </p>
+              </div>
+            </div>
+          </div>
 
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
+                  Total Sessions
+                </p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {totalSessions}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
+                  Active Sessions
+                </p>
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  {activeSessions}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
+                  Completion
+                </p>
+                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                  {totalSessions > 0
+                    ? Math.round(((totalSessions - activeSessions) / totalSessions) * 100)
+                    : 0}
+                  %
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sessions Table */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Course Sessions
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Complete overview of all sessions with attendance tracking capabilities
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Sessions"
+              data={getTableData(sessions)}
+              isLoading={isFetching}
+              customRender={customRender}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Attendance Sheet */}
       <Sheet open={!!editSessionId} onOpenChange={open => !open && setEditSessionId(null)}>
         <SheetTitle style={{ display: 'none' }} />
         <SheetContent
           side="right"
           className="
-              p-0 
-              fixed right-0 top-1/2 -translate-y-1/2
-              min-h-fit max-h-[100vh]
-              sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
-              bg-card border-l border-border
-              shadow-2xl
-              overflow-hidden
-              flex flex-col
-              rounded-l-xl
-            "
+            p-0 
+            fixed right-0 top-1/2 -translate-y-1/2
+            min-h-fit max-h-[100vh]
+            sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
+            bg-gradient-to-br from-background to-muted/30
+            border-l-2 border-border
+            shadow-2xl
+            overflow-hidden
+            flex flex-col
+            rounded-l-2xl
+          "
           style={{ width: '90vw', maxWidth: '1200px' }}
         >
           <div className="flex-1 overflow-y-auto flex flex-row">
-            {/* --- Filter Column --- */}
-            <div className="w-full sm:w-72 md:w-80 lg:w-88 border-r border-border bg-background p-4 space-y-4 my-5">
-              {/* Search Bar */}
-              <div className="relative w-full group">
-                <Input
-                  type="text"
-                  placeholder="Search attendance..."
-                  value={attendanceFilters.search || ''}
-                  onChange={e => setAttendanceFilters(f => ({ ...f, search: e.target.value }))}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter')
-                      setAttendanceFilters(f => ({ ...f, search: e.currentTarget.value }));
-                  }}
-                  className="w-full h-11 pl-4 pr-16 bg-background text-foreground
-        group-hover:shadow-lg text-sm sm:text-base"
-                />
-                {/* Right side icons */}
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  {attendanceFilters.search && (
-                    <button
-                      onClick={() => setAttendanceFilters(f => ({ ...f, search: '' }))}
-                      className="text-muted-foreground hover:text-foreground
-                    transition-colors duration-200 p-1 rounded-full
-                    hover:bg-primary"
-                      type="button"
-                      title="Clear search"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        viewBox="0 0 24 24"
+            {/* Enhanced Filter Column */}
+            <div className="w-full sm:w-80 md:w-88 lg:w-96 border-r-2 border-border bg-gradient-to-b from-muted/20 to-muted/10 p-6 space-y-6">
+              <div className="border-b border-border pb-4">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-primary" />
+                  Attendance Filters
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Apply filters to refine attendance data
+                </p>
+              </div>
+
+              {/* Enhanced Search Bar */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Search className="w-4 h-4" />
+                  Search Students
+                </label>
+                <div className="relative w-full group">
+                  <Input
+                    type="text"
+                    placeholder="Search by student ID, device, etc..."
+                    value={attendanceFilters.search || ''}
+                    onChange={e => setAttendanceFilters(f => ({ ...f, search: e.target.value }))}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter')
+                        setAttendanceFilters(f => ({ ...f, search: e.currentTarget.value }));
+                    }}
+                    className="w-full h-11 pl-4 pr-16 bg-background text-foreground border-2 border-border focus:border-primary transition-colors"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    {attendanceFilters.search && (
+                      <button
+                        onClick={() => setAttendanceFilters(f => ({ ...f, search: '' }))}
+                        className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded-full hover:bg-destructive/10"
+                        type="button"
                       >
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
-                  )}
-                  <button
-                    onClick={() =>
-                      setAttendanceFilters(f => ({
-                        ...f,
-                        search: attendanceFilters.search?.trim() || '',
-                      }))
-                    }
-                    className="text-primary hover:text-foreground
-                  transition-colors duration-200 p-1.5 rounded-lg
-                  hover:bg-primary/10  hover:border border-primary focus-visible:bg-primary focus-visible:border focus-visible:border-primary"
-                    type="button"
-                    title="Search"
-                  >
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                  </button>
+                        <XCircle className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Device Dropdown */}
-              <div className="w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] relative">
+              {/* Enhanced Device Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Monitor className="w-4 h-4" />
+                  Filter by Device
+                </label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full flex justify-between items-center h-10 sm:h-11 text-sm"
+                      className="w-full justify-between h-11 bg-background border-2 border-border hover:border-primary"
                     >
-                      <span className="truncate">
-                        {attendanceFilters.device
-                          ? allDevices.find(d => d === attendanceFilters.device) ||
-                            attendanceFilters.device
-                          : 'Filter Device'}
-                      </span>
+                      <span className="truncate">{attendanceFilters.device || 'All Devices'}</span>
                       <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-56 p-2">
-                    <ScrollArea className="min-h-16 max-h-48">
-                      {allDevices.map(device => (
-                        <div
-                          key={device}
-                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
-                          onClick={() =>
-                            setAttendanceFilters(f => ({
-                              ...f,
-                              device: f.device === device ? undefined : device,
-                            }))
-                          }
-                        >
-                          <Checkbox
-                            checked={attendanceFilters.device === device}
-                            onCheckedChange={() =>
+                  <PopoverContent className="w-72 p-4 bg-background border-2 border-border">
+                    <ScrollArea className="max-h-48">
+                      <div className="space-y-2">
+                        {allDevices.map(device => (
+                          <div
+                            key={device}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                            onClick={() =>
                               setAttendanceFilters(f => ({
                                 ...f,
                                 device: f.device === device ? undefined : device,
                               }))
                             }
-                            className="mr-2"
-                            tabIndex={-1}
-                            aria-label={device}
-                          />
-                          <span className="text-sm">{device}</span>
-                        </div>
-                      ))}
+                          >
+                            <Checkbox
+                              checked={attendanceFilters.device === device}
+                              className="mr-2"
+                            />
+                            <span className="text-sm font-mono">{device}</span>
+                          </div>
+                        ))}
+                      </div>
                     </ScrollArea>
                     {attendanceFilters.device && (
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="mt-2 w-full text-sm"
-                        onClick={() =>
-                          setAttendanceFilters(f => ({
-                            ...f,
-                            device: undefined,
-                          }))
-                        }
+                        className="mt-3 w-full"
+                        onClick={() => setAttendanceFilters(f => ({ ...f, device: undefined }))}
                       >
-                        Clear
+                        Clear Selection
                       </Button>
                     )}
                   </PopoverContent>
                 </Popover>
               </div>
 
-              {/* Room Dropdown */}
-              <div className="w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] relative">
+              {/* Enhanced Room Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Filter by Room
+                </label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full flex justify-between items-center h-10 sm:h-11 text-sm"
+                      className="w-full justify-between h-11 bg-background border-2 border-border hover:border-primary"
                     >
-                      <span className="truncate">
-                        {attendanceFilters.room_id
-                          ? allRoomIds.find(r => r === attendanceFilters.room_id) ||
-                            attendanceFilters.room_id
-                          : 'Filter Room'}
-                      </span>
+                      <span className="truncate">{attendanceFilters.room_id || 'All Rooms'}</span>
                       <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-56 p-2">
-                    <ScrollArea className="min-h-16 max-h-48">
-                      {allRoomIds.map(room => (
-                        <div
-                          key={room}
-                          className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
-                          onClick={() =>
-                            setAttendanceFilters(f => ({
-                              ...f,
-                              room_id: f.room_id === room ? undefined : room,
-                            }))
-                          }
-                        >
-                          <Checkbox
-                            checked={attendanceFilters.room_id === room}
-                            onCheckedChange={() =>
+                  <PopoverContent className="w-72 p-4 bg-background border-2 border-border">
+                    <ScrollArea className="max-h-48">
+                      <div className="space-y-2">
+                        {allRoomIds.map(room => (
+                          <div
+                            key={room}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                            onClick={() =>
                               setAttendanceFilters(f => ({
                                 ...f,
                                 room_id: f.room_id === room ? undefined : room,
                               }))
                             }
-                            className="mr-2"
-                            tabIndex={-1}
-                            aria-label={room}
-                          />
-                          <span className="text-sm">{room}</span>
-                        </div>
-                      ))}
+                          >
+                            <Checkbox
+                              checked={attendanceFilters.room_id === room}
+                              className="mr-2"
+                            />
+                            <span className="text-sm font-mono">{room}</span>
+                          </div>
+                        ))}
+                      </div>
                     </ScrollArea>
                     {attendanceFilters.room_id && (
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="mt-2 w-full text-sm"
-                        onClick={() =>
-                          setAttendanceFilters(f => ({
-                            ...f,
-                            room_id: undefined,
-                          }))
-                        }
+                        className="mt-3 w-full"
+                        onClick={() => setAttendanceFilters(f => ({ ...f, room_id: undefined }))}
                       >
-                        Clear
+                        Clear Selection
                       </Button>
                     )}
                   </PopoverContent>
                 </Popover>
               </div>
 
-              {/* Date Range Picker */}
-              <div className="w-full sm:w-auto sm:min-w-[220px] lg:min-w-[250px] flex items-center gap-2">
-                <DateRangePicker
-                  value={tempDateRange}
-                  onChange={range => setTempDateRange(range as { from: Date; to: Date })}
-                  className="w-full h-10 sm:h-11"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="ml-2"
-                  disabled={!tempDateRange.from || !tempDateRange.to}
-                  onClick={() =>
-                    setAttendanceFilters(f => ({
-                      ...f,
-                      dateRange: tempDateRange,
-                    }))
-                  }
-                >
-                  Apply
-                </Button>
+              {/* Enhanced Date Range Picker */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Date Range
+                </label>
+                <div className="space-y-3">
+                  <DateRangePicker
+                    value={tempDateRange}
+                    onChange={range => setTempDateRange(range as { from: Date; to: Date })}
+                    className="w-full h-11 border-2 border-border"
+                  />
+                  <Button
+                    size="sm"
+                    className="w-full bg-primary hover:bg-primary/90"
+                    disabled={!tempDateRange.from || !tempDateRange.to}
+                    onClick={() =>
+                      setAttendanceFilters(f => ({
+                        ...f,
+                        dateRange: tempDateRange,
+                      }))
+                    }
+                  >
+                    Apply Date Filter
+                  </Button>
+                </div>
               </div>
             </div>
-            {/* --- Main Content --- */}
-            <div className="flex-1 p-8 space-y-6">
+
+            {/* Enhanced Main Content */}
+            <div className="flex-1 p-8 space-y-8">
               {editSessionId && (
                 <>
-                  {/* Header */}
-                  <div className="border-b border-border pb-4">
-                    <h2 className="text-2xl font-bold text-foreground mb-2">Attendance</h2>
-                    <p className="text-sm text-muted-foreground">
-                      Attendance for session <span className="font-mono">{editSessionId}</span>
-                    </p>
-                  </div>
-                  {/* Attendance Stats */}
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-                    {/* Total Students */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">Total Students</span>
-                      <span className="text-xl font-bold">
-                        {filterAttendance(attendances.registered_present || []).length +
-                          filterAttendance(attendances.registered_absent || []).length}
-                      </span>
-                    </div>
-                    {/* Valid Attendance */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">Valid Attendance</span>
-                      <span className="text-xl font-bold">
-                        {
-                          getValidated(
-                            filterAttendance(attendances.registered_present || []),
-                            'registered_present'
-                          ).filter((row: any) => row.Status === 'Valid').length
-                        }
-                      </span>
-                    </div>
-                    {/* Invalid Attendance */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">Invalid Attendance</span>
-                      <span className="text-xl font-bold">
-                        {
-                          getValidated(
-                            filterAttendance(attendances.registered_present || []),
-                            'registered_present'
-                          ).filter((row: any) => row.Status === 'Invalid').length
-                        }
-                      </span>
-                    </div>
-                    {/* Registered Present */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">Registered Present</span>
-                      <span className="text-xl font-bold">
-                        {filterAttendance(attendances.registered_present || []).length}
-                      </span>
-                    </div>
-                    {/* Unregistered Present */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">
-                        Unregistered Present
-                      </span>
-                      <span className="text-xl font-bold">
-                        {filterAttendance(attendances.unregistered_present || []).length}
-                      </span>
-                    </div>
-                    {/* Absent */}
-                    <div className="bg-background rounded-xl shadow border p-4 flex flex-col items-center">
-                      <span className="text-xs text-muted-foreground mb-1">Absent</span>
-                      <span className="text-xl font-bold">
-                        {filterAttendance(attendances.registered_absent || []).length}
-                      </span>
+                  {/* Enhanced Header */}
+                  <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-6 border-2 border-primary/20">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+                        <Users className="w-8 h-8 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold text-foreground mb-2">
+                          Session Attendance
+                        </h2>
+                        <p className="text-muted-foreground">
+                          Session ID:{' '}
+                          <span className="font-mono text-primary">{editSessionId}</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  {/* Attendance Tabs */}
-                  <Tabs
-                    value={attendanceTab}
-                    onValueChange={v => {
-                      setAttendanceTab(v as any);
-                      setAttendanceSubTab('validated');
-                    }}
-                    className="w-full"
-                  >
-                    <TabsList className="mb-4">
-                      <TabsTrigger value="registered_present">
-                        Registered Present (
-                        {filterAttendance(attendances.registered_present || []).length})
-                      </TabsTrigger>
-                      <TabsTrigger value="registered_absent">
-                        Registered Absent (
-                        {filterAttendance(attendances.registered_absent || []).length})
-                      </TabsTrigger>
-                      <TabsTrigger value="unregistered_present">
-                        Unregistered Present (
-                        {filterAttendance(attendances.unregistered_present || []).length})
-                      </TabsTrigger>
-                    </TabsList>
-                    {/* Sub Tabs for all three categories */}
-                    <TabsContent value="registered_present">
-                      <Tabs
-                        value={attendanceSubTab}
-                        onValueChange={v => setAttendanceSubTab(v as any)}
-                        className="w-full"
-                      >
-                        <TabsList className="mb-2">
-                          <TabsTrigger value="validated">Validated</TabsTrigger>
-                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                          <TabsTrigger value="all">All Records</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="validated">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Validated"
-                              data={getRegisteredPresentTableData(
-                                attendances.registered_present || []
-                              )}
-                              customRender={validatedCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="latest">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Latest Only"
-                              data={getRegisteredPresentTableData(
-                                attendances.registered_present || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="all">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="All Records"
-                              data={getRegisteredPresentTableData(
-                                attendances.registered_present || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                      </Tabs>
-                    </TabsContent>
-                    <TabsContent value="registered_absent">
-                      <Tabs
-                        value={attendanceSubTab}
-                        onValueChange={v => setAttendanceSubTab(v as any)}
-                        className="w-full"
-                      >
-                        <TabsList className="mb-2">
-                          <TabsTrigger value="validated">Validated</TabsTrigger>
-                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                          <TabsTrigger value="all">All Records</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="validated">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Validated"
-                              data={getRegisteredAbsentTableData(
-                                attendances.registered_absent || []
-                              )}
-                              customRender={validatedCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="latest">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Latest Only"
-                              data={getRegisteredAbsentTableData(
-                                attendances.registered_absent || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="all">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="All Records"
-                              data={getRegisteredAbsentTableData(
-                                attendances.registered_absent || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                      </Tabs>
-                    </TabsContent>
-                    <TabsContent value="unregistered_present">
-                      <Tabs
-                        value={attendanceSubTab}
-                        onValueChange={v => setAttendanceSubTab(v as any)}
-                        className="w-full"
-                      >
-                        <TabsList className="mb-2">
-                          <TabsTrigger value="validated">Validated</TabsTrigger>
-                          <TabsTrigger value="latest">Latest Only</TabsTrigger>
-                          <TabsTrigger value="all">All Records</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="validated">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Validated"
-                              data={getUnregisteredPresentTableData(
-                                attendances.unregistered_present || []
-                              )}
-                              customRender={validatedCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="latest">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="Latest Only"
-                              data={getUnregisteredPresentTableData(
-                                attendances.unregistered_present || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                        <TabsContent value="all">
-                          {attendanceLoading ? (
-                            <div className="flex justify-center items-center h-40">
-                              <Loader2 className="animate-spin h-8 w-8 text-muted-foreground" />
-                            </div>
-                          ) : (
-                            <DynamicTable
-                              tableHeading="All Records"
-                              data={getUnregisteredPresentTableData(
-                                attendances.unregistered_present || []
-                              )}
-                              customRender={attendanceCustomRender}
-                            />
-                          )}
-                        </TabsContent>
-                      </Tabs>
-                    </TabsContent>
-                  </Tabs>
+
+                  {/* Enhanced Attendance Stats Grid */}
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border-2 border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            Total Students
+                          </p>
+                          <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                            {filterAttendance(attendances.registered_present || []).length +
+                              filterAttendance(attendances.registered_absent || []).length}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border-2 border-green-200 dark:border-green-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                          <CheckCircle2 className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                            Valid
+                          </p>
+                          <p className="text-xl font-bold text-green-700 dark:text-green-300">
+                            {
+                              getValidated(
+                                filterAttendance(attendances.registered_present || []),
+                                'registered_present'
+                              ).filter((row: any) => row.Status === 'Valid').length
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                          <XCircle className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-red-600 dark:text-red-400 font-medium">
+                            Invalid
+                          </p>
+                          <p className="text-xl font-bold text-red-700 dark:text-red-300">
+                            {
+                              getValidated(
+                                filterAttendance(attendances.registered_present || []),
+                                'registered_present'
+                              ).filter((row: any) => row.Status === 'Invalid').length
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border-2 border-purple-200 dark:border-purple-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                          <Target className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                            Present
+                          </p>
+                          <p className="text-xl font-bold text-purple-700 dark:text-purple-300">
+                            {filterAttendance(attendances.registered_present || []).length}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-4 border-2 border-yellow-200 dark:border-yellow-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                            Unregistered
+                          </p>
+                          <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
+                            {filterAttendance(attendances.unregistered_present || []).length}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
+                          <Clock className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                            Absent
+                          </p>
+                          <p className="text-xl font-bold text-gray-700 dark:text-gray-300">
+                            {filterAttendance(attendances.registered_absent || []).length}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Attendance Tabs */}
+                  <div className="bg-gradient-to-br from-background to-muted/20 rounded-2xl border-2 border-border p-6">
+                    <Tabs
+                      value={attendanceTab}
+                      onValueChange={v => {
+                        setAttendanceTab(v as any);
+                        setAttendanceSubTab('validated');
+                      }}
+                      className="w-full"
+                    >
+                      <TabsList className="mb-6 bg-muted/50 p-1">
+                        <TabsTrigger value="registered_present" className="text-sm font-semibold">
+                          Registered Present (
+                          {filterAttendance(attendances.registered_present || []).length})
+                        </TabsTrigger>
+                        <TabsTrigger value="registered_absent" className="text-sm font-semibold">
+                          Registered Absent (
+                          {filterAttendance(attendances.registered_absent || []).length})
+                        </TabsTrigger>
+                        <TabsTrigger value="unregistered_present" className="text-sm font-semibold">
+                          Unregistered Present (
+                          {filterAttendance(attendances.unregistered_present || []).length})
+                        </TabsTrigger>
+                      </TabsList>
+
+                      {/* Sub Tabs for all three categories */}
+                      <TabsContent value="registered_present">
+                        <Tabs
+                          value={attendanceSubTab}
+                          onValueChange={v => setAttendanceSubTab(v as any)}
+                          className="w-full"
+                        >
+                          <TabsList className="mb-4 bg-background border border-border">
+                            <TabsTrigger value="validated">Validated</TabsTrigger>
+                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                            <TabsTrigger value="all">All Records</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="validated">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Validated"
+                                data={getRegisteredPresentTableData(
+                                  attendances.registered_present || []
+                                )}
+                                customRender={validatedCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="latest">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Latest Only"
+                                data={getRegisteredPresentTableData(
+                                  attendances.registered_present || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="all">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="All Records"
+                                data={getRegisteredPresentTableData(
+                                  attendances.registered_present || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                        </Tabs>
+                      </TabsContent>
+
+                      <TabsContent value="registered_absent">
+                        <Tabs
+                          value={attendanceSubTab}
+                          onValueChange={v => setAttendanceSubTab(v as any)}
+                          className="w-full"
+                        >
+                          <TabsList className="mb-4 bg-background border border-border">
+                            <TabsTrigger value="validated">Validated</TabsTrigger>
+                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                            <TabsTrigger value="all">All Records</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="validated">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Validated"
+                                data={getRegisteredAbsentTableData(
+                                  attendances.registered_absent || []
+                                )}
+                                customRender={validatedCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="latest">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Latest Only"
+                                data={getRegisteredAbsentTableData(
+                                  attendances.registered_absent || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="all">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="All Records"
+                                data={getRegisteredAbsentTableData(
+                                  attendances.registered_absent || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                        </Tabs>
+                      </TabsContent>
+
+                      <TabsContent value="unregistered_present">
+                        <Tabs
+                          value={attendanceSubTab}
+                          onValueChange={v => setAttendanceSubTab(v as any)}
+                          className="w-full"
+                        >
+                          <TabsList className="mb-4 bg-background border border-border">
+                            <TabsTrigger value="validated">Validated</TabsTrigger>
+                            <TabsTrigger value="latest">Latest Only</TabsTrigger>
+                            <TabsTrigger value="all">All Records</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="validated">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Validated"
+                                data={getUnregisteredPresentTableData(
+                                  attendances.unregistered_present || []
+                                )}
+                                customRender={validatedCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="latest">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="Latest Only"
+                                data={getUnregisteredPresentTableData(
+                                  attendances.unregistered_present || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                          <TabsContent value="all">
+                            {attendanceLoading ? (
+                              <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                                <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                              </div>
+                            ) : (
+                              <DynamicTable
+                                tableHeading="All Records"
+                                data={getUnregisteredPresentTableData(
+                                  attendances.unregistered_present || []
+                                )}
+                                customRender={attendanceCustomRender}
+                              />
+                            )}
+                          </TabsContent>
+                        </Tabs>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
                 </>
               )}
             </div>
           </div>
         </SheetContent>
       </Sheet>
-
-      {/* Responsive Filters */}
-      {/* Top bar for small screens */}
-      <div className="block md:hidden p-4 border-b border-border bg-background space-y-3">
-        {/* Search Bar */}
-        <div className="relative w-full group">
-          <Input
-            type="text"
-            placeholder="Search attendance..."
-            value={attendanceFilters.search || ''}
-            onChange={e => setAttendanceFilters(f => ({ ...f, search: e.target.value }))}
-            onKeyDown={e => {
-              if (e.key === 'Enter')
-                setAttendanceFilters(f => ({ ...f, search: e.currentTarget.value }));
-            }}
-            className="w-full h-11 pl-4 pr-16 bg-background text-foreground
-        group-hover:shadow-lg text-sm sm:text-base"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-            {attendanceFilters.search && (
-              <button
-                onClick={() => setAttendanceFilters(f => ({ ...f, search: '' }))}
-                className="text-muted-foreground hover:text-foreground
-                    transition-colors duration-200 p-1 rounded-full
-                    hover:bg-primary"
-                type="button"
-                title="Clear search"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  viewBox="0 0 24 24"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            )}
-            <button
-              onClick={() =>
-                setAttendanceFilters(f => ({
-                  ...f,
-                  search: attendanceFilters.search?.trim() || '',
-                }))
-              }
-              className="text-primary hover:text-foreground
-                  transition-colors duration-200 p-1.5 rounded-lg
-                  hover:bg-primary/10  hover:border border-primary focus-visible:bg-primary focus-visible:border focus-visible:border-primary"
-              type="button"
-              title="Search"
-            >
-              <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        {/* Device Dropdown */}
-        <div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full flex justify-between items-center h-10 text-sm"
-              >
-                <span className="truncate">
-                  {attendanceFilters.device
-                    ? allDevices.find(d => d === attendanceFilters.device) ||
-                      attendanceFilters.device
-                    : 'Filter Device'}
-                </span>
-                <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 p-2">
-              <ScrollArea className="min-h-16 max-h-48">
-                {allDevices.map(device => (
-                  <div
-                    key={device}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
-                    onClick={() =>
-                      setAttendanceFilters(f => ({
-                        ...f,
-                        device: f.device === device ? undefined : device,
-                      }))
-                    }
-                  >
-                    <Checkbox
-                      checked={attendanceFilters.device === device}
-                      onCheckedChange={() =>
-                        setAttendanceFilters(f => ({
-                          ...f,
-                          device: f.device === device ? undefined : device,
-                        }))
-                      }
-                      className="mr-2"
-                      tabIndex={-1}
-                      aria-label={device}
-                    />
-                    <span className="text-sm">{device}</span>
-                  </div>
-                ))}
-              </ScrollArea>
-              {attendanceFilters.device && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 w-full text-sm"
-                  onClick={() =>
-                    setAttendanceFilters(f => ({
-                      ...f,
-                      device: undefined,
-                    }))
-                  }
-                >
-                  Clear
-                </Button>
-              )}
-            </PopoverContent>
-          </Popover>
-        </div>
-        {/* Room Dropdown */}
-        <div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full flex justify-between items-center h-10 text-sm"
-              >
-                <span className="truncate">
-                  {attendanceFilters.room_id
-                    ? allRoomIds.find(r => r === attendanceFilters.room_id) ||
-                      attendanceFilters.room_id
-                    : 'Filter Room'}
-                </span>
-                <ChevronDownIcon className="ml-2 h-4 w-4 flex-shrink-0" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 p-2">
-              <ScrollArea className="min-h-16 max-h-48">
-                {allRoomIds.map(room => (
-                  <div
-                    key={room}
-                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted cursor-pointer"
-                    onClick={() =>
-                      setAttendanceFilters(f => ({
-                        ...f,
-                        room_id: f.room_id === room ? undefined : room,
-                      }))
-                    }
-                  >
-                    <Checkbox
-                      checked={attendanceFilters.room_id === room}
-                      onCheckedChange={() =>
-                        setAttendanceFilters(f => ({
-                          ...f,
-                          room_id: f.room_id === room ? undefined : room,
-                        }))
-                      }
-                      className="mr-2"
-                      tabIndex={-1}
-                      aria-label={room}
-                    />
-                    <span className="text-sm">{room}</span>
-                  </div>
-                ))}
-              </ScrollArea>
-              {attendanceFilters.room_id && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 w-full text-sm"
-                  onClick={() =>
-                    setAttendanceFilters(f => ({
-                      ...f,
-                      room_id: undefined,
-                    }))
-                  }
-                >
-                  Clear
-                </Button>
-              )}
-            </PopoverContent>
-          </Popover>
-        </div>
-        {/* Date Range Picker */}
-        <div className="flex items-center gap-2">
-          <DateRangePicker
-            value={tempDateRange}
-            onChange={range => setTempDateRange(range as { from: Date; to: Date })}
-            className="w-full h-10"
-          />
-          <Button
-            size="sm"
-            variant="outline"
-            className="ml-2"
-            disabled={!tempDateRange.from || !tempDateRange.to}
-            onClick={() =>
-              setAttendanceFilters(f => ({
-                ...f,
-                dateRange: tempDateRange,
-              }))
-            }
-          >
-            Apply
-          </Button>
-        </div>
-      </div>
     </HelmetWrapper>
   );
 };

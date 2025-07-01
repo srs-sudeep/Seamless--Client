@@ -1,5 +1,20 @@
 import { useState, useRef } from 'react';
-import { Loader2, Pencil, Plus, Trash2, Download, Upload } from 'lucide-react';
+import {
+  Loader2,
+  Pencil,
+  Plus,
+  Trash2,
+  Download,
+  Upload,
+  MapPin,
+  Building2,
+  Target,
+  BarChart3,
+  CheckCircle2,
+  XCircle,
+  FileSpreadsheet,
+  Database,
+} from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -35,6 +50,11 @@ const RoomsManagement = () => {
 
   // Ref for file input
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Calculate statistics
+  const totalRooms = rooms.length;
+  const activeRooms = rooms.filter(room => !room.is_deleted).length;
+  const deletedRooms = rooms.filter(room => room.is_deleted).length;
 
   // CSV Template headers
   const csvTemplate = 'room_id,room_name\n';
@@ -79,7 +99,7 @@ const RoomsManagement = () => {
             })
           )
       );
-      toast({ title: 'Rooms imported' });
+      toast({ title: 'Rooms imported successfully' });
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -95,7 +115,7 @@ const RoomsManagement = () => {
         room_name: formData.room_name,
       },
     });
-    toast({ title: 'Room updated' });
+    toast({ title: 'Room updated successfully' });
     setEditRoom(null);
   };
 
@@ -104,13 +124,13 @@ const RoomsManagement = () => {
       room_id: formData.room_id,
       room_name: formData.room_name,
     });
-    toast({ title: 'Room created' });
+    toast({ title: 'Room created successfully' });
     setCreateDialogOpen(false);
   };
 
   const handleDelete = async (room_id: string) => {
     await deleteMutation.mutateAsync(room_id);
-    toast({ title: 'Room deleted' });
+    toast({ title: 'Room deleted successfully' });
   };
 
   const customRender = {
@@ -143,21 +163,13 @@ const RoomsManagement = () => {
         )}
       </Button>
     ),
-    is_deleted: (value: boolean) => (
-      <button
-        type="button"
-        className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-200 ${
-          value ? 'bg-destructive' : 'bg-muted-foreground'
-        }`}
-        disabled
-        aria-pressed={!!value}
-      >
-        <span
-          className={`bg-background w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
-            value ? 'translate-x-6' : ''
-          }`}
-        />
-      </button>
+    'Is Deleted': (value: boolean) => (
+      <div className="flex items-center gap-2">
+        <div className={`w-3 h-3 rounded-full ${value ? 'bg-destructive' : 'bg-success'}`}></div>
+        <span className={`text-sm font-medium ${value ? 'text-destructive' : 'text-success'}`}>
+          {value ? 'Deleted' : 'Active'}
+        </span>
+      </div>
     ),
   };
 
@@ -165,78 +177,278 @@ const RoomsManagement = () => {
     rooms.map(room => ({
       'Room ID': room.room_id,
       'Room Name': room.room_name,
-      'Is Deleted': customRender.is_deleted(room.is_deleted),
+      'Is Deleted': room.is_deleted,
       Edit: '',
       Delete: '',
       _row: { ...room },
     }));
 
+  if (isFetching && rooms.length === 0) {
+    return (
+      <HelmetWrapper
+        title="Rooms | Seamless"
+        heading="Room Management"
+        subHeading="Comprehensive facility management system for academic spaces"
+      >
+        <div className="flex justify-center items-center h-96 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border">
+          <div className="text-center">
+            <Loader2 className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading room data...</p>
+          </div>
+        </div>
+      </HelmetWrapper>
+    );
+  }
+
   return (
     <HelmetWrapper
       title="Rooms | Seamless"
-      heading="Rooms List"
-      subHeading="List of rooms for Bodhika."
+      heading="Room Management"
+      subHeading="Comprehensive facility management system for academic spaces and classroom administration"
     >
-      <DynamicTable
-        tableHeading="Rooms"
-        data={getTableData(rooms)}
-        customRender={customRender}
-        isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
-        headerActions={
-          <div className="flex flex-col md:flex-row flex-wrap gap-2">
-            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Room
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Room</DialogTitle>
-                </DialogHeader>
-                <DynamicForm
-                  schema={createSchema}
-                  onSubmit={handleCreate}
-                  onCancel={() => setCreateDialogOpen(false)}
-                  submitButtonText="Create"
-                />
-              </DialogContent>
-            </Dialog>
-            <Button variant="outline" onClick={handleDownloadTemplate}>
-              <Download className="w-4 h-4 mr-2" />
-              Download CSV Template
-            </Button>
-            <Button onClick={() => fileInputRef.current?.click()}>
-              <Upload className="w-4 h-4 mr-2" />
-              Import CSV
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".csv"
-              className="hidden"
-              onChange={handleImportCSV}
+      <div className="space-y-8">
+        {/* Statistics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  Total Rooms
+                </p>
+                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{totalRooms}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
+                  Active Rooms
+                </p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {activeRooms}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-2xl p-6 border-2 border-red-200 dark:border-red-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
+                <XCircle className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-red-600 dark:text-red-400 font-medium mb-1">
+                  Deleted Rooms
+                </p>
+                <p className="text-2xl font-bold text-red-700 dark:text-red-300">{deletedRooms}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Management Tools */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
+                <p className="text-sm text-muted-foreground">Manage rooms efficiently</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Plus className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Add new rooms individually or in bulk</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Pencil className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Edit room details with inline actions</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
+                <FileSpreadsheet className="w-6 h-6 text-secondary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Bulk Operations</h3>
+                <p className="text-sm text-muted-foreground">Import/export room data</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Download className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Download CSV template for bulk import</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Upload className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Import multiple rooms from CSV file</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Room Table Container */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Room Directory
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Comprehensive management of all academic spaces and facilities with bulk import
+              capabilities
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Rooms"
+              data={getTableData(rooms)}
+              customRender={customRender}
+              isLoading={isFetching || createMutation.isPending || updateMutation.isPending}
+              headerActions={
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                  <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Room
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+                          <Plus className="w-6 h-6 text-primary" />
+                          Create New Room
+                        </DialogTitle>
+                      </DialogHeader>
+                      <DynamicForm
+                        schema={createSchema}
+                        onSubmit={handleCreate}
+                        onCancel={() => setCreateDialogOpen(false)}
+                        submitButtonText="Create Room"
+                      />
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button
+                    variant="outline"
+                    onClick={handleDownloadTemplate}
+                    className="border-2 border-border hover:bg-muted/50"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    CSV Template
+                  </Button>
+
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import CSV
+                  </Button>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv"
+                    className="hidden"
+                    onChange={handleImportCSV}
+                  />
+                </div>
+              }
             />
           </div>
-        }
-      />
+        </div>
+
+        {/* Room Status Information */}
+        <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
+              <Database className="w-6 h-6 text-foreground" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Room Status Guide</h3>
+              <p className="text-sm text-muted-foreground">Understanding room status indicators</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <div className="w-4 h-4 rounded-full bg-success"></div>
+                <div>
+                  <span className="font-medium text-foreground">Active Rooms</span>
+                  <p className="text-sm text-muted-foreground">Available for scheduling and use</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <div className="w-4 h-4 rounded-full bg-destructive"></div>
+                <div>
+                  <span className="font-medium text-foreground">Deleted Rooms</span>
+                  <p className="text-sm text-muted-foreground">
+                    Removed from active use but retained in records
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <MapPin className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">Room Management</span>
+                  <p className="text-sm text-muted-foreground">
+                    Edit names and manage room information
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <FileSpreadsheet className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">Bulk Import</span>
+                  <p className="text-sm text-muted-foreground">
+                    Use CSV files for efficient bulk room creation
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Edit Dialog */}
       <Dialog
         open={!!editRoom}
         onOpenChange={open => {
           if (!open) setEditRoom(null);
         }}
       >
-        <DialogContent>
+        <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border">
           <DialogHeader>
-            <DialogTitle>Edit Room</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Pencil className="w-6 h-6 text-primary" />
+              Edit Room Details
+            </DialogTitle>
           </DialogHeader>
           <DynamicForm
             schema={editSchema}
             onSubmit={handleUpdate}
             defaultValues={editRoom ?? undefined}
             onCancel={() => setEditRoom(null)}
-            submitButtonText="Save"
+            submitButtonText="Save Changes"
           />
         </DialogContent>
       </Dialog>

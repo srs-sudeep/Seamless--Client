@@ -1,5 +1,15 @@
 import { useState, useMemo } from 'react';
-import { Loader2, Pencil, Trash2, Users, UserPen } from 'lucide-react';
+import {
+  Loader2,
+  Pencil,
+  Trash2,
+  Users,
+  UserPen,
+  BookOpen,
+  BarChart3,
+  Calendar,
+  Target,
+} from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -50,6 +60,17 @@ const CourseManagement = () => {
 
   const courses = data?.results ?? [];
   const totalCount = data?.total ?? 0;
+
+  // Calculate statistics
+  const uniqueCourses = new Set(courses.map(c => c.course_code)).size;
+  const totalInstructors = courses.reduce(
+    (acc, course) => acc + (Array.isArray(course.instructors) ? course.instructors.length : 0),
+    0
+  );
+  const totalStudents = courses.reduce(
+    (acc, course) => acc + (Array.isArray(course.students) ? course.students.length : 0),
+    0
+  );
 
   // FilterConfig for DynamicTable
   const filterConfig: FilterConfig[] = useMemo(
@@ -194,9 +215,7 @@ const CourseManagement = () => {
         }}
         aria-label="View Sessions"
       >
-        <span role="img" aria-label="sessions">
-          📅
-        </span>
+        <Calendar className="w-4 h-4" />
       </Button>
     ),
     'Slot-Room': (_: any, row: Record<string, any>) => {
@@ -269,44 +288,134 @@ const CourseManagement = () => {
   return (
     <HelmetWrapper
       title="Courses | Seamless"
-      heading="Courses List"
-      subHeading="List of courses for Bodhika."
+      heading="Course Management"
+      subHeading="Comprehensive course management system for academic administration"
     >
-      <DynamicTable
-        tableHeading="Courses"
-        data={getTableData(courses)}
-        customRender={customRender}
-        isLoading={isFetching}
-        filterConfig={filterConfig}
-        filterMode="ui"
-        onSearchChange={setSearch}
-        page={page}
-        onPageChange={setPage}
-        limit={limit}
-        onLimitChange={setLimit}
-        total={totalCount}
-      />
+      <div className="space-y-8">
+        {/* Statistics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  Total Courses
+                </p>
+                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                  {courses.length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
+                  Unique Courses
+                </p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {uniqueCourses}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                <UserPen className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
+                  Total Instructors
+                </p>
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  {totalInstructors}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
+                  Total Students
+                </p>
+                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                  {totalStudents}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Course Table Container */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Course Database
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Manage and monitor all academic courses with detailed instructor and student
+              information
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Courses"
+              data={getTableData(courses)}
+              customRender={customRender}
+              isLoading={isFetching}
+              filterConfig={filterConfig}
+              filterMode="ui"
+              onSearchChange={setSearch}
+              page={page}
+              onPageChange={setPage}
+              limit={limit}
+              onLimitChange={setLimit}
+              total={totalCount}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Edit Dialog */}
       <Dialog
         open={!!editCourse}
         onOpenChange={open => {
           if (!open) setEditCourse(null);
         }}
       >
-        <DialogContent>
+        <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border">
           <DialogHeader>
-            <DialogTitle>Edit Course</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Pencil className="w-6 h-6 text-primary" />
+              Edit Course Details
+            </DialogTitle>
           </DialogHeader>
           <DynamicForm
             schema={editSchema}
             onSubmit={handleUpdate}
             defaultValues={editCourse ?? undefined}
             onCancel={() => setEditCourse(null)}
-            submitButtonText="Save"
+            submitButtonText="Save Changes"
           />
         </DialogContent>
       </Dialog>
 
-      {/* Side Panel for Instructors/Students */}
+      {/* Enhanced Side Panel for Instructors/Students */}
       <Sheet
         open={!!sidePanel.type}
         onOpenChange={open => !open && setSidePanel({ type: null, course: null })}
@@ -315,78 +424,202 @@ const CourseManagement = () => {
         <SheetContent
           side="right"
           className="
-              p-0 
-              fixed right-0 top-1/2 -translate-y-1/2
-              min-h-fit max-h-[100vh]
-              sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
-              bg-card border-l border-border
-              shadow-2xl
-              overflow-hidden
-              flex flex-col
-              rounded-l-xl
-            "
+            p-0 
+            fixed right-0 top-1/2 -translate-y-1/2
+            min-h-fit max-h-[100vh]
+            sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
+            bg-gradient-to-br from-background to-muted/30
+            border-l-2 border-border
+            shadow-2xl
+            overflow-hidden
+            flex flex-col
+            rounded-l-2xl
+          "
           style={{ width: '90vw', maxWidth: '1200px' }}
         >
           <div className="flex-1 overflow-y-auto">
-            <div className="p-8 space-y-6">
-              {sidePanel.type === 'instructors' && sidePanel.course && (
+            {/* Enhanced Header */}
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 border-b-2 border-border">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+                  {sidePanel.type === 'instructors' ? (
+                    <UserPen className="w-8 h-8 text-primary-foreground" />
+                  ) : (
+                    <Users className="w-8 h-8 text-primary-foreground" />
+                  )}
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-foreground mb-2">
+                    {sidePanel.type === 'instructors' ? 'Course Instructors' : 'Enrolled Students'}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {sidePanel.type === 'instructors'
+                      ? 'Teaching staff assigned to this course'
+                      : 'Students registered for this course'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 space-y-8">
+              {sidePanel.course && (
                 <>
-                  <div className="border-b border-border pb-4">
-                    <h2 className="text-2xl font-bold text-foreground mb-2">Instructors</h2>
-                    <p className="text-sm text-muted-foreground">
-                      List of instructors for{' '}
-                      <span className="font-semibold">{sidePanel.course.name}</span>
-                    </p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                    {Array.isArray(sidePanel.course.instructors) &&
-                    sidePanel.course.instructors.length > 0 ? (
-                      sidePanel.course.instructors.map((inst: any, idx: number) => (
-                        <div
-                          key={idx}
-                          className="flex justify-between items-center py-2 border-b border-border/50"
-                        >
+                  {/* Course Information Card */}
+                  <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+                    <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-primary" />
+                      Course Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-background rounded-xl p-4 border border-border shadow-sm">
+                        <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-muted-foreground">
-                            {inst.instructor_ldap}
+                            Course Code
                           </span>
-                          <span className="text-sm font-semibold text-foreground">
-                            {inst.instruction_type}
+                          <span className="text-lg font-bold font-mono text-primary">
+                            {sidePanel.course.course_code}
                           </span>
                         </div>
-                      ))
-                    ) : (
-                      <div className="w-full text-center py-8">
-                        <span className="text-muted-foreground text-sm">
-                          No instructors assigned
-                        </span>
+                      </div>
+                      <div className="bg-background rounded-xl p-4 border border-border shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-muted-foreground">
+                            Course Name
+                          </span>
+                          <span className="text-lg font-bold text-foreground">
+                            {sidePanel.course.name}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="bg-background rounded-xl p-4 border border-border shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-muted-foreground">
+                            Semester
+                          </span>
+                          <span className="text-lg font-bold text-foreground">
+                            {sidePanel.course.sem}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="bg-background rounded-xl p-4 border border-border shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {sidePanel.type === 'instructors'
+                              ? 'Total Instructors'
+                              : 'Total Students'}
+                          </span>
+                          <span className="text-lg font-bold text-primary">
+                            {sidePanel.type === 'instructors'
+                              ? Array.isArray(sidePanel.course.instructors)
+                                ? sidePanel.course.instructors.length
+                                : 0
+                              : Array.isArray(sidePanel.course.students)
+                                ? sidePanel.course.students.length
+                                : 0}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Content Section */}
+                  <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+                    <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+                      {sidePanel.type === 'instructors' ? (
+                        <>
+                          <UserPen className="w-5 h-5 text-primary" />
+                          Instructor Details
+                        </>
+                      ) : (
+                        <>
+                          <Users className="w-5 h-5 text-primary" />
+                          Student Roster
+                        </>
+                      )}
+                    </h3>
+
+                    {sidePanel.type === 'instructors' && sidePanel.course && (
+                      <div className="space-y-4">
+                        {Array.isArray(sidePanel.course.instructors) &&
+                        sidePanel.course.instructors.length > 0 ? (
+                          <div className="grid gap-4">
+                            {sidePanel.course.instructors.map((inst: any, idx: number) => (
+                              <div
+                                key={idx}
+                                className="bg-background rounded-xl p-4 border border-border shadow-sm hover:shadow-md transition-shadow"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                      <UserPen className="w-5 h-5 text-primary" />
+                                    </div>
+                                    <div>
+                                      <p className="font-semibold text-foreground">
+                                        {inst.instructor_ldap}
+                                      </p>
+                                      <p className="text-sm text-muted-foreground">
+                                        Instructor LDAP
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                                      {inst.instruction_type}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-12 bg-background rounded-xl border border-border">
+                            <UserPen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <p className="text-muted-foreground font-semibold text-lg">
+                              No instructors assigned
+                            </p>
+                            <p className="text-muted-foreground/70 text-sm mt-2">
+                              Instructors will appear here once assigned to this course
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
-                </>
-              )}
-              {sidePanel.type === 'students' && sidePanel.course && (
-                <>
-                  <div className="border-b border-border pb-4">
-                    <h2 className="text-2xl font-bold text-foreground mb-2">Students</h2>
-                    <p className="text-sm text-muted-foreground">
-                      List of students for{' '}
-                      <span className="font-semibold">{sidePanel.course.name}</span>
-                    </p>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-                    {Array.isArray(sidePanel.course.students) &&
-                    sidePanel.course.students.length > 0 ? (
-                      sidePanel.course.students.map((student: string, idx: number) => (
-                        <div
-                          key={idx}
-                          className="flex justify-between items-center py-2 border-b border-border/50"
-                        >
-                          <span className="text-sm font-medium text-foreground">{student}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="w-full text-center py-8">
-                        <span className="text-muted-foreground text-sm">No students assigned</span>
+
+                    {sidePanel.type === 'students' && sidePanel.course && (
+                      <div className="space-y-4">
+                        {Array.isArray(sidePanel.course.students) &&
+                        sidePanel.course.students.length > 0 ? (
+                          <div className="grid gap-3">
+                            {sidePanel.course.students.map((student: string, idx: number) => (
+                              <div
+                                key={idx}
+                                className="bg-background rounded-xl p-4 border border-border shadow-sm hover:shadow-md transition-shadow"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-primary" />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground font-mono">
+                                      {student}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">Student ID</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-12 bg-background rounded-xl border border-border">
+                            <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <p className="text-muted-foreground font-semibold text-lg">
+                              No students enrolled
+                            </p>
+                            <p className="text-muted-foreground/70 text-sm mt-2">
+                              Student enrollments will appear here once registered
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

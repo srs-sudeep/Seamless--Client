@@ -115,8 +115,6 @@ const CreateMealSession = () => {
     if (window.electronAPI?.onCardData) {
       window.electronAPI.onCardData(data => {
         setCardInfo(data);
-        console.log('📥 Card info received in React:', data);
-
         // Auto-create transaction when card is tapped and there's an active session
         if (activeSession && data.card_data) {
           handleCreateTransaction(data.card_data, data.student_name);

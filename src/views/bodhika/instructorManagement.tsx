@@ -1,5 +1,17 @@
 import { useState, useMemo } from 'react';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import {
+  Loader2,
+  Pencil,
+  Plus,
+  Trash2,
+  UserCheck,
+  BookOpen,
+  Users,
+  Target,
+  TrendingUp,
+  GraduationCap,
+  BarChart3,
+} from 'lucide-react';
 import {
   DynamicForm,
   Dialog,
@@ -82,6 +94,13 @@ const InstructorManagement = () => {
 
   const instructors = data?.results ?? [];
   const totalCount = data?.total ?? 0;
+
+  // Calculate statistics
+  const totalInstructors = instructors.length;
+  const uniqueCourses = new Set(instructors.map(i => i.course_id)).size;
+  const lectureInstructors = instructors.filter(i => i.instruction_type === 'Lecture').length;
+  const tutorialInstructors = instructors.filter(i => i.instruction_type === 'Tutorial').length;
+  const labInstructors = instructors.filter(i => i.instruction_type === 'Lab').length;
 
   // FilterConfig for DynamicTable
   const filterConfig: FilterConfig[] = useMemo(
@@ -221,7 +240,7 @@ const InstructorManagement = () => {
               ? 'text-chip-blue bg-chip-blue/10 border-chip-blue'
               : 'text-gray-600';
       return (
-        <span className={`px-2 py-0.5 rounded-full ${colorClass}  text-xs font-medium border `}>
+        <span className={`px-2 py-0.5 rounded-full ${colorClass} text-xs font-medium border`}>
           {value}
         </span>
       );
@@ -249,67 +268,274 @@ const InstructorManagement = () => {
       };
     });
 
+  if (isFetching && instructors.length === 0) {
+    return (
+      <HelmetWrapper
+        title="Instructors | Seamless"
+        heading="Instructor Management"
+        subHeading="Comprehensive instructor management system for academic administration"
+      >
+        <div className="flex justify-center items-center h-96 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border">
+          <div className="text-center">
+            <Loader2 className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading instructor data...</p>
+          </div>
+        </div>
+      </HelmetWrapper>
+    );
+  }
+
   return (
     <HelmetWrapper
       title="Instructors | Seamless"
-      heading="Instructors List"
-      subHeading="List of instructors for Bodhika."
+      heading="Instructor Management"
+      subHeading="Comprehensive instructor management system for academic administration"
     >
-      <DynamicTable
-        tableHeading="Instructors"
-        data={getTableData(instructors)}
-        isLoading={isFetching}
-        customRender={customRender}
-        filterConfig={filterConfig}
-        filterMode="ui"
-        onSearchChange={setSearch}
-        page={page}
-        onPageChange={setPage}
-        limit={limit}
-        onLimitChange={setLimit}
-        total={totalCount}
-        headerActions={
-          <div className="flex gap-2">
-            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Instructor
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Instructor</DialogTitle>
-                </DialogHeader>
-                <DynamicForm
-                  schema={createSchema}
-                  onSubmit={handleCreate}
-                  onCancel={() => setCreateDialogOpen(false)}
-                  submitButtonText="Create"
-                  defaultValues={createFormValues}
-                  onChange={setCreateFormValues}
-                />
-              </DialogContent>
-            </Dialog>
+      <div className="space-y-8">
+        {/* Statistics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  Total Instructors
+                </p>
+                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                  {totalInstructors}
+                </p>
+              </div>
+            </div>
           </div>
-        }
-      />
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
+                  Unique Courses
+                </p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {uniqueCourses}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
+                  Lecture Instructors
+                </p>
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  {lectureInstructors}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
+                  Tutorial & Lab
+                </p>
+                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                  {tutorialInstructors + labInstructors}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Instruction Type Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-success rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Lecture Instructors</h3>
+                <p className="text-sm text-muted-foreground">Primary course instructors</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-success mb-2">{lectureInstructors}</div>
+              <div className="text-sm text-muted-foreground">
+                {totalInstructors > 0
+                  ? Math.round((lectureInstructors / totalInstructors) * 100)
+                  : 0}
+                % of total
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-chip-purple rounded-xl flex items-center justify-center">
+                <UserCheck className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Tutorial Instructors</h3>
+                <p className="text-sm text-muted-foreground">Tutorial session leaders</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-chip-purple mb-2">{tutorialInstructors}</div>
+              <div className="text-sm text-muted-foreground">
+                {totalInstructors > 0
+                  ? Math.round((tutorialInstructors / totalInstructors) * 100)
+                  : 0}
+                % of total
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-chip-blue rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Lab Instructors</h3>
+                <p className="text-sm text-muted-foreground">Laboratory supervisors</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-chip-blue mb-2">{labInstructors}</div>
+              <div className="text-sm text-muted-foreground">
+                {totalInstructors > 0 ? Math.round((labInstructors / totalInstructors) * 100) : 0}%
+                of total
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Instructor Table Container */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Instructor Database
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Manage instructor assignments, track course allocations, and maintain academic staff
+              records
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Instructors"
+              data={getTableData(instructors)}
+              isLoading={isFetching}
+              customRender={customRender}
+              filterConfig={filterConfig}
+              filterMode="ui"
+              onSearchChange={setSearch}
+              page={page}
+              onPageChange={setPage}
+              limit={limit}
+              onLimitChange={setLimit}
+              total={totalCount}
+              headerActions={
+                <div className="flex gap-2">
+                  <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Instructor
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+                          <Plus className="w-6 h-6 text-primary" />
+                          Add New Instructor
+                        </DialogTitle>
+                      </DialogHeader>
+                      <DynamicForm
+                        schema={createSchema}
+                        onSubmit={handleCreate}
+                        onCancel={() => setCreateDialogOpen(false)}
+                        submitButtonText="Create Instructor"
+                        defaultValues={createFormValues}
+                        onChange={setCreateFormValues}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              }
+            />
+          </div>
+        </div>
+
+        {/* Quick Actions Card */}
+        <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+              <UserCheck className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
+              <p className="text-sm text-muted-foreground">Common instructor management tasks</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+              <Plus className="w-5 h-5 text-primary" />
+              <span className="text-sm font-medium">
+                Click "Add Instructor" to assign new teaching staff
+              </span>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+              <Pencil className="w-5 h-5 text-primary" />
+              <span className="text-sm font-medium">
+                Use edit icon to modify instructor assignments
+              </span>
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+              <Target className="w-5 h-5 text-primary" />
+              <span className="text-sm font-medium">
+                Filter by course, semester, or instruction type
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Edit Dialog */}
       <Dialog
         open={!!editInstructor}
         onOpenChange={open => {
           if (!open) setEditInstructor(null);
         }}
       >
-        <DialogContent>
+        <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border">
           <DialogHeader>
-            <DialogTitle>Edit Instructor</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Pencil className="w-6 h-6 text-primary" />
+              Edit Instructor Assignment
+            </DialogTitle>
           </DialogHeader>
           <DynamicForm
             schema={editSchema}
             onSubmit={handleUpdate}
             defaultValues={editFormValues}
             onCancel={() => setEditInstructor(null)}
-            submitButtonText="Save"
+            submitButtonText="Save Changes"
             onChange={setEditFormValues}
           />
         </DialogContent>

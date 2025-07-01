@@ -1,7 +1,24 @@
-import { TimeRangePicker } from '@/components';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  RadioGroup,
+  RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+  TimeRangePicker,
+} from '@/components';
+import { cn } from '@/lib';
 import { type FieldType as BaseFieldType } from '@/types';
 import { parse } from 'date-fns';
-import { Plus, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 // Extend FieldType to include 'fields', 'minItems', and 'maxItems' for array type
@@ -72,6 +89,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     });
     return initial;
   });
+
+  // Add search state at the top of your component
+  const [searchTerms, setSearchTerms] = useState<Record<string, string>>({});
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -280,10 +300,10 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                     className={`flex flex-col ${field.columns === 2 ? 'md:col-span-2' : 'md:col-span-1'}`}
                   >
                     <label
-                      className={`mb-2 text-sm font-medium text-gray-700 dark:text-gray-300 ${field.className || ''}`}
+                      className={`mb-2 text-sm font-medium text-muted-foreground ${field.className || ''}`}
                     >
                       {field.label}
-                      {field.required && <span className="ml-1 text-red-500">*</span>}
+                      {field.required && <span className="ml-1 text-destructive">*</span>}
                     </label>
                     {field.type === 'array' && field.fields ? (
                       <div className="mb-6 mt-2">
@@ -291,44 +311,37 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           <div key={idx} className="flex gap-2 mb-2 items-center">
                             {field.fields?.map(subField =>
                               subField.type === 'select' ? (
-                                <select
+                                <Select
                                   key={subField.name}
-                                  className="border p-2 rounded-md bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                                  value={item[subField.name]}
-                                  onChange={e =>
-                                    handleArrayFieldChange(
-                                      field.name,
-                                      idx,
-                                      subField.name,
-                                      e.target.value
-                                    )
+                                  value={item[subField.name] || ''}
+                                  onValueChange={value =>
+                                    handleArrayFieldChange(field.name, idx, subField.name, value)
                                   }
-                                  required={subField.required}
                                   disabled={disabled}
                                 >
-                                  <option value="">Select...</option>
-                                  {subField.options?.map(opt => {
-                                    const optionValue = typeof opt === 'string' ? opt : opt.value;
-                                    const optionLabel = typeof opt === 'string' ? opt : opt.label;
-                                    return (
-                                      <option key={optionValue} value={optionValue}>
-                                        {typeof optionLabel === 'object' && optionLabel !== null
-                                          ? `${optionLabel.id} - ${optionLabel.name}`
-                                          : optionLabel}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {subField.options?.map(opt => {
+                                      const optionValue = typeof opt === 'string' ? opt : opt.value;
+                                      const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                                      return (
+                                        <SelectItem key={optionValue} value={String(optionValue)}>
+                                          {typeof optionLabel === 'object' && optionLabel !== null
+                                            ? `${optionLabel.id} - ${optionLabel.name}`
+                                            : String(optionLabel)}
+                                        </SelectItem>
+                                      );
+                                    })}
+                                  </SelectContent>
+                                </Select>
                               ) : (
-                                <input
+                                <Input
                                   key={subField.name}
                                   type={subField.type}
                                   placeholder={subField.label}
-                                  className="w-full border p-2.5 rounded-md mb-2 
-                                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                                           bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
-                                           dark:placeholder-gray-400 dark:focus:ring-blue-400 dark:focus:border-blue-400
-                                           transition-all duration-200"
+                                  className="w-full bg-background text-foreground"
                                   value={item[subField.name]}
                                   onChange={e =>
                                     handleArrayFieldChange(
@@ -345,7 +358,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                             {arrayFieldData[field.name].length > (field.minItems || 1) && (
                               <Trash2
-                                className="text-red-500 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900 rounded p-1"
+                                className="text-destructive cursor-pointer hover:bg-destructive/30 rounded p-1"
                                 size={24}
                                 onClick={() => handleRemoveArrayFieldItem(field.name, idx)}
                                 style={{ minWidth: 24, minHeight: 24 }}
@@ -355,7 +368,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                               />
                             )}
                             <Plus
-                              className="rounded cursor-pointer h-9 w-9 p-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                              className="rounded cursor-pointer h-9 w-9 p-2 border border-border hover:bg-muted"
                               onClick={() => handleAddArrayFieldItem(field.name, field.fields!)}
                               aria-label={`Add ${field.label}`}
                               tabIndex={0}
@@ -382,7 +395,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           role="switch"
                           aria-checked={formData[field.name]}
                           className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-300 focus:outline-none ${
-                            formData[field.name] ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                            formData[field.name] ? 'bg-success' : 'bg-secondary-foreground/30'
                           }`}
                           onClick={() =>
                             setFormData({ ...formData, [field.name]: !formData[field.name] })
@@ -390,146 +403,165 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                           disabled={disabled || field.disabled}
                         >
                           <span
-                            className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
-                              formData[field.name] ? 'translate-x-6' : ''
+                            className={`bg-background w-4 h-4 rounded-full shadow-md ml-1 transform transition-transform duration-200 ${
+                              formData[field.name] ? 'translate-x-5' : ''
                             }`}
                           />
                         </button>
                         <span
                           className={`text-sm font-medium ${
-                            formData[field.name]
-                              ? 'text-green-600 dark:text-green-400'
-                              : 'text-gray-600 dark:text-gray-300'
+                            formData[field.name] ? 'text-success' : 'text-secondary-foreground/50'
                           }`}
                         >
                           {formData[field.name] ? 'Active' : 'Inactive'}
                         </span>
                       </label>
                     ) : field.type === 'textarea' ? (
-                      <textarea
+                      <Textarea
                         name={field.name}
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="border p-2 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                        className="bg-background text-foreground"
                         value={formData[field.name] || ''}
                         disabled={disabled || field.disabled}
                       />
                     ) : field.type === 'select' && field.multiSelect ? (
-                      <div
-                        className="relative"
-                        ref={el => {
-                          dropdownRefs.current[field.name] = el;
-                        }}
-                      >
-                        {/* Custom Dropdown Button */}
-                        <button
-                          type="button"
-                          onClick={() => toggleDropdown(field.name)}
-                          disabled={disabled || field.disabled}
-                          className="w-full border p-2 mb-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 px-3 
-                                       bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
-                                       flex justify-between items-center text-left
-                                       hover:border-gray-400 dark:hover:border-gray-500
-                                       transition-all duration-200"
-                        >
-                          <span
-                            className={`${!formData[field.name]?.length ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white font-medium'}`}
+                      <div>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className="w-full justify-between h-auto min-h-[40px] p-2"
+                              disabled={disabled || field.disabled}
+                            >
+                              <span
+                                className={`${!formData[field.name]?.length ? 'text-muted-foreground' : 'text-foreground font-medium'}`}
+                              >
+                                {getSelectedLabel(field)}
+                              </span>
+                              <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="p-0"
+                            align="start"
+                            style={{ width: 'var(--radix-popover-trigger-width)' }}
                           >
-                            {getSelectedLabel(field)}
-                          </span>
-                          <svg
-                            className={`w-4 h-4 transition-transform ${openDropdowns[field.name] ? 'rotate-180 text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </button>
+                            <div className="max-h-60 overflow-auto">
+                              {/* Search Input */}
+                              <div className="sticky top-0 z-10 p-2 bg-background border-b">
+                                <Input
+                                  type="text"
+                                  className="w-full h-8 text-sm"
+                                  placeholder="Search options..."
+                                  value={searchTerms[field.name] || ''}
+                                  onChange={e => {
+                                    setSearchTerms(prev => ({
+                                      ...prev,
+                                      [field.name]: e.target.value,
+                                    }));
+                                  }}
+                                  onClick={e => e.stopPropagation()}
+                                />
+                              </div>
 
-                        {/* Dropdown Options - Fixed positioning and scrolling */}
-                        {openDropdowns[field.name] && (
-                          <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-auto">
-                            {/* Search Input for Filtering Options */}
-                            <div className="sticky top-0 z-10 p-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                              <input
-                                type="text"
-                                className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                                placeholder="Search options..."
-                                onClick={e => e.stopPropagation()}
-                              />
-                            </div>
+                              {/* Option List */}
+                              <div className="p-1">
+                                {field.options
+                                  ?.filter(opt => {
+                                    const searchTerm = searchTerms[field.name]?.toLowerCase() || '';
+                                    if (!searchTerm) return true;
 
-                            {/* Option List with improved styling */}
-                            <div>
-                              {field.options?.map(opt => {
-                                const optionValue = typeof opt === 'string' ? opt : opt.value;
-                                const optionLabel = typeof opt === 'string' ? opt : opt.label;
-                                const isSelected =
-                                  Array.isArray(formData[field.name]) &&
-                                  formData[field.name].map(String).includes(String(optionValue));
+                                    const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                                    const labelText =
+                                      typeof optionLabel === 'object' && optionLabel !== null
+                                        ? `${optionLabel.id} - ${optionLabel.name}`
+                                        : String(optionLabel);
 
-                                return (
-                                  <div
-                                    key={optionValue}
-                                    className={`px-3 py-2 cursor-pointer transition-colors duration-150 
-                                               ${
-                                                 isSelected
-                                                   ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                                                   : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                                               }`}
-                                    onClick={() => handleMultiSelectToggle(field.name, optionValue)}
-                                  >
-                                    <div className="flex items-center gap-2">
+                                    return labelText.toLowerCase().includes(searchTerm);
+                                  })
+                                  ?.map(opt => {
+                                    const optionValue = typeof opt === 'string' ? opt : opt.value;
+                                    const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                                    const isSelected =
+                                      Array.isArray(formData[field.name]) &&
+                                      formData[field.name]
+                                        .map(String)
+                                        .includes(String(optionValue));
+
+                                    return (
                                       <div
-                                        className={`flex-shrink-0 w-4 h-4 border rounded 
-                                                      ${
-                                                        isSelected
-                                                          ? 'bg-blue-500 dark:bg-blue-600 border-blue-500 dark:border-blue-600'
-                                                          : 'border-gray-300 dark:border-gray-500'
-                                                      }`}
-                                      >
-                                        {isSelected && (
-                                          <svg
-                                            className="w-4 h-4 text-white"
-                                            viewBox="0 0 20 20"
-                                            fill="currentColor"
-                                          >
-                                            <path
-                                              fillRule="evenodd"
-                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                              clipRule="evenodd"
-                                            />
-                                          </svg>
+                                        key={optionValue}
+                                        className={cn(
+                                          'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
+                                          isSelected
+                                            ? 'bg-accent text-accent-foreground'
+                                            : 'hover:bg-accent hover:text-accent-foreground'
                                         )}
+                                        onClick={() => {
+                                          handleMultiSelectToggle(field.name, optionValue);
+                                          const updatedFormData = {
+                                            ...formData,
+                                            [field.name]: Array.isArray(formData[field.name])
+                                              ? formData[field.name].includes(optionValue)
+                                                ? formData[field.name].filter(
+                                                    (v: string) => v !== optionValue
+                                                  )
+                                                : [...formData[field.name], optionValue]
+                                              : [optionValue],
+                                          };
+                                          setFormData(updatedFormData);
+                                          if (onChange) onChange(updatedFormData);
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2 w-full">
+                                          <div
+                                            className={cn(
+                                              'flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                                              isSelected
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'opacity-50 [&_svg]:invisible'
+                                            )}
+                                          >
+                                            <Check className="h-4 w-4" />
+                                          </div>
+                                          <span className={isSelected ? 'font-medium' : ''}>
+                                            {typeof optionLabel === 'object' && optionLabel !== null
+                                              ? `${optionLabel.id} - ${optionLabel.name}`
+                                              : optionLabel}
+                                          </span>
+                                        </div>
                                       </div>
-                                      <span className={`${isSelected ? 'font-medium' : ''}`}>
-                                        {typeof optionLabel === 'object' && optionLabel !== null
-                                          ? `${optionLabel.id} - ${optionLabel.name}`
-                                          : optionLabel}
-                                      </span>
-                                    </div>
+                                    );
+                                  })}
+
+                                {/* Empty state */}
+                                {field.options?.filter(opt => {
+                                  const searchTerm = searchTerms[field.name]?.toLowerCase() || '';
+                                  if (!searchTerm) return true;
+
+                                  const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                                  const labelText =
+                                    typeof optionLabel === 'object' && optionLabel !== null
+                                      ? `${optionLabel.id} - ${optionLabel.name}`
+                                      : String(optionLabel);
+
+                                  return labelText.toLowerCase().includes(searchTerm);
+                                })?.length === 0 && (
+                                  <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                                    {searchTerms[field.name]
+                                      ? 'No matching options found'
+                                      : 'No options available'}
                                   </div>
-                                );
-                              })}
-
-                              {/* Empty state when no options match search */}
-                              {field.options?.length === 0 && (
-                                <div className="px-3 py-4 text-center text-gray-500 dark:text-gray-400">
-                                  No options available
-                                </div>
-                              )}
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          </PopoverContent>
+                        </Popover>
 
-                        {/* Selected Options Chips with improved styling */}
+                        {/* Selected Options Chips */}
                         {Array.isArray(formData[field.name]) && formData[field.name].length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-2">
                             {formData[field.name].map((val: string) => {
@@ -539,30 +571,38 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                               );
                               const label =
                                 typeof option === 'string' ? option : option?.label || val;
+
                               return (
-                                <span
+                                <div
                                   key={val}
-                                  className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 
-                                           text-blue-700 dark:text-blue-200 text-sm px-3 py-1.5 
-                                           rounded-full border border-blue-200 dark:border-blue-700
-                                           shadow-sm transition-all duration-200 hover:shadow-md"
+                                  className="flex items-center gap-1.5 bg-primary/10 text-primary px-2 py-1 rounded-md text-sm border border-primary/20 transition-all duration-200 hover:bg-primary/20"
                                 >
-                                  {typeof label === 'object' &&
-                                  label !== null &&
-                                  'id' in label &&
-                                  'name' in label
-                                    ? `${label.id} - ${label.name}`
-                                    : String(label)}
-                                  <button
+                                  <span className="font-medium">
+                                    {typeof label === 'object' &&
+                                    label !== null &&
+                                    'id' in label &&
+                                    'name' in label
+                                      ? `${label.id} - ${label.name}`
+                                      : String(label)}
+                                  </span>
+                                  <Button
                                     type="button"
-                                    className="ml-1 rounded-full w-4 h-4 flex items-center justify-center 
-                                             text-blue-500 hover:text-white bg-transparent hover:bg-blue-500
-                                             transition-colors duration-200"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-auto w-auto p-0 hover:bg-transparent hover:text-destructive"
                                     onClick={e => {
                                       e.stopPropagation();
                                       handleMultiSelectToggle(field.name, val);
+                                      const updatedFormData = {
+                                        ...formData,
+                                        [field.name]: formData[field.name].filter(
+                                          (v: string) => v !== val
+                                        ),
+                                      };
+                                      setFormData(updatedFormData);
+                                      if (onChange) onChange(updatedFormData);
                                     }}
-                                    aria-label="Remove"
+                                    disabled={disabled || field.disabled}
                                   >
                                     <svg
                                       className="w-3 h-3"
@@ -575,92 +615,121 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                                         clipRule="evenodd"
                                       />
                                     </svg>
-                                  </button>
-                                </span>
+                                  </Button>
+                                </div>
                               );
                             })}
                           </div>
                         )}
                       </div>
-                    ) : field.type === 'select' ? (
-                      <select
-                        name={field.name}
-                        required={field.required}
-                        onChange={handleChange}
-                        className="border p-2 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white px-3 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    ) : field.type === 'select' && !field.multiSelect ? (
+                      <Select
                         value={formData[field.name] || ''}
+                        onValueChange={value => {
+                          const updatedFormData = { ...formData, [field.name]: value };
+                          setFormData(updatedFormData);
+                          if (onChange) onChange(updatedFormData);
+                        }}
                         disabled={disabled || field.disabled}
                       >
-                        <option value="">Select...</option>
-                        {field.options?.map(opt => {
-                          const optionValue = typeof opt === 'string' ? opt : opt.value;
-                          const optionLabel = typeof opt === 'string' ? opt : opt.label;
-                          return (
-                            <option key={optionValue} value={optionValue}>
-                              {typeof optionLabel === 'object' &&
-                              optionLabel !== null &&
-                              'id' in optionLabel &&
-                              'name' in optionLabel
-                                ? `${optionLabel.id} - ${optionLabel.name}`
-                                : String(optionLabel)}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    ) : field.type === 'radio' ? (
-                      <div className="flex flex-wrap gap-4">
-                        {field.options?.map(opt => {
-                          const optionValue = typeof opt === 'string' ? opt : opt.value;
-                          const optionLabel = typeof opt === 'string' ? opt : opt.label;
-                          return (
-                            <label key={optionValue} className="inline-flex items-center space-x-2">
-                              <input
-                                type="radio"
-                                name={field.name}
-                                value={optionValue}
-                                onChange={handleChange}
-                                required={field.required}
-                                className="bg-primary mb-2 checked:bg-accent"
-                                checked={formData[field.name] === optionValue}
-                                disabled={disabled || field.disabled}
-                              />
-                              <span>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options?.map(opt => {
+                            const optionValue = typeof opt === 'string' ? opt : opt.value;
+                            const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                            return (
+                              <SelectItem key={optionValue} value={String(optionValue)}>
                                 {typeof optionLabel === 'object' &&
                                 optionLabel !== null &&
                                 'id' in optionLabel &&
                                 'name' in optionLabel
                                   ? `${optionLabel.id} - ${optionLabel.name}`
                                   : String(optionLabel)}
-                              </span>
-                            </label>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    ) : field.type === 'radio' ? (
+                      <RadioGroup
+                        value={formData[field.name] || ''}
+                        onValueChange={value => {
+                          const updatedFormData = { ...formData, [field.name]: value };
+                          setFormData(updatedFormData);
+                          if (onChange) onChange(updatedFormData);
+                        }}
+                        disabled={disabled || field.disabled}
+                        className="flex flex-wrap gap-4 mb-2"
+                      >
+                        {field.options?.map(opt => {
+                          const optionValue = typeof opt === 'string' ? opt : opt.value;
+                          const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                          return (
+                            <div key={optionValue} className="flex items-center space-x-2">
+                              <RadioGroupItem
+                                value={String(optionValue)}
+                                id={`${field.name}-${optionValue}`}
+                              />
+                              <label
+                                htmlFor={`${field.name}-${optionValue}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                              >
+                                {typeof optionLabel === 'object' &&
+                                optionLabel !== null &&
+                                'id' in optionLabel &&
+                                'name' in optionLabel
+                                  ? `${optionLabel.id} - ${optionLabel.name}`
+                                  : String(optionLabel)}
+                              </label>
+                            </div>
                           );
                         })}
-                      </div>
+                      </RadioGroup>
                     ) : field.type === 'checkbox' && field.options ? (
-                      <div className="flex flex-wrap gap-4">
+                      <div className="flex flex-wrap gap-4 mb-2">
                         {field.options.map(opt => {
                           const optionValue = typeof opt === 'string' ? opt : opt.value;
                           const optionLabel = typeof opt === 'string' ? opt : opt.label;
+                          const isChecked =
+                            Array.isArray(formData[field.name]) &&
+                            formData[field.name].includes(optionValue);
+
                           return (
-                            <label key={optionValue} className="inline-flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                name={field.name}
-                                value={optionValue}
-                                onChange={handleChange}
-                                checked={formData[field.name]?.includes?.(optionValue) || false}
+                            <div key={optionValue} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`${field.name}-${optionValue}`}
+                                checked={isChecked}
+                                onCheckedChange={checked => {
+                                  const currentValues = Array.isArray(formData[field.name])
+                                    ? formData[field.name]
+                                    : [];
+
+                                  const updatedFormData = {
+                                    ...formData,
+                                    [field.name]: checked
+                                      ? [...currentValues, optionValue]
+                                      : currentValues.filter((val: any) => val !== optionValue),
+                                  };
+
+                                  setFormData(updatedFormData);
+                                  if (onChange) onChange(updatedFormData);
+                                }}
                                 disabled={disabled || field.disabled}
-                                className="mb-2"
                               />
-                              <span>
+                              <label
+                                htmlFor={`${field.name}-${optionValue}`}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                              >
                                 {typeof optionLabel === 'object' &&
                                 optionLabel !== null &&
                                 'id' in optionLabel &&
                                 'name' in optionLabel
                                   ? `${optionLabel.id} - ${optionLabel.name}`
                                   : String(optionLabel)}
-                              </span>
-                            </label>
+                              </label>
+                            </div>
                           );
                         })}
                       </div>
@@ -685,72 +754,60 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                               <button
                                 key={optionValue}
                                 type="button"
-                                className={`
-    group relative px-6 py-4 my-2 rounded-xl border-2 
-    transition-all duration-300 ease-out
-    flex flex-col items-center justify-center min-w-[140px] min-h-[100px]
-    transform hover:scale-105 hover:shadow-lg
-    focus:outline-none focus:ring-4 focus:ring-opacity-50
-    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-    ${
-      selected
-        ? `bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30
-         text-blue-700 dark:text-blue-300 border-blue-500 dark:border-blue-400
-         shadow-lg shadow-blue-200/50 dark:shadow-blue-900/30
-         focus:ring-blue-300 dark:focus:ring-blue-600`
-        : `bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900
-         text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700
-         hover:border-gray-300 dark:hover:border-gray-600
-         hover:shadow-md hover:bg-gradient-to-br hover:from-gray-50 hover:to-gray-100
-         dark:hover:from-gray-700 dark:hover:to-gray-800
-         focus:ring-gray-300 dark:focus:ring-gray-600`
-    }
-  `}
+                                className={cn(
+                                  // Base styles
+                                  'group relative px-6 py-4 my-2 rounded-xl border-2',
+                                  'transition-all duration-300 ease-out',
+                                  'flex flex-col items-center justify-center min-w-[140px] min-h-[100px]',
+                                  'transform hover:scale-105 hover:shadow-lg',
+                                  'focus:outline-none focus:ring-4 focus:ring-opacity-50',
+                                  'disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
+                                  // Selected state
+                                  selected
+                                    ? 'bg-primary/10 text-primary border-primary shadow-lg shadow-primary/20 focus:ring-primary/30'
+                                    : 'bg-background text-foreground border-border hover:border-muted-foreground hover:shadow-md hover:bg-muted/50 focus:ring-ring'
+                                )}
                                 onClick={() => {
-                                  setFormData({ ...formData, [field.name]: optionValue });
-                                  if (onChange)
-                                    onChange({ ...formData, [field.name]: optionValue });
+                                  const updatedFormData = {
+                                    ...formData,
+                                    [field.name]: optionValue,
+                                  };
+                                  setFormData(updatedFormData);
+                                  if (onChange) onChange(updatedFormData);
                                 }}
                                 disabled={disabled || field.disabled}
                               >
                                 {/* Subtle background pattern */}
                                 <div
-                                  className={`
-    absolute inset-0 rounded-xl opacity-20
-    bg-gradient-to-br from-transparent via-white/20 to-transparent
-    ${selected ? 'opacity-30' : 'opacity-0 group-hover:opacity-20'}
-    transition-opacity duration-300
-  `}
+                                  className={cn(
+                                    'absolute inset-0 rounded-xl transition-opacity duration-300',
+                                    'bg-gradient-to-br from-transparent via-background/20 to-transparent',
+                                    selected ? 'opacity-30' : 'opacity-0 group-hover:opacity-20'
+                                  )}
                                 />
 
                                 {/* Content container */}
                                 <div className="relative z-10 flex flex-col items-center space-y-1">
                                   {/* Main label with enhanced typography */}
                                   <span
-                                    className={`
-      font-bold text-center leading-tight
-      transition-all duration-300
-      ${
-        selected
-          ? 'text-3xl text-blue-600 dark:text-blue-300 transform scale-110'
-          : 'text-2xl group-hover:text-3xl group-hover:transform group-hover:scale-105'
-      }
-    `}
+                                    className={cn(
+                                      'font-bold text-center leading-tight transition-all duration-300',
+                                      selected
+                                        ? 'text-3xl text-primary transform scale-110'
+                                        : 'text-2xl group-hover:text-3xl group-hover:transform group-hover:scale-105'
+                                    )}
                                   >
                                     {labelObj.id}
                                   </span>
 
                                   {/* Secondary label with improved styling */}
                                   <span
-                                    className={`
-      text-sm font-medium text-center leading-relaxed
-      transition-all duration-300
-      ${
-        selected
-          ? 'text-blue-600/80 dark:text-blue-300/80'
-          : 'text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
-      }
-    `}
+                                    className={cn(
+                                      'text-sm font-medium text-center leading-relaxed transition-all duration-300',
+                                      selected
+                                        ? 'text-primary/80'
+                                        : 'text-muted-foreground group-hover:text-foreground'
+                                    )}
                                   >
                                     {labelObj.name}
                                   </span>
@@ -758,30 +815,20 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
                                 {/* Selection indicator */}
                                 {selected && (
-                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                                    <svg
-                                      className="w-3 h-3 text-white"
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                                    <Check className="w-3 h-3 text-primary-foreground" />
                                   </div>
                                 )}
 
                                 {/* Ripple effect on click */}
                                 <div className="absolute inset-0 rounded-xl overflow-hidden">
                                   <div
-                                    className={`
-      absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent
-      transform -skew-x-12 -translate-x-full
-      group-active:translate-x-full group-active:duration-700
-      transition-transform duration-0
-    `}
+                                    className={cn(
+                                      'absolute inset-0 bg-gradient-to-r from-transparent via-background/30 to-transparent',
+                                      'transform -skew-x-12 -translate-x-full',
+                                      'group-active:translate-x-full group-active:duration-700',
+                                      'transition-transform duration-0'
+                                    )}
                                   />
                                 </div>
                               </button>
@@ -793,14 +840,16 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                             <button
                               key={optionValue}
                               type="button"
-                              className={`px-4 py-1 my-1 mb-2 rounded-full border transition-colors ${
+                              className={cn(
+                                'px-4 py-2 my-1 mb-2 rounded-full border transition-colors',
                                 selected
-                                  ? 'bg-blue-600 text-white border-blue-600'
-                                  : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600'
-                              }`}
+                                  ? 'bg-primary text-primary-foreground border-primary'
+                                  : 'bg-muted text-muted-foreground border-border hover:bg-muted/80 hover:text-foreground'
+                              )}
                               onClick={() => {
-                                setFormData({ ...formData, [field.name]: optionValue });
-                                if (onChange) onChange({ ...formData, [field.name]: optionValue });
+                                const updatedFormData = { ...formData, [field.name]: optionValue };
+                                setFormData(updatedFormData);
+                                if (onChange) onChange(updatedFormData);
                               }}
                               disabled={disabled || field.disabled}
                             >
@@ -815,17 +864,13 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                         })}
                       </div>
                     ) : (
-                      <input
+                      <Input
                         type={field.type}
                         name={field.name}
                         required={field.required}
                         placeholder={field.placeholder}
                         onChange={handleChange}
-                        className="w-full border p-2.5 rounded-md mb-2 
-                                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                                 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white 
-                                 dark:placeholder-gray-400 dark:focus:ring-blue-400 dark:focus:border-blue-400
-                                 transition-all duration-200"
+                        className="w-full bg-background text-foreground"
                         value={formData[field.name] ?? ''}
                         disabled={disabled || field.disabled}
                       />
@@ -839,22 +884,22 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       ))}
       <div className="flex justify-end gap-2 mt-8">
         {onCancel && (
-          <button
+          <Button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 rounded-md border border-gray-300"
+            className="px-4 py-2 rounded-md border border-primary text-primary bg-background"
             disabled={disabled}
           >
             Cancel
-          </button>
+          </Button>
         )}
-        <button
+        <Button
           type="submit"
-          className="bg-primary transition-colors text-accent text-sm font-semibold px-4 py-2 rounded-md shadow-md"
+          className="bg-primary transition-colors text-sm font-semibold px-4 py-2 rounded-md shadow-md"
           disabled={disabled}
         >
           {submitButtonText || 'Submit'}
-        </button>
+        </Button>
       </div>
     </form>
   );

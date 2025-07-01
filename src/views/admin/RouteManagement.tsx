@@ -625,7 +625,6 @@ const RouteManagement = () => {
             headerActions={
               <Button
                 size="sm"
-                className=""
                 onClick={() => {
                   setCreateDialogParent({ module_id: mod.id, parent_id: null });
                 }}

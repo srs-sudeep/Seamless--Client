@@ -1,5 +1,5 @@
 import { apiClient } from '@/core';
-import type { Transaction, MealSessions } from '@/types';
+import type { Transaction, MealSession } from '@/types';
 
 // Transaction endpoints
 const BASE = '/naivedyam/api/v1/transaction/';
@@ -38,12 +38,12 @@ export async function stopMealSession(session_id: string): Promise<void> {
   );
 }
 
-export async function getVendorMealSessions(): Promise<MealSessions[]> {
-  const { data } = await apiClient.get<MealSessions[]>(`${BASE}meal-session/vendor`);
+export async function getVendorMealSessions(): Promise<MealSession[]> {
+  const { data } = await apiClient.get<MealSession[]>(`${BASE}meal-session/vendor`);
   return data;
 }
 
-export async function getActiveMealSessions(): Promise<MealSessions[]> {
-  const { data } = await apiClient.get<MealSessions[]>(`${BASE}meal-session/active`);
+export async function getActiveMealSessions(): Promise<MealSession[]> {
+  const { data } = await apiClient.get<MealSession[]>(`${BASE}meal-session/active`);
   return data;
 }

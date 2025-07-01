@@ -1,4 +1,3 @@
-import { Navigate } from 'react-router-dom';
 import lazyLoad from '@/lib/lazyLoad';
 import MainLayout from '@/layouts/MainLayout';
 

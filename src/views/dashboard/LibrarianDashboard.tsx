@@ -1,5 +1,5 @@
+import { StatCard } from '@/components';
 import { Book, Users, Clock, ArrowLeft } from 'lucide-react';
-import StatCard from '@/components/dashboard/StatCard';
 
 const LibrarianDashboard = () => {
   return (

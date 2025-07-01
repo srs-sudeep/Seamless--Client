@@ -146,10 +146,6 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     setFormData({ ...formData, [fieldName]: newValues });
   };
 
-  const toggleDropdown = (fieldName: string) => {
-    setOpenDropdowns(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
-  };
-
   const getSelectedLabel = (field: FieldType) => {
     const selectedValues = Array.isArray(formData[field.name]) ? formData[field.name] : [];
     if (selectedValues.length === 0) return 'Select options...';

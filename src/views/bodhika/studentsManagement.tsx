@@ -233,208 +233,52 @@ const StudentsManagement = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Total Students
-                </p>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                  {statistics.totalStudents}
-                </p>
+                <p className="text-sm text-card-blue font-medium mb-1">Total Students</p>
+                <p className="text-2xl font-bold text-card-blue">{statistics.totalStudents}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Unique Courses
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {statistics.totalCourses}
-                </p>
+                <p className="text-sm text-card-green font-medium mb-1">Unique Courses</p>
+                <p className="text-2xl font-bold text-card-green">{statistics.totalCourses}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
-                  Active Semesters
-                </p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                  {statistics.totalSemesters}
-                </p>
+                <p className="text-sm text-card-purple font-medium mb-1">Active Semesters</p>
+                <p className="text-2xl font-bold text-card-purple">{statistics.totalSemesters}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
-                  Avg Courses
-                </p>
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                <p className="text-sm text-card-orange font-medium mb-1">Avg Courses</p>
+                <p className="text-2xl font-bold text-card-orange">
                   {statistics.avgCoursesPerStudent}
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Enrollment Analytics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Enrollment Overview</h3>
-                <p className="text-sm text-muted-foreground">Student distribution insights</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Most Popular Semester
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-foreground">
-                    {statistics.mostPopularSemester.semester}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    ({statistics.mostPopularSemester.count} enrollments)
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Courses per Student
-                </span>
-                <span className="text-lg font-bold text-foreground">
-                  {statistics.avgCoursesPerStudent}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-secondary-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
-                <p className="text-sm text-muted-foreground">Manage student enrollments</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Plus className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">
-                  Add students with multiple course enrollments
-                </span>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Upload className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Bulk import from CSV files</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Semester Distribution */}
-        {Object.keys(statistics.semesterCounts).length > 0 && (
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Semester Distribution</h3>
-                <p className="text-sm text-muted-foreground">Student enrollment across semesters</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {Object.entries(statistics.semesterCounts)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([semester, count]) => (
-                  <div
-                    key={semester}
-                    className="bg-background rounded-xl p-4 border border-border shadow-sm"
-                  >
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Sem {semester}</div>
-                      <div className="text-xl font-bold text-foreground">{count}</div>
-                      <div className="text-xs text-muted-foreground">students</div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {/* Management Tools */}
-        <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-warning rounded-xl flex items-center justify-center">
-              <FileSpreadsheet className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-foreground">Bulk Operations</h3>
-              <p className="text-sm text-muted-foreground">Import/export student enrollment data</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
-                <Download className="w-4 h-4 text-primary" />
-                <div>
-                  <span className="font-medium text-foreground">CSV Template</span>
-                  <p className="text-sm text-muted-foreground">Download template for bulk import</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
-                <Upload className="w-4 h-4 text-primary" />
-                <div>
-                  <span className="font-medium text-foreground">Bulk Import</span>
-                  <p className="text-sm text-muted-foreground">Import multiple students from CSV</p>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
-                <Database className="w-4 h-4 text-primary" />
-                <div>
-                  <span className="font-medium text-foreground">Data Format</span>
-                  <p className="text-sm text-muted-foreground">student_id, course_code, sem</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
-                <Users className="w-4 h-4 text-primary" />
-                <div>
-                  <span className="font-medium text-foreground">Multiple Courses</span>
-                  <p className="text-sm text-muted-foreground">
-                    Students can be enrolled in multiple courses
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -510,6 +354,148 @@ const StudentsManagement = () => {
                 </div>
               }
             />
+          </div>
+        </div>
+
+        {/* Enrollment Analytics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <Activity className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Enrollment Overview</h3>
+                <p className="text-sm text-muted-foreground">Student distribution insights</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Most Popular Semester
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-bold text-foreground">
+                    {statistics.mostPopularSemester.semester}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    ({statistics.mostPopularSemester.count} enrollments)
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-background rounded-lg border border-border">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Courses per Student
+                </span>
+                <span className="text-lg font-bold text-foreground">
+                  {statistics.avgCoursesPerStudent}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-secondary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
+                <p className="text-sm text-muted-foreground">Manage student enrollments</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Plus className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">
+                  Add students with multiple course enrollments
+                </span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Upload className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Bulk import from CSV files</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Semester Distribution */}
+        {Object.keys(statistics.semesterCounts).length > 0 && (
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-6 h-6 text-background" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Semester Distribution</h3>
+                <p className="text-sm text-muted-foreground">Student enrollment across semesters</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {Object.entries(statistics.semesterCounts)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([semester, count]) => (
+                  <div
+                    key={semester}
+                    className="bg-background rounded-xl p-4 border border-border shadow-sm"
+                  >
+                    <div className="text-center">
+                      <div className="text-xs text-muted-foreground mb-1">Sem {semester}</div>
+                      <div className="text-xl font-bold text-foreground">{count}</div>
+                      <div className="text-xs text-muted-foreground">students</div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Management Tools */}
+        <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-warning rounded-xl flex items-center justify-center">
+              <FileSpreadsheet className="w-6 h-6 text-background" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Bulk Operations</h3>
+              <p className="text-sm text-muted-foreground">Import/export student enrollment data</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <Download className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">CSV Template</span>
+                  <p className="text-sm text-muted-foreground">Download template for bulk import</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <Upload className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">Bulk Import</span>
+                  <p className="text-sm text-muted-foreground">Import multiple students from CSV</p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <Database className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">Data Format</span>
+                  <p className="text-sm text-muted-foreground">student_id, course_code, sem</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border">
+                <Users className="w-4 h-4 text-primary" />
+                <div>
+                  <span className="font-medium text-foreground">Multiple Courses</span>
+                  <p className="text-sm text-muted-foreground">
+                    Students can be enrolled in multiple courses
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

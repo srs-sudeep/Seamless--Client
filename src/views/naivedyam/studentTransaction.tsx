@@ -100,68 +100,76 @@ const StudentTransactionPage = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <CreditCard className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <CreditCard className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Total Transactions
-                </p>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                  {statistics.totalTransactions}
-                </p>
+                <p className="text-sm text-card-blue font-medium mb-1">Total Transactions</p>
+                <p className="text-2xl font-bold text-card-blue">{statistics.totalTransactions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <Store className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <Store className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Vendors Used
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {statistics.uniqueVendors}
-                </p>
+                <p className="text-sm text-card-green font-medium mb-1">Vendors Used</p>
+                <p className="text-2xl font-bold text-card-green">{statistics.uniqueVendors}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
+                <Activity className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
-                  Sessions
-                </p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                  {statistics.uniqueSessions}
-                </p>
+                <p className="text-sm text-card-purple font-medium mb-1">Sessions</p>
+                <p className="text-2xl font-bold text-card-purple">{statistics.uniqueSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
+                <Clock className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
-                  Recent (24h)
-                </p>
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                <p className="text-sm text-card-orange font-medium mb-1">Recent (24h)</p>
+                <p className="text-2xl font-bold text-card-orange">
                   {statistics.recentTransactions}
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Enhanced Transaction History Table Container */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Transaction History
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Complete record of your meal service transactions with detailed session and vendor
+              information
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Student Transactions"
+              data={getTableData(data)}
+              isLoading={isLoading}
+            />
           </div>
         </div>
 
@@ -242,7 +250,7 @@ const StudentTransactionPage = () => {
           <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
-                <ChefHat className="w-6 h-6 text-white" />
+                <ChefHat className="w-6 h-6 text-background" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground">Meal Type Breakdown</h3>
@@ -273,7 +281,7 @@ const StudentTransactionPage = () => {
           <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-warning rounded-xl flex items-center justify-center">
-                <Store className="w-6 h-6 text-white" />
+                <Store className="w-6 h-6 text-background" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground">Vendor Usage</h3>
@@ -303,28 +311,6 @@ const StudentTransactionPage = () => {
             </div>
           </div>
         )}
-
-        {/* Enhanced Transaction History Table Container */}
-        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
-          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-              <BarChart3 className="w-7 h-7 text-primary" />
-              Transaction History
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Complete record of your meal service transactions with detailed session and vendor
-              information
-            </p>
-          </div>
-
-          <div className="p-6">
-            <DynamicTable
-              tableHeading="Student Transactions"
-              data={getTableData(data)}
-              isLoading={isLoading}
-            />
-          </div>
-        </div>
       </div>
     </HelmetWrapper>
   );

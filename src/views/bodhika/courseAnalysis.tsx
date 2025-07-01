@@ -169,66 +169,50 @@ const CourseAnalysis = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                  {totalCourses}
-                </p>
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                  Total Courses
-                </p>
+                <p className="text-2xl font-bold text-card-blue">{totalCourses}</p>
+                <p className="text-sm text-card-blue font-medium">Total Courses</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {averageAttendance}%
-                </p>
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                  Avg Attendance
-                </p>
+                <p className="text-2xl font-bold text-card-green">{averageAttendance}%</p>
+                <p className="text-sm text-card-green font-medium">Avg Attendance</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                  {criticalCourses}
-                </p>
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">
-                  Critical Courses
-                </p>
+                <p className="text-2xl font-bold text-card-orange">{criticalCourses}</p>
+                <p className="text-sm text-card-orange font-medium">Critical Courses</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-2xl p-6 border-2 border-red-200 dark:border-red-800">
+          <div className="bg-card-red-gradient rounded-2xl p-6 border-2 border-card-red">
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-red-icon rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-red-700 dark:text-red-300">
-                  {consecutiveAbsenceCourses}
-                </p>
-                <p className="text-sm text-red-600 dark:text-red-400 font-medium">
-                  Consecutive Absences
-                </p>
+                <p className="text-2xl font-bold text-card-red">{consecutiveAbsenceCourses}</p>
+                <p className="text-sm text-card-red font-medium">Consecutive Absences</p>
               </div>
             </div>
           </div>

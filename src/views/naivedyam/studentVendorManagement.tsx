@@ -166,7 +166,7 @@ const StudentVendorManagement = () => {
           <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+                <Activity className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-blue font-medium mb-1">Total Associations</p>
@@ -178,7 +178,7 @@ const StudentVendorManagement = () => {
           <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <UserCheck className="w-6 h-6 text-white" />
+                <UserCheck className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-green font-medium mb-1">Active</p>
@@ -192,7 +192,7 @@ const StudentVendorManagement = () => {
           <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+                <Users className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-purple font-medium mb-1">Unique Students</p>
@@ -204,7 +204,7 @@ const StudentVendorManagement = () => {
           <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <Store className="w-6 h-6 text-white" />
+                <Store className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-orange font-medium mb-1">Active Vendors</p>
@@ -242,6 +242,37 @@ const StudentVendorManagement = () => {
             </div>
           </div>
         </div>
+
+        {/* Student Vendor Table */}
+        <DynamicTable
+          tableHeading="Student Vendors"
+          data={getTableData(studentVendors)}
+          customRender={customRender}
+          isLoading={isFetching}
+          headerActions={
+            <Button onClick={() => setCreateDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Student Vendor
+            </Button>
+          }
+        />
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <div />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Student Vendor</DialogTitle>
+            </DialogHeader>
+            <DynamicForm
+              schema={schema}
+              onSubmit={handleCreate}
+              onCancel={() => setCreateDialogOpen(false)}
+              submitButtonText={createMutation.isPending ? 'Creating...' : 'Create'}
+              disabled={createMutation.isPending}
+            />
+          </DialogContent>
+        </Dialog>
 
         {/* Association Analytics */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -324,7 +355,7 @@ const StudentVendorManagement = () => {
           <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-info rounded-xl flex items-center justify-center">
-                <Store className="w-6 h-6 text-white" />
+                <Store className="w-6 h-6 text-background" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground">Vendor Distribution</h3>
@@ -357,7 +388,7 @@ const StudentVendorManagement = () => {
         <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-warning rounded-xl flex items-center justify-center">
-              <CalendarDays className="w-6 h-6 text-white" />
+              <CalendarDays className="w-6 h-6 text-background" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">Association Management Guide</h3>
@@ -406,37 +437,6 @@ const StudentVendorManagement = () => {
             </div>
           </div>
         </div>
-
-        {/* Student Vendor Table */}
-        <DynamicTable
-          tableHeading="Student Vendors"
-          data={getTableData(studentVendors)}
-          customRender={customRender}
-          isLoading={isFetching}
-          headerActions={
-            <Button onClick={() => setCreateDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Student Vendor
-            </Button>
-          }
-        />
-        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <div />
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Student Vendor</DialogTitle>
-            </DialogHeader>
-            <DynamicForm
-              schema={schema}
-              onSubmit={handleCreate}
-              onCancel={() => setCreateDialogOpen(false)}
-              submitButtonText={createMutation.isPending ? 'Creating...' : 'Create'}
-              disabled={createMutation.isPending}
-            />
-          </DialogContent>
-        </Dialog>
       </div>
     </HelmetWrapper>
   );

@@ -373,64 +373,50 @@ const CourseIndi = () => {
       <div className="space-y-8">
         {/* Course Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Course ID
-                </p>
-                <p className="text-lg font-bold text-blue-700 dark:text-blue-300 font-mono">
-                  {course_id}
-                </p>
+                <p className="text-sm text-card-blue font-medium mb-1">Course ID</p>
+                <p className="text-lg font-bold text-card-blue font-mono">{course_id}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Total Sessions
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {totalSessions}
-                </p>
+                <p className="text-sm text-card-green font-medium mb-1">Total Sessions</p>
+                <p className="text-2xl font-bold text-card-green">{totalSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
-                  Active Sessions
-                </p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                  {activeSessions}
-                </p>
+                <p className="text-sm text-card-purple font-medium mb-1">Active Sessions</p>
+                <p className="text-2xl font-bold text-card-purple">{activeSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
-                  Completion
-                </p>
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                <p className="text-sm text-card-orange font-medium mb-1">Completion</p>
+                <p className="text-2xl font-bold text-card-orange">
                   {totalSessions > 0
                     ? Math.round(((totalSessions - activeSessions) / totalSessions) * 100)
                     : 0}
@@ -687,16 +673,14 @@ const CourseIndi = () => {
 
                   {/* Enhanced Attendance Stats Grid */}
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border-2 border-blue-200 dark:border-blue-800">
+                    <div className="bg-card-blue-gradient rounded-xl p-4 border-2 border-card-blue">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                          <Users className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-blue-icon rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                            Total Students
-                          </p>
-                          <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                          <p className="text-xs text-card-blue font-medium">Total Students</p>
+                          <p className="text-xl font-bold text-card-blue">
                             {filterAttendance(attendances.registered_present || []).length +
                               filterAttendance(attendances.registered_absent || []).length}
                           </p>
@@ -704,16 +688,14 @@ const CourseIndi = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border-2 border-green-200 dark:border-green-800">
+                    <div className="bg-card-green-gradient rounded-xl p-4 border-2 border-card-green">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                          <CheckCircle2 className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-green-icon rounded-lg flex items-center justify-center">
+                          <CheckCircle2 className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-                            Valid
-                          </p>
-                          <p className="text-xl font-bold text-green-700 dark:text-green-300">
+                          <p className="text-xs text-card-green font-medium">Valid</p>
+                          <p className="text-xl font-bold text-card-green">
                             {
                               getValidated(
                                 filterAttendance(attendances.registered_present || []),
@@ -725,16 +707,14 @@ const CourseIndi = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
+                    <div className="bg-card-red-gradient rounded-xl p-4 border-2 border-card-red">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                          <XCircle className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-red-icon rounded-lg flex items-center justify-center">
+                          <XCircle className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-red-600 dark:text-red-400 font-medium">
-                            Invalid
-                          </p>
-                          <p className="text-xl font-bold text-red-700 dark:text-red-300">
+                          <p className="text-xs text-card-red font-medium">Invalid</p>
+                          <p className="text-xl font-bold text-card-red">
                             {
                               getValidated(
                                 filterAttendance(attendances.registered_present || []),
@@ -746,48 +726,42 @@ const CourseIndi = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border-2 border-purple-200 dark:border-purple-800">
+                    <div className="bg-card-purple-gradient rounded-xl p-4 border-2 border-card-purple">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                          <Target className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-purple-icon rounded-lg flex items-center justify-center">
+                          <Target className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
-                            Present
-                          </p>
-                          <p className="text-xl font-bold text-purple-700 dark:text-purple-300">
+                          <p className="text-xs text-card-purple font-medium">Present</p>
+                          <p className="text-xl font-bold text-card-purple">
                             {filterAttendance(attendances.registered_present || []).length}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-4 border-2 border-yellow-200 dark:border-yellow-800">
+                    <div className="bg-card-yellow-gradient rounded-xl p-4 border-2 border-card-yellow">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                          <Users className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-yellow-icon rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-                            Unregistered
-                          </p>
-                          <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
+                          <p className="text-xs text-card-yellow font-medium">Unregistered</p>
+                          <p className="text-xl font-bold text-card-yellow">
                             {filterAttendance(attendances.unregistered_present || []).length}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-800">
+                    <div className="bg-card-gray-gradient rounded-xl p-4 border-2 border-card-gray">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
-                          <Clock className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-gray-icon rounded-lg flex items-center justify-center">
+                          <Clock className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-                            Absent
-                          </p>
-                          <p className="text-xl font-bold text-gray-700 dark:text-gray-300">
+                          <p className="text-xs text-card-gray font-medium">Absent</p>
+                          <p className="text-xl font-bold text-card-gray">
                             {filterAttendance(attendances.registered_absent || []).length}
                           </p>
                         </div>

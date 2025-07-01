@@ -416,98 +416,101 @@ const Sessions = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <Activity className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Total Sessions
-                </p>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                  {totalSessions}
-                </p>
+                <p className="text-sm text-card-blue font-medium mb-1">Total Sessions</p>
+                <p className="text-2xl font-bold text-card-blue">{totalSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Ongoing
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {ongoingSessions}
-                </p>
+                <p className="text-sm text-card-green font-medium mb-1">Ongoing</p>
+                <p className="text-2xl font-bold text-card-green">{ongoingSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-2xl p-6 border-2 border-purple-200 dark:border-purple-800">
+          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
+                <XCircle className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
-                  Completed
-                </p>
-                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                  {completedSessions}
-                </p>
+                <p className="text-sm text-card-purple font-medium mb-1">Completed</p>
+                <p className="text-2xl font-bold text-card-purple">{completedSessions}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800">
+          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium mb-1">
-                  Instructors
-                </p>
-                <p className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-                  {uniqueInstructors}
-                </p>
+                <p className="text-sm text-card-orange font-medium mb-1">Instructors</p>
+                <p className="text-2xl font-bold text-card-orange">{uniqueInstructors}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-2xl p-6 border-2 border-indigo-200 dark:border-indigo-800">
+          <div className="bg-card-pink-gradient rounded-2xl p-6 border-2 border-card-pink">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center">
-                <MapPin className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-pink-icon rounded-xl flex items-center justify-center">
+                <MapPin className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-1">
-                  Rooms
-                </p>
-                <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
-                  {uniqueRooms}
-                </p>
+                <p className="text-sm text-card-pink font-medium mb-1">Rooms</p>
+                <p className="text-2xl font-bold text-card-pink">{uniqueRooms}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 rounded-2xl p-6 border-2 border-teal-200 dark:border-teal-800">
+          <div className="bg-card-teal-gradient rounded-2xl p-6 border-2 border-card-teal">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-teal-icon rounded-xl flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-teal-600 dark:text-teal-400 font-medium mb-1">Courses</p>
-                <p className="text-2xl font-bold text-teal-700 dark:text-teal-300">
-                  {uniqueCourses}
-                </p>
+                <p className="text-sm text-card-teal font-medium mb-1">Courses</p>
+                <p className="text-2xl font-bold text-card-teal">{uniqueCourses}</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Enhanced Sessions Table Container */}
+        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <BarChart3 className="w-7 h-7 text-primary" />
+              Session Archive
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Complete record of all academic sessions with comprehensive filtering and attendance
+              tracking
+            </p>
+          </div>
+
+          <div className="p-6">
+            <DynamicTable
+              tableHeading="Sessions"
+              data={getTableData(sessions)}
+              isLoading={isFetching}
+              customRender={customRender}
+              filterConfig={filterConfig}
+              filterMode="local"
+            />
           </div>
         </div>
 
@@ -569,31 +572,6 @@ const Sessions = () => {
             </div>
           </div>
         </div>
-
-        {/* Enhanced Sessions Table Container */}
-        <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
-          <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-              <BarChart3 className="w-7 h-7 text-primary" />
-              Session Archive
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Complete record of all academic sessions with comprehensive filtering and attendance
-              tracking
-            </p>
-          </div>
-
-          <div className="p-6">
-            <DynamicTable
-              tableHeading="Sessions"
-              data={getTableData(sessions)}
-              isLoading={isFetching}
-              customRender={customRender}
-              filterConfig={filterConfig}
-              filterMode="local"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Enhanced Attendance Side Panel */}
@@ -638,48 +616,44 @@ const Sessions = () => {
                 <div className="p-8 space-y-8">
                   {/* Enhanced Attendance Stats */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border-2 border-blue-200 dark:border-blue-800">
+                    <div className="bg-card-blue-gradient rounded-xl p-4 border-2 border-card-blue">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                          <CheckCircle2 className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-blue-icon rounded-lg flex items-center justify-center">
+                          <CheckCircle2 className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                            Registered Present
-                          </p>
-                          <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                          <p className="text-xs text-card-blue font-medium">Registered Present</p>
+                          <p className="text-xl font-bold text-card-blue">
                             {attendances.registered_present?.length || 0}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 border-2 border-red-200 dark:border-red-800">
+                    <div className="bg-card-red-gradient rounded-xl p-4 border-2 border-card-red">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                          <XCircle className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-red-icon rounded-lg flex items-center justify-center">
+                          <XCircle className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-red-600 dark:text-red-400 font-medium">
-                            Registered Absent
-                          </p>
-                          <p className="text-xl font-bold text-red-700 dark:text-red-300">
+                          <p className="text-xs text-card-red font-medium">Registered Absent</p>
+                          <p className="text-xl font-bold text-card-red">
                             {attendances.registered_absent?.length || 0}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-4 border-2 border-yellow-200 dark:border-yellow-800">
+                    <div className="bg-card-yellow-gradient rounded-xl p-4 border-2 border-card-yellow">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                          <Users className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 bg-card-yellow-icon rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-background" />
                         </div>
                         <div>
-                          <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                          <p className="text-xs text-card-yellow font-medium">
                             Unregistered Present
                           </p>
-                          <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300">
+                          <p className="text-xl font-bold text-card-yellow">
                             {attendances.unregistered_present?.length || 0}
                           </p>
                         </div>

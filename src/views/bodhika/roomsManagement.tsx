@@ -209,93 +209,38 @@ const RoomsManagement = () => {
       <div className="space-y-8">
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-6 border-2 border-blue-200 dark:border-blue-800">
+          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
-                  Total Rooms
-                </p>
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{totalRooms}</p>
+                <p className="text-sm text-card-blue font-medium mb-1">Total Rooms</p>
+                <p className="text-2xl font-bold text-card-blue">{totalRooms}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-6 border-2 border-green-200 dark:border-green-800">
+          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-1">
-                  Active Rooms
-                </p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                  {activeRooms}
-                </p>
+                <p className="text-sm text-card-green font-medium mb-1">Active Rooms</p>
+                <p className="text-2xl font-bold text-card-green">{activeRooms}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-2xl p-6 border-2 border-red-200 dark:border-red-800">
+          <div className="bg-card-red-gradient rounded-2xl p-6 border-2 border-card-red">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-card-red-icon rounded-xl flex items-center justify-center">
+                <XCircle className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
-                <p className="text-sm text-red-600 dark:text-red-400 font-medium mb-1">
-                  Deleted Rooms
-                </p>
-                <p className="text-2xl font-bold text-red-700 dark:text-red-300">{deletedRooms}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Management Tools */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
-                <p className="text-sm text-muted-foreground">Manage rooms efficiently</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Plus className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Add new rooms individually or in bulk</span>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Pencil className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Edit room details with inline actions</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
-                <FileSpreadsheet className="w-6 h-6 text-secondary-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Bulk Operations</h3>
-                <p className="text-sm text-muted-foreground">Import/export room data</p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Download className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Download CSV template for bulk import</span>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
-                <Upload className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Import multiple rooms from CSV file</span>
+                <p className="text-sm text-card-red font-medium mb-1">Deleted Rooms</p>
+                <p className="text-2xl font-bold text-card-red">{deletedRooms}</p>
               </div>
             </div>
           </div>
@@ -372,6 +317,53 @@ const RoomsManagement = () => {
                 </div>
               }
             />
+          </div>
+        </div>
+
+        {/* Management Tools */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Quick Actions</h3>
+                <p className="text-sm text-muted-foreground">Manage rooms efficiently</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Plus className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Add new rooms individually or in bulk</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Pencil className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Edit room details with inline actions</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl p-6 border-2 border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
+                <FileSpreadsheet className="w-6 h-6 text-secondary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Bulk Operations</h3>
+                <p className="text-sm text-muted-foreground">Import/export room data</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Download className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Download CSV template for bulk import</span>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background rounded-lg border border-border">
+                <Upload className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium">Import multiple rooms from CSV file</span>
+              </div>
+            </div>
           </div>
         </div>
 

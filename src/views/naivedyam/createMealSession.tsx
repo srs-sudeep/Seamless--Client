@@ -234,8 +234,8 @@ const CreateMealSession = () => {
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     activeSession
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                      ? 'bg-success/10 text-success'
+                      : 'bg-muted-foreground text-foreground'
                   }`}
                 >
                   {activeSession ? 'Active' : 'Inactive'}
@@ -245,13 +245,15 @@ const CreateMealSession = () => {
               {activeSession ? (
                 <div className="space-y-4">
                   <div
-                    className={`bg-gradient-to-r ${getCurrentMealType()?.color} rounded-xl p-4 text-white`}
+                    className={`bg-gradient-to-r ${getCurrentMealType()?.color} rounded-xl p-4 text-background`}
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{getCurrentMealType()?.icon}</span>
                       <div>
                         <h4 className="text-lg font-bold">{getCurrentMealType()?.label} Session</h4>
-                        <p className="text-white/90 text-sm">Vendor: {activeSession.vendor_id}</p>
+                        <p className="text-background/90 text-sm">
+                          Vendor: {activeSession.vendor_id}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -305,9 +307,9 @@ const CreateMealSession = () => {
                 <span className="text-sm text-muted-foreground">Status</span>
                 <div className="flex items-center gap-1">
                   {activeSession ? (
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-gray-400" />
+                    <AlertCircle className="w-4 h-4 text-muted-foreground" />
                   )}
                   <span className="text-sm font-medium">
                     {activeSession ? 'Running' : 'Stopped'}
@@ -374,13 +376,11 @@ const CreateMealSession = () => {
             <div className="bg-gradient-to-r from-muted/50 to-muted/30 rounded-xl p-6 border border-border">
               {cardInfo ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-success" />
                   </div>
-                  <h4 className="text-lg font-bold text-green-600 dark:text-green-400 mb-2">
-                    Processing Transaction...
-                  </h4>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 border">
+                  <h4 className="text-lg font-bold text-success mb-2">Processing Transaction...</h4>
+                  <div className="bg-background rounded-lg p-4 mb-4 border">
                     <p className="text-sm text-muted-foreground mb-1">Student Name</p>
                     <p className="font-semibold text-lg">{cardInfo.student_name}</p>
                     <p className="text-sm text-muted-foreground mb-1 mt-3">Student ID</p>

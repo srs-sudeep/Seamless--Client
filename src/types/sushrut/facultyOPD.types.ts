@@ -28,12 +28,11 @@ export interface FacultyOPD {
 
 export interface HospitalExpenseOPD {
   id?: string;
-  expense_type: string;
-  amount: number;
-  date: string;
-  description: string;
-  receipt_number?: string;
-  hospital_name?: string;
+  particular_name: string;
+  particular_enum: string;
+  claimed_amount: number;
+  recommended_amount: number;
+  is_custom_particular: string;
 }
 
 export interface FacultyOPDClaim {

@@ -189,43 +189,36 @@ const facultyOPDSchema: FieldType[] = [
 
 const expenseSchema: FieldType[] = [
   {
-    name: 'expense_type',
-    label: 'Expense Type',
+    name: 'particular_name',
+    label: 'Particular Name',
     type: 'text',
     required: true,
     columns: 1,
   },
   {
-    name: 'amount',
-    label: 'Amount',
+    name: 'particular_enum',
+    label: 'Particular Enum',
+    type: 'text',
+    required: true,
+    columns: 1,
+  },
+  {
+    name: 'claimed_amount',
+    label: 'Claimed Amount',
     type: 'number',
     required: true,
     columns: 1,
   },
   {
-    name: 'date',
-    label: 'Date',
-    type: 'date',
+    name: 'recommended_amount',
+    label: 'Recommended Amount',
+    type: 'number',
     required: true,
     columns: 1,
   },
   {
-    name: 'description',
-    label: 'Description',
-    type: 'textarea',
-    required: true,
-    columns: 1,
-  },
-  {
-    name: 'receipt_number',
-    label: 'Receipt Number',
-    type: 'text',
-    required: false,
-    columns: 1,
-  },
-  {
-    name: 'hospital_name',
-    label: 'Hospital Name',
+    name: 'is_custom_particular',
+    label: 'Is Custom Particular',
     type: 'text',
     required: false,
     columns: 1,
@@ -264,6 +257,24 @@ const CreateFacultyOPD = () => {
       return;
     }
 
+    // Convert number fields to numbers
+    const facultyOPDDataNumbered = {
+      ...facultyOPDData,
+      total_claim_submitted: Number(facultyOPDData.total_claim_submitted),
+      total_enclosures: Number(facultyOPDData.total_enclosures),
+      advance_taken:
+        facultyOPDData.advance_taken !== undefined && facultyOPDData.advance_taken !== ''
+          ? Number(facultyOPDData.advance_taken)
+          : undefined,
+      total_amount_recommended: Number(facultyOPDData.total_amount_recommended),
+    };
+
+    const expensesNumbered = expenses.map(({ recommended_amount, claimed_amount, ...rest }) => ({
+      ...rest,
+      recommended_amount: Number(recommended_amount),
+      claimed_amount: Number(claimed_amount),
+    }));
+
     const payload = {
       claimant: {
         claimant_name: claimantData.claimant_name,
@@ -283,14 +294,8 @@ const CreateFacultyOPD = () => {
         referring_ama: patientData.referring_ama,
         treated_hospital: patientData.treated_hospital,
       },
-      faculty_opd: {
-        total_claim_submitted: facultyOPDData.total_claim_submitted,
-        total_enclosures: facultyOPDData.total_enclosures,
-        advance_taken: facultyOPDData.advance_taken,
-        total_amount_recommended: facultyOPDData.total_amount_recommended,
-        declaration_date: facultyOPDData.declaration_date,
-      },
-      hospital_expenses: expenses.map(({ id, ...rest }) => rest),
+      faculty_opd: facultyOPDDataNumbered,
+      hospital_expenses: expensesNumbered,
     };
 
     await createMutation.mutateAsync(payload);

@@ -31,16 +31,12 @@ import {
 import {
   useStudentReimbursements,
   useDeleteStudentReimbursement,
-  useApproveReimbursement,
-  useRejectReimbursement,
 } from '@/hooks/sushrut/studentReimbursement.hook';
 import type { StudentReimbursement } from '@/types';
 
 const ReimbursementList = () => {
   const { data: reimbursements = [], isFetching } = useStudentReimbursements();
   const deleteMutation = useDeleteStudentReimbursement();
-  const approveMutation = useApproveReimbursement();
-  const rejectMutation = useRejectReimbursement();
 
   const [viewReimbursement, setViewReimbursement] = useState<StudentReimbursement | null>(null);
 
@@ -71,16 +67,6 @@ const ReimbursementList = () => {
     toast({ title: 'Reimbursement deleted successfully' });
   };
 
-  const handleApprove = async (id: string) => {
-    await approveMutation.mutateAsync(id);
-    toast({ title: 'Reimbursement approved successfully' });
-  };
-
-  const handleReject = async (id: string) => {
-    await rejectMutation.mutateAsync({ id });
-    toast({ title: 'Reimbursement rejected' });
-  };
-
   const customRender = {
     View: (_: any, row: Record<string, any>) => (
       <Button
@@ -92,40 +78,6 @@ const ReimbursementList = () => {
         }}
       >
         <Eye className="w-4 h-4" />
-      </Button>
-    ),
-    Approve: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="default"
-        onClick={e => {
-          e.stopPropagation();
-          handleApprove(row._row.id);
-        }}
-        disabled={approveMutation.isPending || row._row.status === 'approved'}
-      >
-        {approveMutation.isPending ? (
-          <Loader2 className="animate-spin w-4 h-4" />
-        ) : (
-          <CheckCircle className="w-4 h-4" />
-        )}
-      </Button>
-    ),
-    Reject: (_: any, row: Record<string, any>) => (
-      <Button
-        size="icon"
-        variant="destructive"
-        onClick={e => {
-          e.stopPropagation();
-          handleReject(row._row.id);
-        }}
-        disabled={rejectMutation.isPending || row._row.status === 'rejected'}
-      >
-        {rejectMutation.isPending ? (
-          <Loader2 className="animate-spin w-4 h-4" />
-        ) : (
-          <XCircle className="w-4 h-4" />
-        )}
       </Button>
     ),
     Delete: (_: any, row: Record<string, any>) => (

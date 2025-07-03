@@ -5,9 +5,6 @@ import {
   createFacultyIPDClaim,
   updateFacultyIPDClaim,
   deleteFacultyIPDClaim,
-  approveFacultyIPDClaim,
-  rejectFacultyIPDClaim,
-  submitForReview,
 } from '@/api/sushrut/facultyIPD.api';
 import type { FacultyIPDClaim, UpdateFacultyIPDPayload } from '@/types';
 
@@ -51,37 +48,6 @@ export function useDeleteFacultyIPDClaim() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteFacultyIPDClaim(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['faculty-ipd-claims'] });
-    },
-  });
-}
-
-export function useApproveFacultyIPDClaim() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => approveFacultyIPDClaim(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['faculty-ipd-claims'] });
-    },
-  });
-}
-
-export function useRejectFacultyIPDClaim() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
-      rejectFacultyIPDClaim(id, reason),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['faculty-ipd-claims'] });
-    },
-  });
-}
-
-export function useSubmitForReview() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => submitForReview(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['faculty-ipd-claims'] });
     },

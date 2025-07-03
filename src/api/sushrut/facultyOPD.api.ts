@@ -34,25 +34,3 @@ export async function updateFacultyOPDClaim(id: string, payload: UpdateFacultyOP
 export async function deleteFacultyOPDClaim(id: string) {
   await apiClient.delete(`${BASE}${id}/`);
 }
-
-export async function approveFacultyOPDClaim(id: string) {
-  const { data } = await apiClient.put<FacultyOPDClaim>(
-    `${BASE}${id}/approve/`,
-    {},
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}
-
-export async function rejectFacultyOPDClaim(id: string, reason?: string) {
-  const { data } = await apiClient.put<FacultyOPDClaim>(
-    `${BASE}${id}/reject/`,
-    { reason },
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}

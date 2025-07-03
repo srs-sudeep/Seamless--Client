@@ -72,11 +72,7 @@ import {
   Waves,
   LibraryBig,
   ClipboardPaste,
-  CircleDollarSign,
   Hospital,
-  HandHeart,
-  Info,
-  Plus,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -152,9 +148,5 @@ export const iconMap = {
   wave: Waves,
   books: LibraryBig,
   checkout: ClipboardPaste,
-  dollar: CircleDollarSign,
   hospital: Hospital,
-  insurance: HandHeart,
-  info: Info,
-  plus: Plus,
 };

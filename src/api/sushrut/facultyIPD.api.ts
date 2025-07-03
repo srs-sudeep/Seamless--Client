@@ -30,37 +30,3 @@ export async function updateFacultyIPDClaim(id: string, payload: UpdateFacultyIP
 export async function deleteFacultyIPDClaim(id: string) {
   await apiClient.delete(`${BASE}${id}/`);
 }
-
-// Additional endpoints for specific operations
-export async function approveFacultyIPDClaim(id: string) {
-  const { data } = await apiClient.put<FacultyIPDClaim>(
-    `${BASE}${id}/approve/`,
-    {},
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}
-
-export async function rejectFacultyIPDClaim(id: string, reason?: string) {
-  const { data } = await apiClient.put<FacultyIPDClaim>(
-    `${BASE}${id}/reject/`,
-    { reason },
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}
-
-export async function submitForReview(id: string) {
-  const { data } = await apiClient.put<FacultyIPDClaim>(
-    `${BASE}${id}/submit-review/`,
-    {},
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}

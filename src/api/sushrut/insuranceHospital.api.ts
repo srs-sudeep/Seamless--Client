@@ -1,7 +1,7 @@
 import { apiClient } from '@/core';
 import type { InsuranceHospital, CreateInsuranceHospitalPayload } from '@/types';
 
-const BASE = '/sushrut/api/v1/insaurance-hospitals/';
+const BASE = '/sushrut/api/v1/insurance-hospitals/';
 
 export async function getInsuranceHospitals(): Promise<InsuranceHospital[]> {
   const { data } = await apiClient.get<InsuranceHospital[]>(BASE);

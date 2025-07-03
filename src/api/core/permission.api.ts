@@ -3,7 +3,7 @@ import type { Permission } from '@/types';
 
 const BASE = `${CORE_URL}/rbac/permissions`;
 
-export async function getPermissions(skip = 0, limit = 100): Promise<Permission[]> {
+export async function getPermissions(skip = 0, limit = 300): Promise<Permission[]> {
   const { data } = await apiClient.get<Permission[]>(`${BASE}?skip=${skip}&limit=${limit}`);
   return data;
 }

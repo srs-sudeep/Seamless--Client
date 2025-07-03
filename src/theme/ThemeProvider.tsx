@@ -1,51 +1,100 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { themes } from './themes';
+import { ColorTheme, ThemeMode, ThemeConfig } from './types';
 
-type Theme = 'dark' | 'light';
+const DEFAULT_COLOR: ColorTheme = 'blue';
+const DEFAULT_MODE: ThemeMode = 'light';
+const DARK_DEFAULT_COLOR: ColorTheme = 'pink';
+const LIGHT_DEFAULT_COLOR: ColorTheme = 'blue';
+const STORAGE_KEY = 'app-theme-config';
 
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
-};
-
-type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-};
+interface ThemeProviderState {
+  mode: ThemeMode;
+  color: ColorTheme;
+  setMode: (mode: ThemeMode) => void;
+  setColor: (color: ColorTheme) => void;
+  setTheme: (config: Partial<ThemeConfig>) => void;
+}
 
 const initialState: ThemeProviderState = {
-  theme: 'light',
-  setTheme: () => null,
+  mode: DEFAULT_MODE,
+  color: DEFAULT_COLOR,
+  setMode: () => {},
+  setColor: () => {},
+  setTheme: () => {},
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-export function ThemeProvider({
-  children,
-  defaultTheme = 'light',
-  storageKey = 'vite-ui-theme',
-  ...props
-}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+function applyThemeVars(color: ColorTheme, mode: ThemeMode) {
+  const themeVars = themes[color][mode];
+  const root = window.document.documentElement;
+  // Remove all color classes
+  Object.keys(themes).forEach(c => {
+    root.classList.remove(`theme-${c}`);
+  });
+  root.classList.remove('light', 'dark');
+  root.classList.add(mode);
+  root.classList.add(`theme-${color}`);
+  // Set CSS variables
+  Object.entries(themeVars).forEach(([key, value]) => {
+    root.style.setProperty(`--${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}`, value);
+  });
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [mode, setModeState] = useState<ThemeMode>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        return (JSON.parse(stored).mode as ThemeMode) || DEFAULT_MODE;
+      } catch (e) {
+        console.error('Failed to parse theme mode from localStorage:', e);
+      }
+    }
+    return DEFAULT_MODE;
+  });
+  const [color, setColorState] = useState<ColorTheme>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        return (JSON.parse(stored).color as ColorTheme) || DEFAULT_COLOR;
+      } catch (e) {
+        console.error('Failed to parse theme color from localStorage:', e);
+      }
+    }
+    return DEFAULT_COLOR;
+  });
+
+  // When mode changes, auto-switch color if needed
+  React.useEffect(() => {
+    if (mode === 'dark' && color === LIGHT_DEFAULT_COLOR) {
+      setColorState(DARK_DEFAULT_COLOR);
+    } else if (mode === 'light' && color === DARK_DEFAULT_COLOR) {
+      setColorState(LIGHT_DEFAULT_COLOR);
+    }
+  }, [mode]);
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-  }, [theme]);
+    applyThemeVars(color, mode);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, color }));
+  }, [mode, color]);
 
-  const value = {
-    theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
-    },
+  const setTheme = (config: Partial<ThemeConfig>) => {
+    if (config.mode) setModeState(config.mode);
+    if (config.color) setColorState(config.color);
   };
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider
+      value={{
+        mode,
+        color,
+        setMode: setModeState,
+        setColor: setColorState,
+        setTheme,
+      }}
+    >
       {children}
     </ThemeProviderContext.Provider>
   );

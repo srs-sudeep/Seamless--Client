@@ -1,12 +1,12 @@
 import { AppLogo } from '@/components';
-import { ThemeSwitcher } from '@/theme';
+import { ThemePalettePicker } from '@/theme/ThemePalettePicker';
 import { Outlet } from 'react-router-dom';
 import { useTheme } from '@/theme';
 import { loginAssets } from '@/assets';
 
 const AuthLayout = () => {
-  const { theme } = useTheme();
-  const backgroundImage = theme === 'dark' ? loginAssets.loginImageDark : loginAssets.loginImage;
+  const { mode } = useTheme();
+  const backgroundImage = mode === 'dark' ? loginAssets.loginImageDark : loginAssets.loginImage;
 
   return (
     <div className="relative flex items-center justify-center w-screen h-screen min-h-screen overflow-hidden">
@@ -23,9 +23,9 @@ const AuthLayout = () => {
       <div className="absolute top-4 left-4 z-10">
         <AppLogo horizontal />
       </div>
-      {/* Top right theme switcher */}
+      {/* Top right theme picker */}
       <div className="absolute top-4 right-4 z-10">
-        <ThemeSwitcher />
+        <ThemePalettePicker />
       </div>
       {/* Main container for all auth pages - removed outer box */}
       <Outlet />

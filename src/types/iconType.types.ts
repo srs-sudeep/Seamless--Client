@@ -72,6 +72,10 @@ import {
   LibraryBig,
   ClipboardPaste,
   Hospital,
+  CircleDollarSign,
+  HandHeart,
+  Info,
+  Plus,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -147,4 +151,8 @@ export const iconMap = {
   books: LibraryBig,
   checkout: ClipboardPaste,
   hospital: Hospital,
+  dollar: CircleDollarSign,
+  insurance: HandHeart,
+  info: Info,
+  plus: Plus,
 };

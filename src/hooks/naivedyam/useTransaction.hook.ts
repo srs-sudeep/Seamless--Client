@@ -1,20 +1,33 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  createTransaction,
-  getTransactionsByMealSession,
   createMealSession,
-  stopMealSession,
-  getVendorMealSessions,
+  createTransaction,
   getActiveMealSessions,
+  getTransactionFilters,
+  getTransactionsByMealSession,
+  getVendorMealSessions,
+  stopMealSession,
 } from '@/api';
-import type { Transaction, MealSessions } from '@/types';
+import type {
+  GetTransactionsParams,
+  MealSessions,
+  TransactionFiltersResponse,
+  TransactionListResponse,
+} from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-// Transactions for a meal session
-export function useTransactionsByMealSession(meal_session_id: string, enabled = true) {
-  return useQuery<Transaction[]>({
-    queryKey: ['transactions', meal_session_id],
-    queryFn: () => getTransactionsByMealSession(meal_session_id),
-    enabled: !!meal_session_id && enabled,
+// Transactions for a meal session with filters
+export function useTransactionsByMealSession(params: GetTransactionsParams, enabled = true) {
+  return useQuery<TransactionListResponse>({
+    queryKey: ['transactions', params.meal_session_id, params],
+    queryFn: () => getTransactionsByMealSession(params),
+    enabled: !!params.meal_session_id && enabled,
+  });
+}
+
+export function useTransactionFilters() {
+  return useQuery<TransactionFiltersResponse>({
+    queryKey: ['transaction-filters'],
+    queryFn: getTransactionFilters,
   });
 }
 

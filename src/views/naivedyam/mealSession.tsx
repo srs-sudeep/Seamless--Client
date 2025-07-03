@@ -1,26 +1,64 @@
-import { useState, useMemo } from 'react';
-import { Button, DynamicTable, HelmetWrapper, Sheet, SheetContent, SheetTitle } from '@/components';
-import { useMealSessions, useMealSessionTransactions } from '@/hooks';
 import {
-  FileText,
-  Loader2,
-  Clock,
-  Users,
-  Store,
+  Button,
+  DynamicTable,
+  HelmetWrapper,
+  Input,
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from '@/components';
+import { useMealSessions, useTransactionFilters, useTransactionsByMealSession } from '@/hooks';
+import type { FilterConfig, GetTransactionsParams } from '@/types';
+import {
   Activity,
   BarChart3,
-  Target,
-  TrendingUp,
-  CreditCard,
   CalendarClock,
   ChefHat,
+  Clock,
+  CreditCard,
+  FileText,
+  Filter,
+  Loader2,
+  Store,
+  Target,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 const MealSessionPage = () => {
   const { data: sessions = [], isLoading } = useMealSessions();
   const [sidePanel, setSidePanel] = useState<{ open: boolean; sessionId?: string }>({
     open: false,
   });
+
+  // Transaction filters state
+  const [transactionFilters, setTransactionFilters] = useState<{
+    meal_type?: string[];
+    start_date?: string;
+    end_date?: string;
+  }>({});
+  const [transactionSearch, setTransactionSearch] = useState('');
+  const [transactionPage, setTransactionPage] = useState(1);
+  const [transactionLimit, setTransactionLimit] = useState(10);
+
+  // Filter options
+  const { data: filterOptions } = useTransactionFilters();
+
+  // Filter state for filterConfig
+  const [selectedMealTypes, setSelectedMealTypes] = useState<string[]>([]);
+  const [selectedDateRange, setSelectedDateRange] = useState<{ from?: Date; to?: Date }>({});
+
+  // Reset filters when side panel closes
+  useEffect(() => {
+    if (!sidePanel.open) {
+      setTransactionFilters({});
+      setTransactionSearch('');
+      setTransactionPage(1);
+      setSelectedMealTypes([]);
+      setSelectedDateRange({});
+    }
+  }, [sidePanel.open]);
 
   // Calculate statistics
   const statistics = useMemo(() => {
@@ -42,11 +80,9 @@ const MealSessionPage = () => {
       return now < start;
     }).length;
 
-    // Get unique vendors and transaction types
     const uniqueVendors = new Set(sessions.map(s => s.vendor_id)).size;
     const uniqueTransactionTypes = new Set(sessions.map(s => s.transaction_type)).size;
 
-    // Get transaction type breakdown
     const transactionTypeBreakdown: Record<string, number> = {};
     sessions.forEach(session => {
       const type = session.transaction_type || 'Unknown';
@@ -63,6 +99,66 @@ const MealSessionPage = () => {
       transactionTypeBreakdown,
     };
   }, [sessions]);
+
+  // Transaction query parameters
+  const transactionParams: GetTransactionsParams = useMemo(
+    () => ({
+      meal_session_id: sidePanel.sessionId || '',
+      ...transactionFilters,
+      search: transactionSearch,
+      limit: transactionLimit,
+      offset: (transactionPage - 1) * transactionLimit,
+    }),
+    [sidePanel.sessionId, transactionFilters, transactionSearch, transactionPage, transactionLimit]
+  );
+
+  // Side panel data with filters
+  const { data: transactionData, isLoading: isLoadingTx } = useTransactionsByMealSession(
+    transactionParams,
+    !!sidePanel.sessionId
+  );
+
+  const transactions = Array.isArray(transactionData) ? transactionData : [];
+  const totalTransactionCount = Array.isArray(transactionData) ? transactionData.length : 0;
+
+  // Filter configuration for transaction table
+  const transactionFilterConfig: FilterConfig[] = useMemo(
+    () => [
+      {
+        column: 'Meal Type',
+        type: 'multi-select',
+        options: filterOptions?.meal_types?.map(mt => mt.label) || [],
+        value: selectedMealTypes,
+        onChange: (val: string[]) => {
+          setSelectedMealTypes(val);
+          const mealTypes = val
+            .map(label => filterOptions?.meal_types?.find(mt => mt.label === label)?.value)
+            .filter((value): value is string => typeof value === 'string');
+          setTransactionFilters(f => ({
+            ...f,
+            meal_type: mealTypes.length ? mealTypes : undefined,
+          }));
+          setTransactionPage(1);
+        },
+      },
+      {
+        column: 'Date Range',
+        type: 'date-range',
+        value: selectedDateRange,
+        onChange: (val: { from?: Date; to?: Date }) => {
+          setSelectedDateRange(val);
+          const formatDate = (date: Date) => date.toISOString().split('T')[0];
+          setTransactionFilters(f => ({
+            ...f,
+            start_date: val.from ? formatDate(val.from) : undefined,
+            end_date: val.to ? formatDate(val.to) : undefined,
+          }));
+          setTransactionPage(1);
+        },
+      },
+    ],
+    [filterOptions, selectedMealTypes, selectedDateRange]
+  );
 
   const getTableData = (sessions: any[]) =>
     sessions.map(session => ({
@@ -105,11 +201,6 @@ const MealSessionPage = () => {
       );
     },
   };
-
-  // Side panel data
-  const { data: transactions = [], isLoading: isLoadingTx } = useMealSessionTransactions(
-    sidePanel.sessionId || ''
-  );
 
   const getTransactionTableData = (txs: any[]) =>
     txs.map(tx => ({
@@ -321,7 +412,7 @@ const MealSessionPage = () => {
         </div>
       </div>
 
-      {/* Enhanced Side Panel for Transactions */}
+      {/* Enhanced Side Panel for Transactions with Filters */}
       <Sheet
         open={sidePanel.open}
         onOpenChange={open => {
@@ -335,7 +426,7 @@ const MealSessionPage = () => {
             p-0 
             fixed right-0 top-1/2 -translate-y-1/2 
             min-h-fit max-h-[100vh] 
-            sm:w-[90vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] 
+            w-[95vw] max-w-[1400px]
             bg-gradient-to-br from-background to-muted/30
             border-l-2 border-border 
             shadow-2xl 
@@ -343,11 +434,11 @@ const MealSessionPage = () => {
             flex flex-col 
             rounded-l-2xl
           "
-          style={{ width: '90vw', maxWidth: '800px' }}
+          style={{ maxWidth: '1200vw', width: '70%' }}
         >
           <div className="flex-1 overflow-y-auto">
             {/* Enhanced Header */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 border-b-2 border-border">
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 border-b-2 border-border">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
                   <CreditCard className="w-8 h-8 text-primary-foreground" />
@@ -364,64 +455,207 @@ const MealSessionPage = () => {
               </div>
             </div>
 
-            {/* Transaction Statistics */}
-            <div className="p-6 border-b border-border bg-gradient-to-r from-muted/10 to-background">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-card-blue-gradient rounded-xl p-4 border border-card-blue">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-card-blue-icon rounded-lg flex items-center justify-center">
-                      <CreditCard className="w-5 h-5 text-background" />
+            {/* Main Content Area with Filter Sidebar */}
+            <div className="flex h-full">
+              {/* Filter Sidebar */}
+              <div className="w-80 bg-muted/20 border-r border-border p-6 overflow-y-auto">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <Filter className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">Filters</h3>
+                    <p className="text-sm text-muted-foreground">Filter transactions</p>
+                  </div>
+                </div>
+
+                {/* Search */}
+                <div className="mb-6">
+                  <label className="text-sm font-medium text-foreground mb-2 block">Search</label>
+                  <Input
+                    type="text"
+                    placeholder="Search transactions..."
+                    value={transactionSearch}
+                    onChange={e => setTransactionSearch(e.target.value)}
+                    className="w-full bg-background text-foreground"
+                  />
+                </div>
+
+                {/* Filter Controls */}
+                <div className="space-y-6">
+                  {transactionFilterConfig.map(filter => (
+                    <div key={filter.column}>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        {filter.column}
+                      </label>
+                      <div className="bg-background rounded-lg border border-border p-3">
+                        {filter.type === 'multi-select' && (
+                          <div className="space-y-2">
+                            {filter.options?.map(option => (
+                              <label
+                                key={option}
+                                className="flex items-center space-x-2 cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedMealTypes.includes(option)}
+                                  onChange={e => {
+                                    const newSelected = e.target.checked
+                                      ? [...selectedMealTypes, option]
+                                      : selectedMealTypes.filter(t => t !== option);
+                                    filter.onChange?.(newSelected);
+                                  }}
+                                  className="rounded border-border text-primary focus:ring-primary"
+                                />
+                                <span className="text-sm text-foreground capitalize">{option}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                        {filter.type === 'date-range' && (
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-xs text-muted-foreground">From</label>
+                              <input
+                                type="date"
+                                value={
+                                  selectedDateRange.from
+                                    ? selectedDateRange.from.toISOString().split('T')[0]
+                                    : ''
+                                }
+                                onChange={e => {
+                                  const newRange = {
+                                    ...selectedDateRange,
+                                    from: e.target.value ? new Date(e.target.value) : undefined,
+                                  };
+                                  filter.onChange?.(newRange);
+                                }}
+                                className="w-full px-2 py-1 border border-border rounded bg-background text-foreground text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs text-muted-foreground">To</label>
+                              <input
+                                type="date"
+                                value={
+                                  selectedDateRange.to
+                                    ? selectedDateRange.to.toISOString().split('T')[0]
+                                    : ''
+                                }
+                                onChange={e => {
+                                  const newRange = {
+                                    ...selectedDateRange,
+                                    to: e.target.value ? new Date(e.target.value) : undefined,
+                                  };
+                                  filter.onChange?.(newRange);
+                                }}
+                                className="w-full px-2 py-1 border border-border rounded bg-background text-foreground text-sm"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-card-blue font-medium">Total Transactions</p>
-                      <p className="text-xl font-bold text-card-blue">{transactions.length}</p>
+                  ))}
+                </div>
+
+                {/* Clear Filters */}
+                {(selectedMealTypes.length > 0 ||
+                  selectedDateRange.from ||
+                  selectedDateRange.to ||
+                  transactionSearch) && (
+                  <button
+                    onClick={() => {
+                      setSelectedMealTypes([]);
+                      setSelectedDateRange({});
+                      setTransactionSearch('');
+                      setTransactionFilters({});
+                      setTransactionPage(1);
+                    }}
+                    className="w-full mt-6 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors"
+                  >
+                    Clear All Filters
+                  </button>
+                )}
+              </div>
+
+              {/* Transaction Content */}
+              <div className="flex-1 flex flex-col">
+                {/* Transaction Statistics */}
+                <div className="p-6 border-b border-border bg-gradient-to-r from-muted/10 to-background">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                          <CreditCard className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            Total Transactions
+                          </p>
+                          <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                            {totalTransactionCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                          <Users className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                            Unique Students
+                          </p>
+                          <p className="text-xl font-bold text-green-700 dark:text-green-300">
+                            {new Set(transactions.map(t => t.student_id)).size}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                          <Store className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                            Unique Vendors
+                          </p>
+                          <p className="text-xl font-bold text-purple-700 dark:text-purple-300">
+                            {new Set(transactions.map(t => t.vendor_id)).size}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-card-green-gradient rounded-xl p-4 border border-card-green">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-card-green-icon rounded-lg flex items-center justify-center">
-                      <Users className="w-5 h-5 text-background" />
+                {/* Transaction Table */}
+                <div className="flex-1 p-6">
+                  {isLoadingTx ? (
+                    <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
+                      <Loader2 className="animate-spin h-8 w-8 text-primary" />
                     </div>
-                    <div>
-                      <p className="text-xs text-card-green font-medium">Unique Students</p>
-                      <p className="text-xl font-bold text-card-green">
-                        {new Set(transactions.map(t => t.student_id)).size}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card-purple-gradient rounded-xl p-4 border border-card-purple">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-card-purple-icon rounded-lg flex items-center justify-center">
-                      <Store className="w-5 h-5 text-background" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-card-purple font-medium">Unique Vendors</p>
-                      <p className="text-xl font-bold text-card-purple">
-                        {new Set(transactions.map(t => t.vendor_id)).size}
-                      </p>
-                    </div>
-                  </div>
+                  ) : (
+                    <DynamicTable
+                      tableHeading="Filtered Transactions"
+                      data={getTransactionTableData(transactions)}
+                      isLoading={isLoadingTx}
+                      filterMode="ui"
+                      page={transactionPage}
+                      onPageChange={setTransactionPage}
+                      limit={transactionLimit}
+                      onLimitChange={setTransactionLimit}
+                      total={totalTransactionCount}
+                      disableSearch={true}
+                    />
+                  )}
                 </div>
               </div>
-            </div>
-
-            {/* Transaction Table */}
-            <div className="p-8 space-y-6">
-              {isLoadingTx ? (
-                <div className="flex justify-center items-center h-40 bg-muted/20 rounded-xl">
-                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
-                </div>
-              ) : (
-                <DynamicTable
-                  tableHeading="Transactions"
-                  data={getTransactionTableData(transactions)}
-                  isLoading={isLoadingTx}
-                />
-              )}
             </div>
           </div>
         </SheetContent>

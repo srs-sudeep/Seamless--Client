@@ -8,6 +8,7 @@ import {
   FileText,
   Calendar,
   Building,
+  Building2,
   BarChart,
   GraduationCap,
   BookOpen,
@@ -71,6 +72,11 @@ import {
   Waves,
   LibraryBig,
   ClipboardPaste,
+  CircleDollarSign,
+  Hospital,
+  HandHeart,
+  Info,
+  Plus,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -84,6 +90,7 @@ export const iconMap = {
   fileText: FileText,
   calendar: Calendar,
   building: Building,
+  building2: Building2,
   barChart: BarChart,
   graduationCap: GraduationCap,
   bookOpen: BookOpen,
@@ -145,4 +152,9 @@ export const iconMap = {
   wave: Waves,
   books: LibraryBig,
   checkout: ClipboardPaste,
+  dollar: CircleDollarSign,
+  hospital: Hospital,
+  insurance: HandHeart,
+  info: Info,
+  plus: Plus,
 };

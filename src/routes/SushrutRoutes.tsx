@@ -30,11 +30,11 @@ const SushrutRoutes: RouteObject = {
       element: <CreateReimbursment />,
     },
     {
-      path: 'faculty-ipd',
+      path: 'create-faculty-ipd',
       element: <CreateFacultyIPD />,
     },
     {
-      path: 'faculty-opd',
+      path: 'create-faculty-opd',
       element: <CreateFacultyOPD />,
     },
   ],

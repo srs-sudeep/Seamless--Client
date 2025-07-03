@@ -36,7 +36,7 @@ import { useSidebar } from '@/core';
 import { useIsMobile } from '@/hooks';
 import { getDashboardLink } from '@/lib/redirect';
 import { useAuthStore } from '@/store';
-import { ThemeSwitcher } from '@/theme';
+import { ThemePalettePicker } from '@/theme/ThemePalettePicker';
 import { notifications, UserRole } from '@/types';
 import { Bell, ChevronDown, HelpCircle, LogOut, Menu, User, Info } from 'lucide-react';
 import React, { useState } from 'react';
@@ -117,10 +117,10 @@ export const Navbar = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <ThemeSwitcher />
+                <ThemePalettePicker />
               </div>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Toggle Theme</TooltipContent>
+            <TooltipContent side="bottom">Theme</TooltipContent>
           </Tooltip>
           <Drawer direction="bottom">
             <DrawerTrigger asChild>
@@ -271,10 +271,10 @@ export const Navbar = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
-                  <ThemeSwitcher />
+                  <ThemePalettePicker />
                 </div>
               </TooltipTrigger>
-              <TooltipContent>Toggle Theme</TooltipContent>
+              <TooltipContent>Theme</TooltipContent>
             </Tooltip>
             <Popover>
               <Tooltip>

@@ -5,6 +5,8 @@ import BodhikaRoutes from './BodhikaRoutes';
 import NaivedyamRoutes from './NaivedyamRoutes';
 import ChatravasRoutes from './ChatravasRoutes';
 import GyankoshRoutes from './GyankoshRoutes';
+import SushrutRoutes from './SushrutRoutes';
+
 // import other module routes as needed
 
 export const allRouteObjects = [
@@ -15,5 +17,6 @@ export const allRouteObjects = [
   NaivedyamRoutes,
   ChatravasRoutes,
   GyankoshRoutes,
+  SushrutRoutes, // Assuming SushrutRoutes is defined elsewhere
   // ...otherModuleRoutes,
 ];

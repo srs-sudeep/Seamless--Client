@@ -5,7 +5,7 @@ import type {
   UpdateStudentReimbursementPayload,
 } from '@/types';
 
-const BASE = '/sushrut/api/v1/student-rembuirsment/';
+const BASE = '/sushrut/api/v1/student-reimbursment/';
 
 export async function getStudentReimbursements(): Promise<StudentReimbursement[]> {
   const { data } = await apiClient.get<StudentReimbursement[]>(BASE);

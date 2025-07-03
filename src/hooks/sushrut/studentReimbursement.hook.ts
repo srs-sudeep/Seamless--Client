@@ -5,8 +5,6 @@ import {
   createStudentReimbursement,
   updateStudentReimbursement,
   deleteStudentReimbursement,
-  approveReimbursement,
-  rejectReimbursement,
 } from '@/api/sushrut/studentReimbursement.api';
 import type {
   StudentReimbursement,
@@ -54,27 +52,6 @@ export function useDeleteStudentReimbursement() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteStudentReimbursement(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['student-reimbursements'] });
-    },
-  });
-}
-
-export function useApproveReimbursement() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => approveReimbursement(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['student-reimbursements'] });
-    },
-  });
-}
-
-export function useRejectReimbursement() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
-      rejectReimbursement(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['student-reimbursements'] });
     },

@@ -1,29 +1,29 @@
 import {
   Button,
-  toast,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DynamicForm,
   HelmetWrapper,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  DynamicForm,
+  toast,
 } from '@/components';
 import {
   useCreateMenu,
-  useMenus,
-  useUpdateMenu,
   useCreateTag,
+  useMenus,
   useTags,
+  useUpdateMenu,
   useUpdateTag,
   useVendors,
 } from '@/hooks';
-import { ChefHat, Plus, User, Edit2, Loader2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
 import { FieldType } from '@/types';
+import { ChefHat, Edit2, Loader2, Plus, User } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 const WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -277,22 +277,27 @@ const MenuPage = () => {
       <td
         key={`${mealType}-${category}-${day}`}
         className={`
-          relative border border-border p-2 min-w-[120px] min-h-[60px]
-          cursor-pointer transition-all duration-200
-          ${isEmpty ? 'bg-muted hover:bg-accent/50' : 'bg-background hover:bg-muted'}
+          relative border border-border p-3 min-w-[120px] min-h-[70px]
+          cursor-pointer transition-all duration-300 ease-in-out
+          ${
+            isEmpty
+              ? 'bg-gradient-to-br from-muted/30 to-muted/10 hover:bg-primary/10'
+              : 'bg-gradient-to-br from-background to-muted/30 hover:from-accent/20 hover:to-accent/10 hover:border-primary/20'
+          }
+          hover:shadow-lg rounded-lg
         `}
         onClick={() => handleCellClick({ mealType, category, day, items, menu })}
       >
         {isEmpty ? (
-          <div className="flex items-center justify-center h-full min-h-[60px] text-muted-foreground">
-            <Plus className="w-4 h-4" />
+          <div className="flex items-center justify-center h-full min-h-[70px] text-muted-foreground hover:text-primary transition-colors duration-200">
+            <Plus className="w-5 h-5" />
           </div>
         ) : (
-          <div className="text-xs space-y-1 overflow-hidden py-1">
+          <div className="text-xs space-y-2 overflow-auto py-2">
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="bg-primary/10 text-primary px-2 py-1 rounded text-xs font-medium break-words"
+                className="bg-accent dark:bg-foreground/85 border-2 border-primary text-primary px-3 py-2 rounded-lg text-xs font-medium break-words transition-all duration-200 shadow-sm"
               >
                 {item.name}
               </div>
@@ -303,19 +308,51 @@ const MenuPage = () => {
     );
   };
 
-  // Get meal type color
+  // Get meal type color using dashboard card style gradients
   const getMealTypeColor = (mealType: string) => {
     switch (mealType.toLowerCase()) {
       case 'breakfast':
-        return 'bg-card-orange border-card-orange';
+        return 'bg-card-orange-gradient border-2 border-card-orange text-card-orange';
       case 'lunch':
-        return 'bg-card-green border-card-green';
+        return 'bg-card-green-gradient border-2 border-card-green text-card-green';
       case 'dinner':
-        return 'bg-card-blue border-card-blue';
+        return 'bg-card-blue-gradient border-2 border-card-blue text-card-blue';
       case 'snacks':
-        return 'bg-card-purple border-card-purple';
+        return 'bg-card-purple-gradient border-2 border-card-purple text-card-purple';
       default:
-        return 'bg-primary border-primary';
+        return 'bg-gradient-to-br from-primary/10 to-primary/20 border-2 border-primary/30';
+    }
+  };
+
+  // Get meal type text color
+  const getMealTypeTextColor = (mealType: string) => {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 'text-card-orange';
+      case 'lunch':
+        return 'text-card-green';
+      case 'dinner':
+        return 'text-card-blue';
+      case 'snacks':
+        return 'text-card-purple';
+      default:
+        return 'text-primary';
+    }
+  };
+
+  // Get meal type icon background
+  const getMealTypeIconBg = (mealType: string) => {
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        return 'bg-card-orange';
+      case 'lunch':
+        return 'bg-card-green';
+      case 'dinner':
+        return 'bg-card-blue';
+      case 'snacks':
+        return 'bg-card-purple';
+      default:
+        return 'bg-primary';
     }
   };
 
@@ -344,16 +381,22 @@ const MenuPage = () => {
         <div className="flex justify-start mb-8">
           <div className="flex items-center gap-3">
             <Select value={selectedVendor} onValueChange={setSelectedVendor}>
-              <SelectTrigger className="w-full sm:min-w-[200px] lg:min-w-[220px] flex justify-between items-center h-10 sm:h-11 text-sm bg-background border-muted text-foreground hover:bg-muted">
+              <SelectTrigger className="w-full sm:min-w-[200px] lg:min-w-[220px] flex justify-between items-center h-10 sm:h-11 text-sm bg-card border-border text-card-foreground hover:bg-accent hover:text-accent-foreground">
                 <span className="flex items-center gap-2">
                   <User className="w-4 h-4" />
                   <span className="truncate">{selectedVendorName || 'Select Vendor'}</span>
                 </span>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Vendors</SelectItem>
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="all" className="text-card-foreground hover:bg-accent">
+                  All Vendors
+                </SelectItem>
                 {vendors.map(v => (
-                  <SelectItem key={v.ldapid} value={v.ldapid}>
+                  <SelectItem
+                    key={v.ldapid}
+                    value={v.ldapid}
+                    className="text-card-foreground hover:bg-accent"
+                  >
                     {v.ldapid}
                   </SelectItem>
                 ))}
@@ -369,7 +412,7 @@ const MenuPage = () => {
                 setModalInitial({
                   vendor_id: selectedVendor,
                   meal_type: '',
-                  tag_id: '', // Set empty string instead of undefined
+                  tag_id: '',
                   day_of_week: [],
                   food_items_text: '',
                   menu_id: undefined,
@@ -377,7 +420,6 @@ const MenuPage = () => {
                 setModalMode('create');
                 setOpenCellKey('add-new');
               }}
-              className="bg-primary hover:bg-primary/90 text-background h-10 sm:h-11"
             >
               <Plus className="mr-2 h-4 w-4" />
               Add Menu
@@ -390,7 +432,7 @@ const MenuPage = () => {
                 setTagModalInitial({ name: '' });
                 setTagModalOpen(true);
               }}
-              className="h-10 sm:h-11 border-muted text-foreground hover:bg-muted"
+              className="bg-card-green text-background border-2 border-card-green h-10 sm:h-11"
             >
               <Plus className="mr-2 h-4 w-4" />
               Add Category
@@ -400,11 +442,11 @@ const MenuPage = () => {
 
         {/* Menu Tables by Meal Type */}
         {tableData.length === 0 ? (
-          <div className="text-center py-16 bg-background rounded-xl shadow-lg">
-            <ChefHat className="w-20 h-20 text-muted-foreground mx-auto mb-6" />
-            <div className="text-muted-foreground text-xl font-semibold">
-              No menu data available
+          <div className="text-center py-16 bg-gradient-to-br from-background to-muted/30 rounded-2xl shadow-lg border-2 border-border">
+            <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <ChefHat className="w-10 h-10 text-primary" />
             </div>
+            <div className="text-card-foreground text-xl font-semibold">No menu data available</div>
             <div className="text-muted-foreground text-base mt-3">
               Select a vendor and start creating menus
             </div>
@@ -416,37 +458,43 @@ const MenuPage = () => {
                 {/* Vertical Meal Type Flag */}
                 <div className="relative mr-4">
                   <div
-                    className={`absolute left-0 top-0 h-full w-16 ${getMealTypeColor(mealGroup.mealType)} rounded-l-xl shadow-lg`}
+                    className={`absolute left-0 top-0 h-full w-20 ${getMealTypeColor(mealGroup.mealType)} rounded-l-2xl shadow-xl`}
                   >
                     <div className="h-full flex items-center justify-center">
                       <div className="transform -rotate-90 whitespace-nowrap">
-                        <h2 className="text-2xl font-bold text-background tracking-wider uppercase">
+                        <h2
+                          className={`text-2xl font-bold ${getMealTypeTextColor(mealGroup.mealType)} tracking-wider uppercase`}
+                        >
                           {mealGroup.mealType}
                         </h2>
                       </div>
                     </div>
                   </div>
-                  {/* Flag triangle */}
+                  {/* Enhanced Flag triangle with gradient */}
                   <div
-                    className={`absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 border-l-[20px] ${getMealTypeColor(mealGroup.mealType).split(' ')[0].replace('bg-', 'border-l-')} border-t-[15px] border-t-transparent border-b-[15px] border-b-transparent`}
+                    className={`absolute right-0 top-1/2 transform translate-x-full -translate-y-1/2 w-0 h-0 ${getMealTypeColor(mealGroup.mealType).includes('orange') ? 'border-l-orange-200 dark:border-l-orange-800' : getMealTypeColor(mealGroup.mealType).includes('green') ? 'border-l-green-200 dark:border-l-green-800' : getMealTypeColor(mealGroup.mealType).includes('blue') ? 'border-l-blue-200 dark:border-l-blue-800' : 'border-l-purple-200 dark:border-l-purple-800'} border-l-[25px] border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent`}
                   ></div>
                 </div>
 
                 {/* Menu Table */}
-                <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-xl bg-background ml-12">
+                <div className="flex-1 overflow-x-auto shadow-2xl rounded-r-2xl bg-gradient-to-br from-background to-muted/30 border-2 border-border ml-16">
                   <table className="min-w-full relative">
                     <thead>
-                      <tr className="bg-primary text-background">
-                        <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border border-border bg-primary">
+                      <tr className="bg-gradient-to-r from-primary/10 to-primary/5 border-b-2 border-border">
+                        <th className="sticky left-0 z-10 px-6 py-5 text-left font-bold border-r-2 border-border bg-gradient-to-r from-primary/10 to-primary/5">
                           <div className="flex items-center space-x-3">
-                            <ChefHat className="w-5 h-5" />
-                            <span className="text-lg">Category</span>
+                            <div
+                              className={`w-10 h-10 ${getMealTypeIconBg(mealGroup.mealType)} rounded-xl flex items-center justify-center`}
+                            >
+                              <ChefHat className="w-5 h-5 text-white" />
+                            </div>
+                            <span className="text-lg font-bold text-foreground">Category</span>
                           </div>
                         </th>
                         {WEEKDAYS.map(day => (
                           <th
                             key={day}
-                            className="px-4 py-5 text-center font-bold border border-border min-w-[180px] capitalize"
+                            className="px-4 py-5 text-center font-bold border border-border min-w-[180px] capitalize text-foreground"
                           >
                             <div className="text-sm leading-tight">{day}</div>
                           </th>
@@ -459,12 +507,16 @@ const MenuPage = () => {
                           key={categoryRow.category}
                           className={`
                             border-b border-border
-                            ${categoryIndex % 2 === 0 ? 'bg-background' : 'bg-muted/30'}
+                            ${
+                              categoryIndex % 2 === 0
+                                ? 'bg-gradient-to-r from-background to-muted/20'
+                                : 'bg-gradient-to-r from-muted/20 to-background'
+                            }
                           `}
                         >
                           {/* Category Cell */}
                           <td
-                            className="sticky left-0 z-10 bg-muted border-r-2 border-border px-6 py-6 font-bold text-foreground cursor-pointer hover:bg-accent transition-colors"
+                            className="sticky left-0 z-10 bg-gradient-to-br from-secondary/80 to-secondary border-r-2 border-border px-6 py-6 font-bold text-secondary-foreground cursor-pointer hover:from-accent hover:to-accent/80 hover:text-accent-foreground transition-all duration-200 group rounded-l-lg"
                             onClick={() => {
                               const tagObj = tags.find(t => t.name === categoryRow.category);
                               setTagModalMode('edit');
@@ -473,9 +525,9 @@ const MenuPage = () => {
                             }}
                           >
                             <div className="text-center">
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-center gap-2">
                                 <span className="text-lg font-bold">{categoryRow.category}</span>
-                                <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                               </div>
                             </div>
                           </td>

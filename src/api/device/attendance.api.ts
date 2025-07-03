@@ -1,7 +1,7 @@
 import { apiClient, DEVICE_URL } from '@/core';
 import type { Attendance, Bulk } from '@/types';
 
-const BASE = `${DEVICE_URL}attendance/`;
+const BASE = `${DEVICE_URL}/attendance/`;
 
 export async function getAttendances(): Promise<Attendance[]> {
   const { data } = await apiClient.get<Attendance[]>(`${BASE}`);

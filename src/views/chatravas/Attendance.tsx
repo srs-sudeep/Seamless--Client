@@ -1,29 +1,29 @@
-import { useState, useMemo } from 'react';
 import {
-  HelmetWrapper,
-  DynamicTable,
   Button,
+  DynamicTable,
+  HelmetWrapper,
+  Input,
   Sheet,
   SheetContent,
   SheetTitle,
-  Input,
 } from '@/components';
 import { useAttendance } from '@/hooks';
+import { FilterConfig } from '@/types';
 import {
-  format,
+  addMonths,
   eachDayOfInterval,
-  startOfYear,
+  endOfMonth,
   endOfYear,
+  format,
+  isAfter,
   isBefore,
   isSameDay,
-  startOfMonth,
-  endOfMonth,
-  addMonths,
-  subMonths,
-  isAfter,
   parseISO,
+  startOfMonth,
+  startOfYear,
+  subMonths,
 } from 'date-fns';
-import { FilterConfig } from '@/types';
+import { useMemo, useState } from 'react';
 
 function getDateArray(start: string, end: string) {
   if (!start || !end) return [];
@@ -280,7 +280,7 @@ const Attendance = () => {
         onOpenChange={open => !open && setSidePanel({ open: false, studentId: null })}
       >
         <SheetTitle style={{ display: 'none' }} />
-        <SheetContent side="right" className="max-w-2xl w-full">
+        <SheetContent side="right" className="w-full md:w-[60%]" style={{ maxWidth: '1200px' }}>
           <div className="p-6 space-y-6">
             {/* Header */}
             <div className="border-b pb-4">

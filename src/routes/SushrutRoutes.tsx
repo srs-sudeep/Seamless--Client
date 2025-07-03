@@ -21,7 +21,7 @@ const SushrutRoutes: RouteObject = {
   element: <MainLayout />,
   children: [
     {
-      path: 'empanelled-hospital',
+      path: 'create-empanelled-hospital',
       element: <CreateEmpanelledHospital />,
     },
     {

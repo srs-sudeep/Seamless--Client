@@ -17,27 +17,27 @@ const CreateReimbursment = lazy(() => import('@/views/sushrut/CreateReimbursemen
 // const = lazy(() => import('@/views/sushrut/'));
 // const = lazy(() => import('@/views/sushrut/'));
 
-const BodhikaRoutes: RouteObject = {
+const SushrutRoutes: RouteObject = {
   path: '/sushrut',
   element: <MainLayout />,
   children: [
     {
-      path: '/empanelled-hospital',
+      path: 'empanelled-hospital',
       element: <CreateEmpanelledHospital />,
     },
     {
-      path: '/student-reimbursment',
+      path: 'create-student-reimbursment',
       element: <CreateReimbursment />,
     },
     {
-      path: '/faculty-ipd',
+      path: 'faculty-ipd',
       element: <CreateFacultyIPD />,
     },
     {
-      path: '/faculty-opd',
+      path: 'faculty-opd',
       element: <CreateFacultyOPD />,
     },
   ],
 };
 
-export default BodhikaRoutes;
+export default SushrutRoutes;

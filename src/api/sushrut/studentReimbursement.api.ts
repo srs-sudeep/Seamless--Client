@@ -5,7 +5,7 @@ import type {
   UpdateStudentReimbursementPayload,
 } from '@/types';
 
-const BASE = '/sushrut/api/v1/student-rembuirsment/';
+const BASE = '/sushrut/api/v1/student-reimbursment/';
 
 export async function getStudentReimbursements(): Promise<StudentReimbursement[]> {
   const { data } = await apiClient.get<StudentReimbursement[]>(BASE);
@@ -36,27 +36,4 @@ export async function updateStudentReimbursement(
 
 export async function deleteStudentReimbursement(id: string) {
   await apiClient.delete(`${BASE}${id}/`);
-}
-
-// Additional endpoints for specific operations
-export async function approveReimbursement(id: string) {
-  const { data } = await apiClient.put<StudentReimbursement>(
-    `${BASE}${id}/approve/`,
-    {},
-    {
-      silentError: false,
-    }
-  );
-  return data;
-}
-
-export async function rejectReimbursement(id: string, reason?: string) {
-  const { data } = await apiClient.put<StudentReimbursement>(
-    `${BASE}${id}/reject/`,
-    { reason },
-    {
-      silentError: false,
-    }
-  );
-  return data;
 }

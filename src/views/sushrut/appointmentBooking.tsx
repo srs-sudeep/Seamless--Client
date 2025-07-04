@@ -72,7 +72,7 @@ const AppointmentBooking = () => {
       columns: 1,
       options: doctors.map(doctor => ({
         value: doctor.ldapid,
-        label: `Dr. ${doctor.guest_user?.name} (${doctor.department})`,
+        label: `${doctor?.name} (${doctor.department})`,
       })),
       placeholder: 'Choose a doctor',
       section: 'Doctor Selection',

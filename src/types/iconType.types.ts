@@ -78,6 +78,9 @@ import {
   Info,
   Plus,
   Clock,
+  ShieldUser,
+  SquareChartGantt,
+  Ambulance,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -159,4 +162,7 @@ export const iconMap = {
   info: Info,
   plus: Plus,
   clock: Clock,
+  doctor: ShieldUser,
+  slots: SquareChartGantt,
+  ambulance: Ambulance,
 };

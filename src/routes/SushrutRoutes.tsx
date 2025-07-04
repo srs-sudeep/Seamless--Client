@@ -18,6 +18,9 @@ const EmpanelledHospitalList = lazy(() => import('@/views/sushrut/EmpanelledHosp
 const CreateAdditionalInfo = lazy(() => import('@/views/sushrut/CreateAdditionalInfo'));
 const AdditionalInfoList = lazy(() => import('@/views/sushrut/AdditionalInfoList'));
 const CurrentSlots = lazy(() => import('@/views/sushrut/CurrentSlots'));
+const CreateDoctor = lazy(() => import('@/views/sushrut/createDoctor'));
+const DoctorsManagement = lazy(() => import('@/views/sushrut/doctorsManagement'));
+const AppointmentBooking = lazy(() => import('@/views/sushrut/appointmentBooking'));
 
 const SushrutRoutes: RouteObject = {
   path: '/sushrut',
@@ -82,6 +85,18 @@ const SushrutRoutes: RouteObject = {
     {
       path: 'slots',
       element: <CurrentSlots />,
+    },
+    {
+      path: 'create-doctor',
+      element: <CreateDoctor />,
+    },
+    {
+      path: 'doctor-slots',
+      element: <DoctorsManagement />,
+    },
+    {
+      path: 'appointment',
+      element: <AppointmentBooking />,
     },
   ],
 };

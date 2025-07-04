@@ -17,6 +17,7 @@ const ReimbursmentList = lazy(() => import('@/views/sushrut/ReimbursementList'))
 const EmpanelledHospitalList = lazy(() => import('@/views/sushrut/EmpanelledHospitalList'));
 const CreateAdditionalInfo = lazy(() => import('@/views/sushrut/CreateAdditionalInfo'));
 const AdditionalInfoList = lazy(() => import('@/views/sushrut/AdditionalInfoList'));
+const CurrentSlots = lazy(() => import('@/views/sushrut/CurrentSlots'));
 
 const SushrutRoutes: RouteObject = {
   path: '/sushrut',
@@ -77,6 +78,10 @@ const SushrutRoutes: RouteObject = {
     {
       path: 'list-additional-information',
       element: <AdditionalInfoList />,
+    },
+    {
+      path: 'current-slots',
+      element: <CurrentSlots />,
     },
   ],
 };

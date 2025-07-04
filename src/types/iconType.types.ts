@@ -77,6 +77,7 @@ import {
   HandHeart,
   Info,
   Plus,
+  Clock,
 } from 'lucide-react';
 export const iconMap = {
   dashboard: LayoutDashboard,
@@ -157,4 +158,5 @@ export const iconMap = {
   insurance: HandHeart,
   info: Info,
   plus: Plus,
+  clock: Clock,
 };

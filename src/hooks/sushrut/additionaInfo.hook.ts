@@ -4,7 +4,7 @@ import {
   getAdditionalInfoByID,
   CreateAdditionalInfo,
 } from '@/api/sushrut/additonalInfo.api';
-import type { AdditionalInfo } from '@/types/sushrut/additionalInfo';
+import type { AdditionalInfo } from '@/types/sushrut/additionalInfo.types';
 
 export function useAdditionalInfos() {
   return useQuery<AdditionalInfo[]>({

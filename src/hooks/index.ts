@@ -45,3 +45,4 @@ export * from './sushrut/facultyOPD.hook';
 export * from './sushrut/insurance.hook';
 export * from './sushrut/insuranceHospital.hook';
 export * from './sushrut/studentReimbursement.hook';
+export * from './sushrut/slots.hook';

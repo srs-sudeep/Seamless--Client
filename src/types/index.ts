@@ -50,4 +50,5 @@ export * from './sushrut/facultyOPD.types';
 export * from './sushrut/empanelledHospital.types';
 export * from './sushrut/insuranceHospital.types';
 export * from './sushrut/insurance.types';
-export * from './sushrut/additionalInfo';
+export * from './sushrut/additionalInfo.types';
+export * from './sushrut/slots.types';

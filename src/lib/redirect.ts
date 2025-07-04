@@ -8,10 +8,9 @@ export function getDashboardLink(role: UserRole | null | undefined) {
     academics: '/dashboard/academics',
     student: '/dashboard/student',
     librarian: '/dashboard/librarian',
-    medical: '/dashboard/medical',
+    medicalStaff: '/dashboard/medicalStaff',
     messAdmin: '/dashboard/messadmin',
     messVendor: '/dashboard/messvendor',
-    medicalStaff: '/dashboard/medicalStaff',
     doctor: '/dashboard/doctor',
   };
 

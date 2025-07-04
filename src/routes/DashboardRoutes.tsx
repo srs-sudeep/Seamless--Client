@@ -3,14 +3,15 @@ import MainLayout from '@/layouts/MainLayout';
 
 // Dashboard Pages
 const AdminDashboard = lazyLoad(() => import('@/views/dashboard/AdminDashboard'));
-import MessAdminDashboard from '@/views/dashboard/NaivedyamDashboard';
-import MessVendorDashboard from '@/views/dashboard/MessVendorDashboard';
 const LibrarianDashboard = lazyLoad(() => import('@/views/dashboard/LibrarianDashboard'));
-const MedicalDashboard = lazyLoad(() => import('@/views/dashboard/MedicalDashboard'));
+const MedicalStaffDashboard = lazyLoad(() => import('@/views/dashboard/MedicalStaffDashboard'));
 const StudentDashboard = lazyLoad(() => import('@/views/dashboard/StudentDashboard'));
 const AcademicsDashboard = lazyLoad(() => import('@/views/dashboard/AcademicsDashboard'));
 const FacultyDashboard = lazyLoad(() => import('@/views/dashboard/FacultyDashboard'));
 const Profile = lazyLoad(() => import('@/views/dashboard/Profile'));
+const DoctorDashboard = lazyLoad(() => import('@/views/dashboard/DoctorDashboard'));
+const MessVendorDashboard = lazyLoad(() => import('@/views/dashboard/MessVendorDashboard'));
+const MessAdminDashboard = lazyLoad(() => import('@/views/dashboard/NaivedyamDashboard'));
 
 const DashboardRoutes = {
   path: 'dashboard',
@@ -29,8 +30,8 @@ const DashboardRoutes = {
       element: <LibrarianDashboard />,
     },
     {
-      path: 'medical',
-      element: <MedicalDashboard />,
+      path: 'medicalStaff',
+      element: <MedicalStaffDashboard />,
     },
     {
       path: 'student',
@@ -51,6 +52,10 @@ const DashboardRoutes = {
     {
       path: 'messvendor',
       element: <MessVendorDashboard />,
+    },
+    {
+      path: 'doctor',
+      element: <DoctorDashboard />,
     },
   ],
 };

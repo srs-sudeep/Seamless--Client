@@ -1,7 +1,7 @@
 import { Users, Calendar, FileText, Heart } from 'lucide-react';
 import { StatCard } from '@/components';
 
-const MedicalDashboard = () => {
+const MedicalStaffDashboard = () => {
   return (
     <div className="mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">Medical Dashboard</h1>
@@ -86,4 +86,4 @@ const MedicalDashboard = () => {
   );
 };
 
-export default MedicalDashboard;
+export default MedicalStaffDashboard;

@@ -235,65 +235,6 @@ const CreateInsurance = () => {
       subHeading="Create a new insurance policy with comprehensive coverage details"
     >
       <div className="space-y-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-blue font-medium">Basic Info</p>
-                <p className="text-lg font-bold text-card-blue">
-                  {Object.keys(basicData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-green font-medium">Policy Details</p>
-                <p className="text-lg font-bold text-card-green">
-                  {Object.keys(detailsData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-purple font-medium">Duration</p>
-                <p className="text-lg font-bold text-card-purple">
-                  {calculatePolicyDuration() > 0 ? `${calculatePolicyDuration()} days` : 'Not Set'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-orange font-medium">Coverage</p>
-                <p className="text-lg font-bold text-card-orange">
-                  ₹{(detailsData.coverage_amount || 0).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {!isSubmitted ? (
           <>
             {/* Form Sections */}
@@ -313,6 +254,7 @@ const CreateInsurance = () => {
                     defaultValues={basicData}
                     onChange={setBasicData}
                     submitButtonText="Save Basic Info"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>
@@ -332,6 +274,7 @@ const CreateInsurance = () => {
                     defaultValues={detailsData}
                     onChange={setDetailsData}
                     submitButtonText="Save Policy Details"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>
@@ -342,7 +285,7 @@ const CreateInsurance = () => {
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-info rounded-lg flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-white" />
+                    <Calendar className="w-5 h-5 text-background" />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-foreground">Policy Dates & Status</h3>
@@ -359,6 +302,7 @@ const CreateInsurance = () => {
                   defaultValues={datesData}
                   onChange={setDatesData}
                   submitButtonText="Save Dates & Status"
+                  isSubmitButtonVisible={false}
                 />
               </CardContent>
             </Card>

@@ -33,6 +33,7 @@ type DynamicFormProps = {
   schema: FieldType[];
   onSubmit: (formData: Record<string, any>) => void;
   submitButtonText?: string;
+  isSubmitButtonVisible?: boolean;
   onCancel?: () => void;
   defaultValues?: Record<string, any>;
   disabled?: boolean;
@@ -58,6 +59,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   onCancel,
   defaultValues,
   submitButtonText = 'Submit',
+  isSubmitButtonVisible = true,
   disabled,
   onChange,
 }) => {
@@ -889,13 +891,17 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             Cancel
           </Button>
         )}
-        <Button
-          type="submit"
-          className="bg-primary transition-colors text-sm font-semibold px-4 py-2 rounded-md shadow-md"
-          disabled={disabled}
-        >
-          {submitButtonText || 'Submit'}
-        </Button>
+        {isSubmitButtonVisible ? (
+          <Button
+            type="submit"
+            className="bg-primary transition-colors text-sm font-semibold px-4 py-2 rounded-md shadow-md"
+            disabled={disabled}
+          >
+            {submitButtonText || 'Submit'}
+          </Button>
+        ) : (
+          ''
+        )}
       </div>
     </form>
   );

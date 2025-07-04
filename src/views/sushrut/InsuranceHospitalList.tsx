@@ -163,7 +163,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
+                <Building2 className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-blue font-medium mb-1">Total Hospitals</p>
@@ -175,7 +175,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-white" />
+                <CheckCircle className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-green font-medium mb-1">Active Hospitals</p>
@@ -187,7 +187,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+                <Shield className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-purple font-medium mb-1">Total Coverage</p>
@@ -201,7 +201,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+                <TrendingUp className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-orange font-medium mb-1">Avg Coverage</p>
@@ -218,7 +218,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-teal-gradient rounded-2xl p-6 border-2 border-card-teal">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-teal-icon rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
+                <DollarSign className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-teal font-medium mb-1">Medical Coverage</p>
@@ -232,7 +232,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-pink-gradient rounded-2xl p-6 border-2 border-card-pink">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-pink-icon rounded-xl flex items-center justify-center">
-                <CreditCard className="w-6 h-6 text-white" />
+                <CreditCard className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-pink font-medium mb-1">Buffer Amount</p>
@@ -246,7 +246,7 @@ const InsuranceHospitalList = () => {
           <div className="bg-card-yellow-gradient rounded-2xl p-6 border-2 border-card-yellow">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-yellow-icon rounded-xl flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
+                <User className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-yellow font-medium mb-1">Unique TPAs</p>

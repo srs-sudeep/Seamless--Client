@@ -307,63 +307,6 @@ const CreateReimbursement = () => {
       subHeading="Submit a new medical reimbursement claim with comprehensive details"
     >
       <div className="space-y-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-blue font-medium">Student Info</p>
-                <p className="text-lg font-bold text-card-blue">
-                  {Object.keys(studentData).length > 0 ? 'Completed' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <Stethoscope className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-green font-medium">Medical Info</p>
-                <p className="text-lg font-bold text-card-green">
-                  {Object.keys(patientData).length > 0 ? 'Completed' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <CreditCard className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-purple font-medium">Bank Details</p>
-                <p className="text-lg font-bold text-card-purple">
-                  {Object.keys(bankData).length > 0 ? 'Completed' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <Receipt className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-orange font-medium">Expenses</p>
-                <p className="text-lg font-bold text-card-orange">{expenses.length} items</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Form Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Student Information */}
@@ -381,6 +324,7 @@ const CreateReimbursement = () => {
                 defaultValues={studentData}
                 onChange={setStudentData}
                 submitButtonText="Save Student Info"
+                isSubmitButtonVisible={false}
               />
             </CardContent>
           </Card>
@@ -400,6 +344,7 @@ const CreateReimbursement = () => {
                 defaultValues={patientData}
                 onChange={setPatientData}
                 submitButtonText="Save Medical Info"
+                isSubmitButtonVisible={false}
               />
             </CardContent>
           </Card>
@@ -409,7 +354,7 @@ const CreateReimbursement = () => {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-info rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-white" />
+                  <CreditCard className="w-5 h-5 text-background" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">Bank Details</h3>
               </div>
@@ -419,6 +364,7 @@ const CreateReimbursement = () => {
                 defaultValues={bankData}
                 onChange={setBankData}
                 submitButtonText="Save Bank Details"
+                isSubmitButtonVisible={false}
               />
             </CardContent>
           </Card>
@@ -428,7 +374,7 @@ const CreateReimbursement = () => {
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-warning rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-white" />
+                  <FileText className="w-5 h-5 text-background" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">Reimbursement Details</h3>
               </div>
@@ -438,6 +384,7 @@ const CreateReimbursement = () => {
                 defaultValues={reimbursementData}
                 onChange={setReimbursementData}
                 submitButtonText="Save Reimbursement Info"
+                isSubmitButtonVisible={false}
               />
             </CardContent>
           </Card>
@@ -449,7 +396,7 @@ const CreateReimbursement = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-success rounded-lg flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-white" />
+                  <Receipt className="w-5 h-5 text-background" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">Expenses ({expenses.length})</h3>
               </div>
@@ -469,6 +416,7 @@ const CreateReimbursement = () => {
                     schema={expenseSchema}
                     onSubmit={handleAddExpense}
                     submitButtonText="Add Expense"
+                    isSubmitButtonVisible={true}
                   />
                 </DialogContent>
               </Dialog>

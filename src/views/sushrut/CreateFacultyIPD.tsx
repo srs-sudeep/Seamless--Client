@@ -98,13 +98,6 @@ const patientSchema: FieldType[] = [
     columns: 1,
   },
   {
-    name: 'illness_description',
-    label: 'Illness Description',
-    type: 'textarea',
-    required: true,
-    columns: 1,
-  },
-  {
     name: 'illness_period',
     label: 'Illness Period',
     type: 'text',
@@ -131,6 +124,13 @@ const patientSchema: FieldType[] = [
     type: 'text',
     required: true,
     columns: 1,
+  },
+  {
+    name: 'illness_description',
+    label: 'Illness Description',
+    type: 'textarea',
+    required: true,
+    columns: 2,
   },
 ];
 

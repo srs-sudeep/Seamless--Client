@@ -72,7 +72,6 @@ const FacultyIPDList = () => {
       'Patient Name': claim.patient?.patient_name || 'N/A',
       'Claimed Amount': `₹${claim.hospital_expenses?.total_claimed_amount?.toLocaleString() || 0}`,
       'Recommended Amount': `₹${claim.hospital_expenses?.total_recommended_amount?.toLocaleString() || 0}`,
-      Created: claim.created_at ? new Date(claim.created_at).toLocaleDateString() : 'N/A',
       View: '',
       _row: { ...claim },
     }));

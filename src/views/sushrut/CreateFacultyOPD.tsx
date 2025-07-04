@@ -119,14 +119,6 @@ const patientSchema: FieldType[] = [
     section: 'Patient Information',
   },
   {
-    name: 'illness_nature',
-    label: 'Nature of Illness',
-    type: 'textarea',
-    required: true,
-    columns: 1,
-    section: 'Patient Information',
-  },
-  {
     name: 'referring_ama',
     label: 'Referring AMA',
     type: 'text',
@@ -140,6 +132,14 @@ const patientSchema: FieldType[] = [
     type: 'text',
     required: true,
     columns: 1,
+    section: 'Patient Information',
+  },
+  {
+    name: 'illness_nature',
+    label: 'Nature of Illness',
+    type: 'textarea',
+    required: true,
+    columns: 2,
     section: 'Patient Information',
   },
 ];

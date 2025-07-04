@@ -123,12 +123,7 @@ const ReimbursementList = () => {
       'Student ID': reimbursement.student?.student_id || 'N/A',
       'Total Amount': `₹${reimbursement.reimbursement?.total_amount || 0}`,
       Diagnosis: reimbursement.patient?.illness_diagnosis || 'N/A',
-      Created: reimbursement.created_at
-        ? new Date(reimbursement.created_at).toLocaleDateString()
-        : 'N/A',
       View: '',
-      Approve: '',
-      Reject: '',
       Delete: '',
       _row: { ...reimbursement },
     }));

@@ -61,10 +61,6 @@ const EmpanelledHospitalList = () => {
         'Hospital Name': hospital.hospital_name || 'N/A',
         City: city,
         'Full Address': hospital.address || 'N/A',
-        Created: hospital.created_at ? new Date(hospital.created_at).toLocaleDateString() : 'N/A',
-        'Last Updated': hospital.updated_at
-          ? new Date(hospital.updated_at).toLocaleDateString()
-          : 'N/A',
         View: '',
         _row: { ...hospital },
       };

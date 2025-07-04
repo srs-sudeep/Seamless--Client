@@ -148,7 +148,6 @@ const InsuranceList = () => {
         ? new Date(insurance.policy_end_date).toLocaleDateString()
         : 'N/A',
       Status: insurance.policy_status || 'PENDING',
-      'Expiry Warning': insurance.policy_end_date || '',
       View: '',
       _row: { ...insurance },
     }));

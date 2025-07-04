@@ -3,7 +3,7 @@ import { type FieldType } from '@/types';
 import { CreateAdditionalInfoPayload } from '@/types';
 import { useState } from 'react';
 import { useCreateAdditionalInfo } from '@/hooks';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Info } from 'lucide-react';
 
 const InfoSchema: FieldType[] = [
   {
@@ -11,7 +11,7 @@ const InfoSchema: FieldType[] = [
     label: 'Info Title',
     type: 'text',
     required: true,
-    columns: 1,
+    columns: 2,
     placeholder: 'Enter Title',
     section: 'Additional Information',
   },
@@ -20,7 +20,7 @@ const InfoSchema: FieldType[] = [
     label: 'Info Description',
     type: 'textarea',
     required: true,
-    columns: 1,
+    columns: 2,
     placeholder: 'Enter complete info ',
     section: 'Additional Information',
   },
@@ -71,7 +71,9 @@ const CreateAdditionalInfo = () => {
         <Card className="border-2 border-border shadow-lg ">
           <CardContent className="p-8">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center"></div>
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <Info className="w-6 h-6 text-primary-foreground" />
+              </div>
               <div>
                 <h3 className="text-2xl font-bold text-foreground">Additional Details</h3>
                 <p className="text-muted-foreground">

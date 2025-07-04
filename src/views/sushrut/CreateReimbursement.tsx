@@ -73,7 +73,7 @@ const patientSchema: FieldType[] = [
     label: 'Illness Diagnosis',
     type: 'textarea',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Medical Information',
   },
   {
@@ -100,7 +100,7 @@ const bankSchema: FieldType[] = [
     label: 'Bank Account Number',
     type: 'text',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Bank Details',
   },
   {
@@ -108,7 +108,7 @@ const bankSchema: FieldType[] = [
     label: 'IFSC Code',
     type: 'text',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Bank Details',
   },
   {
@@ -116,7 +116,7 @@ const bankSchema: FieldType[] = [
     label: 'Bank Name',
     type: 'text',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Bank Details',
   },
   {
@@ -124,7 +124,7 @@ const bankSchema: FieldType[] = [
     label: 'Branch Name',
     type: 'text',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Bank Details',
   },
 ];
@@ -167,7 +167,7 @@ const reimbursementSchema: FieldType[] = [
     label: 'Total Amount',
     type: 'number',
     required: true,
-    columns: 1,
+    columns: 2,
     section: 'Reimbursement Details',
   },
   {
@@ -211,18 +211,18 @@ const expenseSchema: FieldType[] = [
     columns: 1,
   },
   {
-    name: 'description',
-    label: 'Description',
-    type: 'textarea',
-    required: true,
-    columns: 1,
-  },
-  {
     name: 'receipt_number',
     label: 'Receipt Number',
     type: 'text',
     required: false,
     columns: 1,
+  },
+  {
+    name: 'description',
+    label: 'Description',
+    type: 'textarea',
+    required: true,
+    columns: 2,
   },
 ];
 

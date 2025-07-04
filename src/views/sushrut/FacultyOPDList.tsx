@@ -89,7 +89,6 @@ const FacultyOPDList = () => {
       'Claimed Amount': `₹${claim.faculty_opd?.total_claim_submitted?.toLocaleString() || 0}`,
       'Recommended Amount': `₹${claim.faculty_opd?.total_amount_recommended?.toLocaleString() || 0}`,
       'Expenses Count': claim.hospital_expenses?.length || 0,
-      Created: claim.created_at ? new Date(claim.created_at).toLocaleDateString() : 'N/A',
       View: '',
       _row: { ...claim },
     }));

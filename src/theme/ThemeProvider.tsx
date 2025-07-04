@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { themes } from './themes';
 import { ColorTheme, ThemeMode, ThemeConfig } from './types';
 
 const DEFAULT_COLOR: ColorTheme = 'blue';
@@ -26,22 +25,6 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-function applyThemeVars(color: ColorTheme, mode: ThemeMode) {
-  const themeVars = themes[color][mode];
-  const root = window.document.documentElement;
-  // Remove all color classes
-  Object.keys(themes).forEach(c => {
-    root.classList.remove(`theme-${c}`);
-  });
-  root.classList.remove('light', 'dark');
-  root.classList.add(mode);
-  root.classList.add(`theme-${color}`);
-  // Set CSS variables
-  Object.entries(themeVars).forEach(([key, value]) => {
-    root.style.setProperty(`--${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}`, value);
-  });
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -66,17 +49,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return DEFAULT_COLOR;
   });
 
-  // When mode changes, auto-switch color if needed
-  React.useEffect(() => {
-    if (mode === 'dark' && color === LIGHT_DEFAULT_COLOR) {
-      setColorState(DARK_DEFAULT_COLOR);
-    } else if (mode === 'light' && color === DARK_DEFAULT_COLOR) {
-      setColorState(LIGHT_DEFAULT_COLOR);
-    }
-  }, [mode]);
-
+  // When mode or color changes, update <html> class
   useEffect(() => {
-    applyThemeVars(color, mode);
+    const root = window.document.documentElement;
+    // Remove all theme/color/mode classes
+    root.className = '';
+    root.classList.add(`theme-${color}`);
+    root.classList.add(mode);
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, color }));
   }, [mode, color]);
 

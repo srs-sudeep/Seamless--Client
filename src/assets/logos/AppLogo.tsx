@@ -36,8 +36,8 @@ const AppLogo = ({
   short = false,
   imgClassname,
 }: AppLogoProps) => {
-  const { theme } = useTheme();
-  const logoSrc = getLogoSrc(theme, horizontal, name, short);
+  const { mode } = useTheme();
+  const logoSrc = getLogoSrc(mode, horizontal, name, short);
   const navigate = useNavigate();
 
   return (

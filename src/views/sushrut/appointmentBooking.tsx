@@ -69,7 +69,7 @@ const AppointmentBooking = () => {
       label: 'Select Doctor',
       type: 'select',
       required: true,
-      columns: 1,
+      columns: 2,
       options: doctors.map(doctor => ({
         value: doctor.ldapid,
         label: `${doctor?.name} (${doctor.department})`,
@@ -305,7 +305,7 @@ const AppointmentBooking = () => {
                 onSubmit={handleDoctorSelection}
                 defaultValues={{ doctor_ldap: selectedDoctorLdap }}
                 onChange={handleDoctorSelection}
-                submitButtonText="Select Doctor"
+                isSubmitButtonVisible={false}
               />
             )}
 

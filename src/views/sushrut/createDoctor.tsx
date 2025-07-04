@@ -2,16 +2,7 @@ import { useState } from 'react';
 import { DynamicForm, HelmetWrapper, toast, Card, CardContent, Button } from '@/components';
 import { useCreateDoctor } from '@/hooks/sushrut/useDoctor.hook';
 import { type FieldType } from '@/types';
-import {
-  User,
-  Mail,
-  Building,
-  Shield,
-  CheckCircle,
-  AlertCircle,
-  UserPlus,
-  IdCard,
-} from 'lucide-react';
+import { User, Building, Shield, CheckCircle, AlertCircle, UserPlus } from 'lucide-react';
 
 const doctorBasicSchema: FieldType[] = [
   {
@@ -199,69 +190,6 @@ const CreateDoctor = () => {
       subHeading="Add a new doctor to the system with guest user credentials"
     >
       <div className="space-y-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-blue font-medium">Doctor Info</p>
-                <p className="text-lg font-bold text-card-blue">
-                  {Object.keys(doctorData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <UserPlus className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-green font-medium">Guest User</p>
-                <p className="text-lg font-bold text-card-green">
-                  {Object.keys(guestUserData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <Building className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-purple font-medium">Department</p>
-                <p className="text-lg font-bold text-card-purple">
-                  {doctorData.department || 'Not Set'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                {isSubmitted ? (
-                  <CheckCircle className="w-6 h-6 text-white" />
-                ) : (
-                  <AlertCircle className="w-6 h-6 text-white" />
-                )}
-              </div>
-              <div>
-                <p className="text-sm text-card-orange font-medium">Status</p>
-                <p className="text-lg font-bold text-card-orange">
-                  {isSubmitted ? 'Created' : isFormComplete() ? 'Ready' : 'Incomplete'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {!isSubmitted ? (
           <>
             {/* Form Sections */}
@@ -280,7 +208,7 @@ const CreateDoctor = () => {
                     onSubmit={setDoctorData}
                     defaultValues={doctorData}
                     onChange={setDoctorData}
-                    submitButtonText="Save Doctor Info"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>
@@ -299,7 +227,7 @@ const CreateDoctor = () => {
                     onSubmit={setGuestUserData}
                     defaultValues={guestUserData}
                     onChange={setGuestUserData}
-                    submitButtonText="Save Guest User Info"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>

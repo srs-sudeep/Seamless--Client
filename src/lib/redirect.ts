@@ -11,6 +11,8 @@ export function getDashboardLink(role: UserRole | null | undefined) {
     medical: '/dashboard/medical',
     messAdmin: '/dashboard/messadmin',
     messVendor: '/dashboard/messvendor',
+    medicalStaff: '/dashboard/medicalStaff',
+    doctor: '/dashboard/doctor',
   };
 
   return role && rolePaths[role] ? rolePaths[role] : '/';

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { DynamicForm, HelmetWrapper, toast, Card, CardContent, Button } from '@/components';
-import { useCreateEmpanelledHospital } from '@/hooks/sushrut/empanelledHospital.hook';
+import { DynamicForm, HelmetWrapper, toast, Card, CardContent } from '@/components';
+import { useCreateEmpanelledHospital } from '@/hooks';
 import { CreateEmpanelledHospitalPayload, type FieldType } from '@/types';
-import { Building2, MapPin, Plus, Hospital, CheckCircle, AlertCircle } from 'lucide-react';
+import { Building2, MapPin, Hospital, CheckCircle, AlertCircle } from 'lucide-react';
 
 const hospitalSchema: FieldType[] = [
   {
@@ -137,7 +137,7 @@ const CreateEmpanelledHospital = () => {
         </div>
 
         {/* Hospital Information Form */}
-        <Card className="border-2 border-border shadow-lg">
+        <Card className="border-2 border-border shadow-lg ">
           <CardContent className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">

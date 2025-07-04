@@ -117,9 +117,7 @@ const policyDatesSchema: FieldType[] = [
     columns: 1,
     options: [
       { value: 'ACTIVE', label: 'Active' },
-      { value: 'INACTIVE', label: 'Inactive' },
       { value: 'EXPIRED', label: 'Expired' },
-      { value: 'PENDING', label: 'Pending' },
       { value: 'CANCELLED', label: 'Cancelled' },
     ],
     section: 'Policy Dates',
@@ -156,7 +154,13 @@ const CreateInsurance = () => {
   };
 
   const handleSubmit = async () => {
+    // Merge all form data
     const allData = { ...basicData, ...detailsData, ...datesData };
+
+    // Ensure coverage_amount is a number
+    if (allData.coverage_amount !== undefined) {
+      allData.coverage_amount = Number(allData.coverage_amount);
+    }
 
     // Basic validation
     const requiredFields = [

@@ -129,7 +129,6 @@ const InsuranceHospitalList = () => {
         'Total Coverage': `₹${totalCoverage.toLocaleString()}`,
         'Ward Entitle': hospital.ward_entitle || 'N/A',
         Status: hospital.is_active,
-        Created: hospital.created_at ? new Date(hospital.created_at).toLocaleDateString() : 'N/A',
         View: '',
         _row: { ...hospital },
       };

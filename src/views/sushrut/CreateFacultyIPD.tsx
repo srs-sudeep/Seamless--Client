@@ -98,13 +98,6 @@ const patientSchema: FieldType[] = [
     columns: 1,
   },
   {
-    name: 'illness_description',
-    label: 'Illness Description',
-    type: 'textarea',
-    required: true,
-    columns: 1,
-  },
-  {
     name: 'illness_period',
     label: 'Illness Period',
     type: 'text',
@@ -131,6 +124,13 @@ const patientSchema: FieldType[] = [
     type: 'text',
     required: true,
     columns: 1,
+  },
+  {
+    name: 'illness_description',
+    label: 'Illness Description',
+    type: 'textarea',
+    required: true,
+    columns: 2,
   },
 ];
 
@@ -487,8 +487,27 @@ const CreateFacultyIPD = () => {
   }, [hospitalExpenses]);
 
   const handleExpensesChange = (data: Record<string, any>) => {
+    // Convert all number fields to numbers
+    const allSchemas = [
+      ...accommodationSchema,
+      ...consultationSchema,
+      ...surgerySchema,
+      ...diagnosticsSchema,
+      ...treatmentSchema,
+      ...othersSchema,
+    ];
+    const parsed: Record<string, any> = { ...data };
+    for (const field of allSchemas) {
+      if (
+        field.type === 'number' &&
+        parsed[field.name] !== undefined &&
+        parsed[field.name] !== ''
+      ) {
+        parsed[field.name] = Number(parsed[field.name]);
+      }
+    }
     const updatedData = {
-      ...data,
+      ...parsed,
       total_claimed_amount: expenseTotals.totalClaimed,
       total_recommended_amount: expenseTotals.totalRecommended,
     };

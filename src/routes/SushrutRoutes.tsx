@@ -15,13 +15,15 @@ const InsuranceList = lazy(() => import('@/views/sushrut/InsuranceList'));
 const CreateInsuranceHospital = lazy(() => import('@/views/sushrut/CreateInsuranceHospital'));
 const ReimbursmentList = lazy(() => import('@/views/sushrut/ReimbursementList'));
 const EmpanelledHospitalList = lazy(() => import('@/views/sushrut/EmpanelledHospitalList'));
+const CreateAdditionalInfo = lazy(() => import('@/views/sushrut/CreateAdditionalInfo'));
+const AdditionalInfoList = lazy(() => import('@/views/sushrut/AdditionalInfoList'));
 
 const SushrutRoutes: RouteObject = {
   path: '/sushrut',
   element: <MainLayout />,
   children: [
     {
-      path: 'empanelled-hospital',
+      path: 'create-empanelled-hospital',
       element: <CreateEmpanelledHospital />,
     },
     {
@@ -67,6 +69,14 @@ const SushrutRoutes: RouteObject = {
     {
       path: 'list-empanelled-hospital',
       element: <EmpanelledHospitalList />,
+    },
+    {
+      path: 'create-additional-info',
+      element: <CreateAdditionalInfo />,
+    },
+    {
+      path: 'list-additional-information',
+      element: <AdditionalInfoList />,
     },
   ],
 };

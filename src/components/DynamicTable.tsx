@@ -1,5 +1,14 @@
 import {
+  Button,
+  Checkbox,
+  DatePicker,
+  DateRangePicker,
+  DateTimePicker,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
@@ -12,21 +21,12 @@ import {
   TableRow,
   TableShimmer,
   Transitions,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  ScrollArea,
-  Checkbox,
-  Button,
-  DateRangePicker,
-  DatePicker,
-  DateTimePicker,
 } from '@/components';
 
-import { ChevronDownIcon, ArrowDownIcon, ArrowUpIcon, XIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import React, { useMemo, useState } from 'react';
 import { FilterConfig } from '@/types';
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, XIcon } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
 
 type DynamicTableProps = {
   data: Record<string, any>[];
@@ -924,7 +924,7 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
                 </svg>
               </button>
 
-              <div className="flex items-center gap-2 px-3 py-2 bg-foreground border-2 border-primary rounded-md">
+              <div className="flex items-center gap-2 px-3 py-2 bg-accent dark:bg-foreground border-2 border-primary rounded-md">
                 <span className="text-sm font-medium text-primary">
                   {filterMode === 'ui' ? page : localPage}
                 </span>
@@ -968,11 +968,11 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 pb-4">
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground">Showing</span>
-              <span className="px-2 py-1 rounded bg-foreground border-2 border-primary text-primary text-sm font-medium">
+              <span className="px-2 py-1 rounded bg-accent dark:bg-foreground text-primary border-2 border-primary text-sm font-medium">
                 {paginatedData.length}
               </span>
               <span className="text-sm text-muted-foreground">of</span>
-              <span className="px-2 py-1 rounded bg-foreground border-2 border-primary text-primary text-sm font-medium">
+              <span className="px-2 py-1 rounded bg-accent dark:bg-foreground text-primary border-2 text-sm border-primary font-medium">
                 {totalRecords}
               </span>
               <span className="text-sm text-muted-foreground">results</span>
@@ -980,7 +980,7 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
 
             <div className="flex flex-wrap items-center gap-3">
               {sortColumn && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-foreground border-2 border-primary text-primary">
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-accent dark:bg-foreground border-2 border-primary text-primary">
                   <svg
                     className="w-4 h-4"
                     viewBox="0 0 24 24"
@@ -1016,7 +1016,7 @@ export const DynamicTable: React.FC<DynamicTableProps> = ({
                     !(typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) &&
                     v !== ''
                 )) && (
-                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-foreground border-2 border-primary text-primary">
+                <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium bg-accent dark:bg-foreground border-2 border-primary text-primary">
                   <svg
                     className="w-4 h-4"
                     viewBox="0 0 24 24"

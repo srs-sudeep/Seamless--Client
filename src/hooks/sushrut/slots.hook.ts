@@ -6,7 +6,7 @@ import {
   deleteSlotByID,
   updateSlotByID,
 } from '@/api/sushrut/slots.api';
-import type { CreateSlotsPayload, Slots } from '@/types';
+import type { CreateSlotsPayload } from '@/types';
 
 export function useSushrutSlots() {
   return useQuery({

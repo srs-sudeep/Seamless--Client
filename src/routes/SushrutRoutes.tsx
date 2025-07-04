@@ -80,7 +80,7 @@ const SushrutRoutes: RouteObject = {
       element: <AdditionalInfoList />,
     },
     {
-      path: 'current-slots',
+      path: 'slots',
       element: <CurrentSlots />,
     },
   ],

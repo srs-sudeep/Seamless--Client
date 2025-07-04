@@ -157,35 +157,11 @@ const ReimbursementList = () => {
           <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <FileText className="w-6 h-6 text-white" />
+                <FileText className="w-6 h-6 text-background" />
               </div>
               <div className="text-right">
                 <p className="text-sm text-card-blue font-medium mb-1">Total Claims</p>
                 <p className="text-2xl font-bold text-card-blue">{statistics.totalClaims}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>

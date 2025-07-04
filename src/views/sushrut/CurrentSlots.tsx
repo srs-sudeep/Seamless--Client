@@ -35,7 +35,6 @@ import {
 } from '@/components';
 import { Slots, CreateSlotsPayload, type FieldType } from '@/types';
 import {
-  useSushrutSlot,
   useSushrutCreateSlots,
   useSushrutSlots,
   useSushrutUpdateSlot,
@@ -246,34 +245,7 @@ const CurrentSlots = () => {
 
   const customRender = {
     Day: (value: string) => {
-      const getDayColor = (day: string) => {
-        switch (day) {
-          case 'Monday':
-            return 'bg-blue-100 border-blue-300 text-blue-800';
-          case 'Tuesday':
-            return 'bg-green-100 border-green-300 text-green-800';
-          case 'Wednesday':
-            return 'bg-yellow-100 border-yellow-300 text-yellow-800';
-          case 'Thursday':
-            return 'bg-purple-100 border-purple-300 text-purple-800';
-          case 'Friday':
-            return 'bg-red-100 border-red-300 text-red-800';
-          case 'Saturday':
-            return 'bg-orange-100 border-orange-300 text-orange-800';
-          case 'Sunday':
-            return 'bg-pink-100 border-pink-300 text-pink-800';
-          default:
-            return 'bg-gray-100 border-gray-300 text-gray-800';
-        }
-      };
-
-      return (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold border ${getDayColor(value)}`}
-        >
-          {value}
-        </span>
-      );
+      return <span className={`px-3 py-1  text-l font-semibold  `}>{value}</span>;
     },
     Actions: (_: any, row: Record<string, any>) => (
       <div className="flex gap-2">
@@ -427,7 +399,6 @@ const CurrentSlots = () => {
                         onSubmit={handleCreateSubmit}
                         onCancel={() => setCreateDialogOpen(false)}
                         submitButtonText="Create Slot"
-                        isLoading={createMutation.isPending}
                       />
                     </DialogContent>
                   </Dialog>
@@ -457,7 +428,6 @@ const CurrentSlots = () => {
               }}
               submitButtonText="Update Slot"
               defaultValues={getEditDefaultValues(editSlot)}
-              isLoading={updateMutation.isPending}
             />
           )}
         </DialogContent>

@@ -219,65 +219,6 @@ const CreateInsuranceHospital = () => {
       subHeading="Add a new insurance hospital with comprehensive coverage details"
     >
       <div className="space-y-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-blue font-medium">Hospital Info</p>
-                <p className="text-lg font-bold text-card-blue">
-                  {Object.keys(basicData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-green-gradient rounded-2xl p-6 border-2 border-card-green">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-green-icon rounded-xl flex items-center justify-center">
-                <Phone className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-green font-medium">Contact Info</p>
-                <p className="text-lg font-bold text-card-green">
-                  {Object.keys(contactData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-purple-gradient rounded-2xl p-6 border-2 border-card-purple">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-purple-icon rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-purple font-medium">Insurance Info</p>
-                <p className="text-lg font-bold text-card-purple">
-                  {Object.keys(insuranceData).length > 0 ? 'Complete' : 'Pending'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-orange-gradient rounded-2xl p-6 border-2 border-card-orange">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-card-orange-icon rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-card-orange font-medium">Total Coverage</p>
-                <p className="text-lg font-bold text-card-orange">
-                  ₹{calculateTotalCoverage().toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {!isSubmitted ? (
           <>
             {/* Form Sections */}
@@ -297,6 +238,7 @@ const CreateInsuranceHospital = () => {
                     defaultValues={basicData}
                     onChange={setBasicData}
                     submitButtonText="Save Basic Info"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>
@@ -316,6 +258,7 @@ const CreateInsuranceHospital = () => {
                     defaultValues={contactData}
                     onChange={setContactData}
                     submitButtonText="Save Contact Info"
+                    isSubmitButtonVisible={false}
                   />
                 </CardContent>
               </Card>
@@ -343,6 +286,7 @@ const CreateInsuranceHospital = () => {
                   defaultValues={insuranceData}
                   onChange={setInsuranceData}
                   submitButtonText="Save Insurance Info"
+                  isSubmitButtonVisible={false}
                 />
               </CardContent>
             </Card>

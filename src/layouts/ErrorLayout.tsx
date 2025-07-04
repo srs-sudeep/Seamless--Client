@@ -1,5 +1,5 @@
 import { Button } from '@/components';
-import { ThemeSwitcher } from '@/theme';
+import { ThemePalettePicker } from '@/theme/ThemePalettePicker';
 import React from 'react';
 import { Link } from 'react-router-dom';
 interface ErrorLayoutProps {
@@ -10,7 +10,7 @@ const ErrorLayout = ({ children }: ErrorLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-blue-950">
       <header className="p-4 flex justify-end">
-        <ThemeSwitcher />
+        <ThemePalettePicker />
       </header>
       <main className="flex-1 flex flex-col items-center justify-center gap-4 p-4">
         {children}

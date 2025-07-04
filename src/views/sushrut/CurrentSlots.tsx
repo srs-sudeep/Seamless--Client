@@ -1,16 +1,5 @@
 import { useState } from 'react';
-import {
-  Loader2,
-  Eye,
-  Clock,
-  Calendar,
-  Settings,
-  BarChart3,
-  Plus,
-  Edit,
-  Trash2,
-  AlertTriangle,
-} from 'lucide-react';
+import { Loader2, BarChart3, Plus, Trash2, AlertTriangle, Pencil } from 'lucide-react';
 import {
   DynamicTable,
   Button,
@@ -20,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Card,
-  CardContent,
   DynamicForm,
   toast,
   AlertDialog,
@@ -82,22 +69,16 @@ const SlotsSchema: FieldType[] = [
 const CurrentSlots = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [viewSlot, setViewSlot] = useState<Slots | null>(null);
   const [editSlot, setEditSlot] = useState<Slots | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [slotToDelete, setSlotToDelete] = useState<Slots | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [infoData, setInfoData] = useState({});
 
   // Hooks
   const { data: slots = [], isFetching, refetch } = useSushrutSlots();
   const createMutation = useSushrutCreateSlots();
   const updateMutation = useSushrutUpdateSlot();
   const deleteMutation = useSushrutDeleteSlot();
-
-  const handleView = (slot: Slots) => {
-    setViewSlot(slot);
-  };
 
   const handleEdit = (slot: Slots) => {
     setEditSlot(slot);
@@ -110,8 +91,6 @@ const CurrentSlots = () => {
   };
 
   const handleCreateSubmit = async (slotsData: Record<string, any>) => {
-    console.log('Creating slot:', slotsData);
-
     if (!slotsData.day || !slotsData.start_time || !slotsData.end_time) {
       toast({
         title: 'Validation Error',
@@ -142,7 +121,6 @@ const CurrentSlots = () => {
       refetch();
 
       setTimeout(() => {
-        setInfoData({});
         setIsSubmitted(false);
       }, 2000);
     } catch (error: any) {
@@ -156,7 +134,6 @@ const CurrentSlots = () => {
   };
 
   const handleUpdateSubmit = async (slotsData: Record<string, any>) => {
-    console.log('Update called');
     if (!editSlot?.id) {
       toast({
         title: 'Error',
@@ -166,8 +143,6 @@ const CurrentSlots = () => {
       return;
     }
 
-    console.log('Updating slot:', editSlot.id, slotsData);
-
     if (!slotsData.day || !slotsData.start_time || !slotsData.end_time) {
       toast({
         title: 'Validation Error',
@@ -176,7 +151,7 @@ const CurrentSlots = () => {
       });
       return;
     }
-    console.log('rejected');
+
     // Validate time logic
     if (slotsData.start_time >= slotsData.end_time) {
       toast({
@@ -188,12 +163,10 @@ const CurrentSlots = () => {
     }
 
     try {
-      console.log('Inside try', editSlot);
       await updateMutation.mutateAsync({
         id: editSlot.id,
         payload: slotsData as CreateSlotsPayload,
       });
-      console.log('After await');
       toast({
         title: 'Success!',
         description: 'Slot updated successfully',
@@ -202,7 +175,6 @@ const CurrentSlots = () => {
       setEditSlot(null);
       refetch();
     } catch (error: any) {
-      console.log('Error aa gaya ooye');
       console.error('Update slot error:', error);
       toast({
         title: 'Error',
@@ -221,8 +193,6 @@ const CurrentSlots = () => {
       });
       return;
     }
-
-    console.log('Deleting slot:', slotToDelete.id);
 
     try {
       await deleteMutation.mutateAsync(slotToDelete.id);
@@ -245,45 +215,56 @@ const CurrentSlots = () => {
 
   const customRender = {
     Day: (value: string) => {
-      return <span className={`px-3 py-1  text-l font-semibold  `}>{value}</span>;
+      return (
+        <span className="px-3 py-1 rounded-full text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
+          {value}
+        </span>
+      );
     },
-    Actions: (_: any, row: Record<string, any>) => (
-      <div className="flex gap-2">
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={e => {
-            e.stopPropagation();
-            handleView(row._row);
-          }}
-          title="View details"
-        >
-          <Eye className="w-4 h-4" />
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={e => {
-            e.stopPropagation();
-            handleEdit(row._row);
-          }}
-          title="Edit slot"
-        >
-          <Edit className="w-4 h-4" />
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={e => {
-            e.stopPropagation();
-            handleDelete(row._row);
-          }}
-          title="Delete slot"
-        >
-          <Trash2 className="w-4 h-4 text-red-500" />
-        </Button>
-      </div>
+    Edit: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={e => {
+          e.stopPropagation();
+          handleEdit(row._row);
+        }}
+        title="Edit slot"
+      >
+        <Pencil className="w-4 h-4" />
+      </Button>
     ),
+    Delete: (_: any, row: Record<string, any>) => (
+      <Button
+        size="icon"
+        variant="destructive"
+        onClick={e => {
+          e.stopPropagation();
+          handleDelete(row._row);
+        }}
+        title="Delete slot"
+        disabled={deleteMutation.isPending}
+      >
+        {deleteMutation.isPending ? (
+          <Loader2 className="animate-spin w-4 h-4" />
+        ) : (
+          <Trash2 className="w-4 h-4" />
+        )}
+      </Button>
+    ),
+    'Start Time': (value: string) => {
+      return <span className="font-mono text-sm font-medium text-foreground">{value}</span>;
+    },
+    'End Time': (value: string) => {
+      return <span className="font-mono text-sm font-medium text-foreground">{value}</span>;
+    },
+    Duration: (value: string) => {
+      return (
+        <span className="px-2 py-1 rounded bg-muted text-muted-foreground text-xs font-medium">
+          {value}
+        </span>
+      );
+    },
   };
 
   const getTableData = (slots: Slots[]) =>
@@ -322,7 +303,8 @@ const CurrentSlots = () => {
         'Start Time': formatTime(slot.start_time),
         'End Time': formatTime(slot.end_time),
         Duration: calculateDuration(slot.start_time, slot.end_time),
-        Actions: '',
+        Edit: '',
+        Delete: '',
         _row: { ...slot },
       };
     });
@@ -387,10 +369,10 @@ const CurrentSlots = () => {
                         Add Slot
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border max-w-md">
+                    <DialogContent className="max-w-md">
                       <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
-                          <Plus className="w-6 h-6 text-primary" />
+                        <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                          <Plus className="w-5 h-5 text-primary" />
                           Create New Slot
                         </DialogTitle>
                       </DialogHeader>
@@ -411,10 +393,9 @@ const CurrentSlots = () => {
 
       {/* Edit Slot Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="bg-gradient-to-br from-background to-muted/20 border-2 border-border max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Edit className="w-6 h-6 text-primary" />
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
               Edit Slot
             </DialogTitle>
           </DialogHeader>
@@ -471,145 +452,6 @@ const CurrentSlots = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* View Details Dialog */}
-      <Dialog open={!!viewSlot} onOpenChange={() => setViewSlot(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-              <Clock className="w-6 h-6 text-primary" />
-              Slot Details
-            </DialogTitle>
-          </DialogHeader>
-
-          {viewSlot && (
-            <div className="space-y-6">
-              {/* Slot Information */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-foreground mb-2">
-                        {viewSlot.day} Schedule
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        {customRender.Day(viewSlot.day)}
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-4">
-                      <div className="grid grid-cols-2 gap-6">
-                        <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-muted-foreground mt-1" />
-                          <div>
-                            <h4 className="font-semibold mb-1">Start Time</h4>
-                            <p className="text-muted-foreground">
-                              {viewSlot.start_time
-                                ? new Date(`1970-01-01T${viewSlot.start_time}`).toLocaleTimeString(
-                                    [],
-                                    {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    }
-                                  )
-                                : 'N/A'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-muted-foreground mt-1" />
-                          <div>
-                            <h4 className="font-semibold mb-1">End Time</h4>
-                            <p className="text-muted-foreground">
-                              {viewSlot.end_time
-                                ? new Date(`1970-01-01T${viewSlot.end_time}`).toLocaleTimeString(
-                                    [],
-                                    {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    }
-                                  )
-                                : 'N/A'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-4">
-                      <div className="flex items-start gap-3 mb-4">
-                        <Calendar className="w-5 h-5 text-muted-foreground mt-1" />
-                        <div>
-                          <h4 className="font-semibold mb-1">Duration</h4>
-                          <p className="text-muted-foreground">
-                            {viewSlot.start_time && viewSlot.end_time
-                              ? (() => {
-                                  try {
-                                    const start = new Date(`1970-01-01T${viewSlot.start_time}`);
-                                    const end = new Date(`1970-01-01T${viewSlot.end_time}`);
-                                    const diff = (end.getTime() - start.getTime()) / (1000 * 60);
-                                    const hours = Math.floor(diff / 60);
-                                    const minutes = diff % 60;
-                                    return hours > 0
-                                      ? `${hours}h ${minutes}m`
-                                      : `${minutes} minutes`;
-                                  } catch {
-                                    return 'N/A';
-                                  }
-                                })()
-                              : 'N/A'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {viewSlot.created_at && (
-                      <div className="border-t pt-4">
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Created:</span>
-                            <p className="font-medium">
-                              {new Date(viewSlot.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
-                          {viewSlot.updated_at && (
-                            <div>
-                              <span className="text-muted-foreground">Last Updated:</span>
-                              <p className="font-medium">
-                                {new Date(viewSlot.updated_at).toLocaleDateString()}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Additional Information */}
-              <Card className="border border-info/20 bg-info/5">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-info/10 rounded-lg flex items-center justify-center mt-1">
-                      <Settings className="w-4 h-4 text-info" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-info mb-2">Schedule Information</h4>
-                      <p className="text-sm text-info/80">
-                        This slot is part of the weekly schedule management system. You can modify
-                        the time slots and configure the weekly schedule according to your
-                        requirements.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </HelmetWrapper>
   );
 };

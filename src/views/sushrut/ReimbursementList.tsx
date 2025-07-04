@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   Loader2,
   Eye,
@@ -6,12 +6,7 @@ import {
   FileText,
   DollarSign,
   Users,
-  Clock,
-  CheckCircle,
-  XCircle,
   BarChart3,
-  TrendingUp,
-  Target,
   Plus,
   CreditCard,
   AlertCircle,
@@ -39,24 +34,6 @@ const ReimbursementList = () => {
   const deleteMutation = useDeleteStudentReimbursement();
 
   const [viewReimbursement, setViewReimbursement] = useState<StudentReimbursement | null>(null);
-
-  // Calculate statistics
-  const statistics = useMemo(() => {
-    const totalClaims = reimbursements.length;
-    const totalAmount = reimbursements.reduce(
-      (sum, r) => sum + (r.reimbursement?.total_amount || 0),
-      0
-    );
-
-    // Get unique students
-    const uniqueStudents = new Set(reimbursements.map(r => r.student?.student_id)).size;
-
-    return {
-      totalClaims,
-      totalAmount,
-      uniqueStudents,
-    };
-  }, [reimbursements]);
 
   const handleView = (reimbursement: StudentReimbursement) => {
     setViewReimbursement(reimbursement);
@@ -152,20 +129,6 @@ const ReimbursementList = () => {
       subHeading="Comprehensive medical reimbursement claims management with real-time analytics"
     >
       <div className="space-y-8">
-        {/* Statistics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card-blue-gradient rounded-2xl p-6 border-2 border-card-blue">
-            <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-card-blue-icon rounded-xl flex items-center justify-center">
-                <FileText className="w-6 h-6 text-background" />
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-card-blue font-medium mb-1">Total Claims</p>
-                <p className="text-2xl font-bold text-card-blue">{statistics.totalClaims}</p>
-              </div>
-            </div>
-          </div>
-        </div>
         {/* Enhanced Reimbursements Table */}
         <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
           <div className="p-6 border-b border-border bg-gradient-to-r from-primary/5 to-primary/10">

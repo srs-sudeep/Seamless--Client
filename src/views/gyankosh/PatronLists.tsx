@@ -398,24 +398,6 @@ const PatronLists = () => {
       subHeading="Manage library patrons and members"
     >
       <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-              <Users className="w-7 h-7 text-primary" />
-              Library Patrons
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Manage patron accounts, view details, and track library usage. Click the expand arrow
-              to view detailed information.
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Total Patrons</p>
-            <p className="text-2xl font-bold text-primary">{patrons.length}</p>
-          </div>
-        </div>
-
         {/* Patrons Table */}
         {patrons.length === 0 ? (
           <div className="text-center py-16 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border">
@@ -424,7 +406,7 @@ const PatronLists = () => {
             <p className="text-muted-foreground">No patron records are currently available.</p>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border shadow-lg overflow-hidden">
+          <div>
             <DynamicTable
               tableHeading={`Patrons (${patrons.length})`}
               data={getTableData(patrons)}

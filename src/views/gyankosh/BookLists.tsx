@@ -62,22 +62,53 @@ const BookLists = () => {
     return new Date(dueDate) < new Date();
   };
 
-  if (isFetching && books.length === 0) {
-    return (
-      <HelmetWrapper
-        title="Book Lists | Gyankosh"
-        heading="Book Lists"
-        subHeading="Browse and manage library books"
-      >
-        <div className="flex justify-center items-center h-96 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border">
-          <div className="text-center">
-            <Loader2 className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Loading books...</p>
+  // Shimmer loading component for book cards
+  const BookCardSkeleton = () => (
+    <Card className="bg-gradient-to-br from-card to-card/80 border-2">
+      <CardContent className="p-6 space-y-4">
+        {/* Book Cover Skeleton */}
+        <div className="relative aspect-[3/4] bg-gradient-to-br from-muted/30 to-muted/60 rounded-lg overflow-hidden">
+          <div className="w-full h-full bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 animate-pulse">
+            <div className="w-full h-full flex items-center justify-center">
+              <BookOpen className="w-12 h-12 text-muted-foreground/30" />
+            </div>
+          </div>
+          {/* Status Badge Skeleton */}
+          <div className="absolute top-2 right-2">
+            <div className="h-6 w-16 bg-muted/50 rounded-full animate-pulse"></div>
           </div>
         </div>
-      </HelmetWrapper>
-    );
-  }
+
+        {/* Book Details Skeleton */}
+        <div className="space-y-3">
+          <div>
+            {/* Title Skeleton */}
+            <div className="space-y-2">
+              <div className="h-4 bg-muted/50 rounded animate-pulse"></div>
+              <div className="h-4 bg-muted/50 rounded w-3/4 animate-pulse"></div>
+            </div>
+            {/* Author Skeleton */}
+            <div className="flex items-center gap-1 mt-2">
+              <div className="w-3 h-3 bg-muted/50 rounded animate-pulse"></div>
+              <div className="h-3 bg-muted/50 rounded w-1/2 animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Copy Information Skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-3 bg-muted/50 rounded w-12 animate-pulse"></div>
+              <div className="h-3 bg-muted/50 rounded w-8 animate-pulse"></div>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-muted/50 rounded animate-pulse"></div>
+              <div className="h-3 bg-muted/50 rounded w-6 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   if (error) {
     return (
@@ -115,12 +146,23 @@ const BookLists = () => {
           </div>
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Total Books</p>
-            <p className="text-2xl font-bold text-primary">{books.length}</p>
+            {isFetching && books.length === 0 ? (
+              <div className="h-8 w-12 bg-muted/50 rounded animate-pulse"></div>
+            ) : (
+              <p className="text-2xl font-bold text-primary">{books.length}</p>
+            )}
           </div>
         </div>
 
-        {/* Books Grid */}
-        {books.length === 0 ? (
+        {/* Show shimmer cards while loading */}
+        {isFetching && books.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Show 8 shimmer cards */}
+            {Array.from({ length: 8 }).map((_, index) => (
+              <BookCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : books.length === 0 ? (
           <div className="text-center py-16 bg-gradient-to-br from-background to-muted/30 rounded-2xl border-2 border-border">
             <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">No Books Available</h3>

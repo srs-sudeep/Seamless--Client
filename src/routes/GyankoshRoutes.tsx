@@ -2,7 +2,6 @@ import lazyLoad from '@/lib/lazyLoad';
 import MainLayout from '@/layouts/MainLayout';
 
 // gyanlosh pages
-const CreateBook = lazyLoad(() => import('@/views/gyankosh/CreateBook'));
 const Checkouts = lazyLoad(() => import('@/views/gyankosh/Checkouts'));
 const BookLists = lazyLoad(() => import('@/views/gyankosh/BookLists'));
 const MyCheckouts = lazyLoad(() => import('@/views/gyankosh/MyCheckouts'));
@@ -14,10 +13,6 @@ const GyankoshRoutes = {
   path: 'gyankosh',
   element: <MainLayout />,
   children: [
-    {
-      path: 'create-book',
-      element: <CreateBook />,
-    },
     {
       path: 'checkouts',
       element: <Checkouts />,

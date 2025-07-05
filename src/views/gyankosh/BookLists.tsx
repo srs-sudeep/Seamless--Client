@@ -133,28 +133,6 @@ const BookLists = () => {
       subHeading="Browse and manage library books"
     >
       <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-              <BookOpen className="w-7 h-7 text-primary" />
-              Library Catalog
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              Browse available books and manage checkouts. Click on any book to view details.
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Total Books</p>
-            {isFetching && books.length === 0 ? (
-              <div className="h-8 w-12 bg-muted/50 rounded animate-pulse"></div>
-            ) : (
-              <p className="text-2xl font-bold text-primary">{books.length}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Show shimmer cards while loading */}
         {isFetching && books.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {/* Show 8 shimmer cards */}

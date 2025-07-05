@@ -1,0 +1,43 @@
+export interface Checkout {
+  checkout_id: number;
+  patron_id: number;
+  patron_name: string;
+  patron_cardnumber: string;
+  item_id: number;
+  item_barcode: string;
+  biblio_id: number;
+  title: string;
+  author: string | null;
+  isbn: string;
+  cover_image_url: string | null;
+  checkout_date: string;
+  due_date: string;
+  checkin_date: string | null;
+  return_date: string | null;
+  renewals_count: number;
+  last_renewed_date: string | null;
+  is_overdue: boolean;
+  auto_renew: boolean;
+  auto_renew_error: string | null;
+  library_id: string;
+  issuer_id: string | null;
+  call_number: string | null;
+  location: string | null;
+  home_library: string;
+  holding_library: string;
+  item_type: string;
+  onsite_checkout: boolean;
+  note: string | null;
+  note_date: string | null;
+  note_seen: boolean;
+  unseen_renewals: number;
+  status: string;
+  publication_year: string | null;
+  publisher: string | null;
+  series: string | null;
+  acquisition_date: string;
+  last_seen_date: string;
+  checkouts_count: number;
+}
+
+export type CheckoutsResponse = Checkout[];
